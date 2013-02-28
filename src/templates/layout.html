@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {%block head %}
+    <title>{% block title %}{% endblock%}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <!-- LESS -->
+    <link href="{{ url_for('static', filename='css/custom.less')}}" rel="stylesheet/less" media="screen">
+    <script src="{{ url_for('static', filename='js/less.js')}}"></script>
+   {% endblock %}
+  </head>
+  <body>
+     <script type=text/javascript>
+       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+     </script>
+    <!-- SCRIPTS -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    
+    <div class="container">
+      <div class="masthead">
+        <h3 class="muted">Povodochek.com</h3>
+        <ul class="nav nav-tabs">
+	  <li class="active">
+	    <a href="#">Найти друга</a>
+	  </li>
+	  <li><a href="#">Test 1</a></li>
+	  <li><a href="#">Test 2</a></li>
+	</ul>
+      </div>
+      {% block container %}
+
+    {% endblock %} <!-- container -->
+    </div>
+  </body>
+</html>
