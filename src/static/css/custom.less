@@ -1,35 +1,112 @@
-body {
-  padding-top: 20px;
-  padding-bottom: 60px;
-  padding-right: 20px;
-  padding-left: 20px;
+html, body {
+    height: 100%;
+
+    .container {
+        /*width: 1170px;*/
+        margin: 0 auto;
+        max-width: 1000px;
+    }
+}
+
+#header {
+  .container > hr {
+    margin: 60px 0;
+}
+
+.navbar .navbar-inner {
+    padding-left:0;
+    padding-right:0;
+}
+}
+
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -60px;
+}
+
+#footer, #push{
+    height: 60px;
 }
 
 
-.pet-search-block {
+#indexPetSearch {
+    /*padding:30px;*/
+
     .control-group {
-        float:left;
+        float: left;
         margin-right: 1em;
-
-        input#petLocation {
-            width:150px;
-        }
-
-        input#petAge {
-            width: 100px;
-        }
-
-        input#petGender {
-            width: 70px;
-        }
     }
 
-     button#petFind {
-            margin-top:24px;
-        }
+    .pet-find {
+        margin-top: 24px;
+    }
+}
+
+#indexPetAdd {
+   /*padding-bottom: 8em !important;*/
+   /*padding: 15px;*/
+
+   h4 {
+    /*font-family: Georgia;*/
 }
 
 
-.container {
-    max-width: 1000px;
+p.ipa-description {
+    line-height: 15px !important;
+    margin-top:0.5em;
+}
+
+p.ipa-add {
+    margin-top: 2em;
+}
+}
+
+#indexPetEvents {
+    margin-top:2em;
+
+    .ipe-items {
+        .event {
+            padding: 5px 5px 10px 5px;
+            h5 {
+                margin:0 !important;
+            }
+            time.event-date {
+                background: #8CC835;
+                color: white;
+                float: left;
+                font: normal 16px 'Oswald';
+                width: 64px;
+                height: 50px;
+                padding: 7px 0;
+                text-transform: uppercase;
+                text-align: center;
+                margin: 0 13px 0 0;
+                text-transform: uppercase;
+                text-align: center;
+
+                span {
+                    display: block;
+                    font-size: 31px;
+                    line-height: 29px;
+                }
+            }
+
+            .content {
+                padding: 0px 0 0 76px;
+                dd {
+                    margin-left: 0 !important;
+                }
+            }
+        }
+    }
+}
+
+#idnexLastPets {
+    .carousel-inner {
+        img {
+            width:100%;    
+        }
+    } 
 }
