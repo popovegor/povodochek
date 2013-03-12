@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   {%block head %}
   <title>{% block title %}{% endblock%}</title>
@@ -25,23 +25,20 @@
   <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   </script>
-  <!-- SCRIPTS -->
-  <script src="http://code.jquery.com/jquery.js"></script>
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
 
-   <div id="wrap">
+  <div id="wrap">
 
   <div class="container">
     <!-- header -->
     {% include "header.html" %}
 
+    {#% include "breadcrumbs.html" %#}
 
     <div class="row-fluid">
         <div class="span8">
           {% block main %}
           {% endblock %}
         </div><!--/span-->
-
 
         <div class="span4">
           {% block sidebar %}
@@ -59,6 +56,12 @@
         <p class="muted credit">Example courtesy <a href="http://martinbean.co.uk">Martin Bean</a> and <a href="http://ryanfait.com/sticky-footer/">Ryan Fait</a>.</p>
       </div>
     </div>
+
+
+<!-- SCRIPTS -->
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
 
 </body>
 </html>

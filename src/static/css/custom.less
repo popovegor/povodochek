@@ -6,11 +6,6 @@ html, body {
         margin: 0 auto;
         max-width: 1000px;
     }
-
-    h1, h2,  {
-        margin:0px !important;
-        font-size:17.5px !important;
-    }
 }
 
 #header {
@@ -31,87 +26,113 @@ html, body {
     margin: 0 auto -60px;
 }
 
-#footer, #push{
+#footer, #push {
     height: 60px;
 }
 
 
-#indexPetSearch {
-    /*padding:30px;*/
+#breadcrumbs {
+    h1.bc-title {
+        display: inline-block;
+        margin: 0px !important;
+    }
+}
 
-    .control-group {
-        float: left;
-        margin-right: 1em;
+#indexPetSearch {
+
+    .pet-type {
+        select#petType {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    .pet-breed {
+        select#petBreed {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    .pet-location {
+        input#petLocation {
+            width: 94%;
+            max-width: 287px;
+        }
     }
 
     .pet-find {
-        margin-top: 24px;
-    }
-}
-
-#indexPetAdd {
- /*padding-bottom: 8em !important;*/
- /*padding: 15px;*/
-
- h4 {
-    /*font-family: Georgia;*/
-}
-
-
-p.ipa-description {
-    line-height: 15px !important;
-    margin-top:0.5em;
-}
-
-p.ipa-add {
-    margin-top: 2em;
-}
-}
-
-#indexPetEvents {
-    margin-top:2em;
-
-    .ipe-items {
-        .event {
-            padding: 5px 5px 10px 5px;
-            h5 {
-                margin:0 !important;
-            }
-            time.event-date {
-                background: #8CC835;
-                color: white;
-                float: left;
-                font: normal 16px 'Oswald';
-                width: 64px;
-                height: 50px;
-                padding: 7px 0;
-                text-transform: uppercase;
-                text-align: center;
-                margin: 0 13px 0 0;
-                text-transform: uppercase;
-                text-align: center;
-
-                span {
-                    display: block;
-                    font-size: 31px;
-                    line-height: 29px;
-                }
-            }
-
-            .content {
-                padding: 0px 0 0 76px;
-                dd {
-                    margin-left: 0 !important;
-                }
-            }
+        #petFind {
+            margin-top:24px;
         }
     }
 }
 
-#idnexLastPets {
+#indexPetAdd {
+     /*padding-bottom: 8em !important;*/
+     /*padding: 15px;*/
+
+     h4 {
+        /*font-family: Georgia;*/
+    }
+
+
+    p.ipa-description {
+     /*   line-height: 15px !important;
+        margin-top:0.5em;*/
+    }
+
+    p.ipa-add {
+        /*margin-top: 2em;*/
+    }
+}
+
+.index-pet-events {
+    margin-top: 2em;
+        .ipe-event {
+            margin-top:15px;
+            overflow: hidden;
+
+            .ipe-date {
+                background-color: #8CC835;
+                color: #ffffff;
+                /*background-color: #eeeeee;*/
+                padding:10px 5px 0px 5px;
+                margin-right: 10px;
+                width:55px;
+                height: 50px;
+                .ipe-number {
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+            }
+            .ipe-body {
+                overflow: hidden;
+                .ipe-heading {
+                    margin:0 0 5px;
+                }
+            }
+
+        }
+  
+}
+
+#indexLastPets {
     .carousel-inner {
         img {
             width:100%;    
         }
     } 
+
+    .tabbable {
+        margin-top:1em;
+        ul.nav-tabs {
+            li {
+                a {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+
 }

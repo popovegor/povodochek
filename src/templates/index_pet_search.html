@@ -1,41 +1,45 @@
-<div id="indexPetSearch">
-  <h1>Найдите своего питомца</h1>
-  <p style=""><em>Search through thousands of adverts for dogs, puppies,
-    cats, kittens, horses and other pets for sale in the UK</em></p>
-
+<div id="indexPetSearch" class="">
+  <h4>Найдите своего питомца</h4>
+  <p class="muted"><small>Поиск объявлений о продаже кошек, собак, птиц, кроликов и других друмашних животных, находящихся по всей России.</small></p>
+    
     <form method="get" class="well">
-        <div class="control-group pet-type">
-            <label class="control-label" for="petType">Тип питомца</label>
-            <div class="controls">
-                <select id="petType" name="petType">
-                    <option value=""  selected="selected">Любой</option>
-                    <option value="1">Собаки</option>
-                    <option value="2">Кошки</option>
-                    <option value="3">Кролики</option>
-                </select>
+        <fieldset>
+            <div class="row-fluid">
+                <div class="span6 pet-type">
+
+                    <label class="control-label" for="petType">Тип</label>
+
+                    <select id="petType" name="petType">
+                        <option value="" selected="selected">Любой</option>
+                        <option value="1">Собаки</option>
+                        <option value="2">Кошки</option>
+                        <option value="3">Кролики</option>
+                    </select>
+
+                </div>
+                <div class="span6 pet-breed">
+
+                    <label class="control-label" for="petBreed">Порода</label>
+                    
+                    <select id="petBreed">
+                        <option value="" selected="selected">Любая</option>
+                        <option value="1">Померанский шпиц</option>
+                        <option value="2">Колли</option>
+                        <option value="3">Овчарка</option>
+                    </select>
+
+                </div>
             </div>
-        </div>
-        <div class="control-group pet-breed">
-            <label class="control-label" for="petBreed">Порода</label>
-            <div class="controls">
-             <select id="petBreed">
-                <option value=""  selected="selected">Любая</option>
-                <option value="1">Померанский шпиц</option>
-                <option value="2">Колли</option>
-                <option value="3">Овчарка</option>
-            </select>
-        </div>
-    </div>
-    <div class="control-group pet-location" style="clear:both;">
-        <label class="control-label" for="petLocation">Местоположение</label>
-        <div class="controls">
-          <input type="text" id="petLocation" placeholder="Санкт-Петербург">
-      </div>
-  </div>
-  <div class="control-group pet-find">
-    <button type="submit" class="btn btn-primary">Найти питомца</button>
-</div>
-<div class="clearfix"></div>
+            <div class="row-fluid">
+               <div class="span6 pet-location">
+                <label class="control-label" for="petLocation">Местоположение</label>
+                <input type="text" id="petLocation" placeholder="Санкт-Петербург">
+                </div>
+                <div class="span6 pet-find">
+                    <button type="submit" class="btn btn-primary" id="petFind">Найти питомца</button>
+                </div>
+            </div>
+    </fieldset>
 </form>
 
 </div>
