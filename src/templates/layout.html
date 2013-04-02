@@ -2,18 +2,12 @@
 <html lang="ru">
 <head>
   {%block head %}
-  <title>{% block title %}{% endblock%}</title>
+  <title>{% block title %}{{page_title}}{% endblock%}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <!-- Bootstrap -->
   <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
-  <style>
-      body { padding-top: 20px;
-            padding-bottom: 60px; }
-      #wrap > .container {
-        /*padding-top: 60px;*/
-      }
-  </style>
   <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css')}}" rel="stylesheet">
   <!-- LESS -->
   <link href="{{ url_for('static', filename='css/custom.less')}}" rel="stylesheet/less">
@@ -28,40 +22,39 @@
 
   <div id="wrap">
 
-  <div class="container">
     <!-- header -->
     {% include "header.html" %}
 
-    {#% include "breadcrumbs.html" %#}
+  <div class="container">
 
-    <div class="row-fluid">
-        <div class="span8">
-          {% block main %}
-          {% endblock %}
-        </div><!--/span-->
+    {% include "breadcrumbs.html" %}
 
-        <div class="span4">
-          {% block sidebar %}
-          {% endblock %}
-        </div><!--/span-->
+    {% include "flashed_messages.html" %}
 
-      </div><!--/row-->
-</div>
+    {% block content %}
+
+    {% endblock %}
  
  <div id="push"></div>
 
   </div>
+</div>
  <div id="footer">
       <div class="container">
         <p class="muted credit">Example courtesy <a href="http://martinbean.co.uk">Martin Bean</a> and <a href="http://ryanfait.com/sticky-footer/">Ryan Fait</a>.</p>
       </div>
     </div>
 
-
 <!-- SCRIPTS -->
-  <script src="http://code.jquery.com/jquery.js"></script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
   <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
   <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
+
+
+  {%block js %}
+  {% endblock %}
 
 </body>
 </html>

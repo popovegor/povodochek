@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+
+{% macro render_nav_item(title, path) -%}
+    <li {% if request.path  == path %} class="active" {% endif %}><a href="{{path}}">{{title}}</a></li>
+{%- endmacro %}
+
+
+{% block content %}      
+
+  <div class="row-fluid">
+    <div class="span3">
+      <ul class="nav nav-list">
+        <li class="nav-header">Мои объявления</li>
+        {% for (title, path) in [("Продажа", "/account/sale")
+          , ("Вязки", "/account/stud")
+          , ("Розыск", "/account/wanted")
+          , ("Приютить", "/account/adoption")] 
+        %}
+
+          {{render_nav_item(title, path)}}
+
+        {% endfor %}
+
+        <li class="nav-header">Мой профиль</li>
+
+        {% for (title, path) in [("Контактная информация", "/account/contact")
+          , ("Учетные данные", "/account/user")] 
+        %}
+        
+          {{render_nav_item(title, path)}}
+
+        {% endfor %}
+
+      </ul>
+    </div>
+    <div class="span9">
+      {% block account_content %}
+        
+      {% endblock%}
+    </div>
+  </div>
+
+{% endblock %} 

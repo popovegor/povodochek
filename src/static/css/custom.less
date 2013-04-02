@@ -2,20 +2,28 @@ html, body {
     height: 100%;
 
     .container {
-        /*width: 1170px;*/
-        margin: 0 auto;
-        max-width: 1000px;
+         h3 {
+            font-size: 20px !important;
+            margin-top:0px !important;
+        }
+         h1 {
+            display: inline-block;
+            margin: 0 0 10px 0 !important;
+            font-size:26px !important;
+        }
     }
 }
 
 #header {
-      .container > hr {
-        margin: 60px 0;
+      .container  {
+        /*margin: 60px 0;*/
     }
 
     .navbar .navbar-inner {
-        padding-left:0;
+        /*padding-left:0;*/
         padding-right:0;
+        /*padding-top:0px !important;*/
+        /*padding-bottom:0px !important;*/
     }
 }
 
@@ -26,16 +34,24 @@ html, body {
     margin: 0 auto -60px;
 }
 
+#wrap > .container {
+    padding-top: 60px;
+}
+
+@media screen and (max-width: 979px) {
+    #wrap > .container {
+        padding-top: 0px;   
+    }
+}
+
 #footer, #push {
     height: 60px;
+    clear: both;
 }
 
 
 #breadcrumbs {
-    h1.bc-title {
-        display: inline-block;
-        margin: 0px !important;
-    }
+   
 }
 
 #indexPetSearch {
@@ -73,6 +89,7 @@ html, body {
      /*padding: 15px;*/
 
      h4 {
+        /*padding:10px 0;*/
         /*font-family: Georgia;*/
     }
 
@@ -135,4 +152,20 @@ html, body {
         }
     }
 
+}
+
+#signin {
+    max-width: 300px;
+}
+
+#signup {
+    max-width: 300px;
+}
+
+form.form-sale-adv {
+    
+}
+
+.required {
+    color:red;
 }

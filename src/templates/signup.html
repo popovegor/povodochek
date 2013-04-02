@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}      
+<p class="muted"><small>Зарегистрируйтесь на сайте, чтобы размещать объявления, общаться с владельцами домашних животных, заводить знакомства и многое другое.</small></p>
+<div class="row-fluid">
+    <div class="span6">
+
+        {% from "forms.html" import form_field_boolean, form_field %}
+
+        <form class="form-signup" id="signup" method="post" action="{{request.path}}" >
+
+          {{ form_field(form.email) }}
+
+          {{ form_field(form.password) }}
+
+          {{ form_field(form.confirm) }}
+
+          {{ form_field(form.accept_tos)}}
+
+            <button class="btn btn btn-primary" type="submit">Регистрация</button>
+     
+      </form>
+  </div>
+</div>
+
+
+{% endblock %} 

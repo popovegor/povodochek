@@ -1,19 +1,21 @@
 {% extends "layout.html" %}
 
-{% block main %}      
+{%  block content %}
 
-  {% include "index_pet_search.html" %}
+<div class="row-fluid">
+        <div class="span8">
 
-  
-  {% include "index_last_pets.html" %}  
+          {% include "index/search.html" %}
+          {% include "index/latest.html" %}
 
-{% endblock %} 
+        </div><!--/span-->
 
-{% block sidebar %}
+        <div class="span4">
+          {% include "index/add.html" %}
+            {% include "index/events.html" %}    
+        </div><!--/span-->
 
-    {% include "index_pet_add.html" %}
+      </div><!--/row-->
+</div>
 
-    {% include "index_pet_events.html" %}    
-
-{% endblock %}
-
+{%  endblock %}

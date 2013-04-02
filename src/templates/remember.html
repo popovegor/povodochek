@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block main %}      
+<p class="muted"><small>Укажите ваш адрес электронный почты, чтобы мы могли выслать ссылку на смену пароля.</small></p>
+<div class="row-fluid">
+    <div class="span6">
+        <form class="form-signin well" id="signin" method="post" >
+            <label class="" for="email">Адрес электронной почты</label>
+            <input type="text" id="email" name="email" class="input-block-level" placeholder="">
+          <button class="btn btn btn-primary" type="submit">Выслать интсрукцию</button>
+      </form>
+  </div>
+</div>
+{% endblock %} 
