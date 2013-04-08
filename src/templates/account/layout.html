@@ -12,10 +12,8 @@
     <div class="span3">
       <ul class="nav nav-list">
         <li class="nav-header">Мои объявления</li>
-        {% for (title, path) in [("Продажа", "/account/sale")
-          , ("Вязки", "/account/stud")
-          , ("Розыск", "/account/wanted")
-          , ("Приютить", "/account/adoption")] 
+        {% for (title, path) in [("Продам", "/account/sale")
+          ] 
         %}
 
           {{render_nav_item(title, path)}}
@@ -25,7 +23,7 @@
         <li class="nav-header">Мой профиль</li>
 
         {% for (title, path) in [("Контактная информация", "/account/contact")
-          , ("Учетные данные", "/account/user")] 
+          , ("Сменить пароль", "/account/pwd")] 
         %}
         
           {{render_nav_item(title, path)}}

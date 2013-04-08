@@ -2,10 +2,55 @@
 
 {% block account_content %}
 
-<p><a href="/account/sale/add" class="btn btn-large">Создать новое</a></p>
+<div class="acount-sale span12">
 
-Тут будет список моих объявления о продаже домашних животных
+<p class="">
+    <a href="/account/sale/add" class="btn"><i class="icon-plus"></i>&nbsp;Новое объявление</a>
+</p>
 
+    {% for adv in advs %}
+
+    <hr>
+
+    <div class="media clearfix adv">
+
+        <div class="photo pull-left">
+            
+            <p class="text-center">
+               <a href="/account/sale/{{adv['_id']}}" class="">
+                    {% if adv['photos'][0] %}
+                    <img  src="/photo/{{ adv['photos'][0] }}" alt="{{adv['title']}}">
+                    {% else %}
+                        <img data-src='/static/js/holder.js/140x100/text:Нет фото' alt="{{adv['title']}}">
+                    {%endif%}
+                </a>    
+                 
+            </p>
+            <p class="text-center">
+                <span class="badge badge-success">{{ adv["price"]}}</span><strong> руб</strong> 
+            </p>
+            
+        </div>
+
+        <div class="media-body">
+            <h4 class="media-heading">{{adv["title"]}}</h4>
+            <ul class="unstyled">
+                <li>
+                    {{adv["desc"]}}
+                </li>
+            </ul>
+            <p class="pull-left actions">
+                <a class="btn btn-mini" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление"><i class="icon-pencil"></i>&nbsp;Изменить</a>
+                <a class="btn btn-mini" href="#" title="Удалить объявление"><i class="icon-trash"></i>&nbsp;Удалить</a>
+            </p>     
+        </div>
+    </div>
+
+
+
+{% endfor %}
+
+</div>
 
 
 {% endblock%}

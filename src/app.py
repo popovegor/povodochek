@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import (Flask, render_template, request, flash, redirect, url_for)
+from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, abort)
 from flask_login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin, AnonymousUser,
                             confirm_login, fresh_login_required)
@@ -13,6 +13,13 @@ from bson.objectid import ObjectId
 
 from werkzeug.utils import secure_filename
 import os
+import uuid
+
+
+from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
+                              UploadNotAllowed)
+
+photos = UploadSet('photos', IMAGES)
 
 
 def mongo():
@@ -20,6 +27,9 @@ def mongo():
 
 def users():
     return mongo().users
+
+def sales():
+    return mongo().sales
 
 class User(UserMixin):
     def __init__(self, name, id, active=True):
@@ -36,10 +46,13 @@ class Anonymous(AnonymousUser):
 
 app = Flask(__name__)
 
+
+UPLOADED_PHOTOS_DEST = '/tmp'
 SECRET_KEY = "yeah, not actually a secret"
-DEBUG = True
 
 app.config.from_object(__name__)
+
+configure_uploads(app, (photos))
 
 login_manager = LoginManager()
 
@@ -119,13 +132,7 @@ def account():
     return tmpl
 
 
-@app.route("/account/sale")
-@login_required
-def account_sale():
-    tmpl = render_template("account/sale.html", page_title=u"Продаю")
-    return tmpl
-
-app.route("/account/stud")
+@app.route("/account/stud")
 @login_required
 def account_stud():
     tmpl = render_template("account/stud.html", page_title=u"Повязать")
@@ -158,60 +165,103 @@ def account_adoption():
     tmpl = render_template("account/adoption.html", page_title=u"Отдам даром")
     return tmpl
 
-@app.route("/account/sale/add", methods = ['GET', 'POST'])
+
+@app.route("/account/sale")
+@login_required
+def account_sale():
+    advs = sales().find({'user': current_user.id })
+    print(advs)
+    tmpl = render_template("account/sale.html", page_title=u"Мои объявления о продаже", advs = advs)
+    return tmpl
+
+
 @app.route("/account/sale/<id>", methods = ['GET', 'POST'])
 @login_required
-def account_sale_adv(id = 0):
-    page_title = (u"Добавить"  if id == 0 else u"Редактировать") + u" объявление"
-    print(id)
+def acount_sale_edit(id):
+    adv = sales().find_one({'_id': ObjectId(id), 'user': ObjectId(current_user.id)})
+    # print(adv)
+    if not adv:
+        abort(404)
+
+    form = Sale(request.form)
+    if request.method == "POST" and form.validate():
+        photos = []
+        print(photos)
+        if form.photos.data:
+            photos = form.photos.data.split(',')
+            photos = filter(lambda x: x and len(x) > 0, photos)
+        print(photos)
+        sales().update({'user': ObjectId(current_user.id), '_id': ObjectId(id)} , {'$set': {'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data}})
+        flash(u"Объявление %s обновлено." % str(id), "success")
+        return redirect(url_for("account_sale"))
+    else:
+        form.pet.data = adv["pet"]
+        form.breed.data = adv["breed"]
+        form.title.data = adv["title"]
+        form.desc.data = adv['desc']
+        form.price.data = adv['price']
+        form.photos.data = ",".join(adv["photos"])
+        return render_template("/account/sale_adv.html", form=form, page_title=u"Редактировать объявление", btn_name = u"Сохранить", photos = adv["photos"])
+
+
+
+@app.route("/account/sale/add", methods = ['GET', 'POST'])
+@login_required
+def account_sale_add():
     form = Sale(request.form)
     if request.method == "POST" and form.validate():
         print(request.form)
-        flash(u"Объявление успешно добавлено", "success")
+        id = sales().insert({'user': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'photos': form.photos.data.split(","), 'price': form.price.data})
+        flash(u"Объявление %s добавлено." % str(id), "success")
         return redirect(url_for('account_sale'))
-    return render_template("/account/sale/adv.html", form=form, page_title=page_title)
+    return render_template("/account/sale_adv.html", form=form, page_title=u"Новое объявление", btn_name = u"Добавить")
+
+
+# @app.route("/acount/stud/add", methods = ["POST", "GET"])
+# @login_required
+# def account_stud_add():
+#     form = Stud(request.form)
+#     if request.method == "POST" and form.validate():
+#         print(request.form)
+#         id = sales().insert({'user': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'ps': form.photos.data.split(",")})
+#         flash(u"Объявление %s добавлено." % str(id), "success")
+#         return redirect(url_for('account_sale'))
+#     return render_template("/account/sale_adv.html", form=form, page_title=u"Новое объявление")
+
+
 
 # upload files
 # 
-# 
 
-UPLOAD_FOLDER = '/tmp'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/upload', methods=['POST'])
 @login_required
 def upload():
-    print(request.method, request.files)
-    if request.method == 'POST':
-        saved_files_urls = []
-        for key, file in request.files.iteritems():
-            print(key, file)
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(UPLOAD_FOLDER, filename)
-                print(file_path)
-                file.save(file_path)
-                saved_files_urls.append(url_for('uploaded_file', filename=filename))
-        return saved_files_urls[0]
-        #return render_template('saved_files.html', urls=saved_files_urls)
+    file = request.files['file']
+    print(file)
+    if file:
+        filename = photos.save(file, name=str(uuid.uuid4()) + ".")
+        # filename = photos.save(file)
+        return filename
+        
 
-    return render_template('upload.html')
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER,
-                               filename)
+@app.route('/photo/<filename>')
+def show(filename):
+    photo = send_from_directory(UPLOADED_PHOTOS_DEST, filename)
+    print(filename)
+    print(photo)
+    return photo
 
 
-@app.route('/upload1', methods=['GET', 'POST'])
-def upload1():
-    return render_template("upload1.html")
+@app.route('/gridster')
+def gridster():
+    return render_template("gridster.html")
+
+
+@app.route('/shapeshift')
+def shapeshift():
+    return render_template("shapeshift.html")
+
+
 
 if __name__ == "__main__":
     app.debug = True

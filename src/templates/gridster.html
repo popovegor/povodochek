@@ -1,0 +1,66 @@
+
+
+
+ 
+
+
+  <link href="{{ url_for('static', filename='gridster/jquery.gridster.min.css')}}" rel="stylesheet">
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
+
+<script src="{{ url_for('static', filename='gridster/jquery.gridster.min.js')}}"></script>
+
+
+
+<html>
+<body>
+<div class="gridster">
+    <ul style="list-style:none">
+        <li data-row="1" data-col="1" data-sizex="1" data-sizey="1"></li>
+        
+ 
+        <li data-row="1" data-col="2" data-sizex="2" data-sizey="1"></li>
+        
+ 
+        <li data-row="1" data-col="4" data-sizex="1" data-sizey="1"></li>
+        
+ 
+        <li data-row="1" data-col="5" data-sizex="1" data-sizey="1"></li>
+        
+ 
+        <li data-row="1" data-col="6" data-sizex="1" data-sizey="1"></li>
+        
+    </ul>
+</div>
+
+
+<style type="text/css">
+
+    .gridster .gs_w {
+        background: #FFF;
+        cursor: pointer;
+        -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        box-shadow: 0 0 5px rgba(0,0,0,0.3)
+}
+
+</style>
+
+
+
+<script type="text/javascript">
+    $(function(){ //DOM Ready
+ 
+        $(".gridster ul").gridster({
+            widget_margins: [10, 10],
+            widget_base_dimensions: [140, 140],
+            shift_larger_widgets_down: false
+        });
+     
+});
+</script>
+
+</body>
+</html>

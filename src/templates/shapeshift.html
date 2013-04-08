@@ -1,0 +1,79 @@
+
+
+<link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css')}}" rel="stylesheet">
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+
+
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
+
+
+
+<script type="text/javascript" src="https://raw.github.com/McPants/jquery.shapeshift/master/core/jquery.shapeshift.min.js"> </script>
+
+<script type="text/javascript" src="https://raw.github.com/McPants/jquery.shapeshift/master/core/vendor/jquery.ui.touch-punch.min.js"></script>
+
+<hmtl>
+    <div class="span12">
+<ul class="photos thumbnails" style="position: relative;">
+  <li style="position: absolute;" class="span2">
+    <a id="uploadAdd" href="" class="thumbnail"><img data-src='/static/js/holder.js/160x120/text:Добавить фото'> 
+            </a>
+  </li>
+  <li style="position: absolute;" class="span2">
+    <a id="uploadAdd" href="" class="thumbnail"><img data-src='/static/js/holder.js/160x120/text:Добавить фото'> 
+            </a>
+  </li>
+  <li style="position: absolute;" class="span2">
+    <a id="uploadAdd" href="" class="thumbnail"><img data-src='/static/js/holder.js/160x120/text:Добавить фото'> 
+            </a>
+  </li>
+  <li style="position: absolute;" class="span2">
+    <a id="uploadAdd" href="" class="thumbnail"><img data-src='/static/js/holder.js/160x120/text:Добавить фото'> 
+            </a>
+  </li>
+</ul>
+
+</div>
+</hmtl>
+
+<script type="text/javascript">
+
+
+
+
+$('.photos').shapeshift({
+  // Features
+  centerGrid: true,
+  enableAnimation: true,
+  enableAnimationOnInit: false,
+  enableAutoHeight: true,
+  enableDrag: true,
+  enableDragAnimation: true,
+  enableRearrange: true,
+  enableResize: true,
+  enableTrash: false,
+
+  // Options
+  animateSpeed: 150,
+  columns: null,
+  dragClone: false,
+  dragRate: 100,
+  dragWhitelist: "*",
+  dropCutoff: 0,
+  dropWhitelist: "*",
+  gutterX: 10,
+  gutterY: 10,
+  minHeight: 100,
+  paddingY: 0,
+  paddingX: 0,
+  selector: ""
+});
+
+
+</script>

@@ -1,5 +1,5 @@
 {%- macro form_field_label(field) -%}
-    <label for="{{ field.id }}">{{ field.label.text }}
+    <label for="{{ field.id }}"><strong>{{ field.label.text }}</strong>
     {%- if field.flags.required -%}
         <!-- <abbr title="Обязательное поле">*</abbr> -->
           <span class="required">*</span>
@@ -33,11 +33,11 @@
   </div>
 {%- endmacro -%}
  
-{%- macro action_buttons(submit_title, cancel_title="Отменить", submit_class="primary") -%}
+{%- macro action_buttons(submit_title, cancel_href, cancel_title="Отменить", submit_class="primary") -%}
 <div class="actions">
-  <input type="submit" class="btn {{submit_class}}" value="{{submit_title}}">
+  <input type="submit" class="btn btn-{{submit_class}}" value="{{submit_title}}">
   &nbsp;
-  <button type="reset" class="btn">{{cancel_title}}</button>
+  <a class="btn" href="{{cancel_href}}" >{{cancel_title}}</a>
 </div>
 {%- endmacro -%}
  

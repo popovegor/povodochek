@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from wtforms import Form, BooleanField, TextField, PasswordField, validators, ValidationError, SelectField, TextAreaField
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, SelectField, TextAreaField, HiddenField)
 from flask import Markup
 
 from pymongo import MongoClient 
@@ -15,11 +15,32 @@ def mongo():
 def users():
     return mongo().users
 
-def sale_advs():
-    return mongo().sales
+# def sale_advs():
+#     return mongo().sales
 
 
 class Sale(Form):
+
+    pet = SelectField(u'Тип животного', \
+        choices = [("1", u"Собака"), ("2", u"Кошка")], \
+        validators = [validators.Required(message=u'Тип животного не выбран')])    
+
+    breed = SelectField(u'Порода', \
+        choices = [("1", u"Померанский шпиц"), ("2", u"Овчарка")], \
+        validators = [validators.Required(message=u'Порода не выбрана')])    
+
+    title = TextField(u"Заголовок", [validators.Required(message=u"Краткое описание не заполнено")])
+
+    desc = TextAreaField(u"Описание", [validators.Required(message=u"Полное описание не заполнено")])
+
+    photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
+
+
+    price = TextField(u"Цена (руб)", [validators.Required(message=u"Цена не указана")])
+
+
+
+class Stud(Form):
 
     pet_type = SelectField(u'Тип животного', \
         choices = [("1", u"Собака"), ("2", u"Кошка")], \
@@ -33,6 +54,7 @@ class Sale(Form):
 
     description = TextAreaField(u"Полное описание", [validators.Required(message=u"Полное описание не заполнено")])
 
+    photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
 class SignIn(Form):
 

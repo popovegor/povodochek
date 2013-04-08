@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p class="muted"><small>Описать тут, как что и где писать кратко.</small></p>
+
+<div class="row-fluid">
+    <div class="span8">
+
+        {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+        <form class="form-sale-adv" id="adv" method="post" action="{{request.path}}" enctype="multipart/form-data" >
+
+          {{ form_field(form.pet) }}
+
+          {{ form_field(form.breed) }}
+
+          {{ form_field(form.title, class="span12") }}
+
+          {{ form_field(form.desc, rows="6", class="span12") }}    
+
+          {{ form_field(form.price, class="span2") }}
+
+          {{ form_field(form.photos) }}
+
+          <div class="cleafix">
+            <label for="uploader">
+              <strong>Фотографии</strong>
+            </label>
+
+              {% include "uploader.html" %}
+        </div>  
+
+        <br>
+
+          {{ action_buttons(submit_title=btn_name, cancel_href="/account/sale") }}
+
+            <script type="text/javascript">
+              $(function(){
+                //submit 
+                $(":submit").bind('click', function() {
+                  photos = $("#photos");
+                  images = $("img[file-name]");
+                  photos.val("");
+                  $.each(images, function(i, image) {
+                    filename = $(image).attr("file-name");
+                    photos.val(photos.val() + "," + filename)
+                  });
+                });
+              });
+          </script>
+
+        
+      </form>
+        
+  </div>
+</div>
+{% endblock%}
+

@@ -21,7 +21,7 @@
                     <li><a href="/signup">Регистрация</a></li>
                   </ul>
                   {% else %}
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{current_user.name}}&nbsp;<b class="caret"></b></a>
+                  <a href="#" title="{{current_user.name}}" class="dropdown-toggle nav-account" data-toggle="dropdown">{{current_user.name}}&nbsp;<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="/account/sale">Мои объявления</a></li>
                     <li><a href="/account/sale">Мой профиль</a></li>
@@ -34,9 +34,9 @@
              <ul class="nav">
                <!-- <li class="active"><a href="/">Главная</a></li> -->
                 <li><a href="/sale">Продажа</a></li>
-                <li><a href="#">Вязки</a></li>
+                {#<li><a href="#">Вязки</a></li>
                 <li><a href="#">Приютить</a></li>
-                <li><a href="#">Розыск</a></li>
+                <li><a href="#">Розыск</a></li>#}
                 <li><a href="#">Советы</a></li>
               </ul>
             </div>

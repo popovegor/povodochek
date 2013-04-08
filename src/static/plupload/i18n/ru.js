@@ -1,7 +1,7 @@
 // Russian
 plupload.addI18n({
     'Select files' : 'Выберите файлы',
-    'Add files to the upload queue and click the start button.' : 'Добавьте файлы и нажмите кнопку "Загрузить файлы".',
+    'Add files to the upload queue and click the start button.' : 'Добавьте файлы и нажмите кнопку "Загрузить".',
     'Filename' : 'Имя файла',
     'Status' : 'Статус',
     'Size' : 'Размер',

@@ -19,7 +19,7 @@ $(function() {
         runtimes : 'gears,flash,silverlight,browserplus,html5',
         url : '/upload',
         max_file_size : '10mb',
-        chunk_size : '1mb',
+        //chunk_size : '1mb',
         unique_names : true,
 
         // Resize images on clientside if we can
@@ -27,7 +27,7 @@ $(function() {
 
         // Specify what files to browse for
         filters : [
-            {title : "Изображения", extensions : "jpg, jpeg,gif,png"},
+            {title : "Изображения", extensions : "jpg, jpeg, gif, png"},
         ],
 
         // Flash settings
@@ -37,7 +37,16 @@ $(function() {
         silverlight_xap_url : '/static/plupload/plupload.silverlight.xap'
     });
 
-    
+
+    $('#uploader').pluploadQueue().bind("FileUploaded", function(uploader, file, response) {
+        filename = response.response;
+        filenames = $("#photos").val();
+        if(filenames) {
+            $("#photos").val(filenames + "," + filename);
+        } else {
+            $("#photos").val(filename);
+        }
+    });
 
     // Client side form validation
     $('form').submit(function(e) {

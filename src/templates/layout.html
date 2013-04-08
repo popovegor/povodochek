@@ -12,7 +12,15 @@
   <!-- LESS -->
   <link href="{{ url_for('static', filename='css/custom.less')}}" rel="stylesheet/less">
   <script src="{{ url_for('static', filename='js/less.js')}}"></script>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
+
   {% endblock %}
+
 </head>
 <body>
   
@@ -44,17 +52,6 @@
         <p class="muted credit">Example courtesy <a href="http://martinbean.co.uk">Martin Bean</a> and <a href="http://ryanfait.com/sticky-footer/">Ryan Fait</a>.</p>
       </div>
     </div>
-
-<!-- SCRIPTS -->
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
-  <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
-
-
-  {%block js %}
-  {% endblock %}
 
 </body>
 </html>
