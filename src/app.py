@@ -7,7 +7,7 @@ from flask_login import (LoginManager, current_user, login_required,
                             confirm_login, fresh_login_required)
 
 from wtforms import Form, BooleanField, TextField, PasswordField, validators
-from forms import SignUp, SignIn, Sale
+from forms import SignUp, SignIn, Sale, Test
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
@@ -30,6 +30,13 @@ def users():
 
 def sales():
     return mongo().sales
+
+
+def pets():
+    return mongo().pets
+
+def breeds():
+    return mongo().breeds
 
 class User(UserMixin):
     def __init__(self, name, id, active=True):
@@ -184,24 +191,26 @@ def acount_sale_edit(id):
         abort(404)
 
     form = Sale(request.form)
-    if request.method == "POST" and form.validate():
-        photos = []
-        print(photos)
-        if form.photos.data:
-            photos = form.photos.data.split(',')
-            photos = filter(lambda x: x and len(x) > 0, photos)
-        print(photos)
-        sales().update({'user': ObjectId(current_user.id), '_id': ObjectId(id)} , {'$set': {'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data}})
-        flash(u"Объявление %s обновлено." % str(id), "success")
-        return redirect(url_for("account_sale"))
+    if request.method == "POST":
+        if form.validate():
+            photos = []
+            print(photos)
+            if form.photos.data:
+                photos = form.photos.data.split(',')
+                photos = filter(lambda x: x and len(x) > 0, photos)
+            print(photos)
+            (pet, breed) = form.breed.data.split("_")
+            sales().update({'user': ObjectId(current_user.id), '_id': ObjectId(id)} , {'$set': {'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data}})
+            flash(u"Объявление %s обновлено." % str(id), "success")
+            return redirect(url_for("account_sale"))
     else:
-        form.pet.data = adv["pet"]
-        form.breed.data = adv["breed"]
+        # form.pet.data = adv["pet"]
+        form.breed.data = u"{0}_{1}".format(adv["pet"], adv["breed"])
         form.title.data = adv["title"]
         form.desc.data = adv['desc']
         form.price.data = adv['price']
         form.photos.data = ",".join(adv["photos"])
-        return render_template("/account/sale_adv.html", form=form, page_title=u"Редактировать объявление", btn_name = u"Сохранить", photos = adv["photos"])
+    return render_template("/account/sale_adv.html", form=form, page_title=u"Редактировать объявление", btn_name = u"Сохранить", photos = adv["photos"])
 
 
 
@@ -211,11 +220,20 @@ def account_sale_add():
     form = Sale(request.form)
     if request.method == "POST" and form.validate():
         print(request.form)
-        id = sales().insert({'user': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'photos': form.photos.data.split(","), 'price': form.price.data})
+        (pet, breed) = form.breed.data.split('_')
+        id = sales().insert({'user': current_user.id, 'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': form.photos.data.split(","), 'price': form.price.data})
         flash(u"Объявление %s добавлено." % str(id), "success")
         return redirect(url_for('account_sale'))
+    else:
+        pass
+        # form.pet.choices = [(u"", u"")] + form.pet.choices
+        # form.breed.choices = [(u"", u"")] + form.breed.choices
     return render_template("/account/sale_adv.html", form=form, page_title=u"Новое объявление", btn_name = u"Добавить")
 
+
+@app.route("/ajax/")
+def ajax():
+    pass
 
 # @app.route("/acount/stud/add", methods = ["POST", "GET"])
 # @login_required
@@ -260,6 +278,14 @@ def gridster():
 @app.route('/shapeshift')
 def shapeshift():
     return render_template("shapeshift.html")
+
+
+@app.route('/test', methods = ["GET", "POST"])
+def test():
+    form = Test(request.form)
+    if request.method == "POST" and form.validate():
+        return render_template('/test.html', form = form)
+    return render_template('/test.html', form = form)
 
 
 

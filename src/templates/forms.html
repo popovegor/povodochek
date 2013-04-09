@@ -23,14 +23,14 @@
 {%- endmacro -%}
  
 {%- macro form_field_boolean(field) -%}
-  <div class="input">
+  <p class="input">
     <label class="checkbox">
       {{ field(**kwargs) }}
       <span>{{ field.label.text }}</span>
       {{ form_field_description(field) }}
       {{ form_field_errors(field) }}
     </label>
-  </div>
+  </p>
 {%- endmacro -%}
  
 {%- macro action_buttons(submit_title, cancel_href, cancel_title="Отменить", submit_class="primary") -%}
@@ -40,6 +40,7 @@
   <a class="btn" href="{{cancel_href}}" >{{cancel_title}}</a>
 </div>
 {%- endmacro -%}
+
  
 {%- macro form_field(field) -%}
   <div class="clearfix">

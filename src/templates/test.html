@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p class="muted"><small>Описать тут, как что и где писать кратко.</small></p>
+
+
+<div class="row-fluid">
+    <div class="span8">
+
+        {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+        <form class="form-sale-adv" id="adv" method="post" action="{{request.path}}" enctype="multipart/form-data" >
+
+          {{ form_field(form.pet) }}   
+
+          {{ action_buttons(submit_title="Post", cancel_href="/account/sale") }}
+
+
+          <script type="text/javascript">
+
+          $(function(){
+            $("#pet").select2()
+          });
+
+          </script>
+
+      </form>
+        
+  </div>
+</div>
+{% endblock%}
+

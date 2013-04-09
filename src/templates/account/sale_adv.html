@@ -11,7 +11,7 @@
 
         <form class="form-sale-adv" id="adv" method="post" action="{{request.path}}" enctype="multipart/form-data" >
 
-          {{ form_field(form.pet) }}
+          {# {{ form_field(form.pet, class="span6") }} #}
 
           {{ form_field(form.breed) }}
 
@@ -51,6 +51,23 @@
           </script>
 
         
+          <script type="text/javascript">
+            $(function(){
+
+              jq_breed = $("#breed");
+              jq_breed.select2({
+                // width: function() {return "50%";}, 
+                width: "off",
+                containerCssClass : "span6",
+                // dropdownCssClass : "span6", 
+                placeholder: "Выберите породу",
+                matcher: function(term, text, option) {
+                  return text.split(", ")[0].toUpperCase().indexOf(term.toUpperCase())>=0; 
+              }});
+
+            })
+          </script>
+
       </form>
         
   </div>

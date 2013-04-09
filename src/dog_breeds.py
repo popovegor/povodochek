@@ -452,9 +452,11 @@ from bson.objectid import ObjectId
 
 if __name__ == '__main__':
     mongo = MongoClient()
+
     pet = mongo.povodochek.pets.find_one({"name":{'$regex':u'Собак'}})
     print(pet)
+    # mongo.povodochek.breeds.drop()
     for breed in breeds:
-        mongo.povodochek.breeds.update({'pet':pet['_id']}, {'name':breed}, upsert=True)
+        mongo.povodochek.breeds.update({'name':breed}, {'name':breed, 'pet':pet['_id']}, upsert=True)
     for breed in mongo.povodochek.breeds.find():
         print(breed)
