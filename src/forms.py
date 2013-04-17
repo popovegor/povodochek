@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, SelectField, TextAreaField, HiddenField)
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField)
 
 from wtforms.validators import *
 
@@ -10,6 +10,10 @@ from flask import Markup
 
 from pymongo import MongoClient 
 from bson.objectid import ObjectId
+
+from itertools import groupby
+
+from wtforms_extended_selectfield import SelectField
 
 def mongo():
     return MongoClient().povodochek
@@ -36,28 +40,38 @@ class Test(Form):
 def breed_key(breed):
     return u"{0}_{1}".format(breed["pet"], breed["_id"])
 
-def breed_name(breed):
-    return u"{0}, {1}".format(breed["name"], pets().find_one(breed["pet"])["name"].lower()) 
+def get_pet_name(pet_id):
+    pet = pets().find_one(pet_id, {"name"})
+    return pet["name"] if pet else ""
+
+
+MSG_REQUIRED = u"Это поле необходимо заполнить"
+
+def pets_breeds():
+    return [
+    # (k, [ (br[1]["_id"], bd[1]["name"]) for br in g]) 
+    (get_pet_name(pet_id), [("{0}_{1}".format(pet_id, g_breed["_id"]), g_breed["name"]) for g_breed in g ] )
+    for pet_id, g in groupby([breed for breed in breeds().find()], lambda x : x["pet"])]
+
 
 class Sale(Form):
 
-    # pet = SelectField(u'Тип животного', \
-    #     choices = [(u"", u"")] + [(str(pet["_id"]), pet["name"]) for pet in pets().find() ], \
-    #     validators = [Required(message=u'Тип животного не выбран')])
+    pet = SelectField(u'Вид', \
+        choices = [(u"", u"")] + [(str(pet["_id"]), pet["name"]) for pet in pets().find() ],\
+        validators = [Required(message=MSG_REQUIRED)])
 
     breed = SelectField(u'Порода', \
-        choices = [(u"", u"")] + [( breed_key(breed), breed_name(breed))
-            for breed in breeds().find()], \
-        validators = [Required(message=u'Порода не выбрана')])    
+        choices = [("", [("","")] )]  + pets_breeds(), \
+        validators = [Required(message=MSG_REQUIRED)])    
 
-    title = TextField(u"Заголовок", [Required(message=u"Краткое описание не заполнено")])
+    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED)])
 
-    desc = TextAreaField(u"Описание", [Required(message=u"Полное описание не заполнено")])
+    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED)])
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
 
-    price = TextField(u"Цена (руб)", [Required(message=u"Цена не указана")])
+    price = TextField(u"Цена (руб)", [Required(message=MSG_REQUIRED)])
 
 
 
@@ -108,3 +122,8 @@ class SignUp(Form):
         Required(message=u"Пароль не указан"),])
     confirm = PasswordField(u'Повторить пароль', [EqualTo('password', message=u'Пароли не совпадают')])
     accept_tos = BooleanField(Markup(u'С <a href="#">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
+
+
+
+    if __name__ == "__main__":
+        print(pets_breeds())

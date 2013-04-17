@@ -34,7 +34,6 @@ $(function() {
  };
 
  uploader.add = function(file_name, file_id) {
-    
         $("li[file-id='" + file_id + "']").remove();
         $(".upload-add").before("<li class='span3' file-name='" + file_name + "'> <a class='thumbnail preview'> <img  file-name='" + file_name + "' src='/photo/" + file_name + "'/> <i title='Удалить' class='icon-remove-sign' file-name='" + file_name + "'></i></a> </li>");
 

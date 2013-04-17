@@ -1,5 +1,7 @@
 .select2-container {
   vertical-align:middle;
+  margin-bottom: 10px;
+  /*margin-left:0px !important;*/
 }
 
 .select2-container .select2-choice {

@@ -30,6 +30,11 @@
                 <span class="badge badge-success">{{ adv["price"]}}</span><strong> руб</strong> 
             </p>
             
+            <p class="text-center actions">
+                <a class="btn btn-mini" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление">{#<i class="icon-pencil"></i>&nbsp;#}Изменить</a>
+                <a class="btn btn-mini" href="#" title="Удалить объявление"><i class="icon-trash"></i>{#&nbsp;Удалить#}</a>
+            </p>     
+
         </div>
 
         <div class="media-body">
@@ -39,10 +44,7 @@
                     {{adv["desc"]}}
                 </li>
             </ul>
-            <p class="pull-left actions">
-                <a class="btn btn-mini" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление"><i class="icon-pencil"></i>&nbsp;Изменить</a>
-                <a class="btn btn-mini" href="#" title="Удалить объявление"><i class="icon-trash"></i>&nbsp;Удалить</a>
-            </p>     
+            
         </div>
     </div>
 

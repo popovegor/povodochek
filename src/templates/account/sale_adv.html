@@ -11,11 +11,11 @@
 
         <form class="form-sale-adv" id="adv" method="post" action="{{request.path}}" enctype="multipart/form-data" >
 
-          {# {{ form_field(form.pet, class="span6") }} #}
+          {{ form_field(form.pet) }}
 
           {{ form_field(form.breed) }}
-
-          {{ form_field(form.title, class="span12") }}
+          
+          {{ form_field(form.title, class="span12" )}}
 
           {{ form_field(form.desc, rows="6", class="span12") }}    
 
@@ -33,39 +33,107 @@
 
         <br>
 
-          {{ action_buttons(submit_title=btn_name, cancel_href="/account/sale") }}
+
+
+        <div class="actions">
+          <input type="submit" class="btn btn-primary" value="{{btn_name}}" id="update">
+          &nbsp;
+          <a class="btn btn-danger" href="#" id="delete">Удалить</a>
+          &nbsp;
+          <a class="btn" href="/account/sale" id="cancel">Отменить</a>
+        </div>
 
             <script type="text/javascript">
+            //add custom logic before submit action
               $(function(){
-                //submit 
                 $(":submit").bind('click', function() {
                   photos = $("#photos");
                   images = $("img[file-name]");
                   photos.val("");
                   $.each(images, function(i, image) {
                     filename = $(image).attr("file-name");
-                    photos.val(photos.val() + "," + filename)
+                    if(filename && photos.val()) {
+                      photos.val(photos.val() + "," + filename);
+                    } else {
+                      photos.val(filename);
+                    }
                   });
                 });
               });
-          </script>
-
-        
-          <script type="text/javascript">
+    
+            //select2 for dropdowns 
             $(function(){
 
-              jq_breed = $("#breed");
+              var jq_breed = $("#breed");
               jq_breed.select2({
-                // width: function() {return "50%";}, 
+                placeholder: "Выберите породу",
                 width: "off",
                 containerCssClass : "span6",
-                // dropdownCssClass : "span6", 
-                placeholder: "Выберите породу",
                 matcher: function(term, text, option) {
-                  return text.split(", ")[0].toUpperCase().indexOf(term.toUpperCase())>=0; 
-              }});
+                  //debugger;
+                  var pet_id = jq_pet.val();
+                  return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
+                  }
+               });
 
-            })
+              var jq_pet = $("#pet");
+              jq_pet.select2({
+                placeholder:"Выберите вид животного",
+                width: "off",
+                containerCssClass : "span6"
+              });
+
+              jq_pet.on('change', function(e){
+                jq_breed.select2('val', '');
+              });
+            });
+
+
+            //validation
+            $(function(){
+
+              var get_element_container = function(element) {
+                return element_container = $("#" + element.id + "-div");
+              };
+
+              $("form").validate({
+                rules: {
+                  pet : {required : true }, 
+                  breed: { required: true },
+                  title: {required: true},
+                  desc : {required: true},
+                  price : {required: true}
+               },
+               errorElement : "p", 
+                errorPlacement: function(error, element) {
+                 error.addClass("label label-important");
+                 $("#" + element.attr("id") + "-div label").after(error);
+               },
+               highlight: function(element, errorClass) {
+                  $("#" + element.id + "-div").addClass("error");
+               },
+               unhighlight: function(element, errorClass) {
+                  $("#" + element.id + "-div").removeClass("error");
+               }
+              });
+            });
+
+            //delete action
+            $(function(){
+
+              $("#delete").click(function(){
+                alert("Вы уверены что хотите удалить объявление.");
+                return false;
+              });
+             
+            });
+
+
+            //maskedit
+            $(function(){
+              $('#price').mask('000000', {reverse: true});
+            });
+
           </script>
 
       </form>

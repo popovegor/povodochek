@@ -15,22 +15,21 @@
 {%- macro form_field_errors(field) -%}
     {% if field.errors %}
         {%- for error in field.errors -%}
-        <p>
-        <span class="label label-important">{{ error }}</span>
+      <p class="label label-important">{{ error }}
       </p>
         {%- endfor -%}
     {% endif %}
 {%- endmacro -%}
  
 {%- macro form_field_boolean(field) -%}
-  <p class="input">
+  <div class="controls">
     <label class="checkbox">
       {{ field(**kwargs) }}
       <span>{{ field.label.text }}</span>
       {{ form_field_description(field) }}
       {{ form_field_errors(field) }}
     </label>
-  </p>
+  </div>
 {%- endmacro -%}
  
 {%- macro action_buttons(submit_title, cancel_href, cancel_title="Отменить", submit_class="primary") -%}
@@ -43,7 +42,7 @@
 
  
 {%- macro form_field(field) -%}
-  <div class="clearfix">
+  <div id="{{field.id}}-div" class="control-group clearfix {{'error' if field.errors else ''}}">
     {% if field.type == 'HiddenField' %}
         {{ field() }}
     {% else %}
@@ -52,7 +51,7 @@
         {% else %}
             {{ form_field_label(field) }}
             {{ form_field_errors(field) }}
-          <div class="input" id="{{field.id}}-div">
+          <div class="controls">
             {% if field.type == 'RadioField' %}
                 {{ field(class='radio-group', **kwargs) }}
             {% else %}

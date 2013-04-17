@@ -198,13 +198,13 @@ def acount_sale_edit(id):
             if form.photos.data:
                 photos = form.photos.data.split(',')
                 photos = filter(lambda x: x and len(x) > 0, photos)
-            print(photos)
+            print("photos: ", photos)
             (pet, breed) = form.breed.data.split("_")
             sales().update({'user': ObjectId(current_user.id), '_id': ObjectId(id)} , {'$set': {'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data}})
             flash(u"Объявление %s обновлено." % str(id), "success")
             return redirect(url_for("account_sale"))
     else:
-        # form.pet.data = adv["pet"]
+        form.pet.data = adv["pet"]
         form.breed.data = u"{0}_{1}".format(adv["pet"], adv["breed"])
         form.title.data = adv["title"]
         form.desc.data = adv['desc']
