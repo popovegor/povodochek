@@ -14,12 +14,14 @@
           {{ form_field(form.pet) }}
 
           {{ form_field(form.breed) }}
+
+          {{ form_field(form.gender) }}
+
+          {{ form_field(form.price, class="span2") }}
           
           {{ form_field(form.title, class="span12" )}}
 
           {{ form_field(form.desc, rows="6", class="span12") }}    
-
-          {{ form_field(form.price, class="span2") }}
 
           {{ form_field(form.photos) }}
 
@@ -32,8 +34,6 @@
         </div>  
 
         <br>
-
-
 
         <div class="actions">
           <input type="submit" class="btn btn-primary" value="{{btn_name}}" id="update">
@@ -70,7 +70,6 @@
                 width: "off",
                 containerCssClass : "span6",
                 matcher: function(term, text, option) {
-                  //debugger;
                   var pet_id = jq_pet.val();
                   return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
                   }
@@ -78,7 +77,7 @@
 
               var jq_pet = $("#pet");
               jq_pet.select2({
-                placeholder:"Выберите вид животного",
+                placeholder:"Выберите вид",
                 width: "off",
                 containerCssClass : "span6"
               });
@@ -86,23 +85,27 @@
               jq_pet.on('change', function(e){
                 jq_breed.select2('val', '');
               });
+
+              var jq_gender = $("#gender");
+              jq_gender.select2({
+                placeholder: "Выберите пол",
+                width: "off",
+                containerCssClass: "span6",
+                allowClear: true
+              });
             });
 
 
             //validation
             $(function(){
 
-              var get_element_container = function(element) {
-                return element_container = $("#" + element.id + "-div");
-              };
-
               $("form").validate({
                 rules: {
                   pet : {required : true }, 
                   breed: { required: true },
-                  title: {required: true},
-                  desc : {required: true},
-                  price : {required: true}
+                  title: { required: true, rangelength: [10, 80] },
+                  desc : { required: true, minlength: 120 },
+                  price : { required: true, range: [10, 900000] }
                },
                errorElement : "p", 
                 errorPlacement: function(error, element) {

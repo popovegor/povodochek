@@ -26,22 +26,54 @@
                 </a>    
                  
             </p>
-            <p class="text-center">
-                <span class="badge badge-success">{{ adv["price"]}}</span><strong> руб</strong> 
-            </p>
+          
             
-            <p class="text-center actions">
-                <a class="btn btn-mini" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление">{#<i class="icon-pencil"></i>&nbsp;#}Изменить</a>
-                <a class="btn btn-mini" href="#" title="Удалить объявление"><i class="icon-trash"></i>{#&nbsp;Удалить#}</a>
-            </p>     
+            
+
+              <p class="text-center">
+               <span class="label label-success">{{ adv.get("price") | format_price}} руб</span>
+            </p>    
 
         </div>
 
         <div class="media-body">
-            <h4 class="media-heading">{{adv["title"]}}</h4>
+
+            <h4 class="media-heading">{{adv.get("title")}}</h4>
             <ul class="unstyled">
-                <li>
+                <li class="adv-dict">
+                     <small><i><abbr title="Вид">{{adv.get("pet") | pet_name}}</abbr>
+                    {{" > "}}
+                    <abbr title="Порода">{{adv.get("breed") | breed_name }}</abbr>
+                    {% if adv.get("gender") %}
+                    {{" > "}}
+                    <abbr title="Пол">{{ adv.get("gender") | gender_name }}</abbr>
+                    {% endif %}
+                    </i></small>
+                </li>
+                <li class="adv-desc">
                     {{adv["desc"]}}
+                </li>
+                <li class="adv-dates">
+                    <p class="pull-left actions">
+
+                <a class="btn btn-mini btn-primary" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление">{#<i class="icon-pencil"></i>&nbsp;#}Изменить</a>
+             
+                <a class="btn btn-mini btn-danger" href="#" title="Удалить объявление"><i class="icon-trash icon-white"></i>{#&nbsp;Удалить#}</a>
+            </p> 
+                    <p class="pull-right">
+                    <small class="muted small">
+                        {% if adv.get("add_date") %}
+                            Добавлено: {{adv.get("add_date") | format_datetime("%d.%m")  }} 
+                         {% endif %}
+                    </small>
+                    <small class="muted small">
+                    {% if adv.get("update_date") and  
+                        adv.get("update_date") | date != adv.get("add_date") | date 
+                      %}
+                        &nbsp;Обновлено: {{ adv.get("update_date") | format_datetime("%d.%m") }}
+                    {% endif%}
+                    </small>
+                    </p>
                 </li>
             </ul>
             

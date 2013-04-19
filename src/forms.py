@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField)
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField)
 
 from wtforms.validators import *
 
@@ -27,6 +27,9 @@ def pets():
 def breeds():
     return mongo().breeds
 
+def genders():
+    return mongo().genders
+
 # def sale_advs():
 #     return mongo().sales
 
@@ -46,12 +49,18 @@ def get_pet_name(pet_id):
 
 
 MSG_REQUIRED = u"Это поле необходимо заполнить"
+MSG_MIN = u"Пожалуйста, введите число, большее или равное {0}"
+MSG_RANGE = u"Пожалуйста, введите число от {0} до {1}"
+MSG_RANGE_LENGTH = u"Пожалуйста, введите значение длиной от {0} до {1} символов"
+MSG_MIN_LENGTH = u"Пожалуйста, введите не меньше {0} символов" 
 
 def pets_breeds():
-    return [
-    # (k, [ (br[1]["_id"], bd[1]["name"]) for br in g]) 
-    (get_pet_name(pet_id), [("{0}_{1}".format(pet_id, g_breed["_id"]), g_breed["name"]) for g_breed in g ] )
-    for pet_id, g in groupby([breed for breed in breeds().find()], lambda x : x["pet"])]
+    grouped_by_pet = \
+        groupby([breed for breed in breeds().find().sort('pet',1)], lambda x : x["pet"]) 
+    key = lambda pet_id: get_pet_name(pet_id)
+    value = lambda pet_id, group: [("{0}_{1}".format(pet_id, breed["_id"]), breed["name"]) for breed in sorted(group, key = lambda x: x['order']) ]
+    return [ (key(pet_id), value(pet_id, group))
+    for pet_id, group in grouped_by_pet ]
 
 
 class Sale(Form):
@@ -64,14 +73,17 @@ class Sale(Form):
         choices = [("", [("","")] )]  + pets_breeds(), \
         validators = [Required(message=MSG_REQUIRED)])    
 
-    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED)])
+    gender = SelectField(u"Пол", choices = [(u"", u"")] + \
+        [(str(gender["_id"]), gender["name"]) for gender in genders().find() ])
 
-    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED)])
+    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))])
+
+    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))])
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
 
-    price = TextField(u"Цена (руб)", [Required(message=MSG_REQUIRED)])
+    price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))])
 
 
 

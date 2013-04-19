@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, abort)
+from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, abort, jsonify)
 from flask_login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin, AnonymousUser,
                             confirm_login, fresh_login_required)
 
-from wtforms import Form, BooleanField, TextField, PasswordField, validators
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
 from forms import SignUp, SignIn, Sale, Test
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -14,6 +14,7 @@ from bson.objectid import ObjectId
 from werkzeug.utils import secure_filename
 import os
 import uuid
+from datetime import datetime, date
 
 
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
@@ -31,12 +32,14 @@ def users():
 def sales():
     return mongo().sales
 
-
 def pets():
     return mongo().pets
 
 def breeds():
     return mongo().breeds
+
+def genders():
+    return mongo().genders
 
 class User(UserMixin):
     def __init__(self, name, id, active=True):
@@ -69,6 +72,51 @@ login_manager.login_message = u"Please log in to access this page."
 login_manager.refresh_view = "reauth"
 
 login_manager.setup_app(app)
+
+# jinja custom filters
+
+def jinja_format_datetime(value, format='%H:%M, %d.%m.%y'):
+    return value.strftime(format) if value  else ""
+
+app.jinja_env.filters['format_datetime'] = jinja_format_datetime
+
+def jinja_date(value):
+    return datetime.date(value) if value else ""
+
+app.jinja_env.filters['date'] = jinja_date
+
+def jinja_format_price(value, template=u"{:,}"):
+    return template.format(int(value)) if value else ""
+
+app.jinja_env.filters['format_price'] = jinja_format_price
+
+def jinja_format(value, template=u"{0}"):
+    return template.format(value)
+
+app.jinja_env.filters['format'] = jinja_format
+
+# todo: add caching layer 
+def jinja_pet_name(pet_id):
+    pet = pets().find_one({"_id": ObjectId(pet_id)})
+    return pet.get("name") if pet else u""
+
+app.jinja_env.filters['pet_name'] = jinja_pet_name
+
+# todo: add caching layer
+def jinja_breed_name(breed_id):
+    print(breed_id)
+    breed = breeds().find_one({"_id": ObjectId(breed_id)})
+    return breed.get("name") if breed else u""
+
+app.jinja_env.filters['breed_name'] = jinja_breed_name
+
+# todo: add caching layer 
+def jinja_gender_name(gender_id):
+    gender = genders().find_one({"_id": ObjectId(gender_id)})
+    return gender.get("name") if gender else u""
+
+app.jinja_env.filters['gender_name'] = jinja_gender_name
+
 
 def debug_write(msg):
     print("DEBUG INFO: %s" % msg)
@@ -103,6 +151,18 @@ def signin():
     # debug_write(errors)
     return render_template("signin.html", form=form, page_title=u"Войти на сайт")
     
+
+def locations():
+    pass
+
+
+@app.route("/ajax/locations_prefetch.json")
+def locations_prefetch():
+    pass
+
+@app.route("/test/locations", methods = ["GET"])
+def test_locations():
+    return render_template("locations.html", page_title=u"Locations")
 
 @app.route("/signup", methods = ["POST", "GET"])
 def signup():
@@ -176,40 +236,54 @@ def account_adoption():
 @app.route("/account/sale")
 @login_required
 def account_sale():
-    advs = sales().find({'user': current_user.id })
-    print(advs)
+    sort = lambda adv: adv.get("update_date") or adv.get("add_date")
+    advs = sorted(sales().find(
+        {'user': {'$in' : [str(current_user.id), current_user.id]} }), key = sort, reverse = True)
+
     tmpl = render_template("account/sale.html", page_title=u"Мои объявления о продаже", advs = advs)
     return tmpl
+
+
+def sale_save(form, id = None):
+    photos = []
+    if form.photos.data:
+        photos = form.photos.data.split(',')
+        photos = filter(lambda x: x and len(x) > 0, photos)
+    (pet, breed) = form.breed.data.split("_")
+    if id:
+        sales().update(
+            {'_id': ObjectId(id), 'user': {'$in': [current_user.id, str(current_user.id)]} } 
+            , {'$set': {'user': str(current_user.id), 'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data, 'gender': form.gender.data, 'update_date':datetime.now()}}, upsert=True)
+    else:
+        id = sales().insert({'user': str(current_user.id), 'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data, 'gender': form.gender.data, 'add_date':datetime.now()})
+    return id
 
 
 @app.route("/account/sale/<id>", methods = ['GET', 'POST'])
 @login_required
 def acount_sale_edit(id):
-    adv = sales().find_one({'_id': ObjectId(id), 'user': ObjectId(current_user.id)})
+    adv = sales().find_one(
+        {'_id': {'$in':[id, ObjectId(id)]}, 
+        'user': {'$in': [current_user.id, str(current_user.id)]}})
     # print(adv)
     if not adv:
         abort(404)
 
     form = Sale(request.form)
     if request.method == "POST":
+        print(form.price.data)
         if form.validate():
-            photos = []
-            print(photos)
-            if form.photos.data:
-                photos = form.photos.data.split(',')
-                photos = filter(lambda x: x and len(x) > 0, photos)
-            print("photos: ", photos)
-            (pet, breed) = form.breed.data.split("_")
-            sales().update({'user': ObjectId(current_user.id), '_id': ObjectId(id)} , {'$set': {'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data}})
+            sale_save(form, id)
             flash(u"Объявление %s обновлено." % str(id), "success")
             return redirect(url_for("account_sale"))
     else:
-        form.pet.data = adv["pet"]
-        form.breed.data = u"{0}_{1}".format(adv["pet"], adv["breed"])
-        form.title.data = adv["title"]
-        form.desc.data = adv['desc']
-        form.price.data = adv['price']
-        form.photos.data = ",".join(adv["photos"])
+        form.pet.data = adv.get("pet")
+        form.breed.data = u"{0}_{1}".format(adv.get("pet"), adv.get("breed"))
+        form.title.data = adv.get("title")
+        form.desc.data = adv.get('desc')
+        form.price.data = adv.get('price')
+        form.gender.data = adv.get('gender', '')
+        form.photos.data = ",".join(adv.get("photos"))
     return render_template("/account/sale_adv.html", form=form, page_title=u"Редактировать объявление", btn_name = u"Сохранить", photos = adv["photos"])
 
 
@@ -221,13 +295,11 @@ def account_sale_add():
     if request.method == "POST" and form.validate():
         print(request.form)
         (pet, breed) = form.breed.data.split('_')
-        id = sales().insert({'user': current_user.id, 'pet': pet, 'breed': breed, 'title':form.title.data, 'desc': form.desc.data, 'photos': form.photos.data.split(","), 'price': form.price.data})
+        id = sale_save(form)
         flash(u"Объявление %s добавлено." % str(id), "success")
         return redirect(url_for('account_sale'))
     else:
         pass
-        # form.pet.choices = [(u"", u"")] + form.pet.choices
-        # form.breed.choices = [(u"", u"")] + form.breed.choices
     return render_template("/account/sale_adv.html", form=form, page_title=u"Новое объявление", btn_name = u"Добавить")
 
 
