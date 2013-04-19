@@ -44,7 +44,7 @@ def breed_key(breed):
     return u"{0}_{1}".format(breed["pet"], breed["_id"])
 
 def get_pet_name(pet_id):
-    pet = pets().find_one(pet_id, {"name"})
+    pet = pets().find_one(pet_id, fileds=["name"])
     return pet["name"] if pet else ""
 
 
