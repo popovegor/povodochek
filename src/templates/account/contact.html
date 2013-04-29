@@ -2,6 +2,74 @@
 
 {% block account_content %}
 
-тут я смогу отредактироват свою контактную информацию
+<p class="muted">Контактная информация будет показываться другим пользователям системы при просмотре ваших объявлений. </p>
+
+<div class="row-fluid">
+    <div class="span12">
+
+
+         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+        <form action="{{request.path}}" method="POST" id="contact">
+
+            {{ form_field(form.username, class="input-xlarge", placeholder="Введите ваше имя") }}            
+
+            {{ form_field(form.phone, class="input-xlarge", placeholder="Введите номер телефона для связи") }}
+
+            {{ form_field(form.city, class="input-xxlarge", placeholder="Введите населенный пункт") }}
+
+              <button type="submit" class="btn btn-primary" id="save" data-loading-text="Сохраняется...">Сохранить</button>
+
+
+        </form>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(function(){
+      $("#city").typeahead({
+        minLength: 1, 
+        limit: 8,
+        source: function (query, process) {
+          return $.getJSON('/ajax/location/typeahead',  {limit: 8, query: query}, function (data) { return process(data.items);
+          }); //getJSON
+        } //source
+      }); //typeahead  
+    });
+
+    $(function(){
+        $("#phone").mask('+7(999)999-9999');
+    });
+
+      //validation
+    $(function(){
+
+      $("form").validate({
+        rules: {
+         username : {required: true}
+       },
+       errorElement : "p", 
+        errorPlacement: function(error, element) {
+         error.addClass("label label-important");
+         $("#" + element.attr("id") + "-div label").after(error);
+       },
+       highlight: function(element, errorClass) {
+          $("#" + element.id + "-div").addClass("error").removeClass('success');
+       },
+       unhighlight: function(element, errorClass) {
+          $("#" + element.id + "-div").removeClass("error").removeClass("success");
+       },
+       submitHandler: function(form) {
+          var btn = $(":submit").button("loading");
+          form.submit();
+         }
+      });
+    });
+
+
+</script>
 
 {% endblock%}

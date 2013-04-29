@@ -14,6 +14,7 @@ from bson.objectid import ObjectId
 from itertools import groupby
 
 from wtforms_extended_selectfield import SelectField
+import re
 
 def mongo():
     return MongoClient().povodochek
@@ -30,6 +31,12 @@ def breeds():
 def genders():
     return mongo().genders
 
+def cities():
+    return mongo().cities
+
+def ages():
+    return mongo().ages
+
 # def sale_advs():
 #     return mongo().sales
 
@@ -39,7 +46,6 @@ class Test(Form):
         choices = [(pet['_id'], pet['name']) for pet in pets().find()], \
         validators = [Required(message=u'Тип животного не выбран')])  
 
-
 def breed_key(breed):
     return u"{0}_{1}".format(breed["pet"], breed["_id"])
 
@@ -48,11 +54,12 @@ def get_pet_name(pet_id):
     return pet["name"] if pet else ""
 
 
-MSG_REQUIRED = u"Это поле необходимо заполнить"
+MSG_REQUIRED = u"Это обязательное поле"
 MSG_MIN = u"Пожалуйста, введите число, большее или равное {0}"
 MSG_RANGE = u"Пожалуйста, введите число от {0} до {1}"
 MSG_RANGE_LENGTH = u"Пожалуйста, введите значение длиной от {0} до {1} символов"
 MSG_MIN_LENGTH = u"Пожалуйста, введите не меньше {0} символов" 
+MSG_EMAIL = u"Пожалуйста, введите корректный адрес электронной почты"
 
 def pets_breeds():
     grouped_by_pet = \
@@ -62,6 +69,16 @@ def pets_breeds():
     return [ (key(pet_id), value(pet_id, group))
     for pet_id, group in grouped_by_pet ]
 
+
+def check_location(form, field):
+    field.city_id = None
+    if field.data:
+        matcher = re.compile(u"^" + re.escape(field.data.strip()), re.IGNORECASE)
+        city = cities().find_one({"city_region": matcher}, fileds=["city_id", "region_id", "region_name", "city_name"])
+        if not(city):
+            raise ValidationError(u'Неправильно указан населенный пункт')
+        else:
+            field.city_id = str(city.get("_id"))
 
 class Sale(Form):
 
@@ -76,16 +93,38 @@ class Sale(Form):
     gender = SelectField(u"Пол", choices = [(u"", u"")] + \
         [(str(gender["_id"]), gender["name"]) for gender in genders().find() ])
 
+    # заголовок объявления
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))])
 
     desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))])
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
-
     price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))])
 
+    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), check_location])
 
+    age = SelectField(u"Возраст", \
+        choices = [(u"", u"")] + [(str(age["_id"]), age["name"]) for age in ages().find()], \
+        validators = [Required(message=MSG_REQUIRED)])
+
+class Contact(Form):
+    username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
+
+    city = TextField(u"Город", validators = [check_location])    
+
+    phone = TextField(u"Телефонный номер")
+
+class Activate(Form): 
+
+    email = TextField(u"Адрес электронной почты", \
+        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)])
+
+    def validate_email(form, field):
+        print("validate confirm  email %s" % field.data)
+        print(users().find_one({'email': field.data}))
+        if not users().find_one({'email': field.data}):
+            raise ValidationError(u"Адрес '%s' не зарегистрирован." % field.data)
 
 class Stud(Form):
 
@@ -105,7 +144,8 @@ class Stud(Form):
 
 class SignIn(Form):
 
-    email = TextField(u'Адрес электронной почты', [Email(message=u'Неправильный адрес эл. почты')])
+    email = TextField(u"Адрес электронной почты", \
+        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)])
 
     # def validate_email(form, field):
     #     print("validate email %s" % field.data)
@@ -116,26 +156,30 @@ class SignIn(Form):
     remember = BooleanField(u"Запомнить меня")
 
     password = PasswordField(u'Пароль', [
-        Required(message=u"Пароль не указан"),])
+        Required(message=MSG_REQUIRED),])
 
 class SignUp(Form):
 
-    email = TextField(u'Адрес электронной почты', [Email(message=u'Неправильный адрес эл. почты')])
+    username = TextField(u"Имя", [Required(message=MSG_REQUIRED)])
 
+    email = TextField(u'Адрес электронной почты', \
+        validators = [Required(message=MSG_REQUIRED),\
+        Email(message=MSG_EMAIL)])
 
     def validate_email(form, field):
         print("validate email %s" % field.data)
         print(users().find_one({'email': field.data}))
         if users().find_one({'email': field.data}):
-            raise ValidationError(u'Адрес %s занят' % field.data)
+            raise ValidationError(u"Адрес '%s' занят" % field.data)
 
 
-    password = PasswordField(u'Пароль', [
-        Required(message=u"Пароль не указан"),])
-    confirm = PasswordField(u'Повторить пароль', [EqualTo('password', message=u'Пароли не совпадают')])
+    password = PasswordField(u'Пароль', [Required(message=MSG_REQUIRED)])
+
+    confirm = PasswordField(u'Повторить пароль', \
+        [ Required(message=MSG_REQUIRED), EqualTo('password', message=u'Пароли не совпадают.')])
+
     accept_tos = BooleanField(Markup(u'С <a href="#">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
 
 
-
-    if __name__ == "__main__":
-        print(pets_breeds())
+if __name__ == "__main__":
+    print(pets_breeds())

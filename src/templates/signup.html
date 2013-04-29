@@ -1,27 +1,72 @@
 {% extends "layout.html" %}
 
 {% block content %}      
-<p class="muted"><small>Зарегистрируйтесь на сайте, чтобы размещать объявления, общаться с владельцами домашних животных, заводить знакомства и многое другое.</small></p>
+
+<h1>{{page_title}}</h1>
+<p class="muted">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление.</p>
 <div class="row-fluid">
     <div class="span6">
 
         {% from "forms.html" import form_field_boolean, form_field %}
 
-        <form class="form-signup" id="signup" method="post" action="{{request.path}}" >
+        <form class="form-signup" method="post" action="{{request.path}}" >
 
-          {{ form_field(form.email) }}
+          {{ form_field(form.username, placeholder="Введите ваше имя", class="input-xlarge") }}
 
-          {{ form_field(form.password) }}
+          {{ form_field(form.email, placeholder="Введите эл. почту: your.mail@yandex.ru", class="input-xlarge") }}
 
-          {{ form_field(form.confirm) }}
+          {{ form_field(form.password, placeholder="Введите пароль", class="input-xlarge") }}
+
+          {{ form_field(form.confirm, placeholder="Введите пароль еще раз", class="input-xlarge") }}
 
           {{ form_field(form.accept_tos)}}
 
-            <button class="btn btn btn-primary" type="submit">Регистрация</button>
+            <button class="btn btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрироваться</button>
      
       </form>
   </div>
+
+<!-- вход или забыл пароль -->
+  <div class="span6">
+
+  </div>
+
 </div>
+
+
+<script type="text/javascript">
+
+  //validation
+  $(function(){
+
+    $("form").validate({
+      rules: {
+        username : {required: true}, 
+        email : {required : true , email: true},
+        password: {required: true},
+        confirm : {required: true,  equalTo: "#password"},
+        accept_tos: {required: true}
+     },
+     errorElement : "p", 
+      errorPlacement: function(error, element) {
+       error.addClass("label label-important");
+       $("#" + element.attr("id") + "-div label").after(error);
+     },
+     highlight: function(element, errorClass) {
+        $("#" + element.id + "-div").addClass("error").removeClass("success");
+     },
+     unhighlight: function(element, errorClass) {
+        $("#" + element.id + "-div").removeClass("error").addClass("success");
+     },
+     submitHandler: function(form) {
+        $(":submit").button("loading");
+         form.submit();
+       }
+    });
+
+  });
+  
+</script>
 
 
 {% endblock %} 

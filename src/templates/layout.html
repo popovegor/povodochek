@@ -19,6 +19,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
 
+
   <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
   <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
 
@@ -31,14 +32,7 @@
       <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.validate.js')}}"></script>
       <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.validate.ru.js')}}"></script>
 
-
-<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.mask.min.js')}}"></script>
-
-
-<script type="text/javascript" src="{{ url_for('static', filename='js/typeahead.min.js')}}"></script>
-
-
-        
+      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.maskedinput.min.js')}}"></script>
 
   {% endblock %}
 
@@ -56,7 +50,7 @@
 
   <div class="container">
 
-    {% include "breadcrumbs.html" %}
+    {#% include "breadcrumbs.html" %#}
 
     {% include "flashed_messages.html" %}
 

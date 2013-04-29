@@ -1,17 +1,22 @@
 {% extends "layout.html" %}
 
 {% block content %}      
-<p class="muted"><small>Пожалуйста, авторизуйтесь на сайте, чтобы получить доступ к вашим персональным данным.</small></p>
+
+<h1>{{page_title}}</h1>
+
+
 <div class="row-fluid">
     <div class="span6">
+
+        <p class="muted">Пожалуйста, авторизуйтесь на сайте, чтобы получить доступ к вашим персональным данным.</p>
 
         {% from "forms.html" import form_field_boolean, form_field %}
 
         <form class="form-signin" id="sigin" method="post" action="{{request.path}}" >
 
-          {{ form_field(form.email) }}
+          {{ form_field(form.email, class="input-xlarge", placeholder="Эл. почта, указанная при регистрации") }}
 
-          {{ form_field(form.password) }}
+          {{ form_field(form.password, class="input-xlarge", placeholder="Пароль, указанный при регистрации") }}
 
           {{ form_field(form.remember)}}
 
@@ -19,5 +24,44 @@
         
       </form>
   </div>
+
+{#  <div class="span6">
+    <p class="text-center" >
+      <a class="btn btn-link btn-large" href="{{url_for('reset')}}">Напомнить пароль</a>
+      </p>
+  </div> #}
+
 </div>
+
+
+<script type="text/javascript">
+        
+          //validation
+            $(function(){
+
+              $("form").validate({
+                rules: {
+                  email : {required : true, email: true }, 
+                  password : { required: true }
+               },
+               errorElement : "p", 
+                errorPlacement: function(error, element) {
+                 error.addClass("label label-important");
+                 $("#" + element.attr("id") + "-div label").after(error);
+               },
+               highlight: function(element, errorClass) {
+                  $("#" + element.id + "-div").addClass("error");
+               },
+               unhighlight: function(element, errorClass) {
+                  $("#" + element.id + "-div").removeClass("error");
+               },
+               submitHandler: function(form) {
+                  var btn = $("sumbit").button("loading");
+                  form.submit();
+                 }
+              });
+            });
+
+
+</script>
 {% endblock %} 

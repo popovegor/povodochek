@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h1>{{page_title}}</h1>
+
 <p class="muted"><small>Описать тут, как что и где писать кратко.</small></p>
 
 <div class="row-fluid">
@@ -16,6 +18,10 @@
           {{ form_field(form.breed) }}
 
           {{ form_field(form.gender) }}
+
+          {{ form_field(form.age) }}
+
+          {{ form_field(form.city, placeholder="Введите название населенного пункта", class="span8") }}
 
           {{ form_field(form.price, class="span2") }}
           
@@ -36,31 +42,30 @@
         <br>
 
         <div class="actions">
-          <input type="submit" class="btn btn-primary" value="{{btn_name}}" id="update">
+          <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
+          {%if adv %}
           &nbsp;
-          <a class="btn btn-danger" href="#" id="delete">Удалить</a>
+          <a class="btn btn-danger" href="{{request.path}}/remove" id="remove">Удалить</a>
+          {%endif%}
           &nbsp;
           <a class="btn" href="/account/sale" id="cancel">Отменить</a>
         </div>
 
             <script type="text/javascript">
-            //add custom logic before submit action
-              $(function(){
-                $(":submit").bind('click', function() {
-                  photos = $("#photos");
-                  images = $("img[file-name]");
-                  photos.val("");
-                  $.each(images, function(i, image) {
-                    filename = $(image).attr("file-name");
-                    if(filename && photos.val()) {
-                      photos.val(photos.val() + "," + filename);
-                    } else {
-                      photos.val(filename);
-                    }
-                  });
-                });
-              });
-    
+            
+            //location with autocomplete built on typeahead.js
+            $(function(){
+              $("#city").typeahead({
+                minLength: 1, 
+                limit: 8,
+                source: function (query, process) {
+                  return $.getJSON('/ajax/location/typeahead',  {limit: 8, query: query}, function (data) { return process(data.items);
+                  }); //getJSON
+                } //source
+              }); //typeahead  
+            });
+
+            
             //select2 for dropdowns 
             $(function(){
 
@@ -93,6 +98,13 @@
                 containerCssClass: "span6",
                 allowClear: true
               });
+
+              var jq_age = $("#age");
+              jq_age.select2({
+                placeholder: "Выберите возраст",
+                width: "off",
+                containerCssClass: "span6"
+              });
             });
 
 
@@ -103,9 +115,11 @@
                 rules: {
                   pet : {required : true }, 
                   breed: { required: true },
+                  location : {required: true}, 
                   title: { required: true, rangelength: [10, 80] },
                   desc : { required: true, minlength: 120 },
-                  price : { required: true, range: [10, 900000] }
+                  price : { required: true, range: [10, 900000] }, 
+                  age : {required: true}
                },
                errorElement : "p", 
                 errorPlacement: function(error, element) {
@@ -117,16 +131,30 @@
                },
                unhighlight: function(element, errorClass) {
                   $("#" + element.id + "-div").removeClass("error");
-               }
+               },
+               submitHandler: function(form) {
+                  var btn = $(":submit").button("loading");
+                  photos = $("#photos");
+                  images = $("img[file-name]");
+                  photos.val("");
+                  $.each(images, function(i, image) {
+                    filename = $(image).attr("file-name");
+                    if(filename && photos.val()) {
+                      photos.val(photos.val() + "," + filename);
+                    } else {
+                      photos.val(filename);
+                    }
+                  });
+                  form.submit();
+                 }
               });
             });
 
-            //delete action
+            //remove action
             $(function(){
 
-              $("#delete").click(function(){
-                alert("Вы уверены что хотите удалить объявление.");
-                return false;
+              $("#remove").click(function(){
+                return confirm("Вы уверены, что хотите удалить объявление?");
               });
              
             });
@@ -134,7 +162,7 @@
 
             //maskedit
             $(function(){
-              $('#price').mask('000000', {reverse: true});
+              $('#price').mask('99?99999', {placeholder:""});
             });
 
           </script>

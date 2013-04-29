@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form>
+
+<!-- <input name="locations" class="typeahead" placeholder="Санкт-Петербург" type="text" />
+ -->
+<input type="text" class="typeahead" />
+
+</form>
+
+<script type="text/javascript">
+
+  $(function(){
+      
+     $(".typeahead").typeahead({
+      minLength: 1, 
+      limit: 8,
+      source: function (query, process) {
+        return $.getJSON('/ajax/location/typeahead',  {limit: 8, query: query}, function (data) { return process(data.items);
+        }); //getJSON
+      } //source
+    }); //typeahead
+
+  });
+</script>
+
+
+{% endblock%}
+

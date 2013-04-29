@@ -15,16 +15,16 @@
                   {% if not current_user or not current_user.get_id()  %}
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Вход&nbsp;<b class="caret"></b></a>
                   <ul class="dropdown-menu">
+                    <li><a href="/signup">Регистрация</a></li>
+                    <li class="divider"></li>
                     <li><a href="/signin">Войти</a></li>
                     <li><a href="/remember">Напомнить пароль</a></li>
-                    <li class="divider"></li>
-                    <li><a href="/signup">Регистрация</a></li>
                   </ul>
                   {% else %}
-                  <a href="#" title="{{current_user.name}}" class="dropdown-toggle nav-account" data-toggle="dropdown">{{current_user.name}}&nbsp;<b class="caret"></b></a>
+                  <a href="#" title="{{current_user.name}}" class="dropdown-toggle nav-account" data-toggle="dropdown"><i class="icon-user"></i>&nbsp;{{current_user.name}}&nbsp;<b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="/account/sale">Мои объявления</a></li>
-                    <li><a href="/account/sale">Мой профиль</a></li>
+                    <li><a href="/account/contact">Мой профиль</a></li>
                     <li><a href="/signout">Выйти</a></li>
                   </ul>
                   {% endif %}

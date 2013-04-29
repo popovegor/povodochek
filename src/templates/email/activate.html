@@ -1,0 +1,14 @@
+{% extends "email/layout.html" %}
+
+
+{% block content %}
+        <p>
+            Для активации регистрации перейдите по ссылке:<a target="_blank" href="{{url_for('activate', id=confirm, _external = True)}}">{{url_for('activate', id=confirm, _external = True)}}
+            </a>
+        </p>
+        <p >
+        Если вы не регистрировались на нашем сайте, то просто удалите это письмо.
+        </p>
+    
+{%endblock%}    
+

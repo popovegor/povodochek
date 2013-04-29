@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block content %}      
+
+<h1>{{page_title}}</h1>
+<div class="row-fluid">
+    <div class="span6">
+      {% if user %}
+          <p><span class="text-transform:capitalize">{{user.get("username") }}, ваша регистрация завершена. Теперь вы можете перейти в раздел <a href="{{url_for('account_sale')}}">свои объявления</a>, введя логин и пароль.</p>
+      {% else %}
+        <p>Не удалось активировать регистрацию, так как ссылка устарела или неверна. Вы можете повторно запросить ссылку на активацию, введя свой адрес электронной почты и нажав кнопку "Выслать".</p>
+
+      {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+        <form method="post" action="{{request.path}}">
+
+          {{ form_field(form.email, placeholder="Введите эл. почту: your.mail@yandex.ru", class="input-xlarge") }}
+
+          <button type="submit" class="btn btn-primary" data-loading-text="Отправляется...">Выслать</button>
+        </form>
+
+      {% endif %}
+  </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+
+  //validation
+  $(function(){
+
+    $("form").validate({
+      rules: {
+        email : {required : true , email: true}
+     },
+     errorElement : "p", 
+      errorPlacement: function(error, element) {
+       error.addClass("label label-important");
+       $("#" + element.attr("id") + "-div label").after(error);
+     },
+     highlight: function(element, errorClass) {
+        $("#" + element.id + "-div").addClass("error").removeClass("success");
+     },
+     unhighlight: function(element, errorClass) {
+        $("#" + element.id + "-div").removeClass("error").addClass("success");
+     },
+     submitHandler: function(form) {
+        $(":submit").button("loading");
+         form.submit();
+       }
+    });
+
+  });
+  
+</script>
+
+
+{% endblock %} 

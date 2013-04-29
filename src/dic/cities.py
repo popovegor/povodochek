@@ -1,7 +1,7 @@
 #!/usr/bin/env 
 # -*- coding: utf-8 -*-
 
-locations = [
+cities = [
 (u"(Касли) x (Вишневогорск)",11650,u"Челябинская область",86,u"Россия",1),
 (u"20-й Километр",2527,u"Республика Карелия",4,u"Россия",1),
 (u"70-й км",11433,u"Мурманская область",77,u"Россия",1),
@@ -5794,5 +5794,5 @@ from bson.objectid import ObjectId
 
 if __name__ == '__main__':
     mongo = MongoClient()
-
-    # mongo.povodochek.breeds.
+    for (city_name, city_id, region_name, region_id, country_name, country_id)  in cities:
+        mongo.povodochek.cities.update({'city_name':city_name, 'region_name': region_name}, {'city_name':city_name,  'city_id': city_id, 'region_name': region_name, 'region_id':region_id, 'country_name': country_name, 'country_id': country_id, 'city_region':u"{0}, {1}".format(city_name,region_name) }, upsert=True)

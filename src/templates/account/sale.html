@@ -2,7 +2,7 @@
 
 {% block account_content %}
 
-<div class="acount-sale span12">
+<div class="acount-sale row-fluid">
 
 <p class="">
     <a href="/account/sale/add" class="btn"><i class="icon-plus"></i>&nbsp;Новое объявление</a>
@@ -26,12 +26,9 @@
                 </a>    
                  
             </p>
-          
-            
-            
 
               <p class="text-center">
-               <span class="label label-success">{{ adv.get("price") | format_price}} руб</span>
+               <span class="label label-success">{{ adv.get("price") | format_price() }} руб</span>
             </p>    
 
         </div>
@@ -48,7 +45,17 @@
                     {{" > "}}
                     <abbr title="Пол">{{ adv.get("gender") | gender_name }}</abbr>
                     {% endif %}
+                    {%if adv.get("age") %}
+                    {{" > "}}
+                    <abbr title="Возраст">{{adv.get("age") | age_name }}</abbr>
+                    {%endif%}
                     </i></small>
+                </li>
+                
+                <li class="adv-dict">
+                    {% if adv.get("city") %}
+                    <small><i class="icon-map-marker"></i>&nbsp;<i><abbr title="Местоположение">{{adv.get("city") | location}}</abbr></i></small>
+                    {%endif%}
                 </li>
                 <li class="adv-desc">
                     {{adv["desc"]}}
@@ -58,21 +65,23 @@
 
                 <a class="btn btn-mini btn-primary" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление">{#<i class="icon-pencil"></i>&nbsp;#}Изменить</a>
              
-                <a class="btn btn-mini btn-danger" href="#" title="Удалить объявление"><i class="icon-trash icon-white"></i>{#&nbsp;Удалить#}</a>
+                <a class="btn btn-mini btn-danger" href='/account/sale/{{adv["_id"]}}/remove' action="remove" title="Удалить объявление"><i class="icon-trash icon-white"></i>{#&nbsp;Удалить#}</a>
             </p> 
                     <p class="pull-right">
-                    <small class="muted small">
-                        {% if adv.get("add_date") %}
-                            Добавлено: {{adv.get("add_date") | format_datetime("%d.%m")  }} 
-                         {% endif %}
-                    </small>
-                    <small class="muted small">
+                        <small class="muted small">
                     {% if adv.get("update_date") and  
                         adv.get("update_date") | date != adv.get("add_date") | date 
                       %}
-                        &nbsp;Обновлено: {{ adv.get("update_date") | format_datetime("%d.%m") }}
+                        Обновлено: {{ adv.get("update_date") | format_datetime("%d.%m") }}
+                        
                     {% endif%}
+                        {% if adv.get("add_date") %}
+                            &nbsp;Добавлено: {{adv.get("add_date") | format_datetime("%d.%m")  }} 
+                         {% endif %}
                     </small>
+                    
+
+                    
                     </p>
                 </li>
             </ul>
@@ -85,6 +94,16 @@
 {% endfor %}
 
 </div>
+
+<script type="text/javascript">
+
+    $(function(){
+        $("a[action='remove']").click(function(){
+            return confirm("Вы уверены, что хотите удалить объявление?");
+        });
+    });
+    
+</script>
 
 
 {% endblock%}
