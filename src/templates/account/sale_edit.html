@@ -1,10 +1,8 @@
-{% extends "layout.html" %}
+{% extends "account/layout.html" %}
 
-{% block content %}
+{% block account_content %}
 
-<h1>{{page_title}}</h1>
-
-<p class="muted"><small>Описать тут, как что и где писать кратко.</small></p>
+<p class="muted">Описать тут, как что и где писать кратко.</p>
 
 <div class="row-fluid">
     <div class="span8">
@@ -21,13 +19,13 @@
 
           {{ form_field(form.age) }}
 
-          {{ form_field(form.city, placeholder="Введите название населенного пункта", class="span8") }}
-
-          {{ form_field(form.price, class="span2") }}
+          {{ form_field(form.city, placeholder="Введите название населенного пункта", class="input-xxlarge") }}
           
-          {{ form_field(form.title, class="span12" )}}
+          {{ form_field(form.title, class="input-xxlarge" )}}
 
-          {{ form_field(form.desc, rows="6", class="span12") }}    
+          {{ form_field(form.desc, rows="6", class="input-xxlarge") }}    
+
+          {{ form_field(form.price, class="input-small") }}
 
           {{ form_field(form.photos) }}
 
@@ -43,12 +41,8 @@
 
         <div class="actions">
           <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
-          {%if adv %}
           &nbsp;
-          <a class="btn btn-danger" href="{{request.path}}/remove" id="remove">Удалить</a>
-          {%endif%}
-          &nbsp;
-          <a class="btn" href="/account/sale" id="cancel">Отменить</a>
+          <a class="btn" href="{{url_for('account_sale')}}" id="cancel">Отменить</a>
         </div>
 
             <script type="text/javascript">
@@ -56,7 +50,7 @@
             //location with autocomplete built on typeahead.js
             $(function(){
               $("#city").typeahead({
-                minLength: 1, 
+                minLength: 1,
                 limit: 8,
                 source: function (query, process) {
                   return $.getJSON('/ajax/location/typeahead',  {limit: 8, query: query}, function (data) { return process(data.items);
@@ -73,7 +67,7 @@
               jq_breed.select2({
                 placeholder: "Выберите породу",
                 width: "off",
-                containerCssClass : "span6",
+                containerCssClass : "input-xlarge",
                 matcher: function(term, text, option) {
                   var pet_id = jq_pet.val();
                   return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
@@ -84,7 +78,7 @@
               jq_pet.select2({
                 placeholder:"Выберите вид",
                 width: "off",
-                containerCssClass : "span6"
+                containerCssClass : "input-xlarge"
               });
 
               jq_pet.on('change', function(e){
@@ -95,15 +89,14 @@
               jq_gender.select2({
                 placeholder: "Выберите пол",
                 width: "off",
-                containerCssClass: "span6",
-                allowClear: true
+                containerCssClass: "input-xlarge"
               });
 
               var jq_age = $("#age");
               jq_age.select2({
                 placeholder: "Выберите возраст",
                 width: "off",
-                containerCssClass: "span6"
+                containerCssClass: "input-xlarge"
               });
             });
 
@@ -119,7 +112,8 @@
                   title: { required: true, rangelength: [10, 80] },
                   desc : { required: true, minlength: 120 },
                   price : { required: true, range: [10, 900000] }, 
-                  age : {required: true}
+                  age : {required: true},
+                  gender : {required: true}
                },
                errorElement : "p", 
                 errorPlacement: function(error, element) {
@@ -134,11 +128,8 @@
                },
                submitHandler: function(form) {
                   var btn = $(":submit").button("loading");
-                  photos = $("#photos");
-                  images = $("img[file-name]");
-                  photos.val("");
-                  $.each(images, function(i, image) {
-                    filename = $(image).attr("file-name");
+                  photos = $("#photos").val("");
+                  $.each(uploader.getFileNames(), function(i, filename) {
                     if(filename && photos.val()) {
                       photos.val(photos.val() + "," + filename);
                     } else {

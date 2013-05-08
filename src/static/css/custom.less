@@ -2,16 +2,16 @@ html, body {
     height: 100%;
 
     .container {
-         h3 {
-            font-size: 20px !important;
-            margin-top:0px !important;
-        }
-         h1 {
-            display: inline-block;
-            margin: 0 0 10px 0 !important;
-            font-size:26px !important;
-        }
+       h3 {
+        font-size: 20px !important;
+        margin-top:0px !important;
     }
+    h1 {
+        display: inline-block;
+        margin: 0 0 10px 0 !important;
+        font-size:26px !important;
+    }
+}
 }
 
 #header {
@@ -44,7 +44,7 @@ html, body {
 
 
 #breadcrumbs {
-   
+
 }
 
 #indexPetSearch {
@@ -77,54 +77,35 @@ html, body {
     }
 }
 
-#indexPetAdd {
-     /*padding-bottom: 8em !important;*/
-     /*padding: 15px;*/
-
-     h4 {
-        /*padding:10px 0;*/
-        /*font-family: Georgia;*/
-    }
-
-
-    p.ipa-description {
-     /*   line-height: 15px !important;
-        margin-top:0.5em;*/
-    }
-
-    p.ipa-add {
-        /*margin-top: 2em;*/
-    }
-}
 
 .index-pet-events {
     margin-top: 2em;
-        .ipe-event {
-            margin-top:15px;
-            overflow: hidden;
+    .ipe-event {
+        margin-top:15px;
+        overflow: hidden;
 
-            .ipe-date {
-                background-color: #8CC835;
-                color: #ffffff;
-                /*background-color: #eeeeee;*/
-                padding:10px 5px 0px 5px;
-                margin-right: 10px;
-                width:55px;
-                height: 50px;
-                .ipe-number {
-                    font-size: 16px;
-                    font-weight: bold;
-                }
+        .ipe-date {
+            background-color: #8CC835;
+            color: #ffffff;
+            /*background-color: #eeeeee;*/
+            padding:10px 5px 0px 5px;
+            margin-right: 10px;
+            width:55px;
+            height: 50px;
+            .ipe-number {
+                font-size: 16px;
+                font-weight: bold;
             }
-            .ipe-body {
-                overflow: hidden;
-                .ipe-heading {
-                    margin:0 0 5px;
-                }
-            }
-
         }
-  
+        .ipe-body {
+            overflow: hidden;
+            .ipe-heading {
+                margin:0 0 5px;
+            }
+        }
+
+    }
+
 }
 
 #indexLastPets {
@@ -145,31 +126,38 @@ html, body {
 
 }
 
-#signin {
-    max-width: 300px;
-}
-
-#signup {
-    max-width: 300px;
-}
-
-form.form-sale-adv {
-    
-}
 
 .required {
     color:red;
 }
 
-
-
-
-.acount-sale {
+.acount-sale, .sale {
     .adv {
-        .photo {
+        div.photo {
+            position: relative;
+            margin-bottom: 10px;
             width:140px;
-            img {
-                height:100px;
+
+            div.photo-count {
+                 position: absolute;
+                 bottom: 5px;
+                 right: 0px;
+                 width: 80px;
+                 padding:2px 0;
+                 background: #fff;
+                 color: #000;
+                 text-align: center;
+                 /*line-height: 24px;*/
+                 opacity:0.8;
+                 filter:alpha(opacity=8);
+                 z-index: 2;
+                }
+            a {
+                height: 100px;
+                /*width: 120px;*/
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
             }
         }
 
@@ -177,39 +165,79 @@ form.form-sale-adv {
             margin-top:10px;
         }
 
-        .adv-dict i {
-            /*border-bottom: 1px dotted;*/
+        .adv-price {
+            .label {
+                padding: 7px !important;
+                font-size: 20px;
+            }
         }
 
-        .actions {
-            /*visibility: hidden;*/
+        .adv-desc {
+            margin-top:10px;
+        }
+    }
+}
+
+.sale {
+   .adv {
+        margin-top: 15px !important;
+        .photo-count {
+            visibility: hidden;        
+        }
+
+        .adv-city {
+            margin-bottom: 5px;
+        }
+        .adv-breed {
+            /*margin-top: 5px;*/
+        }
+        .adv-gender {
+            /*margin-top: 2px;*/
+        }
+
+        .adv-age {
+            /*margin-top: 2px;*/
         }
     }
     .adv:hover {
-        /*background-color: #f9f9f9;*/
-        .actions {
-            /*visibility: visible;*/
+        .photo-count {
+            visibility: visible;
         }
     }
-    hr  {
-        /*margin: 0 0 10px 0 !important;*/
+
+    .filter{
+        .noUiSlider {
+           margin-bottom: 25px;
+        }
+
+        .filter-distance {
+            /*margin-bottom: 5px;*/
+        }
+
+        .filter-price {
+            /*margin-bottom: 10px;*/
+        }
     }
 }
 
 
 .upload-files {
-        li {
-            margin: 0px 10px 10px 0px !important;
-        }
-    .preview {
+    .preview, .upload-add {
+
+        height: 110px;
+        width: 130px;
+        margin: 0px 10px 10px 0px !important;
+        float: left;
 
         /*cursor: move;*/
         position: relative;
-        img {
-            /*width:160px;*/
-            height: 120px;
-            background-repeat: no-repeat;
+        a.thumbnail, img {
+            height: 100px;
+            width: 120px;
+            background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
+            display: block;
         }
         i {
             text-decoration: none;
@@ -226,4 +254,6 @@ form.form-sale-adv {
         }
     }
 }
+
+
 

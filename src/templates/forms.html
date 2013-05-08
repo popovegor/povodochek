@@ -42,7 +42,7 @@
 
  
 {%- macro form_field(field) -%}
-  <div id="{{field.id}}-div" class="control-group clearfix {{'error' if field.errors else ''}}">
+  <div id="{{field.id}}_field" class="clearfix {{'error' if field.errors else ''}}">
     {% if field.type == 'HiddenField' %}
         {{ field() }}
     {% else %}

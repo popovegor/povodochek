@@ -10,36 +10,49 @@
 <script type="text/javascript">
 // Custom example logic
 $(function() {
-    var uploader = new plupload.Uploader({
+    uploader = new plupload.Uploader({
         runtimes : 'gears,html5,flash,silverlight,browserplus',
         browse_button : 'uploadAdd',
         container : 'upload',
         max_file_size : '10mb',
-        url : '/upload',
+        url : '{{url_for("upload")}}',
         flash_swf_url : '/static/plupload/plupload.flash.swf',
         silverlight_xap_url : '/static/plupload/plupload.silverlight.xap',
         filters : [
         {title : "Image files", extensions : "jpg,jpeg,gif,png"}
         ],
-        resize : {width : 320, height : 240, quality : 90}
+        resize : {width : 640, height : 480, quality : 90}
     });
 
+    uploader.getFileNames = function(){
+        filenames = [];
+        images = $("div[file-name]");
+        $.each(images, function(i, image) {
+            filenames.push($(image).attr("file-name"));
+        });
+        return filenames;
+    };
+
     uploader.remove = function(file_name) {
-        $("li[file-name='" + file_name + "']").remove();
+        $("div[file-name='" + file_name + "']").remove();
         var fileId = $(this).attr("file-id");
         var file = uploader.getFile(fileId);
         if(file) {
-         uploader.removeFile(file);
-     }
- };
+             uploader.removeFile(file);
+         }
+     };
 
- uploader.add = function(file_name, file_id) {
-        $("li[file-id='" + file_id + "']").remove();
-        $(".upload-add").before("<li class='span3' file-name='" + file_name + "'> <a class='thumbnail preview'> <img  file-name='" + file_name + "' src='/photo/" + file_name + "'/> <i title='Удалить' class='icon-remove-sign' file-name='" + file_name + "'></i></a> </li>");
+    uploader.add = function(file_name, file_id) {
+        $("div[file-id='" + file_id + "']").remove();
+        var file_url = "/photo/" + file_name;
+        $(".upload-add").before("<div class='preview' file-name='" + file_name + "'> <a class='thumbnail' file-id='" + file_id + "' style='background-image:url(" + file_url + ")' href="+ file_url + "></a> <i title='Удалить' class='icon-remove-sign' file-name='" + file_name + "'></i></div>");
 
         //remove uploaded photo
         $("i[file-name='" + file_name + "']").bind("click", function(){
             uploader.remove(file_name);});
+
+        $('.preview a.thumbnail').colorbox({rel:'preview'});
+
         return false;
     };
 
@@ -52,58 +65,49 @@ $(function() {
         }
     });
 
-    /*$('#uploadfiles').click(function(e) {
+    uploader.init();
+
+    uploader.bind('FilesAdded', function(up, files) {
+        $.each(files, function(i, file) {
+            $(".upload-add").before("<div class='preview' file-id='" +  file.id + "'><img src='/static/img/ajax-loader.gif' alt='Фотография загружается'/></div>")
+        });
         uploader.start();
-        e.preventDefault();
-    });*/
-
-uploader.init();
-
-uploader.bind('FilesAdded', function(up, files) {
-    $.each(files, function(i, file) {
-        $(".upload-add").before("<li class='span3' file-id='" +  file.id + "'><div class='thumbnail preview'><img src='/static/img/ajax-loader.gif' alt='Фотография загружается'/></div></li>")
-    });
-    uploader.start();
         up.refresh(); // Reposition Flash/Silverlight
     });
 
-uploader.bind('UploadProgress', function(up, file) {
-        //alert(file.percent);
-        //$('#' + file.id + " b").html(file.percent + "%");
+    uploader.bind('UploadProgress', function(up, file) {
+            // alert(file.percent);
+            //$('#' + file.id + " b").html(file.percent + "%");
+        });
+
+    uploader.bind('Error', function(up, err) {
+            alert("Произошла ошибка. Попробуйте загрузить файл еще раз.");
+            $("div[file-id='" + err.file.id + "']").remove();
+            up.refresh(); // Reposition Flash/Silverlight
+        });
+
+    uploader.bind('FilesRemoved', function(up, files) {
     });
 
-uploader.bind('Error', function(up, err) {
-    alert("Произошла ошибка. Попробуйте загрузить файл еще раз.");
-        up.refresh(); // Reposition Flash/Silverlight
-    });
+    uploader.bind('FileUploaded', function(up, file, response) {
+            //$('#' + file.id + " b").html("100%");
+            file_name = response.response;
+            up.add(file_name, file.id);
+        });
 
-uploader.bind('FilesRemoved', function(up, files) {
-});
-
-uploader.bind('FileUploaded', function(up, file, response) {
-        //$('#' + file.id + " b").html("100%");
-        file_name = response.response;
-        up.add(file_name, file.id);
-    });
+  
 
 });
 
 </script>
 
 
-
 <div class="input upload-files" id="upload">
-  {#<p>
-      <a id="uploadAdd" class="btn btn-mini" href="#" title="Добавить фото">
-          <i class="icon-plus"></i>&nbsp;Добавить ...&nbsp;</a>
-      </p>#}
-
-      <ul class="thumbnails" id="uploadFiles">
-            <li class="span3 upload-add"> 
-
-            <a id="uploadAdd" href="" class="thumbnail"><img data-src='/static/js/holder.js/160x120/text:Добавить фото'> 
-            </a>
-            </li>
+      <div class="thumbnails" id="uploadFiles">
+            <div class="upload-add"> 
+                <a id="uploadAdd" href="{{request.path}}#" class="thumbnail"><img data-src='/static/js/holder.js/120x100/text:Добавить фото'> 
+                </a>
+            </div>
         </ul>
     </div>
     

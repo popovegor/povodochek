@@ -5,7 +5,7 @@
 <div class="acount-sale row-fluid">
 
 <p class="">
-    <a href="/account/sale/add" class="btn"><i class="icon-plus"></i>&nbsp;Новое объявление</a>
+    <a href="{{url_for('account_sale_add')}}" class="btn btn-warning"><i class="icon-plus icon-white"></i>&nbsp;Новое объявление</a>
 </p>
 
     {% for adv in advs %}
@@ -14,22 +14,35 @@
 
     <div class="media clearfix adv">
 
-        <div class="photo pull-left">
+        <div class="pull-left">
             
-            <p class="text-center">
-               <a href="/account/sale/{{adv['_id']}}" class="">
-                    {% if adv['photos'][0] %}
-                    <img  src="/photo/{{ adv['photos'][0] }}" alt="{{adv['title']}}">
-                    {% else %}
-                        <img data-src='/static/js/holder.js/140x100/text:Нет фото' alt="{{adv['title']}}">
-                    {%endif%}
-                </a>    
-                 
-            </p>
+            <div class="text-center photo">
+                
+                {% if adv['photos'][0] %}
 
-              <p class="text-center">
-               <span class="label label-success">{{ adv.get("price") | format_price() }} руб</span>
-            </p>    
+                    {% for filename in adv.get("photos") %}
+                        <a href="{{url_for('photo', filename=filename)}}" adv-id="{{adv['_id']}}" style="background-image:url({{url_for('photo', filename=filename)}});{{'display:block' if loop.index == 1 else 'display:hidden'}}">
+                            {% if loop.index == 1%}
+                            <div class="photo-count"><small><b>{{adv["photos"] | length }}&nbsp; фото</b></small></div>
+                            {% endif %}
+                        </a>  
+                    {%endfor%}
+              
+                    <script type="text/javascript">
+                        $(function(){
+                            $("a[adv-id='" + "{{adv['_id']}}" + "']").colorbox({rel:"{{adv['_id']}}"})
+                        });
+                    </script>
+                {% else %}
+                    <img data-src='/static/js/holder.js/120x100/text:Нет фото' alt="{{adv['title']}}">
+                {%endif%}
+              
+             
+            </div>
+
+              <div class="text-center price">
+                 <span class="label label-success">{{ adv.get("price") | format_price() }} руб</span>
+            </div>    
 
         </div>
 
@@ -38,50 +51,67 @@
             <h4 class="media-heading">{{adv.get("title")}}</h4>
             <ul class="unstyled">
                 <li class="adv-dict">
-                     <small><i><abbr title="Вид">{{adv.get("pet") | pet_name}}</abbr>
-                    {{" > "}}
-                    <abbr title="Порода">{{adv.get("breed") | breed_name }}</abbr>
-                    {% if adv.get("gender") %}
-                    {{" > "}}
-                    <abbr title="Пол">{{ adv.get("gender") | gender_name }}</abbr>
-                    {% endif %}
-                    {%if adv.get("age") %}
-                    {{" > "}}
-                    <abbr title="Возраст">{{adv.get("age") | age_name }}</abbr>
+                    <small><i>
+                    {% set pet_id = adv.get("pet_id") %}
+                    {% if pet_id %}
+                     <abbr title="Вид">{{pet_id | pet_name}}</abbr>
                     {%endif%}
+
+                    {% set breed_id = adv.get("breed_id") %}
+                    {% if breed_id %}
+                    {{" > "}}
+                    <abbr title="Порода">{{breed_id | breed_name }}</abbr>
+                    {%endif%}
+
+                    {% set gender_id = adv.get("gender_id") %}
+                    {% if  gender_id %}
+                    {{" > "}}
+                    <abbr title="Пол">{{ gender_id | gender_name }}</abbr>
+                    {% endif %}
+
+                    {% set age_id = adv.get("age_id") %}
+                    {%if age_id %}
+                    {{" > "}}
+                    <abbr title="Возраст">{{ age_id | age_name }}</abbr>
+                    {%endif%}
+
                     </i></small>
                 </li>
                 
                 <li class="adv-dict">
-                    {% if adv.get("city") %}
-                    <small><i class="icon-map-marker"></i>&nbsp;<i><abbr title="Местоположение">{{adv.get("city") | location}}</abbr></i></small>
+                    {% set city_id = adv.get("city_id") %}
+                    {% if city_id %}
+                    <small><i class="icon-map-marker"></i>&nbsp;<i><abbr title="Местоположение">{{ city_id | city_region }}</abbr></i></small>
                     {%endif%}
+
                 </li>
                 <li class="adv-desc">
-                    {{adv["desc"]}}
+                    {{ adv["desc"] }}
                 </li>
                 <li class="adv-dates">
                     <p class="pull-left actions">
 
-                <a class="btn btn-mini btn-primary" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление">{#<i class="icon-pencil"></i>&nbsp;#}Изменить</a>
-             
-                <a class="btn btn-mini btn-danger" href='/account/sale/{{adv["_id"]}}/remove' action="remove" title="Удалить объявление"><i class="icon-trash icon-white"></i>{#&nbsp;Удалить#}</a>
-            </p> 
+                        <a class="btn btn-mini btn-primary" href="/account/sale/{{adv['_id']}}" title="Редактировать объявление">{#<i class="icon-pencil"></i>&nbsp;#}Изменить</a>
+                     
+                        <a class="btn btn-mini btn-danger" href='{{url_for("account_sale_remove", id = adv["_id"] | string)}}' action="remove" title="Удалить объявление"><i class="icon-trash icon-white"></i>{#&nbsp;Удалить#}</a>
+                    </p> 
                     <p class="pull-right">
                         <small class="muted small">
-                    {% if adv.get("update_date") and  
-                        adv.get("update_date") | date != adv.get("add_date") | date 
-                      %}
-                        Обновлено: {{ adv.get("update_date") | format_datetime("%d.%m") }}
-                        
-                    {% endif%}
-                        {% if adv.get("add_date") %}
-                            &nbsp;Добавлено: {{adv.get("add_date") | format_datetime("%d.%m")  }} 
-                         {% endif %}
-                    </small>
-                    
-
-                    
+                            {% set update_date = adv.get("update_date") 
+                            %}
+                            {% set add_date = adv.get("add_date") 
+                            %}
+                            
+                            {% if update_date and  
+                                adv.get("update_date") | date != add_date | date 
+                              %}
+                                Обновлено: {{ update_date | format_datetime("%d.%m") }}
+                                
+                            {% endif%}
+                            {% if add_date %}
+                                &nbsp;Добавлено: {{add_date | format_datetime("%d.%m")  }} 
+                             {% endif %}
+                        </small>
                     </p>
                 </li>
             </ul>

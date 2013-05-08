@@ -1,5 +1,314 @@
 {% extends "layout.html" %}
 
-{% block content %}      
+{% block content %}  
+
+<h1>{{header}}</h1>
+
+<p class="muted">Описать тут, сколько найдено.</p>    
+
+<div class="row-fluid sale">
+
+    <!-- ===================== фильтр ====================== -->
+    <div class="span3 well well-small filter">
+
+          {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+        <form action="{{url_for('sale')}}" method="get" class="">
+            <fieldset style="width:100%">
+                <legend>Фильтр</legend>
+            {{ form_field(form.pet,  class="") }}
+
+            {{ form_field(form.breed, class="") }}
+
+            {{ form_field(form.gender,  class="") }}
+
+            {{ form_field(form.age,  class="") }}
+
+
+            {{ form_field(form.city, placeholder="Город", class="span12") }}
+
+            <!-- distance -->
+            <div class="row-fluid filter-distance">
+              <div class="span12">
+                {{ form_field(form.distance, style="display:none") }}
+                <p class="text-center"><small class="pull-left">1</small> <span id="distanceValue">{{form.distance.data}}</span> <small class="pull-right">500</small></p>
+              <div id="disatnceSlider" class="noUiSlider horizontal"></div>
+            </div>
+          </div>
+
+          <!-- price -->
+           <div class="row-fluid filter-price">
+              <div class="span12">
+                {{ form_field(form.price_from, style="display:none") }}
+                <div style="display:none">
+                  {{ form_field(form.price_to, style="display:none") }}
+                </div>
+                <p class="text-center"><small class="pull-left">0</small> <span id="priceValue">{{form.distance.data}}</span> <small class="pull-right">100+</small></p>
+              <div id="priceSlider" class="noUiSlider horizontal"></div>
+            </div>
+          </div>
+
+            <div class="clearfix filter-misc" >
+            <strong>Дополнительно</strong>
+            {{ form_field(form.photo) }}
+          </div>
+            </fieldset>
+            <br>
+            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+        </form>
+
+    </div>
+
+
+    <script type="text/javascript">
+
+      var showDistance = function() {
+        $("#distanceValue").html("<b>" + $("#distance").val() + "</b><small> км</small>");
+      };
+
+      $(function(){
+        $("#disatnceSlider").noUiSlider({
+            range: [1,500], 
+            handles : 1, 
+            connect: "lower",
+            start: $("#distance").val(),
+            serialization : {to: $("#distance"), resolution : 1},
+            slide : showDistance,
+            step: 1
+        });
+
+        showDistance();
+
+        var showPrice = function() {
+          var to = parseInt($("#price_to").val());
+          var from = parseInt($("#price_from").val());
+          var price_html = "";
+          if (to === 100){
+            if(from === 0) {
+              price_html = "любая"
+            } else {
+               price_html = "<small><b>более</b></small><b> " + $("#price_from").val() + "</b><small> тыс руб<small>"
+            }
+          } else {
+            if(from === 0) {
+              price_html = "<small><b>менее</b> </small><b>" + $("#price_to").val() + "</b><small> тыс руб<small>"
+            } else {
+              price_html = "<b>" + $("#price_from").val() + "-" + $("#price_to").val() + "</b><small> тыс руб<small>"
+            }
+          }
+          $("#priceValue").html(price_html);
+        };
+
+         $("#priceSlider").noUiSlider({
+            range: [0,100], 
+            handles : 2, 
+            connect: "upper",
+            start: [$("#price_from").val(), $("#price_to").val()], 
+            serialization : {to: [$("#price_from"), $("#price_to")], resolution : 1},
+            slide : showPrice,
+            step: 1
+        });
+
+        showPrice();
+
+        
+      });
+
+      
+            //location with autocomplete built on typeahead.js
+            $(function(){
+              $("#city").typeahead({
+                minLength: 1,
+                limit: 8,
+                source: function (query, process) {
+                  return $.getJSON('/ajax/location/typeahead/',  {limit: 8, query: query}, function (data) { return process(data.items);
+                  }); //getJSON
+                } //source
+              }); //typeahead  
+
+            });
+
+
+            //select2 for dropdowns 
+            $(function(){
+
+              var jq_breed = $("#breed");
+              jq_breed.select2({
+                placeholder: "Выберите породу",
+                width: "off",
+                containerCssClass : "span12",
+                allowClear: true,
+                matcher: function(term, text, option) {
+                  var pet_id = jq_pet.val();
+                  return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
+                  }
+               });
+
+              var jq_pet = $("#pet");
+              jq_pet.select2({
+                placeholder:"Выберите вид",
+                width: "off",
+                containerCssClass : "span12",
+                allowClear: true
+              });
+
+              jq_pet.on('change', function(e){
+                jq_breed.select2('val', '');
+              });
+
+              var jq_gender = $("#gender");
+              jq_gender.select2({
+                placeholder: "Выберите пол",
+                width: "off",
+                containerCssClass: "span12",
+                allowClear: true
+              });
+
+              var jq_age = $("#age");
+              jq_age.select2({
+                placeholder: "Выберите возраст",
+                width: "off",
+                containerCssClass: "span12",
+                allowClear: true
+              });
+            });
+
+
+
+    </script>
+
+
+    <!-- ===================== результаты ========================= -->
+    <div class="span9">
+
+      <table class="table table-hover">
+
+        {% for adv in advs %}
+
+<tr>
+  <td>
+           
+
+    <div class="media clearfix adv">
+
+        <div class="pull-left">
+            
+            <div class="text-center photo">
+                
+                {% if adv['photos'][0] %}
+
+                    {% for filename in adv.get("photos") %}
+                        <a href="{{url_for('photo', filename=filename)}}" adv-id="{{adv['_id']}}" style="background-image:url({{url_for('photo', filename=filename)}});{{'display:block' if loop.index == 1 else 'display:hidden'}}" title="Посмотреть фото">
+                          {% if loop.index == 1%}
+                             <div class="photo-count"><small><b>{{adv["photos"] | length }}&nbsp; фото</b></small></div>
+                          {% endif%}
+                        </a>  
+                    {%endfor%}
+              
+                    <script type="text/javascript">
+                        $(function(){
+                            $("a[adv-id='" + "{{adv['_id']}}" + "']").colorbox({rel:"{{adv['_id']}}"});
+                        });
+                    </script>
+                {% else %}
+                    <img data-src='/static/js/holder.js/130x110/text:Нет фото' alt="{{adv['title']}}">
+                {%endif%}
+              
+             
+            </div>
+
+              <div class="text-center adv-price" title="Цена">
+                 <span class="label label-success">{{ adv.get("price") | format_price() }} руб</span>
+            </div>    
+
+        </div>
+
+        <div class="media-body">
+
+            <a href="#"><h4 class="media-heading">{{adv.get("title")}}</h4></a>
+            <ul class="unstyled">
+              <li class="adv-city">
+                    {% set city_id = adv.get("city_id") %}
+
+                    {% if city_id %}
+                    <i class="icon-map-marker"></i><span>&nbsp;<b title="Местоположение">{{ city_id | city_region }}</b>
+
+                    {% if adv.get("distance") and adv.get("distance") > 0 %}
+                      (~{{adv.get("distance") | round(-1, "ceil") | int}} км от {{form.city.city_id | city_name | morph_word(["gent"])}})
+                    {% endif %}
+
+                    </span>
+                    {%endif%}
+
+                </li>                
+                <li class="adv-breed">
+                    <small><span>Порода:</span>
+                    {% set pet_id = adv.get("pet_id") %}
+                    {% if pet_id %}
+                    <b>{{pet_id | pet_name | lower}}</b>
+                    {%endif%}
+
+                    {% set breed_id = adv.get("breed_id") %}
+                    {% if breed_id %}
+                    {{" > "}}
+                    <b>{{breed_id | breed_name | lower }}</b>
+                    {%endif%}
+
+                    </small>
+                </li>
+                <li class="adv-gender">
+                    <small>
+                    {% set gender_id = adv.get("gender_id") %}
+                    {% if  gender_id %}
+                    Пол:&nbsp;<b>{{ gender_id | gender_name | lower }}</b>
+                    {% endif %}
+                  </small>
+                </li>
+                <li class="adv-age">
+                    <small>
+                    {% set age_id = adv.get("age_id") %}
+                    {%if age_id %}
+                    Возраст:&nbsp;<b>{{ age_id | age_name | lower }}</b>
+                    {%endif%}
+                  </small>
+                </li>
+                <li class="adv-desc">
+                    {{ adv["desc"] }}
+                </li>
+                
+                <li class="adv-dates">
+                    
+                    <p class="pull-right">
+                        <small ><b>
+                            {% set update_date = adv.get("update_date") 
+                            %}
+                            {% set add_date = adv.get("add_date") 
+                            %}
+                            
+                            {% if update_date and  
+                                adv.get("update_date") 
+                              %}
+                                Обновлено&nbsp;{{ momentjs(add_date or update_date).fromNow() }}
+                                
+                            {% endif%}
+                          </b>
+                        </small>
+                    </p>
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+</td>
+</tr>
+        {% endfor %}
+</table>
+
+    </div>
+
+</div>
+
+
+
 
 {% endblock %} 

@@ -7,7 +7,6 @@
 <div class="row-fluid">
     <div class="span12">
 
-
          {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
         <form action="{{request.path}}" method="POST" id="contact">
@@ -16,7 +15,7 @@
 
             {{ form_field(form.phone, class="input-xlarge", placeholder="Введите номер телефона для связи") }}
 
-            {{ form_field(form.city, class="input-xxlarge", placeholder="Введите населенный пункт") }}
+            {{ form_field(form.city, class="input-xxlarge", placeholder="Введите название населенного пункта") }}
 
               <button type="submit" class="btn btn-primary" id="save" data-loading-text="Сохраняется...">Сохранить</button>
 

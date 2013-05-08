@@ -1,13 +1,15 @@
 #!/usr/bin/env 
 # -*- coding: utf-8 -*-
 
-ages = [u"Малый", u"Взрослый"]
+ages = [(u"Малыш", 1), (u"Взрослый", 2)]
 
-
-from pymongo import MongoClient
+ы
+from pymongo import MongoClient, ASCENDING
 from bson.objectid import ObjectId
 
 if __name__ == '__main__':
     mongo = MongoClient()
-    for age in ages:
-        mongo.povodochek.ages.update({'name':age}, {'name':age}, upsert=True)
+    for (name, id)  in ages:
+        mongo.povodochek.ages.update({'id':id}, {'name':name, 'id': id}, upsert=True)
+
+    mongo.povodochek.ages.ensure_index([('id', ASCENDING)])

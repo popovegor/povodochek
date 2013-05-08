@@ -3,10 +3,10 @@
 {% block content %}      
 
 <h1>{{page_title}}</h1>
-<p class="muted">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление.</p>
+
 <div class="row-fluid">
     <div class="span6">
-
+<p class="muted">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление.</p>
         {% from "forms.html" import form_field_boolean, form_field %}
 
         <form class="form-signup" method="post" action="{{request.path}}" >
@@ -17,18 +17,13 @@
 
           {{ form_field(form.password, placeholder="Введите пароль", class="input-xlarge") }}
 
-          {{ form_field(form.confirm, placeholder="Введите пароль еще раз", class="input-xlarge") }}
+          {{ form_field(form.repeat_password, placeholder="Введите пароль еще раз", class="input-xlarge") }}
 
           {{ form_field(form.accept_tos)}}
 
-            <button class="btn btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрироваться</button>
+            <button class="btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрироваться</button>
      
       </form>
-  </div>
-
-<!-- вход или забыл пароль -->
-  <div class="span6">
-
   </div>
 
 </div>
@@ -43,8 +38,8 @@
       rules: {
         username : {required: true}, 
         email : {required : true , email: true},
-        password: {required: true},
-        confirm : {required: true,  equalTo: "#password"},
+        password: {required: true, rangelength: [6, 36]},
+        repeat_password : {required: true,  equalTo: "#password"},
         accept_tos: {required: true}
      },
      errorElement : "p", 
