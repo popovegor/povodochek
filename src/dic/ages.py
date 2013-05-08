@@ -3,7 +3,6 @@
 
 ages = [(u"Малыш", 1), (u"Взрослый", 2)]
 
-ы
 from pymongo import MongoClient, ASCENDING
 from bson.objectid import ObjectId
 
