@@ -106,8 +106,8 @@ def jinja_date(value):
 
 app.jinja_env.filters['date'] = jinja_date
 
-def jinja_format_price(value, template="{0:,}"):
-    return (template.format(value) if value else "").replace(",", " ")
+def jinja_format_price(value, template=u"{0:,}"):
+    return Markup((template.format(value) if value else u"").replace(u",", u"<span style='letter-spacing:-3px'> </span>"))
 
 app.jinja_env.filters['format_price'] = jinja_format_price
 
@@ -174,19 +174,22 @@ def morph_restore_register(morphed_word, word):
     else:
         return morphed_word.lower()
 
-def morph_word(word, grammemes):
+def morph_word(word, grammemes = None, count = None):
     morphed_word = word
-    grammemes = set(grammemes)
-    if word and grammemes:
+    if word:
         parts = re.findall(u"[а-яА-Я-]+", word, re.U | re.I)
         for part in filter(lambda x: len(x) > 0, parts):
             parse = morph.parse(part)
-            inflect_word = parse[0].inflect(grammemes) if parse[0] else None
-            if inflect_word:
-                morphed_part = parse[0].inflect(grammemes).word if parse[0] else part
-                # morphed_part[0] = part[0] # первая буква в нужном регистре
-                morphed_part = morph_restore_register(morphed_part, part)
-                morphed_word = morphed_word.replace(part, morphed_part)
+            morphed_part = part
+            if grammemes:
+                grammemes = set(grammemes)
+                inflect_word = parse[0].inflect(grammemes) if parse[0] else None
+                if inflect_word:
+                    morphed_part = parse[0].inflect(grammemes).word if parse[0] else part
+            elif count >= 0:
+                morphed_part = parse[0].make_agree_with_number(count).word if parse[0] else part
+            morphed_part = morph_restore_register(morphed_part, part)
+            morphed_word = morphed_word.replace(part, morphed_part)
     return morphed_word
 
 app.jinja_env.filters['morph_word'] = morph_word
@@ -198,7 +201,7 @@ def debug_write(msg):
 def load_user(id):
     # print("user id = %s" % str(id))
     user = users().find_one({'_id':ObjectId(id)})
-    return User(user.get("email"), user.get("_id"), user.get("activated")) if user else None
+    return User(user.get("email"), user.get("_id"), user.get("activated")) if user else Anonymous
 
 @app.route("/")
 def index():
@@ -210,16 +213,18 @@ def signin():
     form = SignIn(request.form)
     if request.method == "POST" and form.validate():
         (email, password, remember) = (form.email.data, form.password.data, form.remember.data)
-        print("email, password = %s, %s" % (email, password))
         user = users().find_one({'email': email})
         if user and check_password(user.get("pwd_hash"), password):
-            if login_user(User(email, user["_id"]), remember=remember):
-                return redirect(request.args.get("next") or url_for("account_sale"))
+            if user.get("activated"):
+                if login_user(User(email, user["_id"]), remember=remember):
+                    return redirect(request.args.get("next") or url_for("account_sale"))
+                else:
+                    flash(u"Извините, но вы не можете войти.", "error")
             else:
-                flash(u"Извините, но вы не можете войти.", "error")
+                print('disactivated')
+                flash(Markup(u"Вы не можете войти на сайт, так регистрация не подтверждена. Проверьте, пожалуйста, эл. почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
         else:
             flash(u"Адрес электронной почты или пароль неправильный.", "error")
-            print(u'Wrong password or email (%s, %s)' % (email, password))
     return render_template("signin.html", form=form, title=u"Вход на сайт")
 
 @app.route("/ajax/location/prefetch.json", methods = ["GET"])
@@ -274,7 +279,7 @@ def send_reset_password(email, asign, password):
     msg.html = render_template("email/reset_password.html", email = email, password = password, asign = asign)
     mail.send(msg)
     
-
+@app.route("/activate/", defaults={'confirm': None}, methods=["GET", "POST"])
 @app.route("/activate/<confirm>", methods = ["GET", "POST"])
 def activate(confirm):
     form = Activate(request.form)
@@ -295,7 +300,7 @@ def activate(confirm):
         return render_template("activate.html", user = user, form = form, title = u"Активация регистрации")
 
 
-@app.route("/asignin/<asign>", methods = ["GET"])
+@app.route("/asignin/<asign>/", methods = ["GET"])
 def asignin(asign):
     user = users().find_one({'asign': asign})
     if user:
@@ -377,7 +382,7 @@ def cities_near(city = None, distance = None):
     return cities
 
 
-def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None):
+def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None):
     add_to_query = lambda k,v: query.update({k:v}) if v else None
     query = {}
     add_to_query("pet_id", num(pet_id))
@@ -398,8 +403,17 @@ def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, cit
 
     if photo:
         add_to_query("photos", {"$nin": [None, []]})
+    sortby = [("update_date", -1)]
+    if sort == 1:
+        sortby = [("price", -1)]
+    elif sort == 2:
+        sortby = [("price", 1)]
+    else:
+        sortby = [("update_date", -1)]
     print("sale query %s" % query)
-    advs = [adv for adv in sales().find(SON(query), sort = [("update_date", -1)])]
+    print("sale sort %s" % sortby)
+    advs = [adv for adv in sales().find(SON(query), sort = sortby)]
+
     if near_cities:
         for adv in advs:
             adv_city_id = adv.get("city_id")
@@ -422,9 +436,10 @@ def sale_find_header(form):
     (pet_id, breed_id) = form.breed.data.split('_') if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
     breed = get_breed_name(breed_id)
     if breed:
-        breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
+        # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
+        breed = u" породы {0}".format(breed).lower()
 
-    return (header.format(pet, breed, u""), title.format(pet, breed, morph_word(pet, {"gent", "plur"}) )) 
+    return (header.format(pet, breed, u""), title.format(pet, breed, morph_word(pet, {"gent", "plur"}) ), pet, breed) 
 
 @app.route("/sale/")
 def sale():
@@ -432,7 +447,10 @@ def sale():
     city = get_city_by_city_and_region(form.city.data)
     form.city.city_id = city["id"] if city else None
     (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
-    print(form.price_from.data, form.price_to.data)
+
+    # sort
+    session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
+    
     advs = sale_find(pet_id = form.pet.data, \
         breed_id = breed_id,\
         age_id = form.age.data,\
@@ -441,13 +459,13 @@ def sale():
         distance = form.distance.data, \
         photo = form.photo.data, \
         price_from = form.price_from.data, \
-        price_to = form.price_to.data if num(form.price_to.data) < 100000 else None
+        price_to = form.price_to.data if num(form.price_to.data) < 100000 else None,\
+        sort = session.get("sale_sort")
         )
 
-    (header, title) = sale_find_header(form)
+    (header, title, pet_name, breed_name) = sale_find_header(form)
 
-
-    tmpl = render_template("sale.html", header=Markup(header), title=title, form= form, advs = advs)
+    tmpl = render_template("sale.html", header=Markup(header), title=title, form= form, advs = advs, pet = pet_name, breed = breed_name, sort = session.get("sale_sort"))
     return tmpl
 
 @app.route("/account/")

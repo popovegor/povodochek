@@ -45,27 +45,9 @@
 
       //validation
     $(function(){
-
-      $("form").validate({
-        rules: {
+      povodochek.validate($("form"),  {
          username : {required: true}
-       },
-       errorElement : "p", 
-        errorPlacement: function(error, element) {
-         error.addClass("label label-important");
-         $("#" + element.attr("id") + "-div label").after(error);
-       },
-       highlight: function(element, errorClass) {
-          $("#" + element.id + "-div").addClass("error").removeClass('success');
-       },
-       unhighlight: function(element, errorClass) {
-          $("#" + element.id + "-div").removeClass("error").removeClass("success");
-       },
-       submitHandler: function(form) {
-          var btn = $(":submit").button("loading");
-          form.submit();
-         }
-      });
+       });
     });
 
 

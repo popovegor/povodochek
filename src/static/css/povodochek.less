@@ -14,7 +14,7 @@ html, body {
 }
 }
 
-#header {
+#menu {
     .navbar .navbar-inner {
         padding-right:0;
     }
@@ -126,6 +126,7 @@ html, body {
 
 }
 
+@photo-width : 140px;
 
 .required {
     color:red;
@@ -154,7 +155,7 @@ html, body {
                 }
             a {
                 height: 100px;
-                /*width: 120px;*/
+                width:@photo-width;
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -166,9 +167,9 @@ html, body {
         }
 
         .adv-price {
-            .label {
-                padding: 7px !important;
-                font-size: 20px;
+            width:@photo-width;
+            .price {
+                font-size: 24px;
             }
         }
 
@@ -206,20 +207,46 @@ html, body {
     }
 
     .filter{
+
+        form {
+            margin-bottom: 0px !important;
+        }
+
         .noUiSlider {
            margin-bottom: 25px;
         }
 
+        .slider-legend {
+            margin-top:5px;
+        }
+
         .filter-distance {
-            /*margin-bottom: 5px;*/
+            label {
+                margin-bottom: 0px !important;
+            }
         }
 
         .filter-price {
-            /*margin-bottom: 10px;*/
+             label {
+                margin-bottom: 0px !important;
+            }
+        }
+
+        .filter-misc {
+            margin-bottom: 10px;
+        }
+
+        .form-actions {
+            margin-bottom: 0px !important;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
         }
     }
 }
 
+.rur {
+    line-height: 20px;
+}
 
 .upload-files {
     .preview, .upload-add {

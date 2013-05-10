@@ -138,8 +138,12 @@ class SaleSearch(Form):
 
     photo = BooleanField(u"Только с фото")
 
+    # price
     price_from = IntegerField(u"Цена, тыс руб", default = 0, filters= [lambda x: x * 1000])
     price_to = IntegerField(u"Цена до", default = 0.1,  filters= [lambda x: x * 1000])
+
+
+    sort = SelectField(u"Сортировка:", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"Новее")], coerce = int)
 
 class Sale(Form):
 

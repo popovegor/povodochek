@@ -2,11 +2,11 @@
 
 {% block content %}      
 
-<h1>{{page_title}}</h1>
+<h1>{{title}}</h1>
 
 <div class="row-fluid">
-    <div class="span6">
-<p class="muted">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление.</p>
+    <div class="span12">
+<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление.</p>
         {% from "forms.html" import form_field_boolean, form_field %}
 
         <form class="form-signup" method="post" action="{{request.path}}" >
@@ -34,31 +34,13 @@
   //validation
   $(function(){
 
-    $("form").validate({
-      rules: {
+    povodochek.validate($("form"), {
         username : {required: true}, 
         email : {required : true , email: true},
         password: {required: true, rangelength: [6, 36]},
         repeat_password : {required: true,  equalTo: "#password"},
         accept_tos: {required: true}
-     },
-     errorElement : "p", 
-      errorPlacement: function(error, element) {
-       error.addClass("label label-important");
-       $("#" + element.attr("id") + "-div label").after(error);
-     },
-     highlight: function(element, errorClass) {
-        $("#" + element.id + "-div").addClass("error").removeClass("success");
-     },
-     unhighlight: function(element, errorClass) {
-        $("#" + element.id + "-div").removeClass("error").addClass("success");
-     },
-     submitHandler: function(form) {
-        $(":submit").button("loading");
-         form.submit();
-       }
-    });
-
+     });
   });
   
 </script>

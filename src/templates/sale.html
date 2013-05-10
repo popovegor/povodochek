@@ -4,7 +4,14 @@
 
 <h1>{{header}}</h1>
 
-<p class="muted">Описать тут, сколько найдено.</p>    
+{%if advs | length > 0 %}
+
+{#
+<p class="muted">Найдено {{advs | length}} {{"объявление" | morph_word(count = advs | length if advs else 0) }} о продаже {{pet | morph_word(["gent", "plur"]) }} {{ breed | morph_word(["gent"]) }} </p>
+#}
+
+<p class="muted">Найдено {{advs | length}} {{"объявление" | morph_word(count = advs | length if advs else 0) }}</p>
+{%endif%}
 
 <div class="row-fluid sale">
 
@@ -16,13 +23,13 @@
         <form action="{{url_for('sale')}}" method="get" class="">
             <fieldset style="width:100%">
                 <legend>Фильтр</legend>
-            {{ form_field(form.pet,  class="") }}
+            {{ form_field(form.pet,  class="input-medium") }}
 
-            {{ form_field(form.breed, class="") }}
+            {{ form_field(form.breed, class="input-medium") }}
 
-            {{ form_field(form.gender,  class="") }}
+            {{ form_field(form.gender,  class="input-medium") }}
 
-            {{ form_field(form.age,  class="") }}
+            {{ form_field(form.age,  class="input-medium") }}
 
 
             {{ form_field(form.city, placeholder="Город", class="span12") }}
@@ -31,7 +38,7 @@
             <div class="row-fluid filter-distance">
               <div class="span12">
                 {{ form_field(form.distance, style="display:none") }}
-                <p class="text-center"><small class="pull-left">1</small> <span id="distanceValue">{{form.distance.data}}</span> <small class="pull-right">500</small></p>
+                <p class="text-center slider-legend"><small class="pull-left">1</small> <span id="distanceValue">{{form.distance.data}}</span> <small class="pull-right">500</small></p>
               <div id="disatnceSlider" class="noUiSlider horizontal"></div>
             </div>
           </div>
@@ -43,18 +50,22 @@
                 <div style="display:none">
                   {{ form_field(form.price_to, style="display:none") }}
                 </div>
-                <p class="text-center"><small class="pull-left">0</small> <span id="priceValue">{{form.distance.data}}</span> <small class="pull-right">100+</small></p>
+                <p class="text-center slider-legend"><small class="pull-left">0</small> <span id="priceValue">{{form.distance.data}}</span> <small class="pull-right">100+</small></p>
               <div id="priceSlider" class="noUiSlider horizontal"></div>
             </div>
           </div>
 
             <div class="clearfix filter-misc" >
-            <strong>Дополнительно</strong>
-            {{ form_field(form.photo) }}
-          </div>
+              <strong>Дополнительно</strong>
+              {{ form_field(form.photo) }}
+            </div>
+
             </fieldset>
-            <br>
-            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+            <div class="form-actions text-center">
+              <button type="submit" class="btn btn-primary btn-small">Применить</button>
+              <a class="btn btn-small" href="{{url_for('sale')}}">Сбросить</a>
+            </div>
+            
         </form>
 
     </div>
@@ -132,6 +143,15 @@
             //select2 for dropdowns 
             $(function(){
 
+
+              var jq_pet = $("#pet");
+              jq_pet.select2({
+                placeholder:"Выберите вид",
+                width: "off",
+                containerCssClass : "span12",
+                allowClear: true
+              });
+
               var jq_breed = $("#breed");
               jq_breed.select2({
                 placeholder: "Выберите породу",
@@ -143,14 +163,6 @@
                   return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
                   }
                });
-
-              var jq_pet = $("#pet");
-              jq_pet.select2({
-                placeholder:"Выберите вид",
-                width: "off",
-                containerCssClass : "span12",
-                allowClear: true
-              });
 
               jq_pet.on('change', function(e){
                 jq_breed.select2('val', '');
@@ -171,6 +183,13 @@
                 containerCssClass: "span12",
                 allowClear: true
               });
+
+               var jq_perpage = $("#perpage");
+              jq_perpage.select2({
+                width: "off",
+                containerCssClass: "span12"
+              });
+
             });
 
 
@@ -181,7 +200,32 @@
     <!-- ===================== результаты ========================= -->
     <div class="span9">
 
+      {%if (advs | length) <= 0 %}
+
+      <p class="lead">К сожалению, не найдено ни одного объявления.</p>
+
+      {% else %}
+
+
+      <!-- сортировка -->
+      <p>
+        <span>{{form.sort.label.text}}</span>&nbsp;
+        {% set sort_param = form.sort.name ~ "=" ~ form.sort.data %}
+        {%set clear_url = request.url | replace("&" ~ sort_param, "") | replace(sort_param, "") %}
+        {% for (value, name) in form.sort.choices %}
+          {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
+          {% if sort == value %}
+            <span title="{{title}}" class="label">{{name}}</span></abbr>
+          {%else%}
+            {% set sorted_url = "{0}{1}&{2}".format(clear_url, "?" if "?" not in clear_url else "", form.sort.name ~ "=" ~ value)  %}
+            <a title="{{title}}" href="{{sorted_url}}">{{name}}</a>
+          {%endif%}&nbsp; 
+        {% endfor %}
+      </p>
+
       <table class="table table-hover">
+
+
 
         {% for adv in advs %}
 
@@ -217,8 +261,8 @@
              
             </div>
 
-              <div class="text-center adv-price" title="Цена">
-                 <span class="label label-success">{{ adv.get("price") | format_price() }} руб</span>
+              <div class="text-center adv-price" title='{{adv.get("price") | format("{0:,}") | replace(","," ")}} {{ "рубль" | morph_word(count=adv.get("price") )}}'>
+                 <span class="price">{{ adv.get("price") | format_price() }} <span class="rur">руб</span></span>
             </div>    
 
         </div>
@@ -231,7 +275,7 @@
                     {% set city_id = adv.get("city_id") %}
 
                     {% if city_id %}
-                    <i class="icon-map-marker"></i><span>&nbsp;<b title="Местоположение">{{ city_id | city_region }}</b>
+                    <i class="icon-map-marker" title="Местоположение"></i><span>&nbsp;<b title="Местоположение">{{ city_id | city_region }}</b>
 
                     {% if adv.get("distance") and adv.get("distance") > 0 %}
                       (~{{adv.get("distance") | round(-1, "ceil") | int}} км от {{form.city.city_id | city_name | morph_word(["gent"])}})
@@ -279,7 +323,7 @@
                 <li class="adv-dates">
                     
                     <p class="pull-right">
-                        <small ><b>
+                        <small class="">
                             {% set update_date = adv.get("update_date") 
                             %}
                             {% set add_date = adv.get("add_date") 
@@ -288,10 +332,10 @@
                             {% if update_date and  
                                 adv.get("update_date") 
                               %}
-                                Обновлено&nbsp;{{ momentjs(add_date or update_date).fromNow() }}
+                                <span class="">Обновлено:</span>&nbsp;<b>{{ momentjs(update_date or add_date).fromNow() }}</b>
                                 
                             {% endif%}
-                          </b>
+                          
                         </small>
                     </p>
                 </li>
@@ -303,6 +347,8 @@
 </tr>
         {% endfor %}
 </table>
+
+{% endif %}
 
     </div>
 

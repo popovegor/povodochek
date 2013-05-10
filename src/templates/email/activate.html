@@ -3,7 +3,7 @@
 
 {% block content %}
         <p>
-            Для активации регистрации перейдите по ссылке:<a target="_blank" href="{{url_for('activate', id=confirm, _external = True)}}">{{url_for('activate', id=confirm, _external = True)}}
+            Для активации регистрации перейдите по ссылке:<a target="_blank" href="{{url_for('activate', confirm=confirm, _external = True)}}">{{url_for('activate', confirm=confirm, _external = True)}}
             </a>
         </p>
         <p >

@@ -2,9 +2,9 @@
 
 {% block content %}      
 
-<h1>{{page_title}}</h1>
+<h1>{{title}}</h1>
 <div class="row-fluid">
-    <div class="span6">
+    <div class="span12">
       {% if user %}
           <p><span class="text-transform:capitalize">{{user.get("username") }}, ваша регистрация завершена. Теперь вы можете перейти в раздел <a href="{{url_for('account_sale')}}">свои объявления</a>, введя логин и пароль.</p>
       {% else %}
@@ -31,25 +31,9 @@
   //validation
   $(function(){
 
-    $("form").validate({
-      rules: {
+    povodochek.validate($("form"), {
         email : {required : true , email: true}
-     },
-     errorElement : "p", 
-      errorPlacement: function(error, element) {
-       error.addClass("label label-important");
-       $("#" + element.attr("id") + "-div label").after(error);
-     },
-     highlight: function(element, errorClass) {
-        $("#" + element.id + "-div").addClass("error").removeClass("success");
-     },
-     unhighlight: function(element, errorClass) {
-        $("#" + element.id + "-div").removeClass("error").addClass("success");
-     },
-     submitHandler: function(form) {
-        $(":submit").button("loading");
-         form.submit();
-       }
+     });
     });
 
   });

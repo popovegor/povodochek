@@ -4,8 +4,10 @@
 
 <div class="acount-sale row-fluid">
 
+<p class="">На этой странице вы можете управлять своими объявлениями о продаже собак и кошек.</p>
+
 <p class="">
-    <a href="{{url_for('account_sale_add')}}" class="btn btn-warning"><i class="icon-plus icon-white"></i>&nbsp;Новое объявление</a>
+    <a href="{{url_for('account_sale_add')}}" class="btn btn-info"><i class="icon-plus icon-white"></i>&nbsp;Новое объявление</a>
 </p>
 
     {% for adv in advs %}
@@ -40,8 +42,8 @@
              
             </div>
 
-              <div class="text-center price">
-                 <span class="label label-success">{{ adv.get("price") | format_price() }} руб</span>
+              <div class="text-center adv-price">
+                  <span class="price">{{ adv.get("price") | format_price() }} <span class="rur">руб</span></span>
             </div>    
 
         </div>
