@@ -113,8 +113,8 @@ class ChangeEmail(Form):
         [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)], \
         filters = [lambda x : (x or '').lower()])
 
-    def validate_email(form, field):
-        print("validate confirm  email %s" % field.data)
+    def validate_new_email(form, field):
+        print("validate confirm email %s" % field.data)
         if users().find_one({'email': field.data}):
             raise ValidationError(u"Адрес '%s' уже зарегистрирован" % field.data)
 

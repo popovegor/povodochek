@@ -1,0 +1,16 @@
+{% extends "email/layout.html" %}
+
+
+{% block content %}
+        <p>
+            Вы или кто-то другой воспользовались функцией изменения адреса электронной почты.
+        </p>
+        <p>
+            Для подтверждения нового почтового адреса на сайте Поводочек перейдите по ссылке: 
+        <a target="_blank" href="{{url_for('account_confirm_email', base64_email = base64_email, _external =True)}}">{{url_for('account_confirm_email', base64_email = base64_email, _external =True)}}</a>.
+        </p>
+        <p>
+        Не нажимайте на ссылку, если вы передумали или не оставляли запрос на изменение. В таком случае адрес электронной почты останется преждним.
+        </p>
+        
+{% endblock %}

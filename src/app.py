@@ -20,6 +20,7 @@ from uuid import uuid4, uuid1
 from datetime import datetime, date, timedelta
 import time
 import re
+import base64
 from sys import maxint
 
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
@@ -67,12 +68,13 @@ def ages():
     return mongo().ages
 
 class User(UserMixin):
-    def __init__(self, login, id, active=True, username = None, email = None):
+    def __init__(self, login, id, active=True, username = None, email = None, new_email = None):
         self.name = login
         self.username = username
         self.id = id
         self.active = active
         self.email = email
+        self.new_email = new_email
 
     def is_signedin(self):
         return True
@@ -245,7 +247,7 @@ def debug_write(msg):
 def load_user(id):
     # print("user id = %s" % str(id))
     user = users().find_one({'_id':ObjectId(id)})
-    return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email")  ) if user else Anonymous
+    return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email")  ) if user else Anonymous
 
 @app.route("/")
 def index():
@@ -311,6 +313,11 @@ def send_msg_aync(mailer, msg):
 def send_activate(email, confirm):
     msg = Message("Подтверждение регистрации на сайте Поводочек", recipients = [email])
     msg.html = render_template("email/activate.html", confirm = confirm)
+    mail.send(msg)
+
+def send_confirm_email(email):
+    msg = Message("Подтверждение изменения почтового адреса на сайте Поводочек", recipients = [email])
+    msg.html = render_template("email/confirm_email.html", base64_email = base64.b64encode(email))
     mail.send(msg)
 
 def send_signup(username, login, email, password, confirm):
@@ -399,6 +406,18 @@ def account_change_password():
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
+@app.route("/account/confirm-email/<base64_email>/")
+@login_required
+def account_confirm_email(base64_email):
+    new_email = base64.b64decode(base64_email)
+    if new_email and current_user.new_email == new_email:
+        users().update({"_id": ObjectId(current_user.id)}, {"$set": {'new_email': None, "email": new_email}})
+        flash(u"Новый почтовый адрес подтвержден.", "success")
+    else:
+        flash(u"Новый почтовый адрес не удалось подтвердить!", "error")
+    return redirect(url_for('account_change_email'))
+
+
 @app.route("/account/change-email/", methods = ["GET", "POST"])
 @login_required
 def account_change_email():
@@ -407,7 +426,8 @@ def account_change_email():
     if request.method == "POST" and form.validate():
         users().find_and_modify({"_id": ObjectId(current_user.id)}, \
             {"$set": {"new_email": form.new_email.data}})
-        flash(u"Для активации новой эл. почты перейдите по ссылке в отправленном на адрес '%s' письме." % form.new_email.data, "warning")
+        send_confirm_email(form.new_email.data)
+        flash(u"Для завершения изменения почтового адреса, необходимо перейти по ссылке, высланной письмом на новый почтовый адрес.", "warning")
     return render_template("account/change_email.html", title=u"Смена электронной почты", form = form)
 
 @app.route("/test/email/signup/")
