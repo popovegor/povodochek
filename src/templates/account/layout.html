@@ -22,8 +22,10 @@
 
         <li class="nav-header">Мой профиль</li>
 
-        {% for (title, path) in [("Контактная информация", url_for('account_contact'))
-          , ("Сменить пароль", url_for('account_change_password'))] 
+        {% for (title, path) in [
+          ("Контактная информация", url_for('account_contact'))
+          , ("Сменить пароль", url_for('account_change_password'))
+          , ("Сменить эл. почту", url_for('account_change_email'))] 
         %}
         
           {{render_nav_item(title, path)}}

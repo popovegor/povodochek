@@ -13,7 +13,9 @@
 
           {{ form_field(form.username, placeholder="Введите ваше имя", class="input-xlarge") }}
 
-          {{ form_field(form.email, placeholder="Введите эл. почту: your.mail@yandex.ru", class="input-xlarge") }}
+          {{ form_field(form.login, placeholder="Введите логин", class="input-xlarge") }}
+
+          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="input-xlarge") }}
 
           {{ form_field(form.password, placeholder="Введите пароль", class="input-xlarge") }}
 
@@ -36,6 +38,7 @@
 
     povodochek.validate($("form"), {
         username : {required: true}, 
+        login : {required : true},
         email : {required : true , email: true},
         password: {required: true, rangelength: [6, 36]},
         repeat_password : {required: true,  equalTo: "#password"},

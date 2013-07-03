@@ -1,0 +1,47 @@
+ {% extends "layout_base.html" %}
+
+{% block layout %}
+  <div class="container">
+
+    {%if not form %}
+        <fieldset>
+        <legend>{{title}}</legend>
+
+        <a href="#" class="btn" aria-hidden="true" data-dismiss="modal" onclick="window.close();">Закрыть</a>
+      </fieldset>
+    {%else%}
+
+    <div id="send_mail" class="send-mail">
+
+      <form id="contact" method="post" action="{{request.path}}">
+          <fieldset>
+            <legend>Написать письмо пользователю {{seller.get('username')}}</legend>
+             {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+            {{form_field(form.subject,  class="input-xxlarge") }}
+            {{form_field(form.message,  class="input-xxlarge", rows=5) }}
+            {%if seller.get("phone_adv_sms") %}
+              {{form_field(form.sms_alert) }}
+            {%endif%}
+            {{form_field(form.username,  class="input-large") }}
+            {{form_field(form.email,  class="input-large") }}
+            
+
+          </fieldset>
+
+              <br/>
+               
+              <button href="#" class="btn btn-primary" type="submit">Отправить</button>
+              <a href="#" class="btn" aria-hidden="true" data-dismiss="modal" onclick="window.close();">Закрыть</a>
+
+        </form>
+      </div> <!-- send-mail -->
+
+
+      {%endif%}
+
+    </div> <!-- container -->
+
+
+{% endblock %}
+

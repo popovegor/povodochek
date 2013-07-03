@@ -2,22 +2,27 @@
     <label for="{{ field.id }}"><strong>{{ field.label.text }}</strong>
     {%- if field.flags.required -%}
         <!-- <abbr title="Обязательное поле">*</abbr> -->
-          <span class="required">*</span>
+          <sub class="required">*</sub>
     {%- endif %}</label>
-{% endmacro %}
+{%- endmacro -%}
  
 {%- macro form_field_description(field) -%}
     {% if field.description %}
-        <span class="descr">{{ field.description }}</span>
+        <span class="form-field-desc help-block">{{ field.description }}</span>
     {% endif %}
 {%- endmacro -%}
  
 {%- macro form_field_errors(field) -%}
     {% if field.errors %}
+      <ul class="unstyled">
         {%- for error in field.errors -%}
-      <p class="label label-important">{{ error }}
-      </p>
+            <li class="label label-important">{{ error }}
+            </li>
+            {%if loop.index >= 1%}
+              <br>
+            {%endif%}
         {%- endfor -%}
+      </ul>
     {% endif %}
 {%- endmacro -%}
  
@@ -32,7 +37,7 @@
   </div>
 {%- endmacro -%}
  
-{%- macro action_buttons(submit_title, cancel_href, cancel_title="Отменить", submit_class="primary") -%}
+{%- macro action_buttons(submit_title, cancel_href, cancel_title="Отменить", submit_class="success") -%}
 <div class="actions">
   <input type="submit" class="btn btn-{{submit_class}}" value="{{submit_title}}">
   &nbsp;
@@ -42,7 +47,7 @@
 
  
 {%- macro form_field(field) -%}
-  <div id="{{field.id}}_field" class="clearfix {{'error' if field.errors else ''}}">
+  <div id="{{field.id}}_field" class="form-field clearfix {{'error' if field.errors else ''}}">
     {% if field.type == 'HiddenField' %}
         {{ field() }}
     {% else %}

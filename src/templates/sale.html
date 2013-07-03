@@ -4,38 +4,40 @@
 
 <h1>{{header}}</h1>
 
-{%if advs | length > 0 %}
+{%if count > 0 %}
 
 {#
-<p class="muted">Найдено {{advs | length}} {{"объявление" | morph_word(count = advs | length if advs else 0) }} о продаже {{pet | morph_word(["gent", "plur"]) }} {{ breed | morph_word(["gent"]) }} </p>
+<p class="muted">Найдено {{ advs | length }} {{"объявление" | morph_word(count = advs | length if advs else 0) }} о продаже {{pet | morph_word(["gent", "plur"]) }} {{ breed | morph_word(["gent"]) }}</p>
 #}
 
-<p class="muted">Найдено {{advs | length}} {{"объявление" | morph_word(count = advs | length if advs else 0) }}</p>
 {%endif%}
 
 <div class="row-fluid sale">
 
     <!-- ===================== фильтр ====================== -->
-    <div class="span3 well well-small filter">
+    <div class="span3 filter well well-small">
 
           {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
         <form action="{{url_for('sale')}}" method="get" class="">
-            <fieldset style="width:100%">
                 <legend>Фильтр</legend>
+
             {{ form_field(form.pet,  class="input-medium") }}
 
             {{ form_field(form.breed, class="input-medium") }}
 
-            {{ form_field(form.gender,  class="input-medium") }}
+            <div class="hidden-phone">
+                {{ form_field(form.gender,  class="input-medium") }}
+            </div>
 
-            {{ form_field(form.age,  class="input-medium") }}
-
+            <div class="hidden-phone">
+              {{ form_field(form.age,  class="input-medium") }}
+            </div>
 
             {{ form_field(form.city, placeholder="Город", class="span12") }}
 
             <!-- distance -->
-            <div class="row-fluid filter-distance">
+            <div class="row-fluid filter-distance hidden-phone">
               <div class="span12">
                 {{ form_field(form.distance, style="display:none") }}
                 <p class="text-center slider-legend"><small class="pull-left">1</small> <span id="distanceValue">{{form.distance.data}}</span> <small class="pull-right">500</small></p>
@@ -55,20 +57,20 @@
             </div>
           </div>
 
-            <div class="clearfix filter-misc" >
+            <div class="clearfix filter-misc hidden-phone" >
               <strong>Дополнительно</strong>
               {{ form_field(form.photo) }}
             </div>
 
-            </fieldset>
-            <div class="form-actions text-center">
-              <button type="submit" class="btn btn-primary btn-small">Применить</button>
+            
+            <div class="text-left form-actions">
+              <button type="submit" class="btn btn-primary btn-small">Применить</button>&nbsp;
               <a class="btn btn-small" href="{{url_for('sale')}}">Сбросить</a>
             </div>
             
         </form>
 
-    </div>
+    </div> <!-- filter -->
 
 
     <script type="text/javascript">
@@ -198,34 +200,32 @@
 
 
     <!-- ===================== результаты ========================= -->
-    <div class="span9">
+    <div class="span9 advs">
 
-      {%if (advs | length) <= 0 %}
+      {%if count <= 0 %}
 
-      <p class="lead">К сожалению, не найдено ни одного объявления.</p>
+          <p class="text-left advs-empty lead"><small>К сожалению, не найдено ни одного объявления.<small>
+          </p>
 
       {% else %}
 
+          <div class="advs-sort pull-left hidden-phone">
+            <span class="" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
+            {% for (value, name) in form.sort.choices %}
+              {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
+              {% if sort == value %}
+                &nbsp;<abbr title="{{title}}" class="">{{name}}</abbr>
+              {%else%}
+                <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="">{{name}}</a>
+              {%endif%}
+            {% endfor %}
+          </div> <!-- advs-sort -->
 
-      <!-- сортировка -->
-      <p>
-        <span>{{form.sort.label.text}}</span>&nbsp;
-        {% set sort_param = form.sort.name ~ "=" ~ form.sort.data %}
-        {%set clear_url = request.url | replace("&" ~ sort_param, "") | replace(sort_param, "") %}
-        {% for (value, name) in form.sort.choices %}
-          {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
-          {% if sort == value %}
-            <span title="{{title}}" class="label">{{name}}</span></abbr>
-          {%else%}
-            {% set sorted_url = "{0}{1}&{2}".format(clear_url, "?" if "?" not in clear_url else "", form.sort.name ~ "=" ~ value)  %}
-            <a title="{{title}}" href="{{sorted_url}}">{{name}}</a>
-          {%endif%}&nbsp; 
-        {% endfor %}
-      </p>
+           <div class="advs-found muted pull-right hidden-phone"><small>Найдено {{count}} {{"объявление" | morph_word(count = count) }}</small>
+           </div> <!-- advs-found -->
+
 
       <table class="table table-hover">
-
-
 
         {% for adv in advs %}
 
@@ -239,37 +239,29 @@
             
             <div class="text-center photo">
                 
-                {% if adv['photos'][0] %}
-
-                    {% for filename in adv.get("photos") %}
-                        <a href="{{url_for('photo', filename=filename)}}" adv-id="{{adv['_id']}}" style="background-image:url({{url_for('photo', filename=filename)}});{{'display:block' if loop.index == 1 else 'display:hidden'}}" title="Посмотреть фото">
-                          {% if loop.index == 1%}
-                             <div class="photo-count"><small><b>{{adv["photos"] | length }}&nbsp; фото</b></small></div>
-                          {% endif%}
-                        </a>  
-                    {%endfor%}
-              
-                    <script type="text/javascript">
-                        $(function(){
-                            $("a[adv-id='" + "{{adv['_id']}}" + "']").colorbox({rel:"{{adv['_id']}}"});
-                        });
-                    </script>
+                {% set photo = (adv.get('photos') or [])[0]%}
+                {% if photo %}
+                    <a title='{{adv.get("title")}}' href="{{url_for('sale_show', id = adv['_id'])}}" target="_blank" class="photo-img" class="thumbnail">
+                        <img src="{{url_for('thumbnail', filename=photo)}}">
+                       <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
+                    </a>  
                 {% else %}
-                    <img data-src='/static/js/holder.js/130x110/text:Нет фото' alt="{{adv['title']}}">
+                    <img data-src='/static/js/holder.js/150x100/text:Нет фото' alt="{{adv['title']}}">
                 {%endif%}
               
              
             </div>
 
-              <div class="text-center adv-price" title='{{adv.get("price") | format("{0:,}") | replace(","," ")}} {{ "рубль" | morph_word(count=adv.get("price") )}}'>
-                 <span class="price">{{ adv.get("price") | format_price() }} <span class="rur">руб</span></span>
-            </div>    
+              {%set price = (adv.get("price") or "") | int  %}
+              <div class="text-left adv-price" title='Цена: {{price | format("{0:,}") | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
+                 <span class="price">{{ price | format_price() }}&thinsp;<span class="rur">руб</span></span>
+            </div>  
 
         </div>
 
         <div class="media-body">
 
-            <a href="#"><h4 class="media-heading">{{adv.get("title")}}</h4></a>
+            <a href="{{url_for('sale_show', id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'><h4 class="media-heading">{{adv.get("title")}}</h4></a>
             <ul class="unstyled">
               <li class="adv-city">
                     {% set city_id = adv.get("city_id") %}
@@ -285,44 +277,39 @@
                     {%endif%}
 
                 </li>                
-                <li class="adv-breed">
-                    <small><span>Порода:</span>
+                <li class="adv-params hidden-phone">
+                    <small>
                     {% set pet_id = adv.get("pet_id") %}
                     {% if pet_id %}
-                    <b>{{pet_id | pet_name | lower}}</b>
+                      <a title="Вид" href="{{url_for('sale', pet=adv.get('pet_id') | int)}}">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</a>
                     {%endif%}
 
                     {% set breed_id = adv.get("breed_id") %}
                     {% if breed_id %}
-                    {{" > "}}
-                    <b>{{breed_id | breed_name | lower }}</b>
+                   &nbsp;>&nbsp;
+                    <abbr  title="Порода">{{breed_id | breed_name | title }}</abbr>
                     {%endif%}
 
-                    </small>
-                </li>
-                <li class="adv-gender">
-                    <small>
                     {% set gender_id = adv.get("gender_id") %}
                     {% if  gender_id %}
-                    Пол:&nbsp;<b>{{ gender_id | gender_name | lower }}</b>
+                    &nbsp;>&nbsp;
+                    <abbr  title="Пол">{{ gender_id | gender_name | title }}</abbr>
                     {% endif %}
-                  </small>
-                </li>
-                <li class="adv-age">
-                    <small>
-                    {% set age_id = adv.get("age_id") %}
+  
+                     {% set age_id = adv.get("age_id") %}
                     {%if age_id %}
-                    Возраст:&nbsp;<b>{{ age_id | age_name | lower }}</b>
+                    &nbsp;>&nbsp;
+                    <abbr  title="Возраст">{{ age_id | age_name | title }}</abbr>
                     {%endif%}
-                  </small>
+                    
+                    </small>
                 </li>
-                <li class="adv-desc">
+                <li class="adv-desc hidden-phone">
                     {{ adv["desc"] }}
                 </li>
                 
                 <li class="adv-dates">
-                    
-                    <p class="pull-right">
+                    <p class="text-right">
                         <small class="">
                             {% set update_date = adv.get("update_date") 
                             %}
@@ -350,11 +337,53 @@
 
 {% endif %}
 
+  {%- macro pagination(pages, current_page, page_range, paging_class) -%}
+      
+       <div class="pagination {{paging_class}}">
+              {% if pages > 1 %}
+                  <ul>
+
+                    {% set page_range_left = ( (current_page - 1) / page_range ) | int * page_range  + 1 %}
+                    {% set page_range_right = (( ((current_page - 1)  / page_range) | int + 1 ) * page_range ) | min(pages) %}
+
+                    {% if current_page > page_range %}
+                      <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
+                      </li>
+                      <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
+                    {% endif %}
+
+                    
+                    {%for page in range(page_range_left, page_range_right + 1)%}
+                      <li class="{{'disabled' if current_page == page else ''}}">
+                        <a href="{{request.url | change_query(form.page.name, current_page, page)}}">{{page}}</a>
+                      </li>
+                    {%endfor%}
+
+                    {%if  page_range_right < pages  %}
+                      
+                      <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
+                      
+                      <li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
+                      </li>
+                    {%endif%}
+
+                  </ul>
+            {% endif %}
+          </div>
+
+  {%- endmacro -%}
+
+      <!-- desktop -->
+      {{ pagination((count / form.perpage.data) | round(0) | int , form.page.data, 10, paging_class="advs-paging pagination-left  visible-desktop") }}
+      <!-- tablet -->
+      {{ pagination((count / form.perpage.data) | round(0) | int , form.page.data, 5, paging_class="advs-paging pagination-left pagination-large visible-tablet") }}
+       <!-- phone --> 
+      {{ pagination((count / form.perpage.data) | round(0) | int , form.page.data, 3, paging_class="advs-paging pagination-left visible-phone") }}
+
+
     </div>
 
 </div>
-
-
 
 
 {% endblock %} 

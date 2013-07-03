@@ -14,7 +14,7 @@
 
         <form class="form-signin" id="sigin" method="post" action="{{request.path}}" >
 
-          {{ form_field(form.email, class="input-xlarge", placeholder="Email, указанный при регистрации") }}
+          {{ form_field(form.login, class="input-xlarge", placeholder="Логин, указанный при регистрации") }}
 
           {{ form_field(form.password, class="input-xlarge", placeholder="Пароль, указанный при регистрации") }}
 
@@ -41,7 +41,7 @@
     $(function(){
 
       povodochek.validate($("form"), {
-          email : {required : true, email: true }, 
+          login : {required : true}, 
           password : { required: true }
        });
 

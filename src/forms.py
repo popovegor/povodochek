@@ -107,14 +107,29 @@ class ChangePassword(Form):
         [ Required(message=MSG_REQUIRED), EqualTo('new_password', message=u'Пароли не совпадают.')])
 
 
-class ResetPassword(Form):
-    email = TextField(u"Адрес электронной почты", \
-        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)])
+class ChangeEmail(Form):
+    
+    new_email = TextField(u"Новая эл. почта", \
+        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)], \
+        filters = [lambda x : (x or '').lower()])
 
     def validate_email(form, field):
-        user = users().find_one({'email': field.data})
+        print("validate confirm  email %s" % field.data)
+        if users().find_one({'email': field.data}):
+            raise ValidationError(u"Адрес '%s' уже зарегистрирован" % field.data)
+
+    repeat_new_email = TextField(u'Повторить эл. почту', \
+        [ Required(message=MSG_REQUIRED), EqualTo('new_email', message=u'Адреса эл. почты не совпадают')])
+
+class ResetPassword(Form):
+    email_or_login = TextField(u"Электронная почта или Логин", \
+        [Required(message=MSG_REQUIRED)], \
+        filters = [lambda x : (x or '').lower()])
+
+    def validate_email_or_login(form, field):
+        user = users().find_one({'$or': [{'email': field.data}, {'login':field.data}]})
         if not user:
-            raise ValidationError(u"Адрес '%s' не зарегистрирован." % field.data)
+            raise ValidationError(u"Электронная почта или Логин '%s' не зарегистрированы" % field.data)
 
 
 class SaleSearch(Form):
@@ -139,11 +154,14 @@ class SaleSearch(Form):
     photo = BooleanField(u"Только с фото")
 
     # price
-    price_from = IntegerField(u"Цена, тыс руб", default = 0, filters= [lambda x: x * 1000])
-    price_to = IntegerField(u"Цена до", default = 0.1,  filters= [lambda x: x * 1000])
+    price_from = IntegerField(u"Цена, тыс руб", default = 0)
+    price_to = IntegerField(u"Цена до", default = 100)
 
+    sort = SelectField(u"Сортировка", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"Новее")], coerce = int)
 
-    sort = SelectField(u"Сортировка:", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"Новее")], coerce = int)
+    page = IntegerField(u"Страница", default = 1)
+
+    perpage = SelectField(u"Объявлений на стр.", default = 3, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (6, 100)])
 
 class Sale(Form):
 
@@ -161,12 +179,15 @@ class Sale(Form):
 
     # заголовок объявления
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))])
+        # description = Markup(u'Введите заголовок объявления длинной от 10 до 80 символов. <abbr title="Подобные слова не несут никакой полезной информации для покупателей, а только замусоривают страницы и создают дополнительный шум.">Не используйте слова "продать" или "купить"</abbr> и схожие с ними.'))
 
     desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))])
+        # description = Markup(u'При детальном описании объявления, пожалуйста, не дублируйте информацию, для которой отведены отдельные поля, например, пол или возраст, если у вас нет на то веских причин. Также <abbr title="Размешяя свои контактные данные в открытом виде, вы рискуете стать жертвой машенников. Используйте для этих целей специальные поля, которые можно заполнить в своем профиле.">не указывайте ваши персональные данные</abbr>, например, адрес или телефонный номер.'))
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
-    price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))])
+    price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))], \
+        description = Markup(u'Указывайте <abbr title="Указываю реальную цену, вы многократно повышаете свои шансы успешной продажи, так как покупатели проявят больше интереса к вашему объявлению.">достоверную цену</abbr>!'))
 
     city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), check_location])
 
@@ -178,18 +199,27 @@ class Contact(Form):
     username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
 
     city = TextField(u"Город", validators = [check_location])    
+    city_adv_hide = BooleanField(u"Не показывать город в объявлениях")
 
     phone = TextField(u"Телефонный номер")
+    phone_adv_hide = BooleanField(u"Не показывать телефонный номер в объявлениях")
+    phone_adv_sms = BooleanField(Markup(u"Присылать sms-оповещения об отликах на объявления (<i>бесплатно</i>)"))
+
+    skype = TextField(u"Skype")
+    skype_adv_hide = BooleanField(u"Не показывать skype-номер в объявлениях")
+
+
 
 class Activate(Form): 
 
-    email = TextField(u"Адрес электронной почты", \
-        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)])
+    email = TextField(u"Электронная почта", \
+        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)], \
+        filters = [lambda x : (x or '').lower()])
 
     def validate_email(form, field):
         print("validate confirm  email %s" % field.data)
         if not users().find_one({'email': field.data}):
-            raise ValidationError(u"Адрес '%s' не зарегистрирован." % field.data)
+            raise ValidationError(u"Адрес '%s' не зарегистрирован" % field.data)
 
 class Stud(Form):
 
@@ -209,14 +239,9 @@ class Stud(Form):
 
 class SignIn(Form):
 
-    email = TextField(u"Адрес электронной почты", \
-        [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)])
-
-    # def validate_email(form, field):
-    #     print("validate email %s" % field.data)
-    #     print(users().find_one({'email': field.data}))
-    #     if users().find_one({'email': field.data}):
-    #         raise ValidationError(u'Адрес %s занят' % field.data)
+    login = TextField(u"Логин", \
+        [Required(message=MSG_REQUIRED)], \
+        filters = [lambda x : (x or '').lower()])
 
     remember = BooleanField(u"Запомнить меня")
 
@@ -227,14 +252,26 @@ class SignUp(Form):
 
     username = TextField(u"Имя", [Required(message=MSG_REQUIRED)])
 
-    email = TextField(u'Адрес электронной почты', \
+    login = TextField(u"Логин", [Required(message=MSG_REQUIRED)],\
+        filters = [lambda x : (x or '').lower()])
+
+    def validate_login(form, field):
+        print("validate login %s" % field.data)
+        user = users().find_one({'login': field.data})
+        if user:
+            raise ValidationError(u"Логин '%s' занят" % field.data)
+
+
+    email = TextField(u'Email', \
         validators = [Required(message=MSG_REQUIRED),\
-        Email(message=MSG_EMAIL)])
+        Email(message=MSG_EMAIL)], \
+        filters = [lambda x : (x or '').lower()])
 
     def validate_email(form, field):
         print("validate email %s" % field.data)
-        print(users().find_one({'email': field.data}))
-        if users().find_one({'email': field.data}):
+        user = users().find_one({'email': field.data})
+        print(user)
+        if user:
             raise ValidationError(u"Адрес '%s' занят" % field.data)
 
     password = PasswordField(u"Пароль", \
@@ -245,6 +282,24 @@ class SignUp(Form):
         [ Required(message=MSG_REQUIRED), EqualTo('password', message=u'Пароли не совпадают.')])
 
     accept_tos = BooleanField(Markup(u'С <a href="#">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
+
+
+class SendMail(Form):
+    username = TextField(u"Представьтесь", \
+        validators = [Required(message=MSG_REQUIRED)])
+
+    subject = TextField(u"Тема", \
+        default = u"Сообщение от пользователя сайта Поводочек.рф", \
+        validators = [Required(message=MSG_REQUIRED)])
+
+    message = TextAreaField(u"Сообщение")
+
+    email = TextField(u'Ваша электронная почта', \
+        validators = [Required(message=MSG_REQUIRED),\
+        Email(message=MSG_EMAIL)], \
+        filters = [lambda x : (x or '').lower()])
+
+    sms_alert = BooleanField(Markup(u"Отправить автору объявления <abbr title='Получатель письма получет короткое sms-оповещение о новом электронном письме.'>sms-оповещение</abbr> (<i>бесплатно</i>)"))
 
 
 if __name__ == "__main__":

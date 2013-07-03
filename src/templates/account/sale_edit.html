@@ -4,8 +4,8 @@
 
 <p class="muted">Описать тут, как что и где писать кратко.</p>
 
-<div class="row-fluid">
-    <div class="span8">
+<div class="row-fluid sale-edit">
+    <div class="span9">
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
@@ -27,17 +27,17 @@
 
           {{ form_field(form.price, class="input-small") }}
 
-          {{ form_field(form.photos) }}
+          <div style="display:none">
+            {{ form_field(form.photos) }}
+          </div>
 
-          <div class="cleafix">
+          <div class="clearfix photos">
             <label for="uploader">
               <strong>Фотографии</strong>
             </label>
-
+              <abbr class="label label-warning main-photo" title="Главная фотография - это первая по счету фотография, и  именно она будет показана в списке объявлений. Вы можете перетащить любую из загруженных фотографий в эту позицию.">главная фотография</abbr>
               {% include "uploader.html" %}
-        </div>  
-
-        <br>
+          </div>  
 
         <div class="actions">
           <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
@@ -117,7 +117,7 @@
               povodochek.validate($("form"), {
                   pet : {required : true }, 
                   breed: { required: true },
-                  location : {required: true}, 
+                  city : {required: true}, 
                   title: { required: true, rangelength: [10, 80] },
                   desc : { required: true, minlength: 120 },
                   price : { required: true, range: [10, 900000] }, 

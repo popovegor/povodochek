@@ -1,0 +1,32 @@
+{% extends "email/layout.html" %}
+
+
+{%block title%}
+    Пользователь сайта Поводочек отправил Вам сообщение! <span style="color:red">*</span>
+{%endblock%}
+
+
+{% block content %}
+
+        <p>
+            <ul style="list-style:none">   
+                <li style="padding-bottom:10px"><b>От кого</b>: {{username}} <a href="mailto:{{email}}" style="color:#494949;font-weight:normal" target="_blank">&lt;{{email}}&gt;</a></li>
+                <li style="padding-bottom:10px"><b>Кому</b>: {{seller.get('username')}} <a href="mailto:{{seller.get('email')}}" style="color:#494949;font-weight:normal" target="_blank">&lt;{{seller.get('email')}}&gt;</a></li>
+                <li style="padding-bottom:10px"><b>Дата</b>: {{date}}</li>
+                <li style="padding-bottom:10px"><b>Тема</b>: {{subject}}</li>
+                {%if message %}
+                <li style="padding-bottom:10px"><b>Сообщение</b>: {{message}}</li>
+                {%endif%}
+            </ul>
+        </p>
+        <p>
+           Сообщение отправлено с объявления № <a target="_blank" href="{{url_for('sale_show', id = adv.get('_id'), _external =True)}}">{{adv.get('_id') }}</a>.
+        </p>
+
+        
+        <small>
+             <span style="color:red">*</span>&nbsp;Поводочек не несет ответственности за содержание сообщения.
+        </small>
+        
+        
+{% endblock %}

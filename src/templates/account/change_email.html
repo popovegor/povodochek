@@ -1,0 +1,40 @@
+{% extends "account/layout.html" %}
+
+{% block account_content %}
+
+<p class="">После того как вы поменяете адрес электронной почты не забудьте активировать ее, перейдя по ссылке в отправленной на новый алрес письме</p>
+
+<div class="row-fluid">
+    <div class="span12">
+
+         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+        <form action="{{request.path}}" method="POST">
+
+            {{ form_field(form.new_email, class="input-large", placeholder="Введите новую эл. почту") }}
+
+            {{ form_field(form.repeat_new_email, class="input-large", placeholder="Повторите эл. почту") }}
+
+              <button type="submit" class="btn btn-primary" id="save" data-loading-text="Изменяется...">Изменить</button>
+
+
+        </form>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    
+    //validation
+    $(function(){
+      povodochek.validate($("form"), {
+         new_email : {required: true, email: true},
+         repeat_new_email : {required: true, equalTo: "#new_email"}
+       });
+    });
+
+
+</script>
+
+{% endblock%}

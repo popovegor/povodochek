@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+
+{%block breadcrumbs %}
+<ul class="breadcrumb hidden-phone" >
+  <li><a href="{{url_for('index')}}">Главная</a> <span class="divider">/</span></li>
+  <li><a href="{{url_for('sale')}}">Продажа</a> <span class="divider">/</span></li>
+  <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int)}}">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
+  <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int, breed='{0}_{1}'.format(adv.get('pet_id') | int,  adv.get('breed_id') | int ) )}}">{{adv.get('breed_id') | breed_name | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
+  <li class="active">{{adv.get("title")}}</li>
+</ul>
+{%endblock%}
+
+{% block content %}  
+
+<h1>{{header}}</h1>
+
+
+<div class="sale-show row-fluid"> 
+
+
+  {%if adv.get('photos') | length > 0%}
+
+  <div class="left-side span5">    
+
+    <div class="photos">
+
+      {%if adv.get("photos") | length > 1%}
+
+      <div id="carousel" class="flexslider hidden-phone">
+        <ul class="slides">
+          {%for photo in adv.get('photos') %}
+          <li>
+            <img src="{{url_for('thumbnail', filename = photo)}}" />
+          </li>
+          {%endfor%}
+        </ul>
+      </div>
+
+       <p class="text-left"><small>Фотография <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}}</small></p>
+
+      {%endif%}
+
+    
+
+      <div id="slider" class="flexslider">
+        <ul class="slides ">
+          {%for photo in adv.get('photos') %}
+          <li class="text-center photo">
+             <img id="{{'main_photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
+          </li>
+          {%endfor%}
+        </ul>
+      </div>
+
+     
+
+    </div> <!-- photos -->
+
+  </div> <!-- left-side -->
+
+  {%endif%}
+
+  <div class="right-side {{'span7' if adv.get('photos') | length > 0 else 'span12'}}">
+
+      <div class="sale-show-price text-left" title="{{adv.get('price') | format('{0:,}') | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
+        Цена&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;<span>{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
+      </div> <!-- price -->
+    
+
+    <h2 class="adv-title">
+      {{adv.get("title")}}
+    </h2>
+
+
+    <!-- description -->
+    <p class="adv=desc">{{adv.get("desc")  }}</p>
+
+
+    <div class="adv-info">
+      <h4>Детальная информация о {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h4>
+
+      <dl class='dl-horizontal'>
+        <dt class="">Местоположение</dt>
+        <dd>{{adv.get("city_id") | city_region}}</dd>
+
+        <dt class="">Вид</dt>
+        <dd>{{adv.get("pet_id") | pet_name | lower}}</dd>
+
+        <dt class="">Порода</dt>
+        <dd>{{adv.get("breed_id") | breed_name | lower}}</dd>
+
+        <dt class="">Пол</dt>
+        <dd>{{adv.get("gender_id") | gender_name | lower}}</dd>
+
+        <dt class="">Возраст</dt>
+        <dd>{{adv.get("age_id") | age_name | lower}}</dd>
+
+        <dt class="">Цена</dt>
+        <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span></dd>
+
+      </dl>
+    </div> <!-- adv-info -->
+
+    {% if seller %}
+    <h4>Контактная информация</h4>
+    <div class="seller-block row-fluid">  
+  
+      <div class="span8">
+        
+        <dl class='dl-horizontal'>
+          <dt class="">Продавец</dt>
+          <dd>{{seller.get("username")}}</dd>
+
+          {%if seller.get("phone") and seller.get("phone_visible") %}
+          <dt class="">Телефон</dt>
+          <dd>{{seller.get("phone")}}</dd>
+          {%endif%}
+
+          {%if seller.get("phone") %}
+          <dt class="">Телефонный номер</dt>
+          <dd>
+            {% if not seller.get("phone_adv_hide") %}
+              {{seller.get("phone")}}
+            {%else%}
+              <abbr title='Телефонный номер скрыт настройками приватности. Воспользуйтесь кнопкой "Написать письмо".'><small>скрыт</small></abbr>
+            {%endif%}
+             </dd>
+          {%endif%}
+
+           {%if seller.get("skype") %}
+          <dt class="">Skype</dt>
+          <dd>
+            {% if not seller.get("skype_adv_hide") %}
+              {{seller.get("skype")}}
+            {%else%}
+              <abbr title='Skype-номер скрыт настройками приватности. Воспользуйтесь кнопкой "Написать письмо".'><small>скрыт</small></abbr>
+            {%endif%}
+             </dd>
+          {%endif%}
+
+          {%if seller.get("city_id") and not seller.get("city_adv_hide") %}
+          <dt class="">Город</dt>
+          <dd>{{seller.get("city_id") | city_region}}</dd>
+          {%endif%}
+        </dl>   
+      </div>
+
+      <div class="seller-contact text-left span4">
+        <a class="btn btn-info" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+      </div>
+
+    </div>  <!-- seller-block -->
+
+    {%endif%}
+
+  </div> <!-- right-side -->
+
+
+
+</div> <!-- sale-show -->
+
+  <script type="text/javascript">
+  $(window).load(function(){
+    $('#carousel').flexslider({
+      animation: "slide",
+      controlNav: false,
+      animationLoop: false,
+      slideshow: false,
+      itemMargin: 5,
+      itemWidth: 100,
+      asNavFor: '#slider'
+    });
+
+    $('#slider').flexslider({
+      animation: 'fade',
+      controlNav: false,
+      animationLoop: false,
+      slideshow: false,
+      sync: "#carousel",
+      smoothHeight: true,
+      animationSpeed : 400,
+      touch: false, 
+      after: function(slider){
+        $("#currentPhotoNumber").html(slider.currentSlide+1);
+      }
+    });
+
+    $("#slider .flex-prev").click(function(){
+      var slider = $('#slider').data('flexslider');
+      slider.flexslider("prev");
+    });
+
+    $("#slider .flex-next").click(function(){
+      var slider = $('#slider').data('flexslider');
+      slider.flexslider("next");
+    });
+
+
+  });
+  </script>
+
+  {% endblock %} 

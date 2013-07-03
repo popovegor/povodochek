@@ -1,0 +1,294 @@
+html, body {
+    height: 100%;
+
+    .container {
+       h3 {
+        font-size: 20px !important;
+        margin-top:0px !important;
+    }
+    h1 {
+        display: inline-block;
+        margin: 0 0 10px 0 !important;
+        font-size:26px !important;
+    }
+}
+}
+
+#menu {
+    .navbar .navbar-inner {
+        padding-right:0;
+    }
+}
+
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -60px;
+}
+
+#wrap > .container {
+    padding-top: 60px;
+}
+
+@media screen and (max-width: 979px) {
+    #wrap > .container {
+        padding-top: 0px;   
+    }
+}
+
+#footer, #push {
+    height: 60px;
+    clear: both;
+}
+
+
+#breadcrumbs {
+
+}
+
+#indexPetSearch {
+
+    .pet-type {
+        select#petType {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    .pet-breed {
+        select#petBreed {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+
+    .pet-location {
+        input#petLocation {
+            width: 94%;
+            max-width: 287px;
+        }
+    }
+
+    .pet-find {
+        #petFind {
+            margin-top:24px;
+        }
+    }
+}
+
+
+.index-pet-events {
+    margin-top: 2em;
+    .ipe-event {
+        margin-top:15px;
+        overflow: hidden;
+
+        .ipe-date {
+            background-color: #8CC835;
+            color: #ffffff;
+            /*background-color: #eeeeee;*/
+            padding:10px 5px 0px 5px;
+            margin-right: 10px;
+            width:55px;
+            height: 50px;
+            .ipe-number {
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+        .ipe-body {
+            overflow: hidden;
+            .ipe-heading {
+                margin:0 0 5px;
+            }
+        }
+
+    }
+
+}
+
+#indexLastPets {
+    .carousel-inner {
+        img {
+            width:100%;    
+        }
+    } 
+
+    .tabbable {
+        margin-top:1em;
+        ul.nav-tabs {
+            li a {
+                font-size: 14px;
+            }
+        }
+    }
+
+}
+
+@photo-width : 140px;
+
+.required {
+    color:red;
+}
+
+.acount-sale, .sale {
+    .adv {
+        div.photo {
+            position: relative;
+            margin-bottom: 10px;
+            width:140px;
+
+            div.photo-count {
+                 position: absolute;
+                 bottom: 5px;
+                 right: 0px;
+                 width: 80px;
+                 padding:2px 0;
+                 background: #fff;
+                 color: #000;
+                 text-align: center;
+                 /*line-height: 24px;*/
+                 opacity:0.8;
+                 filter:alpha(opacity=8);
+                 z-index: 2;
+                }
+            a {
+                height: 100px;
+                width:@photo-width;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+
+        .adv-dates {
+            margin-top:10px;
+        }
+
+        .adv-price {
+            width:@photo-width;
+            .price {
+                font-size: 24px;
+            }
+        }
+
+        .adv-desc {
+            margin-top:10px;
+        }
+    }
+}
+
+.sale {
+
+    .adv-paging {
+        .adv-paging-title {
+            padding-right: 10px;
+            /*padding-top:5px;*/
+        }
+    }
+
+   .adv {
+        margin-top: 15px !important;
+        .photo-count {
+            visibility: hidden;        
+        }
+
+        .adv-city {
+            margin-bottom: 5px;
+        }
+        .adv-breed {
+            /*margin-top: 5px;*/
+        }
+        .adv-gender {
+            /*margin-top: 2px;*/
+        }
+
+        .adv-age {
+            /*margin-top: 2px;*/
+        }
+    }
+    .adv:hover {
+        .photo-count {
+            visibility: visible;
+        }
+    }
+
+    .filter{
+
+        form {
+            margin-bottom: 0px !important;
+        }
+
+        .noUiSlider {
+           margin-bottom: 25px;
+        }
+
+        .slider-legend {
+            margin-top:5px;
+        }
+
+        .filter-distance {
+            label {
+                margin-bottom: 0px !important;
+            }
+        }
+
+        .filter-price {
+             label {
+                margin-bottom: 0px !important;
+            }
+        }
+
+        .filter-misc {
+            margin-bottom: 10px;
+        }
+
+        .form-actions {
+            margin-bottom: 0px !important;
+            padding-left: 0px !important;
+            padding-right: 0px !important;
+        }
+    }
+}
+
+.rur {
+    line-height: 20px;
+}
+
+.upload-files {
+    .preview, .upload-add {
+
+        height: 110px;
+        width: 130px;
+        margin: 0px 10px 10px 0px !important;
+        float: left;
+
+        /*cursor: move;*/
+        position: relative;
+        a.thumbnail, img {
+            height: 100px;
+            width: 120px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: block;
+        }
+        i {
+            text-decoration: none;
+            white-space: nowrap;
+            text-indent: 100%;
+            position: absolute;
+            cursor: pointer;
+            right: -9px;
+            top: -9px;
+            overflow: hidden;
+        }
+        i:hover {
+            background-color:  rgba(255,0,0,.25);
+        }
+    }
+}
+
+
+

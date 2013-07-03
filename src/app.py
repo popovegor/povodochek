@@ -1,21 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, abort, jsonify, Markup)
+from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, send_file, abort, jsonify, Markup, make_response)
 from flask_login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin, AnonymousUser,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Sale, Test, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_and_region)
+from forms import (SignUp, SignIn, Sale, Test, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_and_region, SendMail, ChangeEmail)
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.son import SON
+from gridfs import GridFS
+from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from werkzeug.utils import secure_filename
 import os
 from uuid import uuid4, uuid1
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+import time
 import re
 from sys import maxint
 
@@ -28,7 +31,9 @@ from flask_mail import (Mail, Message)
 from threading import Thread
 from momentjs import MomentJS
 from pymorphy2 import MorphAnalyzer
-from helpers import num
+from helpers import (num, create_thumbnail, get_thumbnail_filename, resize_image, save_photo, get_photo)
+
+from smsgate import send_sms
 
 morph = MorphAnalyzer()
 
@@ -62,10 +67,15 @@ def ages():
     return mongo().ages
 
 class User(UserMixin):
-    def __init__(self, name, id, active=True):
-        self.name = name
+    def __init__(self, login, id, active=True, username = None, email = None):
+        self.name = login
+        self.username = username
         self.id = id
         self.active = active
+        self.email = email
+
+    def is_signedin(self):
+        return True
 
     def is_active(self):
         return self.active
@@ -73,6 +83,11 @@ class User(UserMixin):
 
 class Anonymous(AnonymousUser):
     name = u"Anonymous"
+    username = u""
+    email = u""
+
+    def is_signedin(self):
+        return False
 
 app = Flask(__name__)
 
@@ -107,7 +122,7 @@ def jinja_date(value):
 app.jinja_env.filters['date'] = jinja_date
 
 def jinja_format_price(value, template=u"{0:,}"):
-    return Markup((template.format(value) if value else u"").replace(u",", u"<span style='letter-spacing:-3px'> </span>"))
+    return Markup((template.format(value) if value else u"").replace(u",", u"&nbsp;"))
 
 app.jinja_env.filters['format_price'] = jinja_format_price
 
@@ -144,7 +159,6 @@ def get_age_name(age_id):
 
 app.jinja_env.filters['age_name'] = get_age_name
 
-
 # todo: add caching layer 
 def get_city_region(city_id):
     city = cities().find_one({"id": num(city_id)}, fields=["city_region"]) if city_id else None
@@ -178,14 +192,13 @@ def morph_word(word, grammemes = None, count = None):
     morphed_word = word
     if word:
         parts = re.findall(u"[а-яА-Я-]+", word, re.U | re.I)
-        for part in filter(lambda x: len(x) > 0, parts):
+        for part in filter(lambda x: len(x) > 2, parts):
             parse = morph.parse(part)
             morphed_part = part
             if grammemes:
                 grammemes = set(grammemes)
                 inflect_word = parse[0].inflect(grammemes) if parse[0] else None
-                if inflect_word:
-                    morphed_part = parse[0].inflect(grammemes).word if parse[0] else part
+                morphed_part = inflect_word.word if inflect_word else part
             elif count >= 0:
                 morphed_part = parse[0].make_agree_with_number(count).word if parse[0] else part
             morphed_part = morph_restore_register(morphed_part, part)
@@ -194,6 +207,37 @@ def morph_word(word, grammemes = None, count = None):
 
 app.jinja_env.filters['morph_word'] = morph_word
 
+
+
+def change_query(url, param, old, new):
+    if url and param and old and new:
+        param_value = "{0}={1}".format(param, old)
+        url_non_param = url.replace("&" + param_value, "").replace(param_value, "")
+        return "{0}{1}&{2}={3}".format(url_non_param, "?" if "?" not in url_non_param else "", param, new)
+    return url
+
+app.jinja_env.filters['change_query'] = change_query
+
+def jinja_max(*args):
+    return max(*args)
+
+app.jinja_env.filters['max'] = jinja_max
+
+def jinja_min(*args):
+    return min(*args)
+
+app.jinja_env.filters['min'] = jinja_min
+
+def jinja_shorten_mongoid(id):
+    return int(time.mktime(id.generation_time.timetuple()))
+
+app.jinja_env.filters['shorten_mongoid'] = jinja_shorten_mongoid
+
+def jinja_utcnow():
+    return datetime.utcnow()
+
+app.jinja_env.globals['utcnow'] = jinja_utcnow
+
 def debug_write(msg):
     print("DEBUG INFO: %s" % msg)
 
@@ -201,7 +245,7 @@ def debug_write(msg):
 def load_user(id):
     # print("user id = %s" % str(id))
     user = users().find_one({'_id':ObjectId(id)})
-    return User(user.get("email"), user.get("_id"), user.get("activated")) if user else Anonymous
+    return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email")  ) if user else Anonymous
 
 @app.route("/")
 def index():
@@ -212,19 +256,19 @@ def index():
 def signin():
     form = SignIn(request.form)
     if request.method == "POST" and form.validate():
-        (email, password, remember) = (form.email.data, form.password.data, form.remember.data)
-        user = users().find_one({'email': email})
+        (login, password, remember) = (form.login.data, form.password.data, form.remember.data)
+        user = users().find_one({'login': login})
         if user and check_password(user.get("pwd_hash"), password):
             if user.get("activated"):
-                if login_user(User(email, user["_id"]), remember=remember):
+                if login_user(User(login, user["_id"]), remember=remember):
                     return redirect(request.args.get("next") or url_for("account_sale"))
                 else:
                     flash(u"Извините, но вы не можете войти.", "error")
             else:
                 print('disactivated')
-                flash(Markup(u"Вы не можете войти на сайт, так регистрация не подтверждена. Проверьте, пожалуйста, эл. почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
+                flash(Markup(u"Вы не можете войти на сайт, так регистрация не подтверждена. Проверьте, пожалуйста, электронную почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
         else:
-            flash(u"Адрес электронной почты или пароль неправильный.", "error")
+            flash(u"Логин или пароль неправильный.", "error")
     return render_template("signin.html", form=form, title=u"Вход на сайт")
 
 @app.route("/ajax/location/prefetch.json", methods = ["GET"])
@@ -234,8 +278,8 @@ def ajax_location_prefetch():
 
 @app.route("/ajax/location/typeahead/", methods = ["GET"])
 def ajax_location_typeahead():
-    print(request.args.get("query"))
-    query = (request.args.get("query") or "").strip()
+    # print(str(request.args.get("query")))
+    query = (request.args.get("query") or u"").strip()
     limit = int(request.args.get("limit") or 8)
     matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
     locations = [ city.get("city_region") \
@@ -269,16 +313,47 @@ def send_activate(email, confirm):
     msg.html = render_template("email/activate.html", confirm = confirm)
     mail.send(msg)
 
-def send_signup(username, email, password, confirm):
+def send_signup(username, login, email, password, confirm):
     msg = Message(u"Регистрация на сайте Поводочек", recipients=[email])
-    msg.html = render_template("email/signup.html", username=username, email = email, password = password, confirm = confirm)
+    msg.html = render_template("email/signup.html", username=username, login = login, email = email, password = password, confirm = confirm)
     mail.send(msg)
 
-def send_reset_password(email, asign, password):
+def send_reset_password(email, login, asign, password):
     msg = Message(u"Сброс пароля для сайта Поводочек", recipients=[email])
-    msg.html = render_template("email/reset_password.html", email = email, password = password, asign = asign)
+    msg.html = render_template("email/reset_password.html", login = login, password = password, asign = asign)
     mail.send(msg)
+
+def send_from_sale(email, username, sale_id, seller, subject, message):
+    adv = sales().find_one(ObjectId(sale_id))
+    if adv and seller and seller.get('email'):
+        msg = Message(subject, recipients=[seller.get('email')])
+        msg.html = render_template("email/from_sale.html", \
+            subject = subject, \
+            message = message, \
+            adv = adv, \
+            seller = seller, \
+            email = email, \
+            username = username, \
+            date = datetime.now().date())
+        mail.send(msg)
+
     
+@app.route("/test/email/from_sale")
+def test_email_from_sale():
+    msg = Message(u"Сообщение от %s сайта Поводочек.рф" % (u'пользователя' if current_user.is_signedin() else u'гостя'), \
+        recipients=["popovegor@gmail.com"])
+    adv = sales().find(limit=1)[0]
+    msg.html = render_template("email/from_sale.html", \
+        subject = u"Сообщение от пользователя сайта Поводочек.рф", \
+        message = u"Некоторое тестовое сообщение.", \
+        adv = adv, \
+        username = u'Егор Попов АТИ', \
+        email = u'popovegor@gmail.com', \
+        seller = users().find_one(ObjectId(adv.get('user'))), \
+        date = datetime.now().date())
+    # mail.send(msg)
+    return msg.html
+
 @app.route("/activate/", defaults={'confirm': None}, methods=["GET", "POST"])
 @app.route("/activate/<confirm>", methods = ["GET", "POST"])
 def activate(confirm):
@@ -306,12 +381,11 @@ def asignin(asign):
     if user:
         users().update({'_id': user["_id"]}, \
             {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], 'asign_pwd_hash': ''} })
-        if login_user(User(user["email"], user["_id"])):
+        if login_user(User(user.get("login"), user.get("_id"))):
             flash(u"Новый пароль был успешно активирован", "success")
             return redirect(url_for("account_change_password"))
     flash(u"Не удалось выполнить автоматический вход на сайт под новым паролем, обратитесь в техподдержку сайта или попробуйте выслать ссылку на смену пароля еще раз.", "error")
     return redirect(url_for("index"))
-
 
 @app.route("/account/change-password/", methods = ["GET", "POST"])
 @login_required
@@ -325,16 +399,27 @@ def account_change_password():
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
+@app.route("/account/change-email/", methods = ["GET", "POST"])
+@login_required
+def account_change_email():
+    form = ChangeEmail(request.form)
+    form.current_user = current_user
+    if request.method == "POST" and form.validate():
+        users().find_and_modify({"_id": ObjectId(current_user.id)}, \
+            {"$set": {"new_email": form.new_email.data}})
+        flash(u"Для активации новой эл. почты перейдите по ссылке в отправленном на адрес '%s' письме." % form.new_email.data, "warning")
+    return render_template("account/change_email.html", title=u"Смена электронной почты", form = form)
+
 @app.route("/test/email/signup/")
 def test_email_signup():
     msg = Message("Регистрация на сайте Поводочек", recipients=["popovegor@gmail.com"])
-    msg.html = render_template("email/signup.html", username=u"Егор", password = u"sdfhk434988", email = u"popovegor@gmail.com", confirm=u"nab4eae954386beb2955e49c1ad50a51e")
+    msg.html = render_template("email/signup.html", username=u"Егор", login = 'popovegor', password = u"sdfhk434988", email = u"popovegor@gmail.com", confirm=u"nab4eae954386beb2955e49c1ad50a51e")
     # mail.send(msg)
     return msg.html
 
 @app.route("/test/email/reset-password/")
 def test_email_reset_password():
-    return render_template("email/reset_password.html", password = u"sdfhk434988", email = u"popovegor@gmail.com", asign=u"nab4eae954386beb2955e49c1ad50a51e")
+    return render_template("email/reset_password.html", password = u"sdfhk434988", login = u"popovegor", asign=u"nab4eae954386beb2955e49c1ad50a51e")
 
 @app.route("/test/email/activate/")
 def test_email_activate():
@@ -345,10 +430,10 @@ def test_email_activate():
 def signup():
     form = SignUp(request.form)
     if request.method == "POST" and form.validate():
-        (email, password, confirm, username) = (form.email.data, form.password.data, str(uuid4()), form.username.data)
-        print(email, password)
-        users().insert({'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
-        send_signup(username, email, password, confirm)
+        (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), form.username.data)
+        print(login, email, password)
+        users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
+        send_signup(username, login, email, password, confirm)
         flash(u"Регистрация почти завершена. Проверьте электронную почту '%s', чтобы подтвердить регистрацию." %email, "success")
         return redirect(url_for('signin'))
     return render_template('signup.html', form=form, title=u"Регистрация")
@@ -357,13 +442,14 @@ def signup():
 def reset_password():
     form = ResetPassword(request.form)
     if request.method == "POST" and form.validate():
-        email = form.email.data
+        email_or_login = form.email_or_login.data
         password = str(hash(str(uuid1())) % 10000000)
         asign = str(uuid4())
-        user = users().find_and_modify({'email': email}, {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
+        user = users().find_and_modify({'$or' : [{'email': email_or_login}, {'login': email_or_login}]}, \
+            {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
         if user:
-            send_reset_password(email, asign, password)
-            flash(u"Ссылка на смену пароля была успешна отправлена на эл. почту '%s'" %email , "success")
+            send_reset_password(user.get('email'), user.get("login"), asign, password)
+            flash(u"Ссылка на смену пароля была успешна отправлена на электронную почту '%s'" %user.get('email') , "success")
     return render_template("reset_password.html", title=u"Сброс пароля", form = form)
 
 @app.route("/signout/")
@@ -382,27 +468,28 @@ def cities_near(city = None, distance = None):
     return cities
 
 
-def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None):
-    add_to_query = lambda k,v: query.update({k:v}) if v else None
-    query = {}
-    add_to_query("pet_id", num(pet_id))
-    add_to_query("gender_id", num(gender_id))
-    add_to_query("age_id", num(age_id))
-    add_to_query("breed_id", num(breed_id))
+def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None, skip = None, limit = None):
+
+    _filter = {}
+    extend_filter = lambda k,v: _filter.update({k:v}) if v else None
+    extend_filter("pet_id", num(pet_id))
+    extend_filter("gender_id", num(gender_id))
+    extend_filter("age_id", num(age_id))
+    extend_filter("breed_id", num(breed_id))
 
     price_form = num(price_from)
     price_to = num(price_to)
     if price_from or price_to:
-        add_to_query("price", \
-            {"$gte" : price_from if price_from else 0,\
+        extend_filter("price", \
+            {"$gte" : price_from if price_from > 0 else 0,\
              "$lt" : price_to if price_to else maxint })
     near_cities = []
     if city and distance:
         near_cities = cities_near(city, distance)
-        add_to_query("city_id", {"$in": [city.get("id") for city, dis in near_cities]})
+        extend_filter("city_id", {"$in": [city.get("id") for city, dis in near_cities]})
 
     if photo:
-        add_to_query("photos", {"$nin": [None, []]})
+        extend_filter("photos", {"$nin": [None, []]})
     sortby = [("update_date", -1)]
     if sort == 1:
         sortby = [("price", -1)]
@@ -410,9 +497,16 @@ def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, cit
         sortby = [("price", 1)]
     else:
         sortby = [("update_date", -1)]
-    print("sale query %s" % query)
-    print("sale sort %s" % sortby)
-    advs = [adv for adv in sales().find(SON(query), sort = sortby)]
+    print("filter %s" % _filter)
+    print("sort %s" % sortby)
+    print(limit)
+    total = sales().count()
+    query = sales().find(SON(_filter),\
+        limit = limit or total,\
+        skip = skip or 0,\
+        sort = sortby)
+    count = query.count()
+    advs = [adv for adv in query]
 
     if near_cities:
         for adv in advs:
@@ -420,18 +514,18 @@ def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, cit
             (near_city, dist) = next( ((city, dist) for city, dist in near_cities if city["id"] == adv_city_id), (None, None))
             adv["distance"] = int(round(dist / 1000, 0))
 
-    return advs
+    return (advs, count, total)
 
 
 def sale_find_header(form):
     # generate title
-    header = u"Купить <small><i class='muted'>(Продают)</i></small> {0}{1}{2}"
-    title = u"Купить {0}{1}: Продажа {2}{1}"
+    header = u"Купить <i class='muted'>(продают)</i> {0}{1}{2}"
+    title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
     if form.pet.data == "1":
-        pet = u"собаку (щенка)"
+        pet = u"собаку/щенка"
     elif form.pet.data == "2":
-        pet = u"кошку (котенка)"
+        pet = u"кошку/котенка"
 
     (pet_id, breed_id) = form.breed.data.split('_') if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
     breed = get_breed_name(breed_id)
@@ -439,34 +533,85 @@ def sale_find_header(form):
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
         breed = u" породы {0}".format(breed).lower()
 
-    return (header.format(pet, breed, u""), title.format(pet, breed, morph_word(pet, {"gent", "plur"}) ), pet, breed) 
+    city = get_city_name(form.city.city_id) if form.city.city_id else u''
+    if city:
+        city = u" в {0}".format(morph_word(city, ["loct", "sing"]) )
+        # if form.distance.data:
+            # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
+
+    return (header.format(pet, breed, city), title.format(pet, breed, morph_word(pet, {"gent", "plur"}), city), pet, breed) 
+
+
+@app.route("/kupit-sobaku/")
+def kupit_sobaku():
+    form = SaleSearch()
+    args = MultiDict([(form.pet.name, 1)] + [(name, value) for name, value in request.args.iteritems()])
+    form = SaleSearch(args)
+    return sale(form)
+
+@app.route("/kupit-koshku/")
+def kupit_koshku():
+    form = SaleSearch()
+    args = MultiDict([(form.pet.name, 2)] + [(name, value) for name, value in request.args.iteritems()])
+    form = SaleSearch(args)
+    return sale(form)
 
 @app.route("/sale/")
-def sale():
-    form = SaleSearch(request.args)
+# @app.route("/prodazha-sobak-koshhek/")
+def sale(sale_search_form = None):
+    form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_and_region(form.city.data)
     form.city.city_id = city["id"] if city else None
     (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
 
     # sort
+    print(form.price_from.data, form.price_to.data)
     session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
     
-    advs = sale_find(pet_id = form.pet.data, \
+    (advs, count, total) = sale_find(pet_id = form.pet.data, \
         breed_id = breed_id,\
         age_id = form.age.data,\
         gender_id = form.gender.data,\
         city = city, \
         distance = form.distance.data, \
         photo = form.photo.data, \
-        price_from = form.price_from.data, \
-        price_to = form.price_to.data if num(form.price_to.data) < 100000 else None,\
-        sort = session.get("sale_sort")
+        price_from = form.price_from.data  * 1000, \
+        price_to = (form.price_to.data if num(form.price_to.data) < 100 else 0) * 1000,\
+        sort = session.get("sale_sort"),
+        skip = (form.page.data - 1) * form.perpage.data, \
+        limit = form.perpage.data
         )
 
     (header, title, pet_name, breed_name) = sale_find_header(form)
 
-    tmpl = render_template("sale.html", header=Markup(header), title=title, form= form, advs = advs, pet = pet_name, breed = breed_name, sort = session.get("sale_sort"))
+    tmpl = render_template("sale.html", header=Markup(header), \
+      title=title, form= form, advs = advs, \
+      pet = pet_name, breed = breed_name, \
+      sort = session.get("sale_sort"), \
+      count = count, total = total )
     return tmpl
+
+
+@app.route('/sale/<id>/')
+def sale_show(id):
+    adv = sales().find_one({'_id': ObjectId(id)}) if id else None
+    name = u"Продам {0} породы {1} в {2}".format( \
+        morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
+        get_breed_name(adv.get("breed_id")).lower(),\
+        morph_word(get_city_name(adv.get("city_id")), {"loct"})
+     )
+    header =  Markup(u"{0} &#8212; {1}".format(name, \
+        u"<abbr class='price' title='Цена'>{0}&nbsp;{1}</abbr>".format(jinja_format_price(adv.get("price")), morph_word(u"рубль", count=adv.get("price"))))) 
+    title = u"{0} - {1}".format(name, \
+        u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
+    seller = users().find_one(ObjectId(adv.get("user")))
+    return render_template("sale_show.html", \
+        header = name,
+        title = title,
+        adv = adv,
+        seller = seller)
+
+
 
 @app.route("/account/")
 @login_required
@@ -507,14 +652,27 @@ def account_contact():
     form = Contact(request.form)
     if request.method == "POST":
         if form.validate():
-            users().update({"_id": current_user.id}, {"$set":\
-                {"username": form.username.data, "city_id": form.city.city_id, "phone": form.phone.data}})
+            users().update({"_id": current_user.id}, {"$set":
+                {"username": form.username.data, \
+                "city_id": form.city.city_id, \
+                "phone": form.phone.data, \
+                "phone_adv_sms" : form.phone_adv_sms.data if form.phone.data else None, \
+                "phone_adv_hide": form.phone_adv_hide.data if form.phone.data else None, \
+                'skype' : form.skype.data, \
+                'skype_adv_hide': form.skype_adv_hide.data if form.skype.data else None, \
+                'city_adv_hide': form.city_adv_hide.data if form.city.data else None}})
             flash(u"Контактная информация обновлена.", "success")
             return redirect(url_for("account_contact"))
     else:
         form.city.data = get_city_and_region(user.get("city_id"))
+        form.city_adv_hide.data = user.get("city_adv_hide")
         form.username.data = user.get("username")
         form.phone.data = user.get("phone") 
+        form.phone_adv_hide.data = user.get("phone_adv_hide")
+        form.phone_adv_sms.data = user.get("phone_adv_sms")
+        form.skype.data = user.get("skype")
+        form.skype_adv_hide.data = user.get("skype_adv_hide")
+
     tmpl = render_template("account/contact.html", title=u"Контактная информация", form = form)
     return tmpl
 
@@ -533,18 +691,25 @@ def account_sale():
         {'user': {'$in' : [str(current_user.id), current_user.id]} },\
         sort = [("update_date", -1)])
 
-    tmpl = render_template("account/sale.html", title=u"Мои объявления о продаже", advs = advs)
+    tmpl = render_template("account/sale.html", \
+        title=u"Мои объявления о продаже", \
+        advs = [dict(adv, **{'active_date': adv.get('update_date') + timedelta(days=14)}) for adv in advs])
     return tmpl
 
 
 def sale_save(form, id = None):
-    photos = []
+    filenames = []
     if form.photos.data:
-        photos = form.photos.data.split(',')
-        photos = filter(lambda x: x and len(x) > 0, photos)
+        filenames = form.photos.data.split(',')
+        filenames = filter(lambda x: x and len(x) > 0, filenames)
+        for filename in filenames:
+            if os.path.exists(photos.path(filename)):
+                with open(photos.path(filename)) as file:
+                    save_photo(mongo(), file)
+
     (pet_id, breed_id) = form.breed.data.split("_")
     now = datetime.utcnow()
-    sale = {'user': str(current_user.id), 'pet_id': num(pet_id), 'breed_id': num(breed_id), 'title':form.title.data, 'desc': form.desc.data, 'photos': photos, 'price': form.price.data, 'gender_id': num(form.gender.data), 'update_date':now, "city_id": form.city.city_id, 'age_id': num(form.age.data)}
+    sale = {'user': str(current_user.id), 'pet_id': num(pet_id), 'breed_id': num(breed_id), 'title':form.title.data, 'desc': form.desc.data, 'photos': filenames, 'price': form.price.data, 'gender_id': num(form.gender.data), 'update_date':now, "city_id": form.city.city_id, 'age_id': num(form.age.data)}
     if id:
         sales().update(
             {'_id': ObjectId(id), 'user': {'$in': [current_user.id, str(current_user.id)]} } 
@@ -553,6 +718,18 @@ def sale_save(form, id = None):
         sale["add_date"] = now
         id = sales().insert(sale)
     return id
+
+@app.route("/account/sale/<id>/extend", methods = ['GET'])
+@login_required
+def account_sale_extend(id):
+    adv = sales().find_one(
+        {'_id': {'$in':[id, ObjectId(id)]}, 
+        'user': {'$in': [current_user.id, str(current_user.id)]}})
+    if adv:
+        sales().update({"_id": adv["_id"]}, {"$set": {"update_date": datetime.utcnow()}})
+        flash(u"Объявление '%s' продлено на две недели." % adv["title"], "success")
+    return redirect(url_for("account_sale"))
+
 
 
 @app.route("/account/sale/<id>/remove", methods = ['GET'])
@@ -585,15 +762,15 @@ def account_sale_edit(id):
             flash(u"Объявление '%s' обновлено." % form.title.data, "success")
             return redirect(url_for("account_sale"))
     else:
-        form.pet.data = str(adv.get("pet_id"))
-        form.breed.data = u"{0}_{1}".format(adv.get("pet_id"), adv.get("breed_id"))
+        form.pet.data = str(num(adv.get("pet_id")))
+        form.breed.data = u"{0}_{1}".format(num(adv.get("pet_id")), num(adv.get("breed_id")))
         form.title.data = adv.get("title")
         form.desc.data = adv.get('desc')
-        form.price.data = adv.get('price')
-        form.gender.data = str(adv.get('gender_id') or '')
+        form.price.data = num(adv.get('price'))
+        form.gender.data = str(num(adv.get('gender_id')) or '')
         form.photos.data = ",".join(adv.get("photos"))
         form.city.data = get_city_and_region(adv.get("city_id"))
-        form.age.data = str(adv.get("age_id"))
+        form.age.data = str(num(adv.get("age_id")))
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление", btn_name = u"Сохранить", adv = adv)
 
 
@@ -608,6 +785,11 @@ def account_sale_add():
         flash(u"Объявление '%s' добавлено." % form.title.data, "success")
         return redirect(url_for('account_sale'))
     return render_template("/account/sale_edit.html", form=form, title=u"Новое объявление", btn_name = u"Добавить")
+
+# @app.route("/sovety/")
+@app.route("/advice/")
+def advice():
+    return ""
 
 @app.route("/ajax/")
 def ajax():
@@ -633,17 +815,64 @@ def ajax():
 @login_required
 def upload():
     file = request.files['file']
-    print(file)
     if file:
         filename = photos.save(file, name=str(uuid4()) + ".")
-        # filename = photos.save(file)
+        filename = resize_image(photos.path(filename))
         return filename
         
+@app.route('/thumbnail/<filename>/')
+def thumbnail(filename):
+    path = photos.path(get_thumbnail_filename(filename))
+    if not os.path.exists(path):  
+        (name, file) = get_photo(mongo(), filename)
+        if name and file:
+            create_thumbnail(file, photos.path(name))
+        else:
+            if os.path.exists(photos.path(filename)):
+                with open(photos.path(filename)) as f:
+                    create_thumbnail(f.read(), photos.path(filename))
 
-@app.route('/photo/<filename>')
+    return send_file(path)
+    
+@app.route('/photo/<filename>/')
 def photo(filename):
-    photo = send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
-    return photo
+    path = photos.path(filename)
+    if not os.path.exists(path):
+        print("file exists")  
+        (name, file) = get_photo(mongo(), filename)
+        if name and file:
+            with open(path, 'w') as f:
+                f.write(file)
+
+    return send_file(path)
+
+@app.route("/mail/sale/<id>/", methods = ["POST", "GET"])
+def mail_sale(id):
+    form = SendMail(request.form)
+    adv = sales().find_one(ObjectId(id))
+    if not adv:
+        abort(404)
+
+    seller = users().find_one(ObjectId(adv.get("user")))
+    if not seller:
+        abort(404)
+
+    if request.method == "POST":
+        if form.validate():
+            send_from_sale(form.email.data, form.username.data, adv.get('_id'), seller, form.subject.data, form.message.data)
+            if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
+                send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
+                    [seller.get('phone')] )
+            return render_template("/mail_sale.html", title = u"Сообщение успешно отправлено")
+    else:
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    return render_template("/mail_sale.html", form = form, seller = seller, title=u"Написать письмо")
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static/img'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/test', methods = ["GET", "POST"])
 def test():
