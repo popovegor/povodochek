@@ -13,7 +13,7 @@
 
     <div id="send_mail" class="send-mail">
 
-      <form id="contact" method="post" action="{{request.path}}">
+      <form id="contact" method="post" action="{{request.url}}">
           <fieldset>
             <legend>Написать письмо пользователю {{seller.get('username')}}</legend>
              {% from "forms.html" import form_field_boolean, form_field, action_buttons %}

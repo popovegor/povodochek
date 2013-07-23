@@ -2,14 +2,14 @@
 
 {% block account_content %}
 
-<p class="">После того как вы поменяете адрес электронной почты не забудьте активировать ее, перейдя по ссылке в отправленном на новый адрес письме.</p>
+<p class="">После того, как вы поменяете адрес электронной почты, не забудьте активировать ее, перейдя по ссылке в отправленном на новый адрес письме.</p>
 
 <div class="row-fluid">
     <div class="span12">
 
          {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-        <form action="{{request.path}}" method="POST">
+        <form action="{{request.url}}" method="POST">
 
             <p class="">
                 <strong>Текущая эл. почта:&nbsp;&nbsp;</strong><span>{{current_user.email}}</span>

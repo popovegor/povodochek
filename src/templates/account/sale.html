@@ -4,15 +4,11 @@
 
 <div class="acount-sale">
 
-    <div class="row-fluid clearfix">
+<p class="span12">На этой странице вы можете управлять своими объявлениями о продаже собак и кошек.</p>
 
-<p class="span8">На этой странице вы можете управлять своими объявлениями о продаже собак и кошек.</p>
-
-<p class="span4">
-    <a href="{{url_for('account_sale_add')}}" class="btn btn-large btn-info"><i class="icon-plus icon-white"></i>&nbsp;Новое объявление</a>
+<p>
+    <a href="{{url_for('account_sale_add')}}" class="btn btn"><i class="icon-plus icon-"></i>&nbsp;Новое объявление</a>
 </p>
-
-</div>
 
     {% for adv in advs %}
 
@@ -87,9 +83,9 @@
                 </li>
                 <li class="adv-actions row-fluid">
                     <p class="span6">
-                        <a class="btn btn-mini btn-primary" href="{{url_for('account_sale_edit', id = adv.get('_id'))}}" title="Редактировать объявление"><i class="icon-edit icon-white"></i><span class="hidden-desktop">&nbsp;&nbsp;Изменить</span></a>
+                        <a class="btn btn-mini btn-primary" href="{{url_for('account_sale_edit', id = adv.get('_id'))}}" title="Редактировать объявление"><i class="icon-edit icon-white"></i><span class="">&nbsp;&nbsp;Изменить</span></a>
                      
-                        <a class="btn btn-mini" target="_blank" href="{{url_for('sale_show', id = adv.get('_id'))}}" title="Просмотреть объявление"><i class="icon-eye-open"></i><span class="hidden-desktop">&nbsp;&nbsp;Просмотр</span></a>
+                        <a class="btn btn-mini" target="_blank" href="{{url_for('sale_show', id = adv.get('_id'))}}" title="Просмотреть объявление"><i class="icon-eye-open"></i><span class="">&nbsp;&nbsp;Просмотр</span></a>
 
                         <a class="btn btn-mini btn-danger" href='{{url_for("account_sale_remove", id = adv["_id"])}}' action="remove" title="Удалить объявление"><i class="icon-trash icon-white"></i><span class="hidden-desktop">&nbsp;&nbsp;Удалить</span></a>
 

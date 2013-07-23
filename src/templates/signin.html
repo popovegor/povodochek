@@ -2,17 +2,18 @@
 
 {% block content %}      
 
-<h1>{{title}}</h1>
+<div class="#signin">
+  <h1>{{title}}</h1>
 
 
-<div class="row-fluid">
+  <div class="row-fluid">
     <div class="span12">
 
-        <p class="">Пожалуйста, авторизуйтесь на сайте, чтобы получить доступ к вашим персональным данным.</p>
+        <p class="">Пожалуйста, авторизуйтесь на сайте, чтобы получить доступ к размещению объявлений и вашим персональным данным.</p>
 
         {% from "forms.html" import form_field_boolean, form_field %}
 
-        <form class="form-signin" id="sigin" method="post" action="{{request.path}}" >
+        <form class="form-signin" id="sigin" method="post" action="{{request.url}}" >
 
           {{ form_field(form.login, class="input-xlarge", placeholder="Логин, указанный при регистрации") }}
 
@@ -23,10 +24,8 @@
         <button class="btn btn-primary" type="submit" data-loading-text="Войти..." id="submit">Войти</button>      
         
       </form>
-<p class="text-left">
-      <a class="" href="{{url_for('reset_password')}}">Напомнить пароль</a>
-    </p>
-    <p class="text-left">
+
+    <p class="lead">
       <a class="" href="{{url_for('signup')}}">Регистрация</a>
     </p>
 
@@ -49,4 +48,8 @@
 
 
 </script>
+
+</div> <!-- signin -->
+
+
 {% endblock %} 

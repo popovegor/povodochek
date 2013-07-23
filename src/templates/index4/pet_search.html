@@ -1,0 +1,71 @@
+<div class="pet-search well">    
+  <h2 class="">Поиск объявлений о продаже породистых собак и кошек</h2>
+
+  <p class="">Найдите питомца интересующей вас породы, местоположению, цене, возрасту и&nbsp;другим параметрами. Выбрав подходящее объявление, вы&nbsp;сможете связаться с&nbsp;продавцом и&nbsp;при желании купить понравившуюся собаку или кошку.</p>
+
+  <form method="get" id="search" class="row-fluid" action="{{url_for('sale')}}">
+
+    {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+    <div class="span3">
+    {{ form_field(pet_search_form.pet, class="") }}
+  </div>
+
+  <div class="span3">
+    {{ form_field(pet_search_form.breed, class="") }}
+  </div>
+
+  <div class="span4">
+    {{ form_field(pet_search_form.city, placeholder = "Местоположение: Москва", class="span12") }}
+  </div>
+
+  <div class="span2 text-right">
+        <button type="submit" class="btn btn-primary span12" id="pet_find"><span class="hidden-tablet">Найти питомца</span><span class="visible-tablet"><i class="icon-white icon-search"></i>&nbsp; Найти</span></button>
+  </div>
+      
+  </form>
+
+</div> <!-- pet-search -->
+
+  <script type="text/javascript">
+
+  $(window).load(function(){
+
+   $("#city").typeahead({
+    minLength: 1,
+    limit: 8,
+    source: function (query, process) {
+      return $.getJSON('/ajax/location/typeahead/',  {limit: 8, query: query}, function (data) { return process(data.items);
+                          }); //getJSON
+                        } //source
+                      }); //typeahead  
+
+   var jq_pet = $("#pet");
+   jq_pet.select2({
+    placeholder:"Тип животного: собака",
+    width: "off",
+    openOnEnter : false,
+    containerCssClass : "span12",
+    allowClear: true
+  });
+
+   var jq_breed = $("#breed");
+   jq_breed.select2({
+    placeholder: "Порода: померанский шпиц",
+    width: "off",
+    containerCssClass : "span12",
+    allowClear: true,
+    openOnEnter : false, 
+    matcher: function(term, text, option) {
+      var pet_id = jq_pet.val();
+      return text.toUpperCase().indexOf(term.toUpperCase())===0 && (!pet_id || option.val().split("_")[0] === pet_id); 
+    }
+  });
+
+   jq_pet.on('change', function(e){
+    jq_breed.select2('val', '');
+  });
+
+ });
+
+  </script>

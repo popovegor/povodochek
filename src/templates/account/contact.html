@@ -9,7 +9,7 @@
 
          {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-        <form action="{{request.path}}" method="POST" id="contact">
+        <form action="{{request.url}}" method="POST" id="contact">
 
             {{ form_field(form.username, class="input-large", placeholder="Введите ваше имя") }}         
 

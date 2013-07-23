@@ -6,10 +6,10 @@
 
 <div class="row-fluid">
     <div class="span12">
-<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление.</p>
+<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже ваших питомцев.</p>
         {% from "forms.html" import form_field_boolean, form_field %}
 
-        <form class="form-signup" method="post" action="{{request.path}}" >
+        <form class="form-signup" method="post" action="{{request.url}}" >
 
           {{ form_field(form.username, placeholder="Введите ваше имя", class="input-xlarge") }}
 
@@ -38,7 +38,7 @@
 
     povodochek.validate($("form"), {
         username : {required: true}, 
-        login : {required : true},
+        login : {required : true, rangelength: [6, 36], _login: true},
         email : {required : true , email: true},
         password: {required: true, rangelength: [6, 36]},
         repeat_password : {required: true,  equalTo: "#password"},

@@ -1,0 +1,62 @@
+<div class="pet-search well well-small">    
+
+  <h3 class="ps-title">Поиск объявлений о продаже</h3>
+  {#<p><small class="muted">Поиск объявлений о продаже кошек и собак, проживающих по всей России.</small></p>#}
+  <form method="get" id="pet_search" class="row-fluid" action="{{url_for('sale')}}">
+
+    {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+    {{ form_field(pet_search_form.pet, class="") }}
+
+    {{ form_field(pet_search_form.breed, class="") }}
+
+    {{ form_field(pet_search_form.city, placeholder = "Введите город", class="span12") }}
+
+      
+      <button type="submit" class="btn btn-primary" id="pet_find">Найти питомца</button>
+    
+
+  </form>
+
+</div> <!-- pet-search -->
+
+  <script type="text/javascript">
+
+  $(window).load(function(){
+
+   $("#city").typeahead({
+    minLength: 1,
+    limit: 8,
+    source: function (query, process) {
+      return $.getJSON('/ajax/location/typeahead/',  {limit: 8, query: query}, function (data) { return process(data.items);
+                          }); //getJSON
+                        } //source
+                      }); //typeahead  
+
+   var jq_pet = $("#pet");
+   jq_pet.select2({
+    placeholder:"Выберите вид",
+    width: "off",
+    containerCssClass : "span12",
+    allowClear: true
+  });
+
+   var jq_breed = $("#breed");
+   jq_breed.select2({
+    placeholder: "Выберите породу",
+    width: "off",
+    containerCssClass : "span12",
+    allowClear: true,
+    matcher: function(term, text, option) {
+      var pet_id = jq_pet.val();
+      return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
+    }
+  });
+
+   jq_pet.on('change', function(e){
+    jq_breed.select2('val', '');
+  });
+
+ });
+
+  </script>

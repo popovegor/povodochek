@@ -22,6 +22,7 @@ import time
 import re
 import base64
 from sys import maxint
+# import cities, ages, breeds, genders, pets
 
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
                               UploadNotAllowed)
@@ -32,7 +33,7 @@ from flask_mail import (Mail, Message)
 from threading import Thread
 from momentjs import MomentJS
 from pymorphy2 import MorphAnalyzer
-from helpers import (num, create_thumbnail, get_thumbnail_filename, resize_image, save_photo, get_photo)
+from helpers import (num, create_thumbnail, get_thumbnail_filename, resize_image, save_photo, get_photo, get_photo_size, qoute_rus)
 
 from smsgate import send_sms
 
@@ -42,33 +43,32 @@ morph = MorphAnalyzer()
 
 photos = UploadSet('photos', IMAGES)
 
-
-def mongo():
-    return MongoClient().povodochek
+db = MongoClient()['povodochek']
 
 def users():
-    return mongo().users
+    return db.users
 
 def sales():
-    return mongo().sales
+    return db.sales
 
 def pets():
-    return mongo().pets
+    return db.pets
 
 def breeds():
-    return mongo().breeds
+    return db.breeds
 
 def genders():
-    return mongo().genders
+    return db.genders
 
 def cities():
-    return mongo().cities
+    return db.cities
+    # return cities.cities
 
 def ages():
-    return mongo().ages
+    return db.ages
 
 class User(UserMixin):
-    def __init__(self, login, id, active=True, username = None, email = None, new_email = None):
+    def __init__(self, login, id, active = True, username = None, email = None, new_email = None):
         self.name = login
         self.username = username
         self.id = id
@@ -76,11 +76,11 @@ class User(UserMixin):
         self.email = email
         self.new_email = new_email
 
-    def is_signedin(self):
+    def is_signed(self):
         return True
 
     def is_active(self):
-        return self.active
+        return True
 
 
 class Anonymous(AnonymousUser):
@@ -88,7 +88,7 @@ class Anonymous(AnonymousUser):
     username = u""
     email = u""
 
-    def is_signedin(self):
+    def is_signed(self):
         return False
 
 app = Flask(__name__)
@@ -251,26 +251,30 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    tmpl = render_template('index.html')
+    advs = get_sales_for_index(0, 20)
+    tmpl = render_template('index4.html', \
+        pet_search_form = SaleSearch(), \
+        title = u"Продажа породистых собак и кошек", advs = [adv for adv in advs])
     return tmpl
 
 @app.route("/signin/", methods = ["POST", "GET"])
 def signin():
     form = SignIn(request.form)
+    form.password.description = Markup(u"<a class='' href='%s'>Напомнить пароль</a>" % (url_for("reset_password")))
     if request.method == "POST" and form.validate():
         (login, password, remember) = (form.login.data, form.password.data, form.remember.data)
         user = users().find_one({'login': login})
         if user and check_password(user.get("pwd_hash"), password):
-            if user.get("activated"):
+            if True or user.get("activated"):
                 if login_user(User(login, user["_id"]), remember=remember):
                     return redirect(request.args.get("next") or url_for("account_sale"))
                 else:
                     flash(u"Извините, но вы не можете войти.", "error")
             else:
                 print('disactivated')
-                flash(Markup(u"Вы не можете войти на сайт, так регистрация не подтверждена. Проверьте, пожалуйста, электронную почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
+                flash(Markup(u"Вы не можете войти на сайт, так как регистрация не подтверждена. Проверьте, пожалуйста, электронную почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
         else:
-            flash(u"Логин или пароль неправильный.", "error")
+            flash(u"Неправильный логин или пароль.", "error")
     return render_template("signin.html", form=form, title=u"Вход на сайт")
 
 @app.route("/ajax/location/prefetch.json", methods = ["GET"])
@@ -286,7 +290,34 @@ def ajax_location_typeahead():
     matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
     locations = [ city.get("city_region") \
         for city in cities().find({'city_region': {"$regex": matcher}}, limit=limit, fields=["city_region"])]
-    return jsonify(items = locations )     
+    return jsonify(items = locations )    
+
+
+def get_sales_for_index(skip, limit = 50, pet_id = None):
+    query = {"photos": {"$nin": [None, []]} }
+    if pet_id:
+        query["pet_id"] = pet_id
+    advs = [{"src":url_for('photo', \
+            filename = adv.get('photos')[0], width= 300), \
+        'url' : url_for('sale_show', id = adv.get('_id')), \
+        't' : adv.get('title'), \
+        'id': str(adv.get('_id')),
+        's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
+        for adv in sales().find(
+            query, \
+            skip = skip, \
+            fields = ["_id", "photos", "title"], \
+            limit = limit, \
+            sort = [('update_date', -1)]) ]
+    return advs
+
+
+@app.route("/ajax/sales/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":30, "pet": None, 'skip': 0})
+@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":30, "pet": None})
+@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
+def ajax_sales_showmore(skip, limit, pet):
+    advs = get_sales_for_index(skip, limit = limit, pet_id = pet)
+    return jsonify(advs = advs)
 
 @app.route("/test/location/", methods = ["GET"])
 def test_location():
@@ -333,7 +364,7 @@ def send_reset_password(email, login, asign, password):
 def send_from_sale(email, username, sale_id, seller, subject, message):
     adv = sales().find_one(ObjectId(sale_id))
     if adv and seller and seller.get('email'):
-        msg = Message(subject, recipients=[seller.get('email')])
+        msg = Message(subject, recipients=[seller.get('email')], cc = [email])
         msg.html = render_template("email/from_sale.html", \
             subject = subject, \
             message = message, \
@@ -347,11 +378,11 @@ def send_from_sale(email, username, sale_id, seller, subject, message):
     
 @app.route("/test/email/from_sale")
 def test_email_from_sale():
-    msg = Message(u"Сообщение от %s сайта Поводочек.рф" % (u'пользователя' if current_user.is_signedin() else u'гостя'), \
+    msg = Message(u"Сообщение от %s сайта Поводочек" % (u'пользователя' if current_user.is_signed() else u'гостя'), \
         recipients=["popovegor@gmail.com"])
     adv = sales().find(limit=1)[0]
     msg.html = render_template("email/from_sale.html", \
-        subject = u"Сообщение от пользователя сайта Поводочек.рф", \
+        subject = u"Сообщение от пользователя сайта Поводочек", \
         message = u"Некоторое тестовое сообщение.", \
         adv = adv, \
         username = u'Егор Попов АТИ', \
@@ -373,7 +404,7 @@ def activate(confirm):
                 new_confirm = str(uuid4()) 
                 users().update({'_id': user['_id']}, {"$set": {"confirm": new_confirm}})
                 send_activate(email, new_confirm)
-                flash(u"Ссылка на активацию регистрации успешно отправлена. Проверьте электронную почту '%s', чтобы подтвердить регистрацию." %email, "success")
+                flash(u"Ссылка на активацию регистрации успешно отправлена. Проверьте электронную почту '%s', чтобы подтвердить регистрацию." %email, "info")
         return render_template("activate.html", form = form, title = u"Активация регистрации")
     else:
         user = users().find_one({'confirm': confirm})
@@ -389,7 +420,7 @@ def asignin(asign):
         users().update({'_id': user["_id"]}, \
             {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], 'asign_pwd_hash': ''} })
         if login_user(User(user.get("login"), user.get("_id"))):
-            flash(u"Новый пароль был успешно активирован", "success")
+            flash(u"Новый пароль был успешно активирован", "info")
             return redirect(url_for("account_change_password"))
     flash(u"Не удалось выполнить автоматический вход на сайт под новым паролем, обратитесь в техподдержку сайта или попробуйте выслать ссылку на смену пароля еще раз.", "error")
     return redirect(url_for("index"))
@@ -402,7 +433,7 @@ def account_change_password():
     if request.method == "POST" and form.validate():
         users().find_and_modify({"_id": ObjectId(current_user.id)}, \
             {"$set": {"pwd_hash": hash_password(form.new_password.data)}})
-        flash(u"Пароль успешно изменен.", "success")
+        flash(u"Пароль успешно изменен.", "info")
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
@@ -412,7 +443,7 @@ def account_confirm_email(base64_email):
     new_email = base64.b64decode(base64_email)
     if new_email and current_user.new_email == new_email:
         users().update({"_id": ObjectId(current_user.id)}, {"$set": {'new_email': None, "email": new_email}})
-        flash(u"Новый почтовый адрес подтвержден.", "success")
+        flash(u"Новый почтовый адрес подтвержден.", "info")
     else:
         flash(u"Новый почтовый адрес не удалось подтвердить!", "error")
     return redirect(url_for('account_change_email'))
@@ -452,10 +483,14 @@ def signup():
     if request.method == "POST" and form.validate():
         (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), form.username.data)
         print(login, email, password)
-        users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
+        user_id = users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
         send_signup(username, login, email, password, confirm)
-        flash(u"Регистрация почти завершена. Проверьте электронную почту '%s', чтобы подтвердить регистрацию." %email, "success")
-        return redirect(url_for('signin'))
+        flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
+        if login_user(User(login, user_id), remember = True):
+            print(login)
+            return redirect(request.args.get('next') or url_for('account_contact'))
+        else:
+            return redirect(url_for('signin'))
     return render_template('signup.html', form=form, title=u"Регистрация")
 
 @app.route("/reset-password/", methods = ["GET", "POST"])
@@ -469,21 +504,22 @@ def reset_password():
             {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
         if user:
             send_reset_password(user.get('email'), user.get("login"), asign, password)
-            flash(u"Ссылка на смену пароля была успешна отправлена на электронную почту '%s'" %user.get('email') , "success")
+            flash(u"Ссылка на смену пароля была успешна отправлена на электронную почту '%s'" %user.get('email') , "info")
     return render_template("reset_password.html", title=u"Сброс пароля", form = form)
 
 @app.route("/signout/")
 @login_required
 def signout():
     logout_user()
-    return redirect(url_for("index"))
+    url = request.args.get("url")
+    return redirect( url if url else url_for('index'))
 
 
 def cities_near(city = None, distance = None):
     cities = []
     if city and distance and city.get("location"):
         location = city.get("location")
-        geoNear = mongo().command(SON([("geoNear",  "cities"), ("near", location) ,( "spherical", True ), ("maxDistance", distance * 1000), ("limit", 5000)]))
+        geoNear = db.command(SON([("geoNear",  "cities"), ("near", location) ,( "spherical", True ), ("maxDistance", distance * 1000), ("limit", 5000)]))
         cities = [(geo["obj"], geo["dis"]) for geo in geoNear.get("results")]
     return cities
 
@@ -539,19 +575,20 @@ def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, cit
 
 def sale_find_header(form):
     # generate title
-    header = u"Купить <i class='muted'>(продают)</i> {0}{1}{2}"
+    header = u"Купить <span class='muted'>(продают)</span> {0}{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
-    if form.pet.data == "1":
+    (pet_id, breed_id) = form.breed.data.split('_') if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
+
+    if (pet_id or form.pet.data) == "1":
         pet = u"собаку/щенка"
-    elif form.pet.data == "2":
+    elif (pet_id or form.pet.data) == "2":
         pet = u"кошку/котенка"
 
-    (pet_id, breed_id) = form.breed.data.split('_') if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
     breed = get_breed_name(breed_id)
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed = u" породы {0}".format(breed).lower()
+        breed = Markup(u" породы {0}".format(breed).lower())
 
     city = get_city_name(form.city.city_id) if form.city.city_id else u''
     if city:
@@ -576,8 +613,11 @@ def kupit_koshku():
     form = SaleSearch(args)
     return sale(form)
 
+@app.route("/kupit-sobaku-koshku/")
+def kupit_sobaku_koshku():
+    return sale()
+
 @app.route("/sale/")
-# @app.route("/prodazha-sobak-koshhek/")
 def sale(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_and_region(form.city.data)
@@ -588,10 +628,10 @@ def sale(sale_search_form = None):
     print(form.price_from.data, form.price_to.data)
     session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
     
-    (advs, count, total) = sale_find(pet_id = form.pet.data, \
-        breed_id = breed_id,\
-        age_id = form.age.data,\
-        gender_id = form.gender.data,\
+    (advs, count, total) = sale_find(pet_id = pet_id or form.pet.data, \
+        breed_id = breed_id, \
+        age_id = form.age.data, \
+        gender_id = form.gender.data, \
         city = city, \
         distance = form.distance.data, \
         photo = form.photo.data, \
@@ -681,7 +721,7 @@ def account_contact():
                 'skype' : form.skype.data, \
                 'skype_adv_hide': form.skype_adv_hide.data if form.skype.data else None, \
                 'city_adv_hide': form.city_adv_hide.data if form.city.data else None}})
-            flash(u"Контактная информация обновлена.", "success")
+            flash(u"Контактная информация обновлена.", "info")
             return redirect(url_for("account_contact"))
     else:
         form.city.data = get_city_and_region(user.get("city_id"))
@@ -725,7 +765,7 @@ def sale_save(form, id = None):
         for filename in filenames:
             if os.path.exists(photos.path(filename)):
                 with open(photos.path(filename)) as file:
-                    save_photo(mongo(), file)
+                    save_photo(db, file)
 
     (pet_id, breed_id) = form.breed.data.split("_")
     now = datetime.utcnow()
@@ -747,7 +787,7 @@ def account_sale_extend(id):
         'user': {'$in': [current_user.id, str(current_user.id)]}})
     if adv:
         sales().update({"_id": adv["_id"]}, {"$set": {"update_date": datetime.utcnow()}})
-        flash(u"Объявление '%s' продлено на две недели." % adv["title"], "success")
+        flash(u"Объявление '%s' продлено на две недели." % adv["title"], "info")
     return redirect(url_for("account_sale"))
 
 
@@ -760,7 +800,7 @@ def account_sale_remove(id):
         'user': {'$in': [current_user.id, str(current_user.id)]}})
     if adv:
         # sales().remove({"_id": adv["_id"]  })
-        flash(u"Объявление '%s' удалено." % adv["title"], "success")
+        flash(u"Объявление '%s' удалено." % adv["title"], "info")
     return redirect(url_for("account_sale"))
     
 
@@ -779,7 +819,7 @@ def account_sale_edit(id):
         if form.validate():
             print(form.city.city_id)
             sale_save(form, id)
-            flash(u"Объявление '%s' обновлено." % form.title.data, "success")
+            flash(u"Объявление '%s' обновлено." % form.title.data, "info")
             return redirect(url_for("account_sale"))
     else:
         form.pet.data = str(num(adv.get("pet_id")))
@@ -791,7 +831,7 @@ def account_sale_edit(id):
         form.photos.data = ",".join(adv.get("photos"))
         form.city.data = get_city_and_region(adv.get("city_id"))
         form.age.data = str(num(adv.get("age_id")))
-    return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление", btn_name = u"Сохранить", adv = adv)
+    return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
 
 @app.route("/account/sale/add/", methods = ['GET', 'POST'])
@@ -802,9 +842,9 @@ def account_sale_add():
         print(request.form)
         (pet, breed) = form.breed.data.split('_')
         id = sale_save(form)
-        flash(u"Объявление '%s' добавлено." % form.title.data, "success")
+        flash(u"Объявление '%s' добавлено." % form.title.data, "info")
         return redirect(url_for('account_sale'))
-    return render_template("/account/sale_edit.html", form=form, title=u"Новое объявление", btn_name = u"Добавить")
+    return render_template("/account/sale_edit.html", form=form, title=u"Новое объявление о продаже", btn_name = u"Добавить")
 
 # @app.route("/sovety/")
 @app.route("/advice/")
@@ -822,7 +862,7 @@ def ajax():
 #     if request.method == "POST" and form.validate():
 #         print(request.form)
 #         id = sales().insert({'user': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'ps': form.photos.data.split(",")})
-#         flash(u"Объявление %s добавлено." % str(id), "success")
+#         flash(u"Объявление %s добавлено." % str(id), "info")
 #         return redirect(url_for('account_sale'))
 #     return render_template("/account/sale_adv.html", form=form, title=u"Новое объявление")
 
@@ -837,14 +877,14 @@ def upload():
     file = request.files['file']
     if file:
         filename = photos.save(file, name=str(uuid4()) + ".")
-        filename = resize_image(photos.path(filename))
+        # filename = resize_image(photos.path(filename), height = 400)
         return filename
         
 @app.route('/thumbnail/<filename>/')
 def thumbnail(filename):
     path = photos.path(get_thumbnail_filename(filename))
     if not os.path.exists(path):  
-        (name, file) = get_photo(mongo(), filename)
+        (name, file) = get_photo(db, filename)
         if name and file:
             create_thumbnail(file, photos.path(name))
         else:
@@ -854,15 +894,26 @@ def thumbnail(filename):
 
     return send_file(path)
     
-@app.route('/photo/<filename>/')
-def photo(filename):
-    path = photos.path(filename)
+@app.route('/photo/<filename>/', defaults = {'width': None})
+@app.route('/photo/<filename>/<int:width>/')
+def photo(filename, width):
+    if width:
+        (name, ext) = os.path.splitext(filename)
+        path = photos.path(name + str(width) + ext)
+    else:
+        path = photos.path(filename) 
     if not os.path.exists(path):
-        print("file exists")  
-        (name, file) = get_photo(mongo(), filename)
-        if name and file:
-            with open(path, 'w') as f:
-                f.write(file)
+        try:
+            (name, file) = get_photo(db, filename)
+            if name and file:
+                with open(path, 'w') as f:
+                    f.write(file)
+            if width:
+                resize_image(path, width = width)    
+        except Exception, e:
+            print(e)
+            os.remove(path)
+        
 
     return send_file(path)
 

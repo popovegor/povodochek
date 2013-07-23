@@ -1,0 +1,25 @@
+<div class="pet-post">
+		<a class="span12 btn btn-large btn-danger" id="pet_post" href="{{'#signed' if not current_user.is_signed() else url_for('account_sale_add') }}" {{'data-toggle=modal data-target=#signed' if not current_user.is_signed()}}><span class="hidden-tablet">Подать объявление</span><span class="visible-tablet"> <i class="icon-plus icon-white"></i> Oбъявление</span></a>
+</div> <!-- pet-post -->
+
+
+{% if not current_user.is_signed() %}
+
+	<div id="signed" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">Разместите свое объявление</h3>
+	  </div>
+	  <div class="modal-body">
+	    <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки необходимо войти на сайт или зарегистрироваться.</p>
+	    <a class="btn btn-link btn-large" href="{{url_for('signin', next=url_for('account_sale_add') )}}">Войти</a> <a class="btn btn-link btn-large" href="{{url_for('signup')}}">Зарегистрироваться</a>
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+	  </div>
+	</div>
+
+{%endif%}
+
+
+

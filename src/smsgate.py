@@ -22,4 +22,4 @@ if __name__ == "__main__":
     # api = littlesms.Api("acc-63c6f51f", "MYTKiNP5")
     api = littlesms.Api("popovegor@gmail.com", "76IjzV")
     print(api.balance())
-    print(send_sms(u"Привет от поводочек.рф!", [u"+7(921)7963651"]))
+    print(send_sms(u"Привет от Поводочек!", [u"+7(921)7963651"]))

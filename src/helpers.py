@@ -7,6 +7,7 @@ from pymongo import MongoClient
 import gridfs
 import sys
 import StringIO
+from flask import (Markup)
 
 
 def num(value, default = None):
@@ -18,21 +19,31 @@ def num(value, default = None):
         return int(value)
     return default
 
+def qoute_rus(msg):
+    return Markup(u"&#8222;%s&#8220;" % msg)
+
 def get_thumbnail_filename(filename):
     return os.path.basename(os.path.splitext(filename)[0] + "_preview.png")
 
-def resize_image(filename):
-    size =  (600, 400) #width, height
-    baseheight = 400
+def calc_image_size(img, height = None, width = None):
+    if height:
+        hpercent = (height / float(img.size[1]))
+        wsize = int((float(img.size[0]) * float(hpercent)))
+        return (wsize, height)
+    elif width:
+        wpercent = (width / float(img.size[0]))
+        hsize = int((float(img.size[1]) * float(wpercent)))
+        return (width, hsize)
+
+
+def resize_image(filename, height = None, width = None):
     print(filename)
     # out_filename = os.path.splitext(filename)[0] + ".jpeg"
     (infile, img) = (None, None)
     try:
         img = Image.open(filename)
-        hpercent = (baseheight / float(img.size[1]))
-        wsize = int((float(img.size[0]) * float(hpercent)))
-        img = img.resize((wsize, baseheight), Image.ANTIALIAS)
-        # img.thumbnail(size, Image.ANTIALIAS)
+        (w,h) = calc_image_size(img, height, width)
+        img = img.resize((w, h), Image.ANTIALIAS)
         img.save(filename, "JPEG")
     except IOError as e:
         print("error: cannot resize image")
@@ -80,6 +91,24 @@ def save_photo(mongo, file):
         return fs.put(file.read(), filename = os.path.basename(file.name))
     except e:
         print(e)
+    
+def get_photo_size(mongo, filename, height = None, width = None):
+    (buf, file, im) = None, None, None
+    try:
+        (name, file)  = get_photo(mongo, filename)
+        buf = StringIO.StringIO()
+        buf.write(file)
+        buf.seek(0)
+        im = Image.open(buf)
+        (w,h) = calc_image_size(im, height, width)
+        return {'w': w, 'h':h}
+    except Exception, e:
+        print(e)
+        raise e
+    finally:
+        del im
+        del file
+        del buf
     
 
 

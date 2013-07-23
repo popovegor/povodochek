@@ -2,7 +2,6 @@
 
 {% block content %}  
 
-<h1>{{header}}</h1>
 
 {%if count > 0 %}
 
@@ -12,7 +11,17 @@
 
 {%endif%}
 
-<div class="row-fluid sale">
+<div class="pet-sale">
+
+  <div class="pet-post clearfix row-fluid">
+      <div class="span9"><h1>{{header}}</h1>
+      </div>
+      <div class="span3">
+        {%include "pet_post_button.html" %}
+      </div>
+  </div> <!-- pet-post -->
+
+<div class="row-fluid pet-sale-grid">
 
     <!-- ===================== фильтр ====================== -->
     <div class="span3 filter well well-small">
@@ -46,7 +55,7 @@
           </div>
 
           <!-- price -->
-           <div class="row-fluid filter-price">
+           <div class="row-fluid filter-price hidden-phone">
               <div class="span12">
                 {{ form_field(form.price_from, style="display:none") }}
                 <div style="display:none">
@@ -100,13 +109,13 @@
             if(from === 0) {
               price_html = "любая"
             } else {
-               price_html = "<small><b>более</b></small><b> " + $("#price_from").val() + "</b><small> тыс руб<small>"
+               price_html = "<small><b>более</b></small><b> " + $("#price_from").val() + "</b><small> тыс руб</small>"
             }
           } else {
             if(from === 0) {
-              price_html = "<small><b>менее</b> </small><b>" + $("#price_to").val() + "</b><small> тыс руб<small>"
+              price_html = "<small><b>менее</b> </small><b>" + $("#price_to").val() + "</b><small> тыс руб</small>"
             } else {
-              price_html = "<b>" + $("#price_from").val() + "-" + $("#price_to").val() + "</b><small> тыс руб<small>"
+              price_html = "<b>" + $("#price_from").val() + "-" + $("#price_to").val() + "</b><small> тыс руб</small>"
             }
           }
           $("#priceValue").html(price_html);
@@ -148,7 +157,7 @@
 
               var jq_pet = $("#pet");
               jq_pet.select2({
-                placeholder:"Выберите вид",
+                placeholder:"Выберите тип",
                 width: "off",
                 containerCssClass : "span12",
                 allowClear: true
@@ -162,7 +171,7 @@
                 allowClear: true,
                 matcher: function(term, text, option) {
                   var pet_id = jq_pet.val();
-                  return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
+                  return text.toUpperCase().indexOf(term.toUpperCase())===0 && (!pet_id || option.val().split("_")[0] === pet_id); 
                   }
                });
 
@@ -183,7 +192,8 @@
                 placeholder: "Выберите возраст",
                 width: "off",
                 containerCssClass: "span12",
-                allowClear: true
+                allowClear: true,
+                openOnEnter : false,
               });
 
                var jq_perpage = $("#perpage");
@@ -204,7 +214,7 @@
 
       {%if count <= 0 %}
 
-          <p class="text-left advs-empty lead"><small>К сожалению, не найдено ни одного объявления.<small>
+          <p class="text-left advs-empty lead"><small>К сожалению, не найдено ни одного объявления.</small>
           </p>
 
       {% else %}
@@ -214,7 +224,7 @@
             {% for (value, name) in form.sort.choices %}
               {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
               {% if sort == value %}
-                &nbsp;<abbr title="{{title}}" class="">{{name}}</abbr>
+                &nbsp;<small title="{{title}}" class="badge">{{name}}</small>
               {%else%}
                 <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="">{{name}}</a>
               {%endif%}
@@ -241,7 +251,7 @@
                 
                 {% set photo = (adv.get('photos') or [])[0]%}
                 {% if photo %}
-                    <a title='{{adv.get("title")}}' href="{{url_for('sale_show', id = adv['_id'])}}" target="_blank" class="photo-img" class="thumbnail">
+                    <a title='{{adv.get("title")}}' href="{{url_for('sale_show', id = adv['_id'])}}" target="_blank" class="photo-img thumbnail">
                         <img src="{{url_for('thumbnail', filename=photo)}}">
                        <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                     </a>  
@@ -267,9 +277,9 @@
                     {% set city_id = adv.get("city_id") %}
 
                     {% if city_id %}
-                    <i class="icon-map-marker" title="Местоположение"></i><span>&nbsp;<b title="Местоположение">{{ city_id | city_region }}</b>
+                    {#<i class="icon-map-marker" title="Местоположение"></i>&nbsp;#}<span><b title="Местоположение">{{ city_id | city_region }}</b>
 
-                    {% if adv.get("distance") and adv.get("distance") > 0 %}
+                  {% if adv.get("distance") and adv.get("distance") > 0 %}
                       (~{{adv.get("distance") | round(-1, "ceil") | int}} км от {{form.city.city_id | city_name | morph_word(["gent"])}})
                     {% endif %}
 
@@ -281,7 +291,7 @@
                     <small>
                     {% set pet_id = adv.get("pet_id") %}
                     {% if pet_id %}
-                      <a title="Вид" href="{{url_for('sale', pet=adv.get('pet_id') | int)}}">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</a>
+                      <abbr title="Вид">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</abbr>
                     {%endif%}
 
                     {% set breed_id = adv.get("breed_id") %}
@@ -384,6 +394,8 @@
     </div>
 
 </div>
+
+</div> <!-- pet-sale -->
 
 
 {% endblock %} 

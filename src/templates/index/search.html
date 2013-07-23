@@ -1,45 +1,72 @@
-<div id="indexPetSearch" class="">
-  <h1>Прадажа породистых собак и кошек</h1>
-  <p class="muted"><small>Поиск объявлений о продаже кошек, собак, птиц, кроликов и других друмашних животных, находящихся по всей России.</small></p>
-    
-    <form method="get" class="well">
-        <fieldset>
-            <div class="row-fluid">
-                <div class="span6 pet-type">
+<div class="pet-search">    
+    <form method="get" id="pet_search" class="well" action="{{url_for('sale')}}">
+        <p class="">Поиск объявлений о продаже кошек и собак, проживающих по всей России!</p>
+        {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-                    <label class="control-label" for="petType">Тип</label>
+        
+                    <div class="row-fluid">
+                        <div class="span12 pet-type row-fluid">       
+                            <div class="span4">
+                                 {{ form_field(pet_search_form.pet, class="span12") }}
+                             </div>
+                             <div class="span8">
+                                {{ form_field(pet_search_form.breed, class="span12") }}
+                             </div>
+                         </div>
+                    </div>
 
-                    <select id="petType" name="petType">
-                        <option value="" selected="selected">Любой</option>
-                        <option value="1">Собаки</option>
-                        <option value="2">Кошки</option>
-                        <option value="3">Кролики</option>
-                    </select>
+                    <div class="row-fluid">
+                        <div class="span8 ps-city">
+                            {{ form_field(pet_search_form.city, class="span12", placeholder = "Введите город") }}
+                        </div>
+                        <div class="span4 ps-action">
+                            <button type="submit" class="btn btn-primary span12" style="" id="pet_find">Найти питомца</button>
+                        </div>
+                    </div>
 
-                </div>
-                <div class="span6 pet-breed">
 
-                    <label class="control-label" for="petBreed">Порода</label>
-                    
-                    <select id="petBreed">
-                        <option value="" selected="selected">Любая</option>
-                        <option value="1">Померанский шпиц</option>
-                        <option value="2">Колли</option>
-                        <option value="3">Овчарка</option>
-                    </select>
-
-                </div>
-            </div>
-            <div class="row-fluid">
-               <div class="span6 pet-location">
-                <label class="control-label" for="petLocation">Местоположение</label>
-                <input type="text" id="petLocation" placeholder="Санкт-Петербург">
-                </div>
-                <div class="span6 pet-find">
-                    <button type="submit" class="btn btn-primary" id="petFind">Найти питомца</button>
-                </div>
-            </div>
-    </fieldset>
+  
 </form>
+
+<script type="text/javascript">
+
+    $(window).load(function(){
+
+         $("#city").typeahead({
+            minLength: 1,
+            limit: 8,
+            source: function (query, process) {
+              return $.getJSON('/ajax/location/typeahead/',  {limit: 8, query: query}, function (data) { return process(data.items);
+              }); //getJSON
+            } //source
+          }); //typeahead  
+
+         var jq_pet = $("#pet");
+              jq_pet.select2({
+                placeholder:"Выберите вид",
+                width: "off",
+                containerCssClass : "span12",
+                allowClear: true
+              });
+
+              var jq_breed = $("#breed");
+              jq_breed.select2({
+                placeholder: "Выберите породу",
+                width: "off",
+                containerCssClass : "span12",
+                allowClear: true,
+                matcher: function(term, text, option) {
+                  var pet_id = jq_pet.val();
+                  return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
+                  }
+               });
+
+              jq_pet.on('change', function(e){
+                jq_breed.select2('val', '');
+              });
+
+    });
+
+</script>
 
 </div>

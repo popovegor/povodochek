@@ -10,13 +10,6 @@
 
     {% include "flashed_messages.html" %}
 
-    <!-- крошки -->
-    <div class="clearfix container" id="breadcrumbs">
-    {%block breadcrumbs %}
-
-    {%endblock%}
-    </div> 
-
     {% block content %}
 
     {% endblock %}
@@ -27,5 +20,8 @@
   <div id="push">&nbsp;</div>
 
 </div> <!-- wrap -->
- {% include "footer.html"%}
+
+{% include "footer.html"%}
+
 {%endblock%}
+

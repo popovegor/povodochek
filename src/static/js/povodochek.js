@@ -1,3 +1,7 @@
+jQuery.validator.addMethod("_login", function(value, element) {
+  return this.optional(element) || /^[a-zA-Z0-9_-]+$/.test(value);
+}, "Неправильный формат: только латинские буквы, цифры, дефисы и подчеркивания.");
+
 var povodochek = {};
 
 povodochek.validate = function (form, rules, submit){

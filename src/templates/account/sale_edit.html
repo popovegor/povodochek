@@ -9,7 +9,7 @@
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-        <form class="form-sale-adv" id="adv" method="post" action="{{request.path}}" enctype="multipart/form-data" >
+        <form class="form-sale-adv" id="adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
 
           {{ form_field(form.pet) }}
 
@@ -35,7 +35,7 @@
             <label for="uploader">
               <strong>Фотографии</strong>
             </label>
-              <abbr class="label label-warning main-photo" title="Главная фотография - это первая по счету фотография, и  именно она будет показана в списке объявлений. Вы можете перетащить любую из загруженных фотографий в эту позицию.">главная фотография</abbr>
+              <abbr class="label main-photo" title="Главная фотография - это первая по счету фотография, и  именно она будет показана в списке объявлений. Вы можете перетащить любую из загруженных фотографий в эту позицию.">главная фотография</abbr>
               {% include "uploader.html" %}
           </div>  
 
@@ -48,7 +48,7 @@
             <script type="text/javascript">
             
             //location with autocomplete built on typeahead.js
-            $(function(){
+            $(window).load(function(){
               $("#city").typeahead({
                 minLength: 1,
                 limit: 8,
@@ -57,11 +57,10 @@
                   }); //getJSON
                 } //source
               }); //typeahead  
-            });
-
+          
             
             //select2 for dropdowns 
-            $(function(){
+           
 
               var jq_breed = $("#breed");
               jq_breed.select2({
@@ -76,7 +75,7 @@
 
               var jq_pet = $("#pet");
               jq_pet.select2({
-                placeholder:"Выберите вид",
+                placeholder:"Выберите тип животного",
                 width: "off",
                 containerCssClass : "input-xlarge"
               });
@@ -98,11 +97,9 @@
                 width: "off",
                 containerCssClass: "input-xlarge"
               });
-            });
 
 
             //validation
-            $(function(){
 
               var submit = function(){photos = $("#photos").val("");
                   $.each(uploader.getFileNames(), function(i, filename) {
@@ -124,20 +121,17 @@
                   age : {required: true},
                   gender : {required: true}
                }, submit);
-            });
+ 
 
             //remove action
-            $(function(){
+     
 
               $("#remove").click(function(){
                 return confirm("Вы уверены, что хотите удалить объявление?");
               });
-             
-            });
-
 
             //maskedit
-            $(function(){
+            
               $('#price').mask('99?99999', {placeholder:""});
             });
 

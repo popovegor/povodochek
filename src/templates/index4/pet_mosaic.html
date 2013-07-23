@@ -1,0 +1,156 @@
+<div class="pet-mosaic">
+
+	<div id="filters" class="">
+		<p><b>Недавно добавленные</b> <a href="#" id="filter_all" class="filter badge hidden-phone">Все</a><a id="filter_dogs" class="filter hidden-phone" href="#">Собаки</a><a id="filter_cats" class="filter hidden-phone" href="#">Кошки</a>
+			<a href="{{url_for('sale')}}" class="pull-right show-all">Все объявления</a>
+		</p> 
+	</div>
+
+    <div class="clearfix" id="advs">
+
+        {% for adv in advs %}
+       <div class="mosaicflow__item">
+       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" title='{{adv.get("t")}}' style="display:none">
+    		<img width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
+	    	</a>
+    	</div> 
+        {% endfor %}
+
+        <ins class="fade-white"></ins>
+    </div>
+
+
+    <div class="show-more text-center">
+    	<a class="btn btn-large" id="more" pet_id="0" skip="{{advs | length}}" data-loading-text="Загружаю...">Показать еще</a>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+	$(function(){
+
+		var mosaic;
+
+		var reinit = function() {
+
+			mosaic = null;
+
+			mosaic = $("#advs").mosaicflow({
+			    itemSelector: '.mosaicflow__item',
+			    minItemWidth: 150,
+			    itemHeightCalculation : 'attribute'
+			});
+
+			mosaic.on('mosaicflow-layout', function(){
+				$(".adv[data-status='loading']").each(function(key, value) {
+					var adv = $(value);
+					var img = adv.find("img");
+					adv.fadeIn("slow");
+					adv.tooltip({placement:'bottom'});
+					adv.attr("data-status", "complete");
+				});
+			});
+
+			mosaic.trigger("mosaicflow-layout");
+		}
+
+		reinit();
+
+		var get_mosaic_elm = function(adv){
+			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-toggle="tooltip" title="'+ adv['t'] +'" style="display:none" data-status="loading"> <img src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
+		}
+
+		var more = $("#more"); 
+
+		more.click(function() {
+			more.button('loading');
+
+			$.getJSON('/ajax/sales/showmore/' + more.attr("pet_id") +  '/' + more.attr("skip")
+				, function(data) {
+			  		var advs = data["advs"];
+			 		
+			  		$.each(advs, function(key, adv) {
+			  			var elm = get_mosaic_elm(adv);
+						mosaic.mosaicflow('add', elm)
+			  		});
+
+			  		if (advs.length === 0){
+			  			more.hide();
+			  		} else {
+			  			more.button('reset');
+			  			more.attr('skip', parseInt(more.attr('skip')) + advs.length)
+			  		}
+			});
+
+		}); //more click
+
+
+		var filter_advs = function(button, url, pet_id){
+			more.hide();
+			$(".filter").removeClass("badge");
+			$(button).addClass("badge");
+
+			$(".fade-white").remove();
+
+			$(".adv").each(function(key, value){
+				var elm = $(value);
+				mosaic.mosaicflow("remove", elm);
+				elm.remove();
+			});
+
+			$("#advs").remove();
+	  		$("#filters").after("<div id='advs' class='clearfix'><div class='ajax-loader'></div>")
+
+
+			$.getJSON(url
+				, function(data) {
+			  		var advs = data["advs"];
+
+			  		if (advs.length <= 0 ){
+			  			$("#advs").append("<p class='text-center no-advs'>Нет подходящих объявлений</p>")
+			  		} else {
+
+				  		$.each(advs, function(key, adv) {
+				  			var elm = get_mosaic_elm(adv);
+				  			$("#advs").append(elm);
+				  		});
+
+				  		reinit();
+
+				  		$("#advs").append('<ins class="fade-white"></ins>');
+				  		more.attr('skip', advs.length);
+				  		more.attr('pet_id', pet_id);
+				  		more.show();
+			  		}
+
+			  		$(".ajax-loader").remove();
+	
+			}); /*getJSON*/
+		}
+
+
+		$("#filter_dogs").click(function(){
+				filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = advs | length, pet = 1)}}', 1);
+		});
+
+		$("#filter_all").click(function(){
+				filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = advs | length, pet = 0)}}', 0);
+		});
+
+		$("#filter_cats").click(function(){
+				filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = advs | length, pet = 2)}}', 2);
+		});
+
+
+		{#$(window).scroll(function() {
+		    if( $(window).scrollTop() 
+		    	== $(document).height() - $(window).height()) {
+		          more.click();
+		    }
+		});#}
+
+
+	});
+
+</script>

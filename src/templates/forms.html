@@ -1,5 +1,5 @@
 {%- macro form_field_label(field) -%}
-    <label for="{{ field.id }}"><strong>{{ field.label.text }}</strong>
+    <label for="{{ field.id }}" class="form-field-name"><strong>{{ field.label.text }}</strong>
     {%- if field.flags.required -%}
         <!-- <abbr title="Обязательное поле">*</abbr> -->
           <sub class="required">*</sub>

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField)
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField, RadioField)
 
 from wtforms.validators import *
 
-from flask import Markup
+from flask import (Markup, url_for)
 
 from pymongo import MongoClient 
 from bson.objectid import ObjectId
@@ -134,8 +134,12 @@ class ResetPassword(Form):
 
 class SaleSearch(Form):
 
-    pet = SelectField(u'Вид', \
+    pet = SelectField(u'Тип животного', \
         choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ])
+
+    # pet = RadioField(u'Вид', \
+    #     choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ])
+
 
     #TODO: показывать только те породы, по которым есть объявления
     breed = SelectField(u'Порода', \
@@ -165,31 +169,37 @@ class SaleSearch(Form):
 
 class Sale(Form):
 
-    pet = SelectField(u'Вид',\
+    pet = SelectField(u'Тип животного',\
         choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ],\
         validators = [Required(message=MSG_REQUIRED)])
 
     breed = SelectField(u'Порода', \
         choices = [("", [("","")] )]  + pets_breeds(), \
-        validators = [Required(message=MSG_REQUIRED)])    
+        validators = [Required(message=MSG_REQUIRED)], \
+        description = u"Перед тем как выбрать породу, укажите тип животного выше.")    
 
     gender = SelectField(u"Пол", choices = [(u"", u"")] + \
         [(str(gender["id"]), gender["name"]) for gender in genders().find() ], \
         validators = [Required(message=MSG_REQUIRED)])
 
     # заголовок объявления
-    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))])
+    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
         # description = Markup(u'Введите заголовок объявления длинной от 10 до 80 символов. <abbr title="Подобные слова не несут никакой полезной информации для покупателей, а только замусоривают страницы и создают дополнительный шум.">Не используйте слова "продать" или "купить"</abbr> и схожие с ними.'))
+         description = u'Заголовок объявления должен быть короче 80 символов.'
+         )
 
-    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))])
-        # description = Markup(u'При детальном описании объявления, пожалуйста, не дублируйте информацию, для которой отведены отдельные поля, например, пол или возраст, если у вас нет на то веских причин. Также <abbr title="Размешяя свои контактные данные в открытом виде, вы рискуете стать жертвой машенников. Используйте для этих целей специальные поля, которые можно заполнить в своем профиле.">не указывайте ваши персональные данные</abbr>, например, адрес или телефонный номер.'))
+    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))], \
+        # description = Markup(u'При детальном описании объявления, пожалуйста, не дублируйте информацию, для которой отведены отдельные поля, например, пол или возраст, если у вас нет на то веских причин. Также <abbr title="Размешяя свои контактные данные в открытом виде, вы рискуете стать жертвой машенников. Используйте для этих целей специальные поля, которые можно заполнить в своем профиле.">не указывайте ваши персональные данные</abbr>, например, адрес или телефонный номер.')
+        description = u'Детальное описание должно быть длинее 120 символов.'
+    )
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
     price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))], \
         description = Markup(u'Указывайте <abbr title="Указываю реальную цену, вы многократно повышаете свои шансы успешной продажи, так как покупатели проявят больше интереса к вашему объявлению.">достоверную цену</abbr>!'))
 
-    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), check_location])
+    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), check_location], \
+        description = u"Введите населенный пункт, в котором продается питомец.")
 
     age = SelectField(u"Возраст", \
         choices = [(u"", u"")] + [(str(age["id"]), age["name"]) for age in ages().find()], \
@@ -240,20 +250,22 @@ class Stud(Form):
 class SignIn(Form):
 
     login = TextField(u"Логин", \
-        [Required(message=MSG_REQUIRED)], \
-        filters = [lambda x : (x or '').lower()])
+        [Required(message=MSG_REQUIRED)])
 
     remember = BooleanField(u"Запомнить меня")
 
-    password = PasswordField(u'Пароль', [
-        Required(message=MSG_REQUIRED),])
+    password = PasswordField(u'Пароль', \
+        [Required(message=MSG_REQUIRED)])
 
 class SignUp(Form):
 
     username = TextField(u"Имя", [Required(message=MSG_REQUIRED)])
 
-    login = TextField(u"Логин", [Required(message=MSG_REQUIRED)],\
-        filters = [lambda x : (x or '').lower()])
+    login = TextField(u"Логин", \
+        [Required(message=MSG_REQUIRED), \
+        Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],\
+        description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
 
     def validate_login(form, field):
         print("validate login %s" % field.data)
@@ -262,10 +274,11 @@ class SignUp(Form):
             raise ValidationError(u"Логин '%s' занят" % field.data)
 
 
-    email = TextField(u'Email', \
+    email = TextField(u'Эл. почта / Email', \
         validators = [Required(message=MSG_REQUIRED),\
         Email(message=MSG_EMAIL)], \
-        filters = [lambda x : (x or '').lower()])
+        filters = [lambda x : (x or '').lower()], \
+        description = u"После регистрации не забудьте подтвердить эл. почту, перейдя по ссылке в письме.")
 
     def validate_email(form, field):
         print("validate email %s" % field.data)
@@ -276,7 +289,8 @@ class SignUp(Form):
 
     password = PasswordField(u"Пароль", \
         [Required(message=MSG_REQUIRED), \
-        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))])
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],
+        description = u"Длинна пароля от 6 до 36 символов.")
 
     repeat_password = PasswordField(u'Повторить пароль', \
         [ Required(message=MSG_REQUIRED), EqualTo('password', message=u'Пароли не совпадают.')])
@@ -285,11 +299,11 @@ class SignUp(Form):
 
 
 class SendMail(Form):
-    username = TextField(u"Представьтесь", \
+    username = TextField(u"Ваше имя", \
         validators = [Required(message=MSG_REQUIRED)])
 
     subject = TextField(u"Тема", \
-        default = u"Сообщение от пользователя сайта Поводочек.рф", \
+        default = u"Сообщение от пользователя сайта Поводочек", \
         validators = [Required(message=MSG_REQUIRED)])
 
     message = TextAreaField(u"Сообщение")
@@ -299,7 +313,7 @@ class SendMail(Form):
         Email(message=MSG_EMAIL)], \
         filters = [lambda x : (x or '').lower()])
 
-    sms_alert = BooleanField(Markup(u"Отправить автору объявления <abbr title='Получатель письма получет короткое sms-оповещение о новом электронном письме.'>sms-оповещение</abbr> (<i>бесплатно</i>)"))
+    sms_alert = BooleanField(Markup(u"Отправить автору <abbr title='Получатель письма получет короткое sms-оповещение о новом электронном письме.'>sms-оповещение</abbr> (<i>бесплатно</i>)"))
 
 
 if __name__ == "__main__":

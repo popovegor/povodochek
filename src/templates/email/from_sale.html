@@ -7,8 +7,7 @@
 
 
 {% block content %}
-
-        <p>
+            <div style="padding:10px 0; background-color:#f5f5f5; border:dashed 1px #cccccc">
             <ul style="list-style:none">   
                 <li style="padding-bottom:10px"><b>От кого</b>: {{username}} <a href="mailto:{{email}}" style="color:#494949;font-weight:normal" target="_blank">&lt;{{email}}&gt;</a></li>
                 <li style="padding-bottom:10px"><b>Кому</b>: {{seller.get('username')}} <a href="mailto:{{seller.get('email')}}" style="color:#494949;font-weight:normal" target="_blank">&lt;{{seller.get('email')}}&gt;</a></li>
@@ -18,11 +17,12 @@
                 <li style="padding-bottom:10px"><b>Сообщение</b>: {{message}}</li>
                 {%endif%}
             </ul>
-        </p>
+        </div>
         <p>
            Сообщение отправлено с объявления № <a target="_blank" href="{{url_for('sale_show', id = adv.get('_id'), _external =True)}}">{{adv.get('_id') }}</a>.
         </p>
 
+        <br/>
         
         <small>
              <span style="color:red">*</span>&nbsp;Поводочек не несет ответственности за содержание сообщения.

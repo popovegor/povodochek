@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{%  block content %}
+
+<div class="index4">
+
+
+	{#<div class="clearfix row-fluid">
+			<div class="span9"><h1 class="tagline">Портал о продаже породистых собак и кошек</h1>
+			</div>
+			<div class="span3">
+				{%include "pet_post.html" %}				
+			</div>
+	</div>#}
+
+
+	<h1 class="text-center tagline"><span class="logo" style="">Поводочек</span> <span style="font-family: Arial">&mdash;</span> портал о продаже породистых собак и кошек</h1>
+
+
+	{%include "index4/pet_search.html" %}
+
+
+	
+	{%include "index4/pet_post.html" %}
+
+
+	{%include "index4/pet_mosaic.html" %}	
+
+
+</div> <!-- index -->
+
+{%  endblock %}
