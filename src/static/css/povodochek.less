@@ -12,8 +12,9 @@
 }*/
 
 .h1 {
-    font-size: 25px !important;
-    margin: 0px 0 20px 0 !important;
+    font-size: 25px;
+    margin: 0px 0 20px 0;
+    line-height: 32px;
 }
 
 
@@ -49,8 +50,8 @@ html, body {
         }
 
         .tagline {
-            margin-top: 0px !important;
-            margin-bottom: 20px !important;
+            margin-top: 0px;
+            margin-bottom: 20px;
             font-family: @brand-font;
             font-weight: normal;
             font-size: 30px !important;
@@ -64,22 +65,35 @@ html, body {
     #content {
         margin-top:30px;
     }
+
+    .table-hover {
+        tr {
+            &:focus > td, &:hover > td {
+                background-color: lighten(#eaf5fb, 3%);
+            }
+        }
+    }
+}
+
+.ajax-link {
+    border-bottom: dotted 1px; 
+    &:focus, &:hover {
+        text-decoration: none !important;
+    };   
 }
 
 #menu {
 
     .brand {
         font-family: @brand-font;
-        /*color: #86b6cd;*/
         font-size: 22px !important;
         padding-top:8px !important;
-        /*color:lighten(#86b6cd, 20%);*/
-        color:darken(#86b6cd, 15%);
+        color:darken(#86b6cd, 20%);
     }
 
     a.brand:focus, a.brand:hover {
         /*color:lighten(#86b6cd, 30%);*/
-        color:darken(#86b6cd, 20%);
+        color:darken(#86b6cd, 25%);
     }
 
     span.brand {
@@ -205,6 +219,9 @@ form {
   border-radius: @radius;
 }
 
+
+
+
 .index4 {
 
     .pet-search {
@@ -217,6 +234,7 @@ form {
                 /*display: none;*/
                 font-weight: normal !important;
             }
+
             #pet_find {
                 margin-top: 28px;
             } 
@@ -318,7 +336,146 @@ form {
         }
 
     } /*pet-mosaic*/
+
+} /*index4*/
+
+.pet-post-button {
+    a.btn {
+
+    }
 }
+
+.index5 {
+
+    h1 {
+        margin-bottom: 30px !important;
+    }
+
+    .pet-search {
+        padding: 10px 20px;
+
+        .alert.alert-info {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+
+        #search {
+            margin: 10px 0px 0px 0px !important;
+            label { 
+                /*display: none;*/
+                font-weight: normal !important;
+            }
+
+            .form-field {
+                margin-bottom: 5px !important;
+            }
+
+            #pet_find { margin-top: 28px; } 
+        }
+    }
+
+    .pet-post {
+
+        h3 {
+            margin-top: 0px;
+        }
+
+        .strelka {
+            padding-top: 40px;
+            font-size: 80px;
+        }
+
+        .qoute {
+            /*line-height: 24px;*/
+        }
+
+        .steps {
+            .step-num {
+                margin-right: 20px;
+                font-size: 1.3em;
+            }
+
+            .step {
+                margin-top: 20px;
+                font-size: 20px;
+                font-family: Georgia;
+                font-style: italic;
+            }
+        }
+    }
+
+    .pet-mosaic {
+
+        margin-top:40px;
+
+        #filters {
+            .filter { margin-left: 10px;}
+            .filter.badge {
+                cursor: default;
+                border-bottom: none;
+            }
+            .show-all {
+                margin-right: 10px;
+            }
+        }
+
+        #advs {
+
+            margin-top:20px;
+            position: relative;
+            min-height: 300px;
+
+            .no-advs{
+                margin-top: 60px;
+            }
+
+            .ajax-loader {
+                margin-top: 80px;
+                height: 30px;
+                width: 100%;
+                background-image: url(../img/ajax-loader.gif);
+                background-repeat: no-repeat;
+                background-position: center 50%;
+            }
+
+            .fade-white {
+                height: 30px;
+                width: 100%;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                background-image: url('../img/fade-white.png');
+                background-repeat: repeat-x;
+                z-index: 1000;
+                display: block;
+            }
+
+            .adv {
+                display: block;
+                padding: 5px;
+            
+                img {
+                    .rounded-corners(5px);
+                }
+
+                &:hover, &:focus {
+                    padding: 0px;
+                    border:5px solid #0088cc;
+                    .rounded-corners(5px);
+                    img {
+                        .rounded-corners(0px);
+                    }
+                }
+            }
+        } /*#advs */
+
+        .show-more {
+            margin:30px 0;
+        }
+
+    } /*pet-mosaic*/
+} /*index5*/
 
 .index {
     margin-top:0px;

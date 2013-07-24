@@ -249,8 +249,8 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    advs = get_sales_for_index(0, 20)
-    tmpl = render_template('index4.html', \
+    advs = get_sales_for_index(0, 40)
+    tmpl = render_template('index5.html', \
         pet_search_form = SaleSearch(), \
         title = u"Продажа породистых собак и кошек", advs = [adv for adv in advs])
     return tmpl

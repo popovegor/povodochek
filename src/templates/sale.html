@@ -226,7 +226,7 @@
               {% if sort == value %}
                 &nbsp;<small title="{{title}}" class="badge">{{name}}</small>
               {%else%}
-                <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="">{{name}}</a>
+                <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
               {%endif%}
             {% endfor %}
           </div> <!-- advs-sort -->
