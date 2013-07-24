@@ -18,6 +18,7 @@ import re
 from security import hash_password, check_password
 
 from helpers import num
+from dic.ages import ages 
 
 def mongo():
     return MongoClient().povodochek
@@ -36,12 +37,6 @@ def genders():
 
 def cities():
     return mongo().cities
-
-def ages():
-    return mongo().ages
-
-# def sale_advs():
-#     return mongo().sales
 
 class Test(Form):
 
@@ -149,7 +144,7 @@ class SaleSearch(Form):
         [(str(gender["id"]), gender["name"]) for gender in genders().find() ])
 
     age = SelectField(u"Возраст", \
-        choices = [(u"", u"")] + [(str(age["id"]), age["name"]) for age in ages().find()])
+        choices = [(u"", u"")] + [ (age_id, age_name) for age_id, age_name in ages.items()])
 
     city = TextField(u"Местоположение")
 
@@ -202,7 +197,7 @@ class Sale(Form):
         description = u"Введите населенный пункт, в котором продается питомец.")
 
     age = SelectField(u"Возраст", \
-        choices = [(u"", u"")] + [(str(age["id"]), age["name"]) for age in ages().find()], \
+        choices = [(u"", u"")] + [ (str(age_id), age_name) for age_id, age_name in ages.items()], \
         validators = [Required(message=MSG_REQUIRED)])
 
 class Contact(Form):

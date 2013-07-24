@@ -22,7 +22,6 @@ import time
 import re
 import base64
 from sys import maxint
-# import cities, ages, breeds, genders, pets
 
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
                               UploadNotAllowed)
@@ -36,6 +35,8 @@ from pymorphy2 import MorphAnalyzer
 from helpers import (num, create_thumbnail, get_thumbnail_filename, resize_image, save_photo, get_photo, get_photo_size, qoute_rus)
 
 from smsgate import send_sms
+
+from dic.ages import ages
 
 morph = MorphAnalyzer()
 
@@ -63,9 +64,6 @@ def genders():
 def cities():
     return db.cities
     # return cities.cities
-
-def ages():
-    return db.ages
 
 class User(UserMixin):
     def __init__(self, login, id, active = True, username = None, email = None, new_email = None):
@@ -156,8 +154,8 @@ app.jinja_env.filters['gender_name'] = get_gender_name
 
 # todo: add caching layer 
 def get_age_name(age_id):
-    age = ages().find_one({"id": num(age_id)}) if age_id else None
-    return age.get("name") if age else u""
+    id = num(age_id)
+    return ages[id] if id in ages else u""
 
 app.jinja_env.filters['age_name'] = get_age_name
 

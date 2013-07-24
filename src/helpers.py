@@ -50,7 +50,6 @@ def resize_image(filename, height = None, width = None):
 
     del img
     
-
     return os.path.basename(filename)
 
 def create_thumbnail(file, filename):
@@ -120,9 +119,9 @@ def get_photo(mongo, filename):
         filename = filename.lower()
         fs = gridfs_photos(mongo)
         name = os.path.basename(filename)
-        print("get_photo", name)
+        # print("get_photo", name)
         photo = mongo.photos.files.find_one({"filename" : filename}, fields= ['_id'])
-        print(photo)
+        # print(photo)
         with fs.get(photo.get('_id')) as gridfs_file:
             return (gridfs_file.name, gridfs_file.read()) 
     except:
