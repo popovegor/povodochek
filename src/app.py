@@ -37,6 +37,8 @@ from helpers import (num, create_thumbnail, get_thumbnail_filename, resize_image
 from smsgate import send_sms
 
 from dic.ages import ages
+from dic.genders import genders
+
 
 morph = MorphAnalyzer()
 
@@ -57,9 +59,6 @@ def pets():
 
 def breeds():
     return db.breeds
-
-def genders():
-    return db.genders
 
 def cities():
     return db.cities
@@ -147,8 +146,8 @@ app.jinja_env.filters['breed_name'] = get_breed_name
 
 # todo: add caching layer 
 def get_gender_name(gender_id):
-    gender = genders().find_one({"id": num(gender_id)}) if gender_id else None
-    return gender.get("name") if gender else u""
+    id = num(gender_id)
+    return genders[id] if id in genders else u""
 
 app.jinja_env.filters['gender_name'] = get_gender_name
 

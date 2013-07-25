@@ -18,7 +18,8 @@ import re
 from security import hash_password, check_password
 
 from helpers import num
-from dic.ages import ages 
+from dic.genders import genders
+from dic.ages import ages
 
 def mongo():
     return MongoClient().povodochek
@@ -31,9 +32,6 @@ def pets():
 
 def breeds():
     return mongo().breeds
-
-def genders():
-    return mongo().genders
 
 def cities():
     return mongo().cities
@@ -140,11 +138,12 @@ class SaleSearch(Form):
     breed = SelectField(u'Порода', \
         choices = [("", [("","")] )]  + pets_breeds())    
 
-    gender = SelectField(u"Пол", choices = [(u"", u"")] + \
-        [(str(gender["id"]), gender["name"]) for gender in genders().find() ])
+    gender = SelectField(u"Пол", \
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()]
+        )
 
     age = SelectField(u"Возраст", \
-        choices = [(u"", u"")] + [ (age_id, age_name) for age_id, age_name in ages.items()])
+        choices = [(u"", u"")] + [ (str(age_id), age_name) for age_id, age_name in ages.items()])
 
     city = TextField(u"Местоположение")
 
@@ -173,8 +172,8 @@ class Sale(Form):
         validators = [Required(message=MSG_REQUIRED)], \
         description = u"Перед тем как выбрать породу, укажите тип животного выше.")    
 
-    gender = SelectField(u"Пол", choices = [(u"", u"")] + \
-        [(str(gender["id"]), gender["name"]) for gender in genders().find() ], \
+    gender = SelectField(u"Пол", \
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()], \
         validators = [Required(message=MSG_REQUIRED)])
 
     # заголовок объявления

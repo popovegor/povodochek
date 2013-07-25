@@ -1,7 +1,7 @@
 #!/usr/bin/env 
 # -*- coding: utf-8 -*-
 
-genders = [(u"Мальчик", 1), (u"Девочка", 2)]
+genders = {1:u"Мальчик", 2:u"Девочка"}
 
 
 from pymongo import MongoClient, ASCENDING
