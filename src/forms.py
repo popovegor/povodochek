@@ -20,6 +20,8 @@ from security import hash_password, check_password
 from helpers import num
 from dic.genders import genders
 from dic.ages import ages
+# from dic.breeds import breeds
+from dic.pets import pets, get_pet_name
 
 def mongo():
     return MongoClient().povodochek
@@ -27,27 +29,11 @@ def mongo():
 def users():
     return mongo().users
 
-def pets():
-    return mongo().pets
-
 def breeds():
     return mongo().breeds
 
 def cities():
     return mongo().cities
-
-class Test(Form):
-
-    pet = SelectField(u'Тип животного', \
-        choices = [(pet['id'], pet['name']) for pet in pets().find()], \
-        validators = [Required(message=u'Тип животного не выбран')])  
-
-def breed_key(breed):
-    return u"{0}_{1}".format(breed["pet_id"], breed["id"])
-
-def get_pet_name(pet_id):
-    pet = pets().find_one({"id": pet_id}, fields=["name"])
-    return pet["name"] if pet else ""
 
 
 MSG_REQUIRED = u"Это обязательное поле"
@@ -128,7 +114,7 @@ class ResetPassword(Form):
 class SaleSearch(Form):
 
     pet = SelectField(u'Тип животного', \
-        choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ])
+        choices = [(u"", u"")] + [(str(pet_id), pet_name) for pet_id, pet_name in pets.items() ])
 
     # pet = RadioField(u'Вид', \
     #     choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ])
@@ -164,7 +150,7 @@ class SaleSearch(Form):
 class Sale(Form):
 
     pet = SelectField(u'Тип животного',\
-        choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ],\
+        choices = [(u"", u"")] + [(str(pet_id), pet_name) for pet_id, pet_name in pets.items() ], \
         validators = [Required(message=MSG_REQUIRED)])
 
     breed = SelectField(u'Порода', \

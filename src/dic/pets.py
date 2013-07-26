@@ -1,15 +1,7 @@
 #!/usr/bin/env 
 # -*- coding: utf-8 -*-
 
-pets = [(u"Собака", 1), (u"Кошка", 2)]
+pets = {1: u"Собака", 2: u"Кошка"}
 
-from pymongo import (MongoClient, ASCENDING)
-
-if __name__ == "__main__":
-    mongo = MongoClient()
-    for (name, id) in pets:
-        mongo.povodochek.pets.update({"id":id}, {'$set':{"name": name, "id": id}}, upsert=True)
-    for pet in mongo.povodochek.pets.find():
-        print(pet)
-
-    mongo.povodochek.pets.ensure_index([("id", ASCENDING)])
+def get_pet_name(pet_id):
+    return pets.get(pet_id) or ""

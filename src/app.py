@@ -7,7 +7,7 @@ from flask_login import (LoginManager, current_user, login_required,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Sale, Test, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_and_region, SendMail, ChangeEmail)
+from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_and_region, SendMail, ChangeEmail)
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.son import SON
@@ -38,6 +38,7 @@ from smsgate import send_sms
 
 from dic.ages import ages
 from dic.genders import genders
+from dic.pets import pets, get_pet_name
 
 
 morph = MorphAnalyzer()
@@ -54,8 +55,6 @@ def users():
 def sales():
     return db.sales
 
-def pets():
-    return db.pets
 
 def breeds():
     return db.breeds
@@ -129,11 +128,6 @@ def jinja_format(value, template=u"{0}"):
     return template.format(value)
 
 app.jinja_env.filters['format'] = jinja_format
-
-# todo: add caching layer 
-def get_pet_name(pet_id):
-    pet = pets().find_one({"id": num(pet_id)}) if pet_id else None
-    return pet.get("name") if pet else u""
 
 app.jinja_env.filters['pet_name'] = get_pet_name
 
@@ -941,13 +935,6 @@ def mail_sale(id):
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-@app.route('/test', methods = ["GET", "POST"])
-def test():
-    form = Test(request.form)
-    if request.method == "POST" and form.validate():
-        return render_template('/test.html', form = form)
-    return render_template('/test.html', form = form)
 
 
 if __name__ == "__main__":
