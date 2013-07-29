@@ -1,7 +1,7 @@
 <div class="pet-mosaic">
 
 	<div id="filters" class="">
-		<p><b id="">Новые<span class="hidden-phone"> объявления</span></b> <a id="filter_all" class="filter badge hidden-phone ajax-link" href="#">Вперемешку</a><a id="filter_dogs" class="filter hidden-phone ajax-link" href="#">Собаки</a>
+		<p><b id="">Новые<span class="hidden-phone"> объявления</span></b> <a id="filter_all" class="filter label hidden-phone ajax-link" href="#">Вперемешку</a><a id="filter_dogs" class="filter hidden-phone ajax-link" href="#">Собаки</a>
 		<a id="filter_cats" class="filter hidden-phone ajax-link" href="#">Кошки</a>
 		<a href="{{url_for('sale')}}" class="pull-right show-all">Все объявления</a>
 		</p>
@@ -91,8 +91,8 @@
 
 		var filter_advs = function(button, url, pet_id){
 			more.hide();
-			$(".filter").removeClass("badge");
-			$(button).addClass("badge");
+			$(".filter").removeClass("label");
+			$(button).addClass("label");
 
 			$(".fade-white").remove();
 
@@ -157,7 +157,6 @@
 		          more.click();
 		    }
 		});#}
-
 
 	});
 

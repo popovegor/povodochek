@@ -226,7 +226,7 @@
             {% for (value, name) in form.sort.choices %}
               {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
               {% if sort == value %}
-                &nbsp;<small title="{{title}}" class="badge">{{name}}</small>
+                &nbsp;<small title="{{title}}" class="label">{{name}}</small>
               {%else%}
                 <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
               {%endif%}
@@ -317,7 +317,7 @@
                     </small>
                 </li>
                 <li class="adv-desc hidden-phone">
-                    {{ adv["desc"] }}
+                    {{ adv["desc"] | truncate(120) }}
                 </li>
                 
                 <li class="adv-dates">
