@@ -70,7 +70,8 @@
                 matcher: function(term, text, option) {
                   var pet_id = jq_pet.val();
                   return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
-                  }
+                  },
+                sortResults : povodochek.select2_breed_sort
                });
 
               var jq_pet = $("#pet");

@@ -45,10 +45,11 @@
     minLength: 1,
     limit: 8,
     source: function (query, process) {
-      return $.getJSON('/ajax/location/typeahead/',  {limit: 8, query: query}, function (data) { return process(data.items);
-                          }); //getJSON
-                        } //source
-                      }); //typeahead  
+      return $.getJSON('/ajax/location/typeahead/',
+        {limit: 8, query: query },
+        function (data) { return process(data.items);}); //getJSON
+      } //source
+    }); //typeahead  
 
    var jq_pet = $("#pet");
    jq_pet.select2({
@@ -70,7 +71,8 @@
       var pet_id = jq_pet.val();
       return text.toLowerCase().indexOf(term.toLowerCase()) >= 0 && (!pet_id || option.val().split("_")[0] === pet_id); 
     },
-    sortResults : povodochek.select2_breed_sort
+    sortResults : povodochek.select2_breed_sort,
+    formatResult : povodochek.select2_breed_format
   }).on('select2-opening', function(e) {});
 
    jq_pet.on('change', function(e){

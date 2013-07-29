@@ -11,11 +11,11 @@
 
         <form action="{{request.url}}" method="POST" id="contact">
 
-            {{ form_field(form.username, class="input-large", placeholder="Введите ваше имя") }}         
+            {{ form_field(form.username, class="input-xlarge", placeholder="Введите ваше имя") }}         
 
              <div class="phone">
 
-              {{ form_field(form.phone, class="input-large", placeholder="Введите номер телефона для связи") }}
+              {{ form_field(form.phone, class="input-xlarge", placeholder="Введите номер телефона для связи") }}
                 <div class="phone-options">
                   {{ form_field(form.phone_adv_hide) }}    
                   {{ form_field(form.phone_adv_sms) }}   
@@ -24,7 +24,7 @@
 
                <div class="skype">
           
-                   {{ form_field(form.skype, class="input-large", placeholder="Введите skype-имя") }}
+                   {{ form_field(form.skype, class="input-xlarge", placeholder="Введите skype-имя") }}
 
                    <div class="skype-options">
                      {{ form_field(form.skype_adv_hide) }} 

@@ -16,7 +16,7 @@
   <div class="pet-post clearfix row-fluid">
       <div class="span9"><h1>{{header}}</h1>
       </div>
-      <div class="span3">
+      <div class="span3 hidden-phone">
         {%include "pet_post_button.html" %}
       </div>
   </div> <!-- pet-post -->
@@ -171,8 +171,10 @@
                 allowClear: true,
                 matcher: function(term, text, option) {
                   var pet_id = jq_pet.val();
-                  return text.toUpperCase().indexOf(term.toUpperCase())===0 && (!pet_id || option.val().split("_")[0] === pet_id); 
-                  }
+                  return text.toLowerCase().indexOf(term.toLowerCase()) >= 0 && (!pet_id || option.val().split("_")[0] === pet_id); 
+                  },
+                  sortResults : povodochek.select2_breed_sort,
+                  formatResult : povodochek.select2_breed_format
                });
 
               jq_pet.on('change', function(e){

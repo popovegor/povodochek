@@ -12,9 +12,9 @@
 }*/
 
 .h1 {
-    font-size: 25px;
-    margin: 0px 0 20px 0;
-    line-height: 32px;
+    font-size: 24px;
+    margin: 0px 0 10px 0;
+    line-height: 36px;
 }
 
 
@@ -296,7 +296,10 @@ form {
         margin-top:40px;
 
         #filters {
-            .filter { margin-left: 10px;}
+            .filter { 
+                margin-left: 10px; 
+                cursor: pointer;
+            }
             .filter.badge {
                 cursor: default;
                 border-bottom: none;
@@ -340,18 +343,18 @@ form {
 
             .adv {
                 display: block;
-                padding: 5px;
-                 background-color: #f5f5f5;
+                padding: 10px;
+                 /*background-color: #f5f5f5;*/
                  /*border:10px solid #f5f5f5;*/
             
                 img {
-                    .rounded-corners(0px);
+                    .rounded-corners(5px);
                 }
 
                 &:hover, &:focus {
                     /*margin: 5px;*/
                     /*margin: 2px;*/
-                    padding: 0px;
+                    padding: 5px;
                     border:5px solid #0088cc;
                     .rounded-corners(0px);
                     img {
@@ -362,7 +365,7 @@ form {
         } /*#advs */
 
         .show-more {
-            margin:0px 0;
+            margin:30px 0 0 0;
         }
 
     } /*pet-mosaic*/

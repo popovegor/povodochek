@@ -4,6 +4,14 @@ jQuery.validator.addMethod("_login", function(value, element) {
 
 var povodochek = {};
 
+povodochek.sort_alphabetical = function(x,y) {
+  if(x,y) {
+    return x.text.toLowerCase() > y.text.toLowerCase() ? 1: -1;
+  } else {
+    return 0;
+  }
+};
+
 povodochek.select2_breed_sort = function(results, container, query) {
   if(query.term) {
     var results_top = [];
@@ -16,10 +24,22 @@ povodochek.select2_breed_sort = function(results, container, query) {
         results_bottom.push(value);
       }
     });
-    results = $.merge(results_top.sort(), results_bottom.sort());
+    results = $.merge(results_top.sort(povodochek.sort_alphabetical), 
+      results_bottom.sort(povodochek.sort_alphabetical));
   }
   return results;
-}
+};
+
+povodochek.select2_breed_format = function(object, container, query) {
+    breed_name = "";
+    if(object.id) {
+      breed_name = object.id.split("_")[0] == "1" ? "собаки" : "кошки";
+    }
+    var regex = new RegExp(query.term, "i");
+    var match = object.text.match(regex);
+    var text  = object.text.replace(match, "<span style='text-decoration:underline'>" + match + "</span>");
+    return $("<div>" + text + "<small class='muted pull-right'>" + breed_name + "</small></div>");
+};
 
 povodochek.validate = function (form, rules, submit){
     form.validate({

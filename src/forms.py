@@ -17,10 +17,10 @@ from wtforms_extended_selectfield import SelectField
 import re
 from security import hash_password, check_password
 
-from helpers import num
+from helpers import (num, morph_word)
 from dic.genders import genders
 from dic.ages import ages
-from dic.breeds import dogs, get_breed_name
+from dic.breeds import (dogs, cats, get_breed_name)
 from dic.pets import pets, get_pet_name
 
 def mongo():
@@ -41,16 +41,11 @@ MSG_MIN_LENGTH = u"Пожалуйста, введите не меньше {0} с
 MSG_EMAIL = u"Пожалуйста, введите корректный адрес электронной почты"
 
 def pets_breeds():
-    grouped_by_pet = \
-        groupby([breed for breed in breeds().find().sort('pet_id',1)], lambda x : x["pet_id"]) 
-    key = lambda pet_id: get_pet_name(pet_id)
-    value = lambda pet_id, group: [("{0}_{1}".format(pet_id, breed["id"]), breed["name"]) for breed in sorted(group, key = lambda x: x['order']) ]
-    return [ (key(pet_id), value(pet_id, group)) for pet_id, group in grouped_by_pet ]
-
-
-def pets_breeds():
-    return [(get_pet_name(1), \
+    _dogs = [(morph_word(get_pet_name(1), ["plur"]), \
         [("%s_%s" % (1, dog_id), dog_name) for dog_id, dog_name in dogs.items()])]
+    _cats = [(morph_word(get_pet_name(2), ["plur"]), \
+        [("%s_%s" % (2, cat_id), cat_name) for cat_id, cat_name in cats.items()])]
+    return _dogs + _cats
 
 
 def get_city_by_city_and_region(city_and_region):
