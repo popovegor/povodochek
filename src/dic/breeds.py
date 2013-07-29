@@ -243,7 +243,7 @@ cats = {
 }
 
 def get_breed_name(breed_id, pet_id = 1):
-    print(breed_id, pet_id)
+    # print(breed_id, pet_id)
     breed_id = int(breed_id or 0)
     pet_id = int(pet_id or 0)
     breed = None

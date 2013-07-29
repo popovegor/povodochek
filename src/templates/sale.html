@@ -293,25 +293,25 @@
                     <small>
                     {% set pet_name = adv.get("pet_id") | pet_name %}
                     {% if pet_name %}
-                      <abbr title="Вид">{{pet_name | morph_word(["plur"]) }}</abbr>
+                      <span title="Вид">{{pet_name | morph_word(["plur"]) }}</span>
                     {%endif%}
 
                     {% set breed_name = adv.get("breed_id") | breed_name %}
                     {% if breed_name %}
                    &nbsp;>&nbsp;
-                    <abbr  title="Порода">{{breed_name | title }}</abbr>
+                    <span  title="Порода">{{breed_name | title }}</span>
                     {%endif%}
 
                     {% set gender_name = adv.get("gender_id") | gender_name  %}
                     {% if  gender_name %}
                     &nbsp;>&nbsp;
-                    <abbr  title="Пол">{{ gender_name | title }}</abbr>
+                    <span  title="Пол">{{ gender_name | title }}</span>
                     {% endif %}
   
                      {% set age_name = adv.get("age_id") | age_name %}
                     {%if age_name %}
                     &nbsp;>&nbsp;
-                    <abbr  title="Возраст">{{ age_name | title }}</abbr>
+                    <span  title="Возраст">{{ age_name | title }}</span>
                     {%endif%}
                     
                     </small>

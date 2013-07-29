@@ -142,7 +142,7 @@ class SaleSearch(Form):
 
     page = IntegerField(u"Страница", default = 1)
 
-    perpage = SelectField(u"Объявлений на стр.", default = 3, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (6, 100)])
+    perpage = SelectField(u"Объявлений на стр.", default = 30, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
 
 class Sale(Form):
 
@@ -260,7 +260,6 @@ class SignUp(Form):
     def validate_email(form, field):
         print("validate email %s" % field.data)
         user = users().find_one({'email': field.data})
-        print(user)
         if user:
             raise ValidationError(u"Адрес '%s' занят" % field.data)
 

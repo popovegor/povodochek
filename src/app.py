@@ -197,7 +197,7 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    advs = get_sales_for_index(0, 40)
+    advs = get_sales_for_index(0, 36)
     tmpl = render_template('index5.html', \
         pet_search_form = SaleSearch(), \
         title = u"Продажа породистых собак и кошек", advs = [adv for adv in advs])
@@ -239,16 +239,17 @@ def ajax_location_typeahead():
     return jsonify(items = locations )    
 
 
-def get_sales_for_index(skip, limit = 50, pet_id = None):
+def get_sales_for_index(skip, limit = 36, pet_id = None):
     query = {"photos": {"$nin": [None, []]} }
     if pet_id:
         query["pet_id"] = pet_id
-    advs = [{"src":url_for('photo', \
+    advs = [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
         'url' : url_for('sale_show', id = adv.get('_id')), \
         't' : adv.get('title'), \
         'id': str(adv.get('_id')),
-        's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
+        # 's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
+        's' : {'h':100, 'w':150}}
         for adv in sales().find(
             query, \
             skip = skip, \
@@ -258,10 +259,11 @@ def get_sales_for_index(skip, limit = 50, pet_id = None):
     return advs
 
 
-@app.route("/ajax/sales/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":30, "pet": None, 'skip': 0})
-@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":30, "pet": None})
+@app.route("/ajax/sales/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":36, 'skip': 0})
+@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":36})
 @app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
-def ajax_sales_showmore(skip, limit, pet):
+def ajax_sales_showmore(pet, skip, limit):
+    print(pet)
     advs = get_sales_for_index(skip, limit = limit, pet_id = pet)
     return jsonify(advs = advs)
 

@@ -2,7 +2,7 @@
 
 {% block account_content %}
 
-<div class="acount-sale">
+<div class="account-sale">
 
 <p class="span12">На этой странице вы можете управлять своими объявлениями о продаже собак и кошек.</p>
 
@@ -43,40 +43,39 @@
 
             <h4 class="media-heading">{{adv.get("title")}}</h4>
             <ul class="unstyled">
+                 <li class="adv-location">
+                    {% set city_id = adv.get("city_id") %}
+                    {% if city_id %}
+                    <small><i class="icon-map-marker"></i>&nbsp;<b><span title="Местоположение">{{ city_id | city_region }}</span></b></small>
+                    {%endif%}
+
+                </li>
                 <li class="adv-dict hidden-phone">
                     <small><i>
                     {% set pet_id = adv.get("pet_id") %}
                     {% if pet_id %}
-                     <abbr title="Вид">{{pet_id | pet_name}}</abbr>
+                     <span title="Вид">{{pet_id | pet_name}}</span>
                     {%endif%}
 
                     {% set breed_id = adv.get("breed_id") %}
                     {% if breed_id %}
                     {{" > "}}
-                    <abbr title="Порода">{{breed_id | breed_name }}</abbr>
+                    <span title="Порода">{{breed_id | breed_name }}</span>
                     {%endif%}
 
                     {% set gender_id = adv.get("gender_id") %}
                     {% if  gender_id %}
                     {{" > "}}
-                    <abbr title="Пол">{{ gender_id | gender_name }}</abbr>
+                    <span title="Пол">{{ gender_id | gender_name }}</span>
                     {% endif %}
 
                     {% set age_id = adv.get("age_id") %}
                     {%if age_id %}
                     {{" > "}}
-                    <abbr title="Возраст">{{ age_id | age_name }}</abbr>
+                    <span title="Возраст">{{ age_id | age_name }}</span>
                     {%endif%}
 
                     </i></small>
-                </li>
-                
-                <li class="adv-location">
-                    {% set city_id = adv.get("city_id") %}
-                    {% if city_id %}
-                    <small><i class="icon-map-marker"></i>&nbsp;<i><abbr title="Местоположение">{{ city_id | city_region }}</abbr></i></small>
-                    {%endif%}
-
                 </li>
                 <li class="adv-desc hidden-phone">
                     {{ adv["desc"] }}
