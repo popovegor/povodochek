@@ -39,6 +39,7 @@ from smsgate import send_sms
 from dic.ages import ages
 from dic.genders import genders
 from dic.pets import pets, get_pet_name
+from dic.breeds import dogs, get_breed_name
 
 
 morph = MorphAnalyzer()
@@ -54,10 +55,6 @@ def users():
 
 def sales():
     return db.sales
-
-
-def breeds():
-    return db.breeds
 
 def cities():
     return db.cities
@@ -130,11 +127,6 @@ def jinja_format(value, template=u"{0}"):
 app.jinja_env.filters['format'] = jinja_format
 
 app.jinja_env.filters['pet_name'] = get_pet_name
-
-# todo: add caching layer
-def get_breed_name(breed_id):
-    breed = breeds().find_one({"id": num(breed_id)}) if breed_id else None
-    return breed.get("name") if breed else u""
 
 app.jinja_env.filters['breed_name'] = get_breed_name
 
@@ -576,7 +568,7 @@ def sale_find_header(form):
     elif (pet_id or form.pet.data) == "2":
         pet = u"кошку/котенка"
 
-    breed = get_breed_name(breed_id)
+    breed = get_breed_name(breed_id, pet_id)
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
         breed = Markup(u" породы {0}".format(breed).lower())

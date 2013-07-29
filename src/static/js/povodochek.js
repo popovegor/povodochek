@@ -4,6 +4,23 @@ jQuery.validator.addMethod("_login", function(value, element) {
 
 var povodochek = {};
 
+povodochek.select2_breed_sort = function(results, container, query) {
+  if(query.term) {
+    var results_top = [];
+    var results_bottom = [];
+    $.each(results, function(key, value) {
+      var breed_name = value.text;
+      if (breed_name.toLowerCase().indexOf(query.term.toLowerCase()) === 0){
+        results_top.push(value);
+      } else {
+        results_bottom.push(value);
+      }
+    });
+    results = $.merge(results_top.sort(), results_bottom.sort());
+  }
+  return results;
+}
+
 povodochek.validate = function (form, rules, submit){
     form.validate({
        rules : rules,

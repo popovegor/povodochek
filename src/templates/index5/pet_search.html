@@ -1,5 +1,5 @@
 <div class="pet-search  well">    
-  <h2 class="">Поиск объявлений о продаже породистых собак и кошек</h2>
+  <h2 class="">Поиск объявлений о&nbsp;продаже породистых собак и&nbsp;кошек</h2>
 
   <p class="">Найдите питомца интересующей вас породы, местоположению, цене, возрасту и&nbsp;другим параметрами. Выбрав подходящее объявление, вы&nbsp;сможете связаться с&nbsp;продавцом и&nbsp;при желании купить понравившуюся собаку или кошку.</p>
 
@@ -68,9 +68,10 @@
     openOnEnter : false, 
     matcher: function(term, text, option) {
       var pet_id = jq_pet.val();
-      return text.toUpperCase().indexOf(term.toUpperCase())===0 && (!pet_id || option.val().split("_")[0] === pet_id); 
-    }
-  });
+      return text.toLowerCase().indexOf(term.toLowerCase()) >= 0 && (!pet_id || option.val().split("_")[0] === pet_id); 
+    },
+    sortResults : povodochek.select2_breed_sort
+  }).on('select2-opening', function(e) {});
 
    jq_pet.on('change', function(e){
     jq_breed.select2('val', '');

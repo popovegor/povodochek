@@ -289,27 +289,27 @@
                 </li>                
                 <li class="adv-params hidden-phone">
                     <small>
-                    {% set pet_id = adv.get("pet_id") %}
-                    {% if pet_id %}
-                      <abbr title="Вид">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</abbr>
+                    {% set pet_name = adv.get("pet_id") | pet_name %}
+                    {% if pet_name %}
+                      <abbr title="Вид">{{pet_name | morph_word(["plur"]) }}</abbr>
                     {%endif%}
 
-                    {% set breed_id = adv.get("breed_id") %}
-                    {% if breed_id %}
+                    {% set breed_name = adv.get("breed_id") | breed_name %}
+                    {% if breed_name %}
                    &nbsp;>&nbsp;
-                    <abbr  title="Порода">{{breed_id | breed_name | title }}</abbr>
+                    <abbr  title="Порода">{{breed_name | title }}</abbr>
                     {%endif%}
 
-                    {% set gender_id = adv.get("gender_id") %}
-                    {% if  gender_id %}
+                    {% set gender_name = adv.get("gender_id") | gender_name  %}
+                    {% if  gender_name %}
                     &nbsp;>&nbsp;
-                    <abbr  title="Пол">{{ gender_id | gender_name | title }}</abbr>
+                    <abbr  title="Пол">{{ gender_name | title }}</abbr>
                     {% endif %}
   
-                     {% set age_id = adv.get("age_id") %}
-                    {%if age_id %}
+                     {% set age_name = adv.get("age_id") | age_name %}
+                    {%if age_name %}
                     &nbsp;>&nbsp;
-                    <abbr  title="Возраст">{{ age_id | age_name | title }}</abbr>
+                    <abbr  title="Возраст">{{ age_name | title }}</abbr>
                     {%endif%}
                     
                     </small>

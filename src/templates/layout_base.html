@@ -6,13 +6,15 @@
 
   <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 
-  <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-
   <title>{% block title %}{{title}} на Поводочке{% endblock%}</title>
   <meta name="title" content="{{title}} на Поводочке">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+  <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   <!-- Bootstrap -->
   <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">

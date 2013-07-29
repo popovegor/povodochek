@@ -20,7 +20,7 @@ from security import hash_password, check_password
 from helpers import num
 from dic.genders import genders
 from dic.ages import ages
-# from dic.breeds import breeds
+from dic.breeds import dogs, get_breed_name
 from dic.pets import pets, get_pet_name
 
 def mongo():
@@ -28,9 +28,6 @@ def mongo():
 
 def users():
     return mongo().users
-
-def breeds():
-    return mongo().breeds
 
 def cities():
     return mongo().cities
@@ -49,6 +46,11 @@ def pets_breeds():
     key = lambda pet_id: get_pet_name(pet_id)
     value = lambda pet_id, group: [("{0}_{1}".format(pet_id, breed["id"]), breed["name"]) for breed in sorted(group, key = lambda x: x['order']) ]
     return [ (key(pet_id), value(pet_id, group)) for pet_id, group in grouped_by_pet ]
+
+
+def pets_breeds():
+    return [(get_pet_name(1), \
+        [("%s_%s" % (1, dog_id), dog_name) for dog_id, dog_name in dogs.items()])]
 
 
 def get_city_by_city_and_region(city_and_region):

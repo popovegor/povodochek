@@ -5,8 +5,11 @@
 <div class="index5">
 
 
+	{%if not current_user.is_signed() %}
 
-	<h1 class="text-center {#tagline#}"><span class="logo" style="">Поводочек</span>&nbsp;&mdash; портал о продаже породистых собак и кошек</h1>
+	<h1 class="text-center {#tagline#}">Поводочек&nbsp;&mdash; портал о&nbsp;продаже породистых собак и&nbsp;кошек</h1>
+
+	{% endif %}
 
 	<div class="row-fluid">
 		<div class="span9">
@@ -18,11 +21,12 @@
 
 		</div>
 	
-	<div class="span3">
-		{%include "index5/pet_post.html" %}
-	</div>
-	
+		<div class="span3">
+			{%include "index5/pet_post.html" %}
 
+			{%include "index5/pet_by_cities.html" %}			
+		</div>
+	
 	</div>	
 
 

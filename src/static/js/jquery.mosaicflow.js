@@ -191,7 +191,10 @@
 				var highestHeight = columnsHeights[highestColumn];
 				var newLowestHeight = lowestHeight + lastInHighestColumnHeight;
 
-				if (newLowestHeight >= highestHeight) return;
+				if (newLowestHeight >= highestHeight) {
+					// this.container.css("max-height", newLowestHeight)
+					return;
+				}
 
 				this.columns.eq(lowestColumn).append(lastInHighestColumn);
 				columnsHeights[highestColumn] -= lastInHighestColumnHeight;
