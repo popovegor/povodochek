@@ -3,11 +3,11 @@
 
 		<table style="width:100%">
 			<tr>
-			<td><h4 class="text-left clearfix">
+			<td><h4 class="text-left clearfix pbc-caption">
 				<span class="text-left">{{pet_id | pet_name |morph_word(["plur"]) | title }} по городам</span>
 			</h4>
 			</td>
-			<td><small class="pull-right"><a href="{{url_for('sale_cities', pet_id = pet_id)}}">все&nbsp;&rarr;</a></small></td>
+			<td class=""><a class="pull-right" href="{{url_for('sale_cities', pet_id = pet_id)}}"><small>все&nbsp;города</small></a></td>
 		</tr>
 		</table>
 
@@ -25,13 +25,13 @@
 							{{breed_id | breed_name(pet_id) | truncate(30) }}
 						</td>
 						<td class="breed-count" style="width:25px">
-							<span class="pull-right badge">{{breeds | length}}</span>
+							<span class="pull-right ">{{breeds | length}}</span>
 						</td>
 					</tr>
 				{%endfor%}
 					<tr class="">
 						<td colspan="2" class="breed-more">
-							<a href="{{url_for('sale', pet = pet_id, city = city_name, distance = 0)}}"><small class="">все {{pet_id | pet_name | morph_word(["plur"]) | lower }} в  {{city_name | morph_word(["loct"]) }}</small></a>
+							<a href="{{url_for('sale', pet = pet_id, city = city_name, distance = 1)}}"><small class="">все {{pet_id | pet_name | morph_word(["plur"]) | lower }} в  {{city_name | morph_word(["loct"]) }}</small></a>
 						</td>
 					</tr>
 				</table>

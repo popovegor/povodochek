@@ -3,6 +3,13 @@
 @photo-thumbail-width : 150px;
 @bottom-height : 100px;
 
+.opacity (@opacity) {
+    @opacityPercentage: @opacity * 100;
+    opacity: @opacity;
+    -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(opacity=(@{opacityPercentage}))"; 
+    filter: ~"alpha(opacity = (@{opacityPercentage}))";;
+}
+
 /*.h1 {
     margin: 0px 0 20px 0 !important;
     line-height: 40px !important;
@@ -12,7 +19,7 @@
 }*/
 
 .h1 {
-    font-size: 32px;
+    font-size: 28px;
     margin: 0px 0 10px 0;
     line-height: 36px;
 }
@@ -30,18 +37,18 @@ html, body {
         h1{ .h1; }
 
         h2 {
-            font-size: 24px !important;
-            line-height: 30px !important;
+            font-size: 23px !important;
+            line-height: 32px !important;
         }
 
         h3 {
-            font-size: 20px !important;
-            line-height: 26px !important;
+            font-size: 19px !important;
+            line-height: 28px !important;
         }        
 
         h4 {
-            font-size: 15px !important;
-            line-height: 26px !important;
+            font-size: 16px !important;
+            line-height: 24px !important;
         }
 
         h5 {
@@ -294,7 +301,7 @@ form {
     } /*pet-post*/
 
     .pet-by-cities {
-        h3 { margin: 0px !important;}
+        .pbc-caption { margin: 0px !important; padding-right: 10px;}
 
         .city-name { }
 
@@ -306,6 +313,10 @@ form {
             td {
                 margin-top: 5px;
             }
+            .breed-count .badge{
+                background-color: lighten(#999999, 10%);
+            }
+
         }
 
         .cats-by-cities { margin-top: 30px; }
@@ -428,8 +439,7 @@ form {
                          color: #000;
                          text-align: center;
                          /*line-height: 24px;*/
-                         opacity:0.8;
-                         filter:alpha(opacity=8);
+                         .opacity(0.8);
                          z-index: 2;
                          font-size: 19px;
                     }
@@ -572,8 +582,7 @@ form {
      color: #000;
      text-align: center;
      /*line-height: 24px;*/
-     opacity:0.8;
-     filter:alpha(opacity=8);
+     .opacity(0.8);
      z-index: 2;
 }
 
@@ -827,8 +836,7 @@ form {
                  color: #000;
                  text-align: center;
                  /*line-height: 24px;*/
-                 opacity:0.8;
-                 filter:alpha(opacity=8);
+                 .opacity(0.8);
                  z-index: 2;
                  visibility: hidden;
             }
@@ -961,13 +969,25 @@ form {
             }
         }
         .breeds {
-            .breed-column {
-                .breed {
-                    margin:0px 0px 10px 0;
-                    .breed-name {}
-                    .breed-count {}
-                }
+            .breed {
+                margin:0px 0px 10px 0;
+                .breed-name {}
+                .breed-count {}
             }
         }
     }
+} /*sale-cities*/
+
+.flashed-messages {
+    margin-bottom:30px;
+    background-color: lighten(yellow, 30%);
+    border-color: yellow;
+    color: lighten(black, 30%);
+    text-shadow:none;
+    button.close { }
+
+    .flashed-message {
+        margin-left:10px;
+    }
 }
+

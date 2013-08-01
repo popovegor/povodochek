@@ -39,7 +39,7 @@
                     <div class="span3 breed-column">                  
                     {%for breed_id, breeds in column %}
                       <div class="breed">
-                        <a class="breed-name" target="_blank" href="{{url_for('sale', breed = '{0}_{1}' | format(adv.get('pet_id'), breed_id), city = city_name, distance = 0)}}">{{breed_id | breed_name(adv.get('pet_id')) }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count badge">{{breeds | length}}</span>
+                        <a class="breed-name" target="_blank" href="{{url_for('sale', breed = '{0}_{1}' | format(adv.get('pet_id'), breed_id), city = city_name, distance = 1)}}">{{breed_id | breed_name(adv.get('pet_id')) }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
                       </div> <!-- breed -->
                     {%endfor%}
                     </div> <!-- breed-column -->

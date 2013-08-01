@@ -729,7 +729,7 @@ def sale_save(form, id = None):
 
     (pet_id, breed_id) = form.breed.data.split("_")
     now = datetime.utcnow()
-    sale = {'user': str(current_user.id), 'pet_id': num(pet_id), 'breed_id': num(breed_id), 'title':form.title.data, 'desc': form.desc.data, 'photos': filenames, 'price': form.price.data, 'gender_id': num(form.gender.data), 'update_date':now, "city_id": form.city.city_id, 'age_id': num(form.age.data)}
+    sale = {'user': str(current_user.id), 'pet_id': num(pet_id), 'breed_id': num(breed_id), 'title':form.title.data, 'desc': form.desc.data, 'photos': filenames, 'price'   : form.price.data, 'gender_id': num(form.gender.data), 'update_date':now, "city_id": form.city.city_id, 'age_id': num(form.age.data)}
     if id:
         sales().update(
             {'_id': ObjectId(id), 'user': {'$in': [current_user.id, str(current_user.id)]} } 
@@ -908,14 +908,14 @@ def favicon():
 @app.route('/sale/cities/', defaults = {'pet_id': 1})
 @app.route('/sale/cities/<int:pet_id>/')
 def sale_cities(pet_id):
-    pet_name = morph_word(get_pet_name(pet_id), ["plur"]).title()
+    pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
     advs = sorted([adv for adv in pets_by_cities().find({'pet_id':pet_id})], \
         key = lambda x : x['city_name'])
 
     breeds_by_cities = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['city_name'][0])]
 
     return render_template("/sale_cities.html", \
-        title=u"{0} по городам".format(pet_name), \
+        title=u"Объявления о продаже {0} по городам".format(pet_name), \
         breeds_by_cities = breeds_by_cities)
 
 
