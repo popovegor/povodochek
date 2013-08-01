@@ -1,7 +1,7 @@
 @brand-font : 'Lobster', cursive !important;
 @brand-color: #ffffff !important;
 @photo-thumbail-width : 150px;
-@bottom-height : 160px;
+@bottom-height : 100px;
 
 /*.h1 {
     margin: 0px 0 20px 0 !important;
@@ -12,7 +12,7 @@
 }*/
 
 .h1 {
-    font-size: 24px;
+    font-size: 32px;
     margin: 0px 0 10px 0;
     line-height: 36px;
 }
@@ -30,22 +30,27 @@ html, body {
         h1{ .h1; }
 
         h2 {
-            font-size: 20px !important;
+            font-size: 24px !important;
             line-height: 30px !important;
         }
 
         h3 {
-            font-size: 18px !important;
+            font-size: 20px !important;
             line-height: 26px !important;
         }        
 
         h4 {
-            font-size: 16px !important;
+            font-size: 15px !important;
             line-height: 26px !important;
         }
 
         h5 {
-            font-size: 14px !important;
+            font-size: 13px !important;
+            line-height: 20px !important;
+        }
+
+        h6 {
+            font-size: 12px !important;
             line-height: 20px !important;
         }
 
@@ -177,7 +182,7 @@ form {
 }
 
 #footer {
-    height: (@bottom-height - 61px);
+    min-height: (@bottom-height - 61px);
     text-align: center;
     padding: 30px 0;
     border-top: 1px solid #e5e5e5;
@@ -234,7 +239,8 @@ form {
     }
 
     .pet-search {
-        padding: 10px 20px;
+        padding: 0px 20x;
+        margin-bottom: 30px;
 
         .alert.alert-info {
             padding-left: 20px;
@@ -253,7 +259,7 @@ form {
                 margin-bottom: 5px !important;
             }
 
-            #pet_find { margin-top: 28px; } 
+            #pet_find { margin-top: 16px; } 
         }
     }
 
@@ -288,7 +294,24 @@ form {
     } /*pet-post*/
 
     .pet-by-cities {
-        margin-top: 40px;
+        h3 { margin: 0px !important;}
+
+        .city-name { }
+
+        .breeds {
+            margin-bottom: 0px;
+            .breed-name, .breed-more {
+                padding-left:5%;
+            }
+            td {
+                margin-top: 5px;
+            }
+        }
+
+        .cats-by-cities { margin-top: 30px; }
+
+        .dogs-by-cities { margin-top: 35px; }
+
     } /*pet-by-cities*/
 
     .pet-mosaic {
@@ -584,6 +607,9 @@ form {
                 font-size: 24px;
             }
         }
+        .adv-dates {
+            margin-top: 10px;
+        }
     }
 }
 
@@ -593,12 +619,6 @@ form {
 
     .pet-sale-grid {
         margin-top: 20px;
-    }
-
-    .advs {
-        .adv {
-            margin-bottom:15px;
-        }
     }
 
     .advs-empty {
@@ -625,7 +645,7 @@ form {
         }
 
    .adv {
-        margin-top: 15px !important;        
+        margin-top: 10px !important;        
 
         div.photo {
             .photo-count {
@@ -637,15 +657,13 @@ form {
             margin-bottom: 5px;
         }
         
-    }
-    .adv:hover {
-        div.photo {
-            .photo-count {
-                visibility: visible;
+        &:hover, &:focus {
+            div.photo {
+                .photo-count {  visibility: visible; }
             }
         }
     }
-
+    
     .filter{
 
         form {
@@ -930,4 +948,26 @@ form {
     display:block;
     width:100%;
     height:auto;
+}
+
+.sale-cities {
+    .cities {
+        margin-top: 20px;
+        .city-letter {
+            margin-top: 30px;
+            font-size: 32px !important;
+            .city-fullname {
+                margin-top: 20px;
+            }
+        }
+        .breeds {
+            .breed-column {
+                .breed {
+                    margin:0px 0px 10px 0;
+                    .breed-name {}
+                    .breed-count {}
+                }
+            }
+        }
+    }
 }

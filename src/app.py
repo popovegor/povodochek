@@ -8,7 +8,7 @@ from flask_login import (LoginManager, current_user, login_required,
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
 from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_and_region, SendMail, ChangeEmail)
-from pymongo import MongoClient
+from pymongo import (MongoClient, ASCENDING, DESCENDING)
 from bson.objectid import ObjectId
 from bson.son import SON
 from gridfs import GridFS
@@ -22,6 +22,7 @@ import time
 import re
 import base64
 from sys import maxint
+from itertools import groupby
 
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
                               UploadNotAllowed)
@@ -56,6 +57,9 @@ def sales():
 def cities():
     return db.cities
     # return cities.cities
+
+def pets_by_cities():
+    return db.pets_by_cities
 
 class User(UserMixin):
     def __init__(self, login, id, active = True, username = None, email = None, new_email = None):
@@ -118,14 +122,19 @@ def jinja_format_price(value, template=u"{0:,}"):
 
 app.jinja_env.filters['format_price'] = jinja_format_price
 
-def jinja_format(value, template=u"{0}"):
-    return template.format(value)
+def jinja_format(template=u"{0}", *args):
+    return template.format(*args)
 
 app.jinja_env.filters['format'] = jinja_format
 
 app.jinja_env.filters['pet_name'] = get_pet_name
 
 app.jinja_env.filters['breed_name'] = get_breed_name
+
+def jinja_sorted(iterable, cmp = None, key = None, reverse = False):
+    return sorted(iterable, key = eval(key), reverse = reverse) 
+
+app.jinja_env.filters['sorted'] = jinja_sorted
 
 # todo: add caching layer 
 def get_gender_name(gender_id):
@@ -197,10 +206,14 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    advs = get_sales_for_index(0, 36)
+    mosaic_advs = get_sales_for_index(0, 42)
+    dogs_by_cities = [adv for adv in pets_by_cities().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 3)]
+    cats_by_cities = [adv for adv in pets_by_cities().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 3)]
     tmpl = render_template('index5.html', \
         pet_search_form = SaleSearch(), \
-        title = u"Продажа породистых собак и кошек", advs = [adv for adv in advs])
+        dogs_by_cities = dogs_by_cities, \
+        cats_by_cities = cats_by_cities, 
+        title = u"Продажа породистых собак и кошек", mosaic_advs = [adv for adv in mosaic_advs])
     return tmpl
 
 @app.route("/signin/", methods = ["POST", "GET"])
@@ -287,7 +300,6 @@ def async(f):
 @async
 def send_msg_aync(mailer, msg):
     mailer.send(msg)
-
 
 def send_activate(email, confirm):
     msg = Message("Подтверждение регистрации на сайте Поводочек", recipients = [email])
@@ -581,7 +593,7 @@ def sale(sale_search_form = None):
         age_id = form.age.data, \
         gender_id = form.gender.data, \
         city = city, \
-        distance = form.distance.data, \
+        distance = form.distance.data + 0.01, \
         photo = form.photo.data, \
         price_from = form.price_from.data  * 1000, \
         price_to = (form.price_to.data if num(form.price_to.data) < 100 else 0) * 1000,\
@@ -605,7 +617,7 @@ def sale_show(id):
     adv = sales().find_one({'_id': ObjectId(id)}) if id else None
     name = u"Продам {0} породы {1} в {2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
-        get_breed_name(adv.get("breed_id")).lower(),\
+        get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
         morph_word(get_city_name(adv.get("city_id")), {"loct"})
      )
     header =  Markup(u"{0} &#8212; {1}".format(name, \
@@ -892,6 +904,19 @@ def mail_sale(id):
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/sale/cities/', defaults = {'pet_id': 1})
+@app.route('/sale/cities/<int:pet_id>/')
+def sale_cities(pet_id):
+    pet_name = morph_word(get_pet_name(pet_id), ["plur"]).title()
+    advs = sorted([adv for adv in pets_by_cities().find({'pet_id':pet_id})], \
+        key = lambda x : x['city_name'])
+
+    breeds_by_cities = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['city_name'][0])]
+
+    return render_template("/sale_cities.html", \
+        title=u"{0} по городам".format(pet_name), \
+        breeds_by_cities = breeds_by_cities)
 
 
 if __name__ == "__main__":

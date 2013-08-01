@@ -55,9 +55,19 @@ def get_city_by_city_and_region(city_and_region):
         city = cities().find_one({"city_region": matcher}, fileds=["id", "region_id", "region_name", "city_name", "location"])
     return city
 
+def get_city_by_city_id(city_id):
+    city = None
+    if city_and_region: 
+        matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
+        city = cities().find_one({"city_region": matcher}, fileds=["id", "region_id", "region_name", "city_name", "location"])
+    return city
+
+
 def check_location(form, field):
     field.city_id = None
     if field.data:
+        # city = get_city_by_id(field.data)
+        # if not city:
         city = get_city_by_city_and_region(field.data)
         if not city :
             raise ValidationError(u'Неправильно указан населенный пункт')
@@ -142,7 +152,7 @@ class SaleSearch(Form):
 
     page = IntegerField(u"Страница", default = 1)
 
-    perpage = SelectField(u"Объявлений на стр.", default = 30, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
+    perpage = SelectField(u"Объявлений на стр.", default = 3, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
 
 class Sale(Form):
 

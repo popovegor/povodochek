@@ -242,7 +242,7 @@ cats = {
     48:u"Японский бобтейл",
 }
 
-def get_breed_name(breed_id, pet_id = 1):
+def get_breed_name(breed_id, pet_id):
     # print(breed_id, pet_id)
     breed_id = int(breed_id or 0)
     pet_id = int(pet_id or 0)
@@ -252,3 +252,21 @@ def get_breed_name(breed_id, pet_id = 1):
     elif pet_id == 2:
         breed = cats.get(breed_id)
     return breed or ""
+
+from pymongo import MongoClient
+import random
+from bson.objectid import ObjectId
+from pets import pets
+
+def shuffle_breeds_in_advs():
+    c = MongoClient()
+    db = c['povodochek']
+    for adv in db.sales.find():
+        pet_id = random.choice(pets.keys()[:5])
+        breed_id = random.choice((dogs if pet_id == 1 else cats).keys())
+        db.sales.update(adv, \
+            {'$set': {'breed_id': breed_id, 'pet_id' : pet_id}}, upsert = False)
+
+if __name__ == '__main__':
+    # shuffle_breeds_in_advs()
+    pass

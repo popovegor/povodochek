@@ -60,7 +60,7 @@
                     {% set breed_id = adv.get("breed_id") %}
                     {% if breed_id %}
                     {{" > "}}
-                    <span title="Порода">{{breed_id | breed_name }}</span>
+                    <span title="Порода">{{breed_id | breed_name(pet_id) }}</span>
                     {%endif%}
 
                     {% set gender_id = adv.get("gender_id") %}

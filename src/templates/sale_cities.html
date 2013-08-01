@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block content %}  
+
+
+<div class="sale-cities"> 
+
+<h1>{{title}}</h1>
+    
+    <div class="cities">
+
+        <div class="city-navigation">
+          
+          {% for letter, advs in breeds_by_cities %}
+            <a href="#{{letter}}">{{letter}}</a>&nbsp;
+          {%endfor%}
+
+        </div>
+
+        
+        {% for letter, advs in breeds_by_cities %}
+        <div class="cleafix" id="{{letter}}">
+          <p class="muted city-letter">
+            {{letter}}
+          </p>
+          
+        
+          {%for adv in advs %}
+              <div class="city-fullname">
+                  {%set city_name = adv.get('city_name')%}
+                  <h3>
+                  {{city_name}}
+                  </h3>
+
+                  <div class="row-fluid breeds">
+                  {%for column in adv.get('breeds') | groupby('breed_id') | slice(4) %}
+
+                    {% if column %}
+                    <div class="span3 breed-column">                  
+                    {%for breed_id, breeds in column %}
+                      <div class="breed">
+                        <a class="breed-name" target="_blank" href="{{url_for('sale', breed = '{0}_{1}' | format(adv.get('pet_id'), breed_id), city = city_name, distance = 0)}}">{{breed_id | breed_name(adv.get('pet_id')) }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count badge">{{breeds | length}}</span>
+                      </div> <!-- breed -->
+                    {%endfor%}
+                    </div> <!-- breed-column -->
+                    {%endif%}
+
+                  {%endfor%}
+                  </div> <!-- breeds -->
+                  
+
+              </div>
+      
+          {%endfor%}
+
+          
+          </div>
+        {%endfor%}
+
+    </div>
+   
+</div> <!-- sale-cities -->
+
+  <script type="text/javascript">
+  $(window).load(function(){
+
+  });
+  </script>
+
+  {% endblock %} 

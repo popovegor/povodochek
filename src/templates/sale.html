@@ -13,13 +13,15 @@
 
 <div class="pet-sale">
 
-  <div class="pet-post clearfix row-fluid">
-      <div class="span9"><h1>{{header}}</h1>
-      </div>
-      <div class="span3 hidden-phone">
-        {%include "pet_post_button.html" %}
-      </div>
-  </div> <!-- pet-post -->
+  <table style="width:100%">
+    <tr>
+    <td><h1>{{header}}</h1></td>
+    <td class="hidden-phone">
+        <div class="pull-right">{%include "pet_post_button.html" %}</div>
+    </td>
+    </tr>
+  </table>
+      
 
 <div class="row-fluid pet-sale-grid">
 
@@ -265,7 +267,7 @@
             </div>
 
               {%set price = (adv.get("price") or "") | int  %}
-              <div class="text-left adv-price" title='Цена: {{price | format("{0:,}") | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
+              <div class="text-left adv-price" title='Цена: {{"{0:,}" | format(price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
                  <span class="price">{{ price | format_price() }}&thinsp;<span class="rur">руб</span></span>
             </div>  
 
@@ -290,13 +292,13 @@
 
                 </li>                
                 <li class="adv-params hidden-phone">
-                    <small>
+                    <span>
                     {% set pet_name = adv.get("pet_id") | pet_name %}
                     {% if pet_name %}
                       <span title="Вид">{{pet_name | morph_word(["plur"]) }}</span>
                     {%endif%}
 
-                    {% set breed_name = adv.get("breed_id") | breed_name %}
+                    {% set breed_name = adv.get("breed_id") | breed_name(adv.get("pet_id")) %}
                     {% if breed_name %}
                    &nbsp;>&nbsp;
                     <span  title="Порода">{{breed_name | title }}</span>
@@ -314,7 +316,7 @@
                     <span  title="Возраст">{{ age_name | title }}</span>
                     {%endif%}
                     
-                    </small>
+                    </span>
                 </li>
                 <li class="adv-desc hidden-phone">
                     {{ adv["desc"] | truncate(120) }}
@@ -331,7 +333,7 @@
                             {% if update_date and  
                                 adv.get("update_date") 
                               %}
-                                <span class="">Обновлено:</span>&nbsp;<b>{{ momentjs(update_date or add_date).fromNow() }}</b>
+                                <span class="muted">Обновлено</span>&nbsp;<b>{{ momentjs(update_date or add_date).fromNow() }}</b>
                                 
                             {% endif%}
                           
@@ -353,33 +355,36 @@
       
        <div class="pagination {{paging_class}}">
               {% if pages > 1 %}
-                  <ul>
+              <p>Страницы:</p>
+                <ul>
 
-                    {% set page_range_left = ( (current_page - 1) / page_range ) | int * page_range  + 1 %}
-                    {% set page_range_right = (( ((current_page - 1)  / page_range) | int + 1 ) * page_range ) | min(pages) %}
+                  {% set page_range_left = ( (current_page - 1) / page_range ) | int * page_range  + 1 %}
+                  {% set page_range_right = (( ((current_page - 1)  / page_range) | int + 1 ) * page_range ) | min(pages) %}
 
-                    {% if current_page > page_range %}
-                      <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
-                      </li>
-                      <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
-                    {% endif %}
+                  {% if current_page > page_range %}
+                    <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
+                    </li>
+                    <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
+                  {% endif %}
 
+                  
+                  {%for page in range(page_range_left, page_range_right + 1)%}
+                    <li class="{{'disabled' if current_page == page else ''}}">
+                      <a href="{{request.url | change_query(form.page.name, current_page, page)}}">{{page}}</a>
+                    </li>
+                  {%endfor%}
+
+                  {%if  page_range_right < pages  %}
                     
-                    {%for page in range(page_range_left, page_range_right + 1)%}
-                      <li class="{{'disabled' if current_page == page else ''}}">
-                        <a href="{{request.url | change_query(form.page.name, current_page, page)}}">{{page}}</a>
-                      </li>
-                    {%endfor%}
+                    <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
+                    
+                    <li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
+                    </li>
+                  {%endif%}
 
-                    {%if  page_range_right < pages  %}
-                      
-                      <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
-                      
-                      <li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
-                      </li>
-                    {%endif%}
+                </ul>                
 
-                  </ul>
+
             {% endif %}
           </div>
 

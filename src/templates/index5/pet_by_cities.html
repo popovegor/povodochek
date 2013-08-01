@@ -1,0 +1,64 @@
+
+{%- macro pet_by_cities(pets, pet_id) -%}
+
+		<table style="width:100%">
+			<tr>
+			<td><h4 class="text-left clearfix">
+				<span class="text-left">{{pet_id | pet_name |morph_word(["plur"]) | title }} по городам</span>
+			</h4>
+			</td>
+			<td><small class="pull-right"><a href="{{url_for('sale_cities', pet_id = pet_id)}}">все&nbsp;&rarr;</a></small></td>
+		</tr>
+		</table>
+
+		<div class="cities clearfix">
+			{% for pet in pets %}
+				{%set city_name = pet.get('city_name') %}
+				{%set pet_id =pet.get('pet_id') %}
+				<h5 class="city-name">{{city_name}}</h5>
+				<table class="unstyled breeds" style="width:100%">
+				{% set sorted_pet = pet.get('breeds') | groupby(attribute='breed_id') | sorted( key= 'lambda x: len(x[1])', reverse = True)  %}
+
+				{%for breed_id, breeds in sorted_pet[:3]  %}
+					<tr class="">
+						<td class="breed-name">
+							{{breed_id | breed_name(pet_id) | truncate(30) }}
+						</td>
+						<td class="breed-count" style="width:25px">
+							<span class="pull-right badge">{{breeds | length}}</span>
+						</td>
+					</tr>
+				{%endfor%}
+					<tr class="">
+						<td colspan="2" class="breed-more">
+							<a href="{{url_for('sale', pet = pet_id, city = city_name, distance = 0)}}"><small class="">все {{pet_id | pet_name | morph_word(["plur"]) | lower }} в  {{city_name | morph_word(["loct"]) }}</small></a>
+						</td>
+					</tr>
+				</table>
+
+			{% endfor %}
+			</div> <!-- cities -->
+
+		{%- endmacro -%}
+
+
+<div class="pet-by-cities">
+	
+	<div class="dogs-by-cities clearfix">
+		
+		{{ pet_by_cities(dogs_by_cities, pet_id = 1)}}
+
+	</div>
+
+	<div class="cats-by-cities">
+
+		{{ pet_by_cities(cats_by_cities, pet_id = 2)}}
+
+	</div>	
+	
+		
+
+
+		
+	
+</div> <!-- pet-by-cities -->

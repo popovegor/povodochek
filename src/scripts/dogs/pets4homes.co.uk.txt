@@ -1,0 +1,197 @@
+
+70:Affenpinscher
+71:Afghan Hound
+72:Airedale Terrier
+73:Akita
+75:Alapaha Blue Blood Bulldog
+74:Alaskan Malamute
+76:American Bulldog
+77:American Cocker Spaniel
+78:Anatolian Shepherd
+79:Australian Cattle Dog
+80:Australian Shepherd
+483:Australian Silky Terrier
+81:Australian Terrier
+82:Basenji
+83:Basset Bleu De Gascogne
+437:Basset Fauve De Bretagne
+84:Basset Griffon Vendeen
+85:Basset Hound
+438:Bavarian Mountain Hound
+86:Beagle
+87:Bearded Collie
+88:Beauceron
+89:Bedlington Terrier
+90:Belgian Shepherd Dog
+91:Bergamasco
+92:Bernese Mountain Dog
+93:Bichon Frise
+486:Biewer Terrier
+94:Bloodhound
+95:Boerboel
+96:Bolognese
+97:Border Collie
+98:Border Terrier
+99:Borzoi
+100:Boston Terrier
+101:Bouvier Des Flandres
+102:Boxer
+103:Bracco Italiano
+104:Briard
+484:Brittany Spaniel
+105:Bullmastif
+106:Cairn Terrier
+107:Canaan Dog
+446:Canadian Eskimo Dog
+108:Cane Corso
+485:Caucasian Shepherd Dog
+109:Cavalier King Charles Spaniel
+110:Cesky Terrier
+111:Chesapeake Bay Retriever
+112:Chihuahua
+113:Chinese Crested
+114:Chow Chow
+115:Clumber Spaniel
+441:Cockapoo
+116:Cocker Spaniel
+479:Coonhound
+118:Coton De Tulear
+447:Curly Coated Retriever
+119:Dachshund
+120:Dalmatian
+121:Dandie Dinmont Terrier
+122:Deerhound
+123:Dobermann
+124:Dogue De Bordeaux
+125:Dorset Old Tyme Bulldog
+127:English Bull Terrier
+126:English Bulldog
+128:English Setter
+129:English Springer Spaniel
+130:English Toy Terrier
+482:Entlebucher Mountain Dog
+475:Estrela Mountain Dog
+131:Eurasier
+133:Field Spaniel
+134:Finnish Lapphund
+135:Finnish Spitz
+132:Flat coated Retriever
+136:Fox Terrier
+439:Foxhound
+137:French Bulldog
+463:German Longhaired Pointer
+138:German Shepherd
+462:German Shorthaired Pointer
+139:German Spitz
+464:German Wirehaired Pointer
+140:Giant Schnauzer
+141:Glen of Imaal Terrier
+142:Golden Retriever
+143:Goldendoodle
+144:Gordon Setter
+145:Grand Bleu De Gascogne
+146:Great Dane
+481:Greenland Dog
+147:Greyhound
+148:Griffon Bruxellois
+465:Havanese
+149:Hovawart
+150:Hungarian Puli
+151:Hungarian Vizsla
+152:Irish Setter
+153:Irish Terrier
+154:Irish Water Spaniel
+155:Irish Wolfhound
+470:Italian Greyhound
+156:Italian Spinone
+157:Jack Russell
+444:Japanese Akita Inu
+158:Japanese Chin
+159:Japanese Shiba Inu
+445:Japanese Spitz
+160:Keeshond
+161:Kerry Blue Terrier
+162:King Charles Spaniel
+506:Korthals Griffon
+476:Kromfohrlander
+164:Labradoodle
+163:Labrador Retriever
+166:Lakeland Terrier
+165:Lancashire Heeler
+167:Leonberger
+168:Lhasa Apso
+169:Lowchen
+170:Lurcher
+172:Maltese Terrier
+171:Manchester Terrier
+173:Mastiff
+174:Mexican Hairless
+491:Mi-Ki
+175:Miniature Dachshund
+176:Miniature Pinscher
+177:Miniature Poodle
+178:Miniature Schnauzer
+179:Neapolitan Mastiff
+180:Newfoundland
+181:Norfolk Terrier
+184:Northern Inuit
+182:Norwegian Elkhound
+183:Norwich Terrier
+185:Nova Scotia Duck Tolling Retriever
+186:Old English Sheepdog
+469:Old Tyme Bulldog
+440:Otterhound
+187:Papillon
+188:Parson Russell
+189:Patterdale Terrier
+190:Pekingese
+191:Pharaoh Hound
+192:Pinscher
+193:Pointer
+194:Pomeranian
+195:Poodle
+474:Portuguese Podengo
+196:Portuguese Sheepdog
+460:Portuguese Water Dog
+197:Pug
+480:Pyrenean Mastiff
+198:Pyrenean Mountain Dog
+199:Pyrenean Sheepdog
+200:Rhodesian Ridgeback
+201:Rottweiler
+461:Rough Collie
+473:Russian Black Terrier
+202:Saarloos Wolfdog
+203:Saint Bernard
+204:Saluki
+205:Samoyed
+206:Schipperke
+207:Schnauzer
+208:Scottish Terrier
+209:Sealyham Terrier
+210:Shar Pei
+211:Shetland Sheepdog
+212:Shih Tzu
+213:Siberian Husky
+214:Skye Terrier
+442:Sloughi
+117:Smooth Collie
+436:Soft Coated Wheaten Terrier
+443:Spanish Water Dog
+216:Staffordshire Bull Terrier
+215:Standard Poodle
+217:Sussex Spaniel
+218:Tibetan Mastiff
+219:Tibetan Spaniel
+220:Tibetan Terrier
+221:Toy Poodle
+222:Utonagan
+223:Weimaraner
+224:Welsh Collie
+225:Welsh Corgi
+226:Welsh Springer Spaniel
+227:Welsh Terrier
+228:West Highland Terrier
+229:Whippet
+467:White Swiss Shepherd
+230:Yorkshire Terrier

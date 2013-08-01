@@ -1,7 +1,7 @@
 <div class="pet-search  well">    
   <h2 class="">Поиск объявлений о&nbsp;продаже породистых собак и&nbsp;кошек</h2>
 
-  <p class="">Найдите питомца интересующей вас породы, местоположению, цене, возрасту и&nbsp;другим параметрами. Выбрав подходящее объявление, вы&nbsp;сможете связаться с&nbsp;продавцом и&nbsp;при желании купить понравившуюся собаку или кошку.</p>
+  <p class="hidden-phone">Найдите питомца интересующей вас породы, местоположению, цене, возрасту и&nbsp;другим параметрами. Выбрав подходящее объявление, вы&nbsp;сможете связаться с&nbsp;продавцом и&nbsp;при желании купить понравившуюся собаку или кошку.</p>
 
   <div class="">
 
@@ -21,15 +21,16 @@
 
   </div>
 
-  <div class="row-fluid">
-       <div class="span9">
-          {{ form_field(pet_search_form.city, placeholder = "Местоположение: Москва", class="span12") }}
-        </div>
-
-        <div class="span3 text-right">
-              <button type="submit" class="btn btn-primary span12" id="pet_find"><span class="hidden-tablet">Найти питомца</span><span class="visible-tablet"><i class="icon-white icon-search"></i>&nbsp; Найти</span></button>
-        </div>
-    </div>
+  <table style="width:100%">
+    <tr>
+      <td>
+        {{ form_field(pet_search_form.city, placeholder = "Местоположение: Москва", class="", style="width:96%") }}
+      </td>
+      <td style="width:10px; padding-left:20px">
+          <button type="submit" class="btn btn-primary pull-right" id="pet_find">Найти<span class="hidden-phone">&nbsp;питомца</span></button>
+      </td>
+    </tr>
+  </table>
     
   </form>
 </div> <!-- well -->

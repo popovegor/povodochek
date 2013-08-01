@@ -2163,17 +2163,36 @@ cities = [
 
 from pymongo import MongoClient, GEO2D, GEOSPHERE, ASCENDING
 from bson.objectid import ObjectId
+import random
+
+def povodochek():
+	return MongoClient().povodochek;
+
+def shuffle_cities_in_advs():
+	db = povodochek()
+	for adv in db.sales.find():
+		city_id = random.choice([city[1] for city  in cities[:]])
+		db.sales.update(adv, {'$set':{'city_id': city_id}}, upsert = False)
+
+
+def update_cities_in_db():
+	db = povodochek()
+	db.cities.drop()
+
+	for (city_name, id, region_name, region_id, country_name, country_id, latitude, longitude)  in cities:
+		city_region = u"{0}, {1}".format(city_name,region_name)
+		location = {'type': "Point", 'coordinates' : [ longitude, latitude ] }
+		db.cities.update({'id': id}, \
+			{'$set': {'city_name':city_name,  'id': id, 'region_name': region_name, 'region_id':region_id, 'country_name': country_name, 'country_id': country_id, 'city_region':city_region, 'location' :  location } } , upsert=True)
+
+		db.cities.ensure_index([("location", GEOSPHERE)])
+
+		db.cities.ensure_index([("id", ASCENDING)])
+
+import sys
 
 if __name__ == '__main__':
-    mongo = MongoClient()
-
-    mongo.povodochek.cities.drop()
-
-    for (city_name, id, region_name, region_id, country_name, country_id, latitude, longitude)  in cities:
-        city_region = u"{0}, {1}".format(city_name,region_name)
-        location = {'type': "Point", 'coordinates' : [ longitude, latitude ] }
-        mongo.povodochek.cities.update({'id': id}, {'city_name':city_name,  'id': id, 'region_name': region_name, 'region_id':region_id, 'country_name': country_name, 'country_id': country_id, 'city_region':city_region, 'location' :  location } , upsert=True)
-
-        mongo.povodochek.cities.ensure_index([("location", GEOSPHERE)])
-
-        mongo.povodochek.cities.ensure_index([("id", ASCENDING)])
+    # shuffle_cities_in_advs()
+    # pass
+    eval('{0}()'.format(sys.args[1]))
+    

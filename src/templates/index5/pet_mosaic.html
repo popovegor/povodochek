@@ -3,13 +3,13 @@
 	<div id="filters" class="">
 		<p><b id="">Новые<span class="hidden-phone"> объявления</span></b> <a id="filter_all" class="filter label hidden-phone ajax-link" href="#">Вперемешку</a><a id="filter_dogs" class="filter hidden-phone ajax-link" href="#">Собаки</a>
 		<a id="filter_cats" class="filter hidden-phone ajax-link" href="#">Кошки</a>
-		<a href="{{url_for('sale')}}" class="pull-right show-all">Все объявления</a>
+		<a href="{{url_for('sale')}}" class="pull-right show-all">Все объявления &rarr;</a>
 		</p>
 	</div>
 
     <div class="clearfix" id="advs">
 
-        {% for adv in advs %}
+        {% for adv in mosaic_advs %}
        <div class="mosaicflow__item">
        		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" title='{{adv.get("t")}}' style="display:none">
     		<img width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
@@ -22,7 +22,7 @@
 
 
     <div class="show-more text-center">
-    	<a class="btn btn-large" id="more" pet_id="0" skip="{{advs | length}}" data-loading-text="Загружаю...">Показать еще</a>
+    	<a class="btn btn-info btn-small" id="more" pet_id="0" skip="{{advs | length}}" data-loading-text="Загружаю...">Показать еще</a>
     </div>
 
 </div>
@@ -136,17 +136,17 @@
 
 
 		$("#filter_dogs").click(function(){
-			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = advs | length, pet = 1)}}', 1);
+			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 1)}}', 1);
 			return false;
 		});
 
 		$("#filter_all").click(function(){
-			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = advs | length, pet = 0)}}', 0);
+			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 0)}}', 0);
 			return false;
 		});
 
 		$("#filter_cats").click(function(){
-			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = advs | length, pet = 2)}}', 2);
+			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 2)}}', 2);
 			return false;
 		});
 

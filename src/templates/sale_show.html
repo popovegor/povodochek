@@ -11,7 +11,7 @@
             <li><a href="{{url_for('index')}}">Главная</a> <span class="divider">/</span></li>
             <li><a href="{{url_for('sale')}}">Продажа</a> <span class="divider">/</span></li>
             <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int)}}">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
-            <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int, breed='{0}_{1}'.format(adv.get('pet_id') | int,  adv.get('breed_id') | int ) )}}">{{adv.get('breed_id') | breed_name | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
+            <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int, breed='{0}_{1}'.format(adv.get('pet_id') | int,  adv.get('breed_id') | int ) )}}">{{adv.get('breed_id') | breed_name(adv.get('pet_id')) | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
             <li class="active">{{adv.get("title")}}</li>
           </ul>
     </div> 
@@ -63,7 +63,7 @@
 
   <div class="right-side {{'span7' if adv.get('photos') | length > 0 else 'span12'}}">
 
-      <div class="sale-show-price text-left" title="{{adv.get('price') | format('{0:,}') | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
+      <div class="sale-show-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
         Цена&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;<span>{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
       </div> <!-- price -->
     
@@ -88,7 +88,7 @@
         <dd>{{adv.get("pet_id") | pet_name | lower}}</dd>
 
         <dt class="">Порода</dt>
-        <dd>{{adv.get("breed_id") | breed_name | lower}}</dd>
+        <dd>{{adv.get("breed_id") | breed_name(adv.get('pet_id')) | lower}}</dd>
 
         <dt class="">Пол</dt>
         <dd>{{adv.get("gender_id") | gender_name | lower}}</dd>
