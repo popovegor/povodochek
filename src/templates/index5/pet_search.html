@@ -24,7 +24,7 @@
   <table style="width:100%">
     <tr>
       <td>
-        {{ form_field(pet_search_form.city, placeholder = "Местоположение: Москва", class="", style="width:96%") }}
+        {{ form_field(pet_search_form.city, placeholder = "Москва", class="", style="width:96%") }}
       </td>
       <td style="width:10px; padding-left:20px">
           <button type="submit" class="btn btn-primary pull-right" id="pet_find">Найти<span class="hidden-phone">&nbsp;питомца</span></button>
@@ -54,7 +54,7 @@
 
    var jq_pet = $("#pet");
    jq_pet.select2({
-    placeholder:"Тип животного: собака",
+    placeholder:"Собака",
     width: "off",
     openOnEnter : false,
     containerCssClass : "span12",
@@ -63,7 +63,7 @@
 
    var jq_breed = $("#breed");
    jq_breed.select2({
-    placeholder: "Порода: померанский шпиц",
+    placeholder: "Померанский шпиц",
     width: "off",
     containerCssClass : "span12",
     allowClear: true,
