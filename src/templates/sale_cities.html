@@ -29,7 +29,7 @@
               <div class="city-fullname">
                   {%set city_name = adv.get('city_name')%}
                   <h3>
-                  {{city_name}}
+                  {{city_name}}<small class="city-region">&nbsp;&nbsp;{{adv.get("region_name")}}</small>
                   </h3>
 
                   <div class="row-fluid breeds">

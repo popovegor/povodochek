@@ -152,7 +152,7 @@ app.jinja_env.filters['age_name'] = get_age_name
 
 # todo: add caching layer 
 def get_city_region(city_id):
-    city = cities().find_one({"id": num(city_id)}, fields=["city_region"]) if city_id else None
+    city = cities().find_one({"city_id": num(city_id)}, fields=["city_region"]) if city_id else None
     return city.get("city_region") if city else u""
 
 app.jinja_env.filters['city_region'] = get_city_region
@@ -160,7 +160,7 @@ app.jinja_env.filters['city_region'] = get_city_region
 
 def get_city_name(city_id):
     city_name = None
-    city = cities().find_one({"id": num(city_id)}, fields=["city_name"]) if city_id else None
+    city = cities().find_one({"city_id": num(city_id)}, fields=["city_name"]) if city_id else None
     return city.get("city_name") if city else u""
 
 app.jinja_env.filters['city_name'] = get_city_name
@@ -502,7 +502,7 @@ def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, cit
     near_cities = []
     if city and distance:
         near_cities = cities_near(city, distance)
-        extend_filter("city_id", {"$in": [city.get("id") for city, dis in near_cities]})
+        extend_filter("city_id", {"$in": [city.get("city_id") for city, dis in near_cities]})
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})
@@ -527,7 +527,7 @@ def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, cit
     if near_cities:
         for adv in advs:
             adv_city_id = adv.get("city_id")
-            (near_city, dist) = next( ((city, dist) for city, dist in near_cities if city["id"] == adv_city_id), (None, None))
+            (near_city, dist) = next( ((city, dist) for city, dist in near_cities if city["city_id"] == adv_city_id), (None, None))
             adv["distance"] = int(round(dist / 1000, 0))
 
     return (advs, count, total)
@@ -581,7 +581,7 @@ def kupit_sobaku_koshku():
 def sale(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_and_region(form.city.data)
-    form.city.city_id = city["id"] if city else None
+    form.city.city_id = city["city_id"] if city else None
     (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
 
     # sort
