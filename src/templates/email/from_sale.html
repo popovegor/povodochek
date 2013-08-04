@@ -19,7 +19,7 @@
             </ul>
         </div>
         <p>
-           Сообщение отправлено с объявления № <a target="_blank" href="{{url_for('sale_show', id = adv.get('_id'), _external =True)}}">{{adv.get('_id') }}</a>.
+           Сообщение отправлено с объявления № <a target="_blank" href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv.get('_id'), _external =True)}}">{{adv.get('_id') }}</a>.
         </p>
 
         <br/>

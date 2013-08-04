@@ -9,9 +9,8 @@
     <div class="clearfix container" id="breadcrumbs">
           <ul class="breadcrumb hidden-phone" >
             <li><a href="{{url_for('index')}}">Главная</a> <span class="divider">/</span></li>
-            <li><a href="{{url_for('sale')}}">Продажа</a> <span class="divider">/</span></li>
-            <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int)}}">{{adv.get('pet_id') | pet_name | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
-            <li><a href="{{url_for('sale', pet=adv.get('pet_id') | int, breed='{0}_{1}'.format(adv.get('pet_id') | int,  adv.get('breed_id') | int ) )}}">{{adv.get('breed_id') | breed_name(adv.get('pet_id')) | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
+            <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'))}}">Продажа {{adv.get('pet_id') | pet_name | morph_word(["plur", "gent"])  | lower }}</a> <span class="divider">/</span></li>
+            <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'), pet=adv.get('pet_id') | int, breed='{0}_{1}'.format(adv.get('pet_id') | int,  adv.get('breed_id') | int ) )}}">{{adv.get('breed_id') | breed_name(adv.get('pet_id')) | morph_word(["plur"]) }}</a> <span class="divider">/</span></li>
             <li class="active">{{adv.get("title")}}</li>
           </ul>
     </div> 
@@ -84,7 +83,7 @@
         <dt class="">Местоположение</dt>
         <dd>{{adv.get("city_id") | city_region}}</dd>
 
-        <dt class="">Вид</dt>
+        <dt class="">Тип животного</dt>
         <dd>{{adv.get("pet_id") | pet_name | lower}}</dd>
 
         <dt class="">Порода</dt>

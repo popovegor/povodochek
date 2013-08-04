@@ -39,7 +39,8 @@ from smsgate import send_sms
 from dic.ages import ages
 from dic.genders import genders
 from dic.pets import pets, get_pet_name
-from dic.breeds import dogs, get_breed_name
+from dic.breeds import (dogs, get_breed_name)
+from dic.cities import (get_city_and_region)
 
 
 # from pymorphy import 
@@ -56,7 +57,7 @@ def sales():
 
 def cities():
     return db.cities
-    # return cities.cities
+
 
 def pets_by_cities():
     return db.pets_by_cities
@@ -97,13 +98,13 @@ configure_uploads(app, (photos))
 login_manager = LoginManager()
 
 login_manager.anonymous_user = Anonymous
-login_manager.login_view = "/signin"
+login_manager.login_view = "/vhod/"
 login_manager.login_message = u"Please log in to access this page."
 login_manager.refresh_view = "reauth"
 
 login_manager.setup_app(app)
 
-# jinja custom filters
+# jinja custom filters and globals
 
 app.jinja_env.globals['momentjs'] = MomentJS
 
@@ -216,7 +217,7 @@ def index():
         title = u"Продажа породистых собак и кошек", mosaic_advs = [adv for adv in mosaic_advs])
     return tmpl
 
-@app.route("/signin/", methods = ["POST", "GET"])
+@app.route("/vhod/", methods = ["POST", "GET"])
 def signin():
     form = SignIn(request.form)
     form.password.description = Markup(u"<a class='' href='%s'>Напомнить пароль</a>" % (url_for("reset_password")))
@@ -252,13 +253,18 @@ def ajax_location_typeahead():
     return jsonify(items = locations )    
 
 
+def url_for_sale_show(pet_id, adv_id):
+    return url_for('sale_dogs_show', id = adv_id) if pet_id == 1 else url_for('sale_cats_show', id = adv_id)
+
+app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
+
 def get_sales_for_index(skip, limit = 36, pet_id = None):
     query = {"photos": {"$nin": [None, []]} }
     if pet_id:
         query["pet_id"] = pet_id
     advs = [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
-        'url' : url_for('sale_show', id = adv.get('_id')), \
+        'url' : url_for_sale_show( adv.get('pet_id'), adv_id = adv.get('_id')), \
         't' : adv.get('title'), \
         'id': str(adv.get('_id')),
         # 's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
@@ -385,7 +391,7 @@ def asignin(asign):
     flash(u"Не удалось выполнить автоматический вход на сайт под новым паролем, обратитесь в техподдержку сайта или попробуйте выслать ссылку на смену пароля еще раз.", "error")
     return redirect(url_for("index"))
 
-@app.route("/account/change-password/", methods = ["GET", "POST"])
+@app.route("/kabinet/smenit-parol/", methods = ["GET", "POST"])
 @login_required
 def account_change_password():
     form = ChangePassword(request.form)
@@ -397,7 +403,7 @@ def account_change_password():
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
-@app.route("/account/confirm-email/<base64_email>/")
+@app.route("/kabinet/podtverdit-pochtu/<base64_email>/")
 @login_required
 def account_confirm_email(base64_email):
     new_email = base64.b64decode(base64_email)
@@ -409,7 +415,7 @@ def account_confirm_email(base64_email):
     return redirect(url_for('account_change_email'))
 
 
-@app.route("/account/change-email/", methods = ["GET", "POST"])
+@app.route("/kabinet/smenit-pochtu/", methods = ["GET", "POST"])
 @login_required
 def account_change_email():
     form = ChangeEmail(request.form)
@@ -437,7 +443,7 @@ def test_email_activate():
     return render_template("email/activate.html", confirm = "1")
 
 
-@app.route("/signup/", methods = ["POST", "GET"])
+@app.route("/registracija/", methods = ["POST", "GET"])
 def signup():
     form = SignUp(request.form)
     if request.method == "POST" and form.validate():
@@ -453,7 +459,7 @@ def signup():
             return redirect(url_for('signin'))
     return render_template('signup.html', form=form, title=u"Регистрация")
 
-@app.route("/reset-password/", methods = ["GET", "POST"])
+@app.route("/sbros-parol/", methods = ["GET", "POST"])
 def reset_password():
     form = ResetPassword(request.form)
     if request.method == "POST" and form.validate():
@@ -467,7 +473,7 @@ def reset_password():
             flash(u"Ссылка на смену пароля была успешна отправлена на электронную почту '%s'" %user.get('email') , "info")
     return render_template("reset_password.html", title=u"Сброс пароля", form = form)
 
-@app.route("/signout/")
+@app.route("/vyhod/")
 @login_required
 def signout():
     logout_user()
@@ -558,26 +564,29 @@ def sale_find_header(form):
 
     return (header.format(pet, breed, city), title.format(pet, breed, morph_word(pet, {"gent", "plur"}), city), pet, breed) 
 
-
-@app.route("/kupit-sobaku/")
-def kupit_sobaku():
-    form = SaleSearch()
-    args = MultiDict([(form.pet.name, 1)] + [(name, value) for name, value in request.args.iteritems()])
-    form = SaleSearch(args)
-    return sale(form)
-
-@app.route("/kupit-koshku/")
-def kupit_koshku():
+@app.route("/kupit-sobaku-koshku/")
+def kupit_sobaku_koshku():
     form = SaleSearch()
     args = MultiDict([(form.pet.name, 2)] + [(name, value) for name, value in request.args.iteritems()])
     form = SaleSearch(args)
     return sale(form)
 
-@app.route("/kupit-sobaku-koshku/")
-def kupit_sobaku_koshku():
-    return sale()
 
-@app.route("/sale/")
+@app.route("/prodazha-sobak/")
+def sale_dogs():
+    form = SaleSearch()
+    args = MultiDict([(form.pet.name, 1)] + [(name, value) for name, value in request.args.iteritems()])
+    form = SaleSearch(args)
+    return sale(form)
+
+@app.route("/prodazha-koshek/")
+def sale_cats():
+    form = SaleSearch()
+    args = MultiDict([(form.pet.name, 2)] + [(name, value) for name,value in request.args.iteritems()])
+    form = SaleSearch(args)
+    return sale(form)
+
+@app.route("/prodazha-koshek-sobak/")
 def sale(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_and_region(form.city.data)
@@ -612,7 +621,19 @@ def sale(sale_search_form = None):
     return tmpl
 
 
-@app.route('/sale/<id>/')
+def url_for_sale(pet_id, **kwargs):
+    return url_for('sale_dogs', **kwargs) if pet_id == 1 else url_for('sale_cats', **kwargs)
+
+app.jinja_env.globals['url_for_sale'] = url_for_sale
+
+@app.route('/prodazha-sobak/<id>/')
+def sale_dogs_show(id):
+    return sale_show(id)
+
+@app.route('/prodazha-koshek/<id>/')
+def sale_cats_show(id):
+    return sale_show(id)
+
 def sale_show(id):
     adv = sales().find_one({'_id': ObjectId(id)}) if id else None
     name = u"Продам {0} породы {1} в {2}".format( \
@@ -633,7 +654,7 @@ def sale_show(id):
 
 
 
-@app.route("/account/")
+@app.route("/kabinet/")
 @login_required
 def account():
     tmpl = render_template("account/sale.html", title=u"Кабинет")
@@ -660,12 +681,7 @@ def account_user():
     tmpl = render_template("account/user.html", title=u"Учетные данные")
     return tmpl
 
-
-def get_city_and_region(city_id):
-    city = cities().find_one({'id': city_id})
-    return city["city_region"] if city else ""
-
-@app.route("/account/contact/", methods = ["GET", "POST"])
+@app.route("/kabinet/kontakty/", methods = ["GET", "POST"])
 @login_required
 def account_contact():
     user = users().find_one(current_user.id)
@@ -702,8 +718,7 @@ def account_adoption():
     tmpl = render_template("account/adoption.html", title=u"Отдам даром")
     return tmpl
 
-
-@app.route("/account/sale/")
+@app.route("/kabinet/prodazha/")
 @login_required
 def account_sale():
     sort = lambda adv: adv.get("update_date") or adv.get("add_date")
@@ -752,7 +767,7 @@ def account_sale_extend(id):
 
 
 
-@app.route("/account/sale/<id>/remove", methods = ['GET'])
+@app.route("/kabinet/prodazha/<id>/remove", methods = ['GET'])
 @login_required
 def account_sale_remove(id):
     adv = sales().find_one(
@@ -764,7 +779,7 @@ def account_sale_remove(id):
     return redirect(url_for("account_sale"))
     
 
-@app.route("/account/sale/<id>", methods = ['GET', 'POST'])
+@app.route("/kabinet/prodazha/<id>", methods = ['GET', 'POST'])
 @login_required
 def account_sale_edit(id):
     adv = sales().find_one(
@@ -794,7 +809,7 @@ def account_sale_edit(id):
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
 
-@app.route("/account/sale/add/", methods = ['GET', 'POST'])
+@app.route("/kabinet/prodazha/novoe/", methods = ['GET', 'POST'])
 @login_required
 def account_sale_add():
     form = Sale(request.form)
@@ -806,8 +821,7 @@ def account_sale_add():
         return redirect(url_for('account_sale'))
     return render_template("/account/sale_edit.html", form=form, title=u"Новое объявление о продаже", btn_name = u"Добавить")
 
-# @app.route("/sovety/")
-@app.route("/advice/")
+@app.route("/poleznoe/")
 def advice():
     return ""
 
@@ -877,7 +891,7 @@ def photo(filename, width):
 
     return send_file(path)
 
-@app.route("/mail/sale/<id>/", methods = ["POST", "GET"])
+@app.route("/pochta/prodazha/<id>/", methods = ["POST", "GET"])
 def mail_sale(id):
     form = SendMail(request.form)
     adv = sales().find_one(ObjectId(id))
@@ -905,8 +919,8 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/sale/cities/', defaults = {'pet_id': 1})
-@app.route('/sale/cities/<int:pet_id>/')
+@app.route('/prodazha-koshek-sobak/goroda/', defaults = {'pet_id': 1})
+@app.route('/prodazha-koshek-sobak/goroda/<int:pet_id>/')
 def sale_cities(pet_id):
     pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
     advs = sorted([adv for adv in pets_by_cities().find({'pet_id':pet_id})], \
@@ -918,6 +932,14 @@ def sale_cities(pet_id):
         title=u"Объявления о продаже {0} по городам".format(pet_name), \
         breeds_by_cities = breeds_by_cities)
 
+
+@app.route('/tos/')
+def tos():
+    pass
+
+@app.route('/kontakty/')
+def kontakty():
+    pass
 
 if __name__ == "__main__":
     app.debug = True

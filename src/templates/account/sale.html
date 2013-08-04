@@ -22,7 +22,7 @@
 
                 {% if (adv['photos'] | length) > 0 %}
                     {%set photo = adv.get("photos")[0] %}
-                        <a target="_blank" href="{{url_for('sale_show', id = adv.get('_id'))}}" adv-id="{{adv['_id']}}" title="Просмотреть объявление">
+                        <a target="_blank" href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv.get('_id'))}}" adv-id="{{adv['_id']}}" title="Просмотреть объявление">
                             <img src="{{url_for('thumbnail', filename=photo)}}">
                             <div class="photo-count"><small><b>{{adv["photos"] | length }}&nbsp; фото</b></small></div>
                         </a>  
@@ -84,7 +84,7 @@
                     <p class="span12">
                         <a class="btn btn-mini btn-primary" href="{{url_for('account_sale_edit', id = adv.get('_id'))}}" title="Редактировать объявление"><i class="icon-edit icon-white"></i><span class="">&nbsp;&nbsp;Изменить</span></a>
                      
-                        <a class="btn btn-mini" target="_blank" href="{{url_for('sale_show', id = adv.get('_id'))}}" title="Просмотреть объявление"><i class="icon-eye-open"></i><span class="">&nbsp;&nbsp;Просмотр</span></a>
+                        <a class="btn btn-mini" target="_blank" href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv.get('_id'))}}" title="Просмотреть объявление"><i class="icon-eye-open"></i><span class="">&nbsp;&nbsp;Просмотр</span></a>
 
                         <a class="btn btn-mini btn-danger" href='{{url_for("account_sale_remove", id = adv["_id"])}}' action="remove" title="Удалить объявление"><i class="icon-trash icon-white"></i><span class="hidden-desktop">&nbsp;&nbsp;Удалить</span></a>
 

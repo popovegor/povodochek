@@ -76,9 +76,34 @@
     formatResult : povodochek.select2_breed_format
   }).on('select2-opening', function(e) {});
 
+
+   var rewrite_search_url = function() {
+    debugger;
+    var pet_id = jq_pet.select2('val');
+    if(! pet_id) {
+      breed_id = jq_breed.select2('val');
+      if(breed_id){
+        pet_id =  breed_id.split('_')[0];
+      }
+    }
+    switch(pet_id) {
+      case '1':
+        $("#search").attr("action", "{{url_for('sale_dogs')}}");
+        break;
+      case "2":
+        $("#search").attr("action", "{{url_for('sale_cats')}}");
+        break;
+    }
+   }
+
    jq_pet.on('change', function(e){
     jq_breed.select2('val', '');
+    rewrite_search_url();
   });
+
+   jq_breed.on('change', function(e){
+    rewrite_search_url();
+   });
 
  });
 

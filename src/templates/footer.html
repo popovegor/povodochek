@@ -1,18 +1,31 @@
 <div id="footer" class="footer">
       <div class="container">
         <div class="row-fluid">
-            <div class="span3">
-1
+            <div class="span2 ">
+<a href="{{url_for('tos')}}">Пользовательское соглашение</a>
             </div>
-            <div class="span3">
-2
+            <div class="span2 contacts">
+<a href="{{url_for('kontakty')}}">Контакты</a>
+              </div>
+            {#<div class="span2 company">
+<a href="">О компании</a>
+            </div>#}
+            <div class="span2">
+<a href="{{url_for('advice')}}">Полезное</a>
             </div>
-            <div class="span3">
-3
+            <div class="span2">
+<a href="{{url_for('sale_dogs')}}">Продажа собак</a>
             </div>
-            <div class="span3">
-4
+            <div class="span2">
+<a href="{{url_for('sale_cats')}}">Продажа кошек</a>
             </div>
+            <div class="span2 ">
+<a href="{{url_for('account')}}">Кабинет</a>
+            </div>
+        </div>
+
+         <div class="copyright text-center">
+          © 2013-{{date_now}} Поводочек: продажа породистых собак и кошек. Собаки и щенки на продажу. Кошки и котята на продажу. Купить собаку или кошку.
         </div>
       </div>
   </div>

@@ -38,7 +38,7 @@
             {%for adv in advs[:] %}
               {%set photo = adv.get('photos')[0]%}
               <div class="photo">
-                <a href="{{url_for('sale_show', id = adv['_id'])}}" target="_self" class="photo-img">
+                <a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" class="photo-img">
                   <img alt="{{adv.get('title')}}" src="{{url_for('thumbnail', filename=photo)}}">
                    <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>
                    {#<div class="photo-price" title="Цена {{adv.get("price") | format_price }} руб">{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span></div> #}                         

@@ -2174,11 +2174,10 @@ def shuffle_cities_in_advs():
 		city_id = random.choice([city[1] for city  in cities[:]])
 		db.sales.update(adv, {'$set':{'city_id': city_id}}, upsert = False)
 
-
-def get_city_region(city_id):
+def get_city_and_region(city_id):
 	db = povodochek()
-	city = db.cities.find_one({'city_id': city_id}, fields  = {'city_region':1})
-	return city.get('city_region') if city else u"" 
+	city = db.cities.find_one({'city_id': city_id})
+	return city["city_region"] if city else ""
 
 def update_cities_in_db():
 	db = povodochek()

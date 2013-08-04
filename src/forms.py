@@ -52,14 +52,14 @@ def get_city_by_city_and_region(city_and_region):
     city = None
     if city_and_region: 
         matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
-        city = cities().find_one({"city_region": matcher}, fileds=["id", "region_id", "region_name", "city_name", "location"])
+        city = cities().find_one({"city_region": matcher}, fileds=["city_id", "region_id", "region_name", "city_name", "location"])
     return city
 
 def get_city_by_city_id(city_id):
     city = None
     if city_and_region: 
         matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
-        city = cities().find_one({"city_region": matcher}, fileds=["id", "region_id", "region_name", "city_name", "location"])
+        city = cities().find_one({"city_region": matcher}, fileds=["city_id", "region_id", "region_name", "city_name", "location"])
     return city
 
 
@@ -72,7 +72,7 @@ def check_location(form, field):
         if not city :
             raise ValidationError(u'Неправильно указан населенный пункт')
         else:
-            field.city_id = city.get("id")
+            field.city_id = city.get("city_id")
             field.location = city.get("location")
 
 

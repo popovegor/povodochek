@@ -7,7 +7,7 @@
 				<span class="text-left">{{pet_id | pet_name |morph_word(["plur"]) | title }} по городам</span>
 			</h4>
 			</td>
-			<td class=""><a class="pull-right" href="{{url_for('sale_cities', pet_id = pet_id)}}"><small>все&nbsp;города</small></a></td>
+			<td class="text-right"><a class="all-cities" href="{{url_for('sale_cities', pet_id = pet_id)}}"><span>все города</span></a></td>
 		</tr>
 		</table>
 
@@ -31,7 +31,7 @@
 				{%endfor%}
 					<tr class="">
 						<td colspan="2" class="breed-more">
-							<a href="{{url_for('sale', pet = pet_id, city = city_name, distance = 1)}}"><small class="">все {{pet_id | pet_name | morph_word(["plur"]) | lower }} в  {{city_name | morph_word(["loct"]) }}</small></a>
+							<a href="{{url_for_sale(pet_id = pet_id, pet = pet_id, city = city_name, distance = 1)}}"><small class="">все {{pet_id | pet_name | morph_word(["plur"]) | lower }} в  {{city_name | morph_word(["loct"]) }}</small></a>
 						</td>
 					</tr>
 				</table>
