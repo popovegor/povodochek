@@ -981,13 +981,19 @@ form {
 .flashed-messages {
     margin-bottom:30px;
     background-color: lighten(yellow, 30%);
-    border-color: yellow;
-    color: lighten(black, 30%);
+    border-color: lighten(yellow, 30%);;
+    color: lighten(black, 50%);
     text-shadow:none;
     button.close { }
 
     .flashed-message {
-        margin-left:10px;
+        /*margin-left:10px;*/
     }
+}
+
+.flashed-messages-error {
+    background-color: lighten(red, 30%);
+    border-color: lighten(red, 30%);
+    color: lighten(black, 30%);
 }
 

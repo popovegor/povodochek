@@ -15,10 +15,10 @@
 
              <div class="phone">
 
-              {{ form_field(form.phone, class="input-xlarge", placeholder="Введите номер телефона для связи") }}
+              {{ form_field(form.phone, class="input-large", placeholder = "Введите тел. номер") }}
                 <div class="phone-options">
-                  {{ form_field(form.phone_adv_hide) }}    
-                  {{ form_field(form.phone_adv_sms) }}   
+                  {{ form_field(form.phone_adv_hide) }}
+                  {#{ form_field(form.phone_adv_sms) }#}   
                 </div>
               </div>  
 
@@ -67,13 +67,20 @@
     });
 
     $(function(){
-        $("#phone").mask('+7(999)999-9999');
+        /*var mask = $("#phone").mask('+7(999)999-9999', {
+          completed: function(){alert(this.val());}
+        });*/
+      $("#phone").inputmask({"mask": "+7(999)999-9999", 
+        'oncompleted': function() {alert('how');} 
+      }); 
     });
+
 
       //validation
     $(function(){
       povodochek.validate($("form"),  {
-         username : {required: true}
+         username : {required: true},
+         phone : {_phone: true}
        });
     });
 

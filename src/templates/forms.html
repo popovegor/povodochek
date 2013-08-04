@@ -14,15 +14,10 @@
  
 {%- macro form_field_errors(field) -%}
     {% if field.errors %}
-      <ul class="unstyled">
         {%- for error in field.errors -%}
-            <li class="label label-important">{{ error }}
-            </li>
-            {%if loop.index >= 1%}
-              <br>
-            {%endif%}
+            <p class="label label-important error">{{ error }}
+            </p>
         {%- endfor -%}
-      </ul>
     {% endif %}
 {%- endmacro -%}
  
@@ -47,7 +42,7 @@
 
  
 {%- macro form_field(field) -%}
-  <div id="{{field.id}}_field" class="form-field clearfix {{'error' if field.errors else ''}}">
+  <div id="{{field.id}}_field" class="control-group form-field clearfix {{'error' if field.errors else ''}}">
     {% if field.type == 'HiddenField' %}
         {{ field() }}
     {% else %}
