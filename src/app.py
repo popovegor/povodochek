@@ -253,8 +253,8 @@ def ajax_location_typeahead():
     return jsonify(items = locations )    
 
 
-def url_for_sale_show(pet_id, adv_id):
-    return url_for('sale_dogs_show', id = adv_id) if pet_id == 1 else url_for('sale_cats_show', id = adv_id)
+def url_for_sale_show(pet_id, adv_id, **kwargs):
+    return url_for('sale_dogs_show', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_cats_show', id = adv_id, **kwargs)
 
 app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
 
