@@ -48,8 +48,8 @@
 
            <ul class="nav">
 
-               <li class="{{'active' if url_for('sale_dogs') in request.path else ''}}"><a href="{{url_for('sale_dogs')}}"  title="Объявления о продаже собак/щенков">Продажа собак</a></li>
-               <li class="{{'active' if url_for('sale_cats') in request.path else ''}}"><a href="{{url_for('sale_cats')}}"  title="Объявления о продаже кошек/котят">Продажа кошек</a></li>
+               <li class="{{'active' if url_for('sale_dogs') in request.path else ''}}"><a href="{{url_for('sale_dogs')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
+               <li class="{{'active' if url_for('sale_cats') in request.path else ''}}"><a href="{{url_for('sale_cats')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
                <li class=" {{'active' if url_for('advice') == request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
             </ul>
 
