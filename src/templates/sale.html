@@ -241,9 +241,9 @@
            </div> <!-- advs-found -->
 
 
-      <table class="table table-hover">
+<table class="table table-hover">
 
-        {% for adv in advs %}
+  {% for adv in advs %}
 
 <tr>
   <td>
@@ -293,7 +293,7 @@
                     {%endif%}
 
                 </li>                
-                <li class="adv-params hidden-phone">
+                <li class="adv-params">
                     <span>
                     {% set pet_name = adv.get("pet_id") | pet_name %}
                     {% if pet_name %}
