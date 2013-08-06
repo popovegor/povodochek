@@ -254,6 +254,8 @@ def ajax_location_typeahead():
 
 
 def url_for_sale_show(pet_id, adv_id, **kwargs):
+    print(pet_id)
+    print(adv_id)
     return url_for('sale_dogs_show', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_cats_show', id = adv_id, **kwargs)
 
 app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
@@ -264,7 +266,7 @@ def get_sales_for_index(skip, limit = 36, pet_id = None):
         query["pet_id"] = pet_id
     advs = [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
-        'url' : url_for_sale_show( adv.get('pet_id'), adv_id = adv.get('_id')), \
+        'url' : url_for_sale_show( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
         't' : adv.get('title'), \
         'id': str(adv.get('_id')),
         # 's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
@@ -272,7 +274,7 @@ def get_sales_for_index(skip, limit = 36, pet_id = None):
         for adv in sales().find(
             query, \
             skip = skip, \
-            fields = ["_id", "photos", "title"], \
+            fields = ["_id", "photos", "title", "pet_id"], \
             limit = limit, \
             sort = [('update_date', -1)]) ]
     return advs
