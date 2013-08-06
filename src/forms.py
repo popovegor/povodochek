@@ -48,6 +48,14 @@ def pets_breeds():
     return _dogs + _cats
 
 
+def get_city_by_city_field(field):
+    city = None
+    if field.data:
+        city = get_city_by_city_id(field.data)
+        if not city:
+            city = get_city_by_city_and_region(field.data)
+    return city
+
 def get_city_by_city_and_region(city_and_region):
     city = None
     if city_and_region: 
@@ -57,23 +65,19 @@ def get_city_by_city_and_region(city_and_region):
 
 def get_city_by_city_id(city_id):
     city = None
-    if city_and_region: 
-        matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
-        city = cities().find_one({"city_region": matcher}, fileds=["city_id", "region_id", "region_name", "city_name", "location"])
+    if isinstance(city_id, unicode) and city_id.isdigit():
+        city = cities().find_one({'city_id': int(city_id)})
     return city
 
 
-def check_location(form, field):
+def validate_location(form, field):
     field.city_id = None
-    if field.data:
-        # city = get_city_by_id(field.data)
-        # if not city:
-        city = get_city_by_city_and_region(field.data)
-        if not city :
-            raise ValidationError(u'Неправильно указан населенный пункт')
-        else:
-            field.city_id = city.get("city_id")
-            field.location = city.get("location")
+    city = get_city_by_city_field(field)
+    if not city:
+        raise ValidationError(u'Неправильно указан населенный пункт')
+    else:
+        field.city_id = city.get("city_id")
+        field.location = city.get("location")
 
 
 class ChangePassword(Form):
@@ -185,7 +189,7 @@ class Sale(Form):
     price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))], \
         description = Markup(u'Указывайте <abbr title="Указываю реальную цену, вы многократно повышаете свои шансы успешной продажи, так как покупатели проявят больше интереса к вашему объявлению.">достоверную цену</abbr>!'))
 
-    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), check_location], \
+    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
         description = u"Введите населенный пункт, в котором продается питомец.")
 
     age = SelectField(u"Возраст", \
@@ -195,7 +199,7 @@ class Sale(Form):
 class Contact(Form):
     username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
 
-    city = TextField(u"Город", validators = [check_location])    
+    city = TextField(u"Город", validators = [validate_location])    
     city_adv_hide = BooleanField(u"Не показывать город в объявлениях")
 
     phone = TextField(u"Телефонный номер")

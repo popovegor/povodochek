@@ -7,7 +7,7 @@ from flask_login import (LoginManager, current_user, login_required,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_and_region, SendMail, ChangeEmail)
+from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_field, SendMail, ChangeEmail)
 from pymongo import (MongoClient, ASCENDING, DESCENDING)
 from bson.objectid import ObjectId
 from bson.son import SON
@@ -254,8 +254,6 @@ def ajax_location_typeahead():
 
 
 def url_for_sale_show(pet_id, adv_id, **kwargs):
-    print(pet_id)
-    print(adv_id)
     return url_for('sale_dogs_show', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_cats_show', id = adv_id, **kwargs)
 
 app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
@@ -591,8 +589,9 @@ def sale_cats():
 @app.route("/prodazha-koshek-sobak/")
 def sale(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
-    city = get_city_by_city_and_region(form.city.data)
-    form.city.city_id = city["city_id"] if city else None
+    city = get_city_by_city_field(form.city)
+    (form.city.data, form.city.city_id) = \
+        (city.get('city_region'), city.get("city_id")) if city else (None, None)
     (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
 
     # sort
