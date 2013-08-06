@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from pymongo import MongoClient 
-from dic.cities import (cities, get_city_region)
 
 def povodochek():
 	return MongoClient().povodochek

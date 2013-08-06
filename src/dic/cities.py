@@ -2179,7 +2179,7 @@ def get_city_and_region(city_id):
 	city = db.cities.find_one({'city_id': city_id})
 	return city["city_region"] if city else ""
 
-def update_cities_in_db():
+def update_cities():
 	db = povodochek()
 	db.cities.drop()
 
@@ -2191,7 +2191,7 @@ def update_cities_in_db():
 
 		db.cities.ensure_index([("location", GEOSPHERE)])
 
-		db.cities.ensure_index([("id", ASCENDING)])
+		db.cities.ensure_index([("city_id", ASCENDING)])
 
 import sys
 
