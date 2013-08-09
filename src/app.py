@@ -43,6 +43,8 @@ from dic.breeds import (dogs, get_breed_name)
 from dic.cities import (get_city_and_region)
 
 
+from flaskext.markdown import Markdown
+
 # from pymorphy import 
 
 photos = UploadSet('photos', IMAGES)
@@ -92,6 +94,8 @@ config = os.path.join(app.root_path, 'config.py')
 app.config.from_pyfile(config)
 
 mail = Mail(app)
+
+Markdown(app)
 
 configure_uploads(app, (photos))
 
@@ -936,7 +940,8 @@ def sale_cities(pet_id):
 
 @app.route('/tos/')
 def tos():
-    pass
+    return render_template("/tos.html", \
+        title=u"Пользовательское соглашение")
 
 @app.route('/kontakty/')
 def kontakty():
