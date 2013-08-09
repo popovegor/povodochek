@@ -1,5 +1,5 @@
 @brand-font : 'Lobster', cursive !important;
-@brand-color: #ffffff !important;
+@brand-color: darken(#86b6cd, 10%);
 @photo-thumbail-width : 150px;
 @bottom-height : 100px;
 
@@ -105,12 +105,13 @@ html, body {
     }
 
     a.brand:focus, a.brand:hover {
-        color:darken(#86b6cd, 10%);
+        color: @brand-color;
         /*color:lighten(gray, 5%);*/
     }
 
     span.brand {
         cursor: default !important;
+        color:@brand-color;
     }
 
     .brand-phone {
