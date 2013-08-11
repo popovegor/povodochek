@@ -3,7 +3,7 @@
 {% block content %}  
 
 
-<div class="sale-show"> 
+<div class="sale-pet"> 
 
    <!-- крошки -->
     <div class="clearfix container" id="breadcrumbs">
@@ -18,7 +18,7 @@
 
   <h1>{{header}}</h1>
 
-  <div class="sale-show-container row-fluid"> 
+  <div class="sale-pet-container row-fluid"> 
 
   {%if adv.get('photos') | length > 0%}
 
@@ -62,18 +62,16 @@
 
   <div class="right-side {{'span7' if adv.get('photos') | length > 0 else 'span12'}}">
 
-      <div class="sale-show-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
+      <div class="sale-pet-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
         Цена&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;<span>{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
       </div> <!-- price -->
     
-
     <h2 class="adv-title">
       {{adv.get("title")}}
     </h2>
 
-
     <!-- description -->
-    <p class="adv=desc">{{adv.get("desc")  }}</p>
+    <p class="adv=desc">{{adv.get("desc") }}</p>
 
 
     <div class="adv-info">
@@ -155,9 +153,9 @@
 
   </div> <!-- right-side -->
 
-  </div> <!-- sale-show-container -->  
+  </div> <!-- sale-pet-container -->  
 
-</div> <!-- sale-show -->
+</div> <!-- sale-pet -->
 
   <script type="text/javascript">
   $(window).load(function(){

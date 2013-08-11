@@ -40,26 +40,19 @@ from dic.ages import ages
 from dic.genders import genders
 from dic.pets import pets, get_pet_name
 from dic.breeds import (dogs, get_breed_name)
-from dic.cities import (get_city_and_region)
-
+from dic.cities import (get_city_region, get_city, get_city_name)
 
 from flaskext.markdown import Markdown
 
-# from pymorphy import 
-
 photos = UploadSet('photos', IMAGES)
 
-db = MongoClient()['povodochek']
+db = MongoClient().povodochek
 
 def users():
     return db.users
 
 def sales():
     return db.sales
-
-def cities():
-    return db.cities
-
 
 def pets_by_cities():
     return db.pets_by_cities
@@ -154,20 +147,7 @@ def get_age_name(age_id):
     return ages[id] if id in ages else u""
 
 app.jinja_env.filters['age_name'] = get_age_name
-
-# todo: add caching layer 
-def get_city_region(city_id):
-    city = cities().find_one({"city_id": num(city_id)}, fields=["city_region"]) if city_id else None
-    return city.get("city_region") if city else u""
-
 app.jinja_env.filters['city_region'] = get_city_region
-
-
-def get_city_name(city_id):
-    city_name = None
-    city = cities().find_one({"city_id": num(city_id)}, fields=["city_name"]) if city_id else None
-    return city.get("city_name") if city else u""
-
 app.jinja_env.filters['city_name'] = get_city_name
 app.jinja_env.filters['morph_word'] = morph_word
 
@@ -253,14 +233,14 @@ def ajax_location_typeahead():
     limit = int(request.args.get("limit") or 8)
     matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
     locations = [ city.get("city_region") \
-        for city in cities().find({'city_region': {"$regex": matcher}}, limit=limit, fields=["city_region"])]
+        for city in db.cities.find({'city_region': {"$regex": matcher}}, limit=limit, fields=["city_region"])]
     return jsonify(items = locations )    
 
 
-def url_for_sale_show(pet_id, adv_id, **kwargs):
-    return url_for('sale_dogs_show', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_cats_show', id = adv_id, **kwargs)
+def url_for_sale_pet(pet_id, adv_id, **kwargs):
+    return url_for('sale_dog', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_cat', id = adv_id, **kwargs)
 
-app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
+app.jinja_env.globals['url_for_sale_pet'] = url_for_sale_pet
 
 def get_sales_for_index(skip, limit = 36, pet_id = None):
     query = {"photos": {"$nin": [None, []]} }
@@ -268,7 +248,7 @@ def get_sales_for_index(skip, limit = 36, pet_id = None):
         query["pet_id"] = pet_id
     advs = [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
-        'url' : url_for_sale_show( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
+        'url' : url_for_sale_pet( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
         't' : adv.get('title'), \
         'id': str(adv.get('_id')),
         # 's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
@@ -560,9 +540,9 @@ def sale_find_header(form):
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
         breed = Markup(u" породы {0}".format(breed).lower())
 
-    city = get_city_name(form.city.city_id) if form.city.city_id else u''
+    city = get_city_name(form.city.city_id, "p") if form.city.city_id else u''
     if city:
-        city = u" в {0}".format(morph_word(city, ["loct", "sing"]) )
+        city = u" в {0}".format(city)
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
 
@@ -632,26 +612,26 @@ def url_for_sale(pet_id, **kwargs):
 app.jinja_env.globals['url_for_sale'] = url_for_sale
 
 @app.route('/prodazha-sobak/<id>/')
-def sale_dogs_show(id):
-    return sale_show(id)
+def sale_dog(id):
+    return sale_pet(id)
 
 @app.route('/prodazha-koshek/<id>/')
-def sale_cats_show(id):
-    return sale_show(id)
+def sale_cat(id):
+    return sale_pet(id)
 
-def sale_show(id):
+def sale_pet(id):
     adv = sales().find_one({'_id': ObjectId(id)}) if id else None
     name = u"Продам {0} породы {1} в {2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
-        morph_word(get_city_name(adv.get("city_id")), {"loct"})
-     )
+        get_city_name(adv.get("city_id"), "p")
+    )
     header =  Markup(u"{0} &#8212; {1}".format(name, \
         u"<abbr class='price' title='Цена'>{0}&nbsp;{1}</abbr>".format(jinja_format_price(adv.get("price")), morph_word(u"рубль", count=adv.get("price"))))) 
     title = u"{0} - {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
     seller = users().find_one(ObjectId(adv.get("user")))
-    return render_template("sale_show.html", \
+    return render_template("sale_pet.html", \
         header = name,
         title = title,
         adv = adv,
@@ -924,8 +904,14 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/prodazha-koshek-sobak/goroda/', defaults = {'pet_id': 1})
-@app.route('/prodazha-koshek-sobak/goroda/<int:pet_id>/')
+@app.route('/prodazha-koshek/goroda/')
+def cats_cities():
+    return sale_cities(pet_id = 2) 
+
+@app.route('/prodazha-sobak/goroda/')
+def dogs_cities():
+    return sale_cities(pet_id = 1) 
+
 def sale_cities(pet_id):
     pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
     advs = sorted([adv for adv in pets_by_cities().find({'pet_id':pet_id})], \
