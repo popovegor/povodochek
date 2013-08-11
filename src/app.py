@@ -932,6 +932,10 @@ def contacts():
     return render_template("/contacts.html", \
         title=u"Контактная информация")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html', title = u"Страница не найдена"), 404
+
 
 if __name__ == "__main__":
     app.debug = True

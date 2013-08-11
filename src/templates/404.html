@@ -1,0 +1,19 @@
+{% extends "layout_base.html" %}
+
+{% block layout %}  
+
+
+<div class="error-404"> 
+    <div>
+      <a href="/" class="error-404-logo">
+        Поводочек
+      </a>
+      </div>
+      <br/>
+      <div class="error-text">
+        <b class="error-404-number">404.</b> <span>Запрашиваемая вами страница <b>&laquo;{{request.url}}&raquo;</b> не&nbsp;найдена.</span>
+      </div>
+      
+</div>
+
+{% endblock %} 
