@@ -129,7 +129,7 @@ app.jinja_env.filters['pet_name'] = get_pet_name
 
 app.jinja_env.filters['breed_name'] = get_breed_name
 
-def jinja_sorted(iterable, cmp = None, key = None, reverse = False):
+def jinja_sorted(iterable, key = None, reverse = False):
     return sorted(iterable, key = eval(key), reverse = reverse) 
 
 app.jinja_env.filters['sorted'] = jinja_sorted
@@ -685,7 +685,7 @@ def account_contact():
             flash(u"Контактная информация обновлена.", "info")
             return redirect(url_for("account_contact"))
     else:
-        form.city.data = get_city_and_region(user.get("city_id"))
+        form.city.data = get_city_region(user.get("city_id"))
         form.city_adv_hide.data = user.get("city_adv_hide")
         form.username.data = user.get("username")
         form.phone.data = user.get("phone") 
