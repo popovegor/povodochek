@@ -789,7 +789,7 @@ def account_sale_edit(id):
         form.price.data = num(adv.get('price'))
         form.gender.data = str(num(adv.get('gender_id')) or '')
         form.photos.data = ",".join(adv.get("photos"))
-        form.city.data = get_city_and_region(adv.get("city_id"))
+        form.city.data = get_city_region(adv.get("city_id"))
         form.age.data = str(num(adv.get("age_id")))
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
