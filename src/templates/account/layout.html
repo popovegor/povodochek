@@ -9,7 +9,7 @@
 {% block content %}      
 
   <div class="row-fluid account">
-    <div class="span3 ">
+    <div class="span3 left-side">
       <ul class="nav nav-pills nav-stacked">
         <li class="nav-header">Мои объявления</li>
         {% for (title, path) in [("Объявления о продаже", url_for('account_sale')), ("Новое объявление", url_for('account_sale_add'))
