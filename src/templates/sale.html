@@ -248,11 +248,12 @@
 <tr>
   <td>
            
+    <small style="display:none" class="adv-number muted">#&thinsp;{{(form.page.data - 1)*form.perpage.data + loop.index}}</small>
 
     <div class="media clearfix adv">
 
         <div class="pull-left">
-            
+             
             <div class="text-center photo">
                 
                 {% set photo = (adv.get('photos') or [])[0]%}
