@@ -759,7 +759,7 @@ def account_sale_remove(id):
         {'_id': {'$in':[id, ObjectId(id)]}, 
         'user': {'$in': [current_user.id, str(current_user.id)]}})
     if adv:
-        # sales().remove({"_id": adv["_id"]  })
+        sales().remove(adv)
         flash(u"Объявление '%s' удалено." % adv["title"], "info")
     return redirect(url_for("account_sale"))
     
