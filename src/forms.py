@@ -285,7 +285,7 @@ class SignUp(Form):
     repeat_password = PasswordField(u'Повторить пароль', \
         [ Required(message=MSG_REQUIRED), EqualTo('password', message=u'Пароли не совпадают.')])
 
-    accept_tos = BooleanField(Markup(u'С <a href="#">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
+    accept_tos = BooleanField(Markup(u'С <a target="_blank" href="/tos/">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
 
 
 class SendMail(Form):
