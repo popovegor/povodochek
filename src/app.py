@@ -777,7 +777,6 @@ def account_sale_edit(id):
     if request.method == "POST":
         print(form.price.data)
         if form.validate():
-            print(form.city.city_id)
             sale_save(form, id)
             flash(u"Объявление '%s' обновлено." % form.title.data, "info")
             return redirect(url_for("account_sale"))
@@ -931,7 +930,8 @@ def tos():
 
 @app.route('/kontakty/')
 def kontakty():
-    pass
+    return render_template("/contacts.html", \
+        title=u"Контактная информация")
 
 if __name__ == "__main__":
     app.debug = True
