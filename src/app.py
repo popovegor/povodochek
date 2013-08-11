@@ -579,7 +579,6 @@ def sale(sale_search_form = None):
     (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
 
     # sort
-    print(form.price_from.data, form.price_to.data)
     session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
     
     (advs, count, total) = sale_find(pet_id = pet_id or form.pet.data, \
@@ -929,9 +928,10 @@ def tos():
         title=u"Пользовательское соглашение")
 
 @app.route('/kontakty/')
-def kontakty():
+def contacts():
     return render_template("/contacts.html", \
         title=u"Контактная информация")
+
 
 if __name__ == "__main__":
     app.debug = True
