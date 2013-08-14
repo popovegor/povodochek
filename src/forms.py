@@ -22,6 +22,7 @@ from dic.genders import genders
 from dic.ages import ages
 from dic.breeds import (dogs, cats, get_breed_name)
 from dic.pets import pets, get_pet_name
+from dic.cities import (get_city)
 
 def mongo():
     return MongoClient().povodochek
@@ -66,18 +67,19 @@ def get_city_by_city_and_region(city_and_region):
 def get_city_by_city_id(city_id):
     city = None
     if isinstance(city_id, unicode) and city_id.isdigit():
-        city = cities().find_one({'city_id': int(city_id)})
+        city = get_city(int(city_id))
     return city
 
 
 def validate_location(form, field):
     field.city_id = None
-    city = get_city_by_city_field(field)
-    if not city:
-        raise ValidationError(u'Неправильно указан населенный пункт')
-    else:
-        field.city_id = city.get("city_id")
-        field.location = city.get("location")
+    if field.data:
+        city = get_city_by_city_field(field)
+        if not city:
+            raise ValidationError(u'Неправильно указан населенный пункт')
+        else:
+            field.city_id = city.get("city_id")
+            field.location = city.get("location")
 
 
 class ChangePassword(Form):

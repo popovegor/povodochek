@@ -686,7 +686,7 @@ def account_contact():
         if form.validate():
             users().update({"_id": current_user.id}, {"$set":
                 {"username": form.username.data, \
-                "city_id": form.city.city_id, \
+                "city_id": form.city.city_id if form.city.data else None, \
                 "phone": form.phone.data, \
                 "phone_adv_sms" : form.phone_adv_sms.data if form.phone.data else None, \
                 "phone_adv_hide": form.phone_adv_hide.data if form.phone.data else None, \
