@@ -248,10 +248,7 @@ class SignIn(Form):
     password = PasswordField(u'Пароль', \
         [Required(message=MSG_REQUIRED)])
 
-class SignUp(Form):
-
-    username = TextField(u"Имя", [Required(message=MSG_REQUIRED)])
-
+class SignUpBasic(Form):
     login = TextField(u"Логин", \
         [Required(message=MSG_REQUIRED), \
         Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
@@ -259,7 +256,6 @@ class SignUp(Form):
         description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
 
     def validate_login(form, field):
-        print("validate login %s" % field.data)
         user = users().find_one({'login': field.data})
         if user:
             raise ValidationError(u"Логин '%s' занят" % field.data)
@@ -272,7 +268,40 @@ class SignUp(Form):
         description = u"После регистрации не забудьте подтвердить эл. почту, перейдя по ссылке в письме.")
 
     def validate_email(form, field):
-        print("validate email %s" % field.data)
+        user = users().find_one({'email': field.data})
+        if user:
+            raise ValidationError(u"Адрес '%s' занят" % field.data)
+
+    password = PasswordField(u"Пароль", \
+        [Required(message=MSG_REQUIRED), \
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],
+        description = u"Длина пароля от 6 до 36 символов.")
+
+    accept_tos = BooleanField(Markup(u'С <a target="_blank" href="/tos/">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
+
+class SignUp(Form):
+
+    username = TextField(u"Имя", [Required(message=MSG_REQUIRED)])
+
+    login = TextField(u"Логин", \
+        [Required(message=MSG_REQUIRED), \
+        Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],\
+        description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
+
+    def validate_login(form, field):
+        user = users().find_one({'login': field.data})
+        if user:
+            raise ValidationError(u"Логин '%s' занят" % field.data)
+
+
+    email = TextField(u'Эл. почта / Email', \
+        validators = [Required(message=MSG_REQUIRED),\
+        Email(message=MSG_EMAIL)], \
+        filters = [lambda x : (x or '').lower()], \
+        description = u"После регистрации не забудьте подтвердить эл. почту, перейдя по ссылке в письме.")
+
+    def validate_email(form, field):
         user = users().find_one({'email': field.data})
         if user:
             raise ValidationError(u"Адрес '%s' занят" % field.data)

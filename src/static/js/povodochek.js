@@ -49,10 +49,10 @@ povodochek.select2_breed_format = function(object, container, query) {
 povodochek.validate = function (form, rules, submit){
     form.validate({
        rules : rules,
-       errorElement : "p", 
+       errorElement : "li", 
         errorPlacement: function(error, element) {
-         error.addClass("label label-important");
-         $("#" + element.attr("id") + "_field label").after(error);
+         error.addClass("form-field-error");
+         $("#" + element.attr("id") + "_field .form-field-errors").append(error);
        },
        highlight: function(element, errorClass) {
           $("#" + element.id + "_field").addClass("error").removeClass('success');

@@ -31,8 +31,8 @@
 
                 {%else%}
                   <!-- anonymous -->
-                  <li class="{{'active' if url_for('signup') in request.path }}">
-                     <a href="{{url_for('signup')}}" class="hidden-phone signup">Регистрация</a>
+                  <li class="{{'active' if url_for('signup_basic') in request.path }}">
+                     <a href="{{url_for('signup_basic')}}" class="hidden-phone signup">Регистрация</a>
                    </li>
                    <li class="divider-vertical hidden-phone"></li>
                    <li class="{{'active' if url_for('signin') in request.path  }}">

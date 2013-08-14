@@ -7,7 +7,7 @@ from flask_login import (LoginManager, current_user, login_required,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_field, SendMail, ChangeEmail)
+from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_field, SendMail, ChangeEmail, SignUpBasic)
 from pymongo import (MongoClient, ASCENDING, DESCENDING)
 from bson.objectid import ObjectId
 from bson.son import SON
@@ -427,23 +427,35 @@ def test_email_activate():
     return render_template("email/activate.html", confirm = "1")
 
 
+@app.route("/reg/", methods = ["POST", "GET"])
+def signup_basic():
+    form = SignUpBasic(request.form)
+    if request.method == "POST" and form.validate():
+        (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), "Пользователь")
+        user_id = users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
+        send_signup(username, login, email, password, confirm)
+        flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
+        if login_user(User(login, user_id), remember = True):
+            return redirect(request.args.get('next') or url_for('account_contact'))
+        else:
+            return redirect(url_for('signin'))
+    return render_template('signup_basic.html', form=form, title=u"Регистрация")
+
 @app.route("/registracija/", methods = ["POST", "GET"])
 def signup():
     form = SignUp(request.form)
     if request.method == "POST" and form.validate():
         (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), form.username.data)
-        print(login, email, password)
         user_id = users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
         send_signup(username, login, email, password, confirm)
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
         if login_user(User(login, user_id), remember = True):
-            print(login)
             return redirect(request.args.get('next') or url_for('account_contact'))
         else:
             return redirect(url_for('signin'))
     return render_template('signup.html', form=form, title=u"Регистрация")
 
-@app.route("/sbros-parol/", methods = ["GET", "POST"])
+@app.route("/sbros-parolja/", methods = ["GET", "POST"])
 def reset_password():
     form = ResetPassword(request.form)
     if request.method == "POST" and form.validate():

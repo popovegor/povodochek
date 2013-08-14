@@ -13,12 +13,14 @@
 {%- endmacro -%}
  
 {%- macro form_field_errors(field) -%}
-    {% if field.errors %}
+  <ul class="form-field-errors">
+    {% if field.errors %}      
         {%- for error in field.errors -%}
-            <p class="label label-important error">{{ error }}
-            </p>
+            <li class="form-field-error">{{ error }}
+            </li>
         {%- endfor -%}
     {% endif %}
+  </ul>
 {%- endmacro -%}
  
 {%- macro form_field_boolean(field) -%}

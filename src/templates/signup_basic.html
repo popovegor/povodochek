@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}      
+
+<h1>{{title}}</h1>
+
+<div class="row-fluid">
+    <div class="span12">
+<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже ваших питомцев.</p>
+        {% from "forms.html" import form_field_boolean, form_field %}
+
+        <form class="form-signup" method="post" action="{{request.url}}" >
+
+          {{ form_field(form.login, placeholder="Введите логин", class="input-xlarge") }}
+
+          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="input-xlarge") }}
+
+          {{ form_field(form.password, placeholder="Введите пароль", class="input-xlarge") }}
+
+          {{ form_field(form.accept_tos)}}
+
+            <button class="btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрироваться</button>
+     
+      </form>
+  </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+  //validation
+  $(function(){
+
+    povodochek.validate($("form"), {
+        login : {required : true, rangelength: [6, 36], _login: true},
+        email : {required : true , email: true},
+        password: {required: true, rangelength: [6, 36]},
+        accept_tos: {required: true}
+     });
+  });
+  
+</script>
+
+
+{% endblock %} 
