@@ -3,4 +3,4 @@ python:
   - "2.7"
 # command to install dependencies
 install:
-  - "pip install -r pip-reqs.txt --use-mirrors"
+  - "pip install -r pip_reqs.txt --use-mirrors"
