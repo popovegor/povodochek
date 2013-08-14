@@ -175,7 +175,7 @@ class Sale(Form):
 
     # заголовок объявления
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
-        # description = Markup(u'Введите заголовок объявления длинной от 10 до 80 символов. <abbr title="Подобные слова не несут никакой полезной информации для покупателей, а только замусоривают страницы и создают дополнительный шум.">Не используйте слова "продать" или "купить"</abbr> и схожие с ними.'))
+        # description = Markup(u'Введите заголовок объявления длиной от 10 до 80 символов. <abbr title="Подобные слова не несут никакой полезной информации для покупателей, а только замусоривают страницы и создают дополнительный шум.">Не используйте слова "продать" или "купить"</abbr> и схожие с ними.'))
          description = u'Заголовок объявления должен быть короче 80 символов.'
          )
 
@@ -280,7 +280,7 @@ class SignUp(Form):
     password = PasswordField(u"Пароль", \
         [Required(message=MSG_REQUIRED), \
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],
-        description = u"Длинна пароля от 6 до 36 символов.")
+        description = u"Длина пароля от 6 до 36 символов.")
 
     repeat_password = PasswordField(u'Повторить пароль', \
         [ Required(message=MSG_REQUIRED), EqualTo('password', message=u'Пароли не совпадают.')])
