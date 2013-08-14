@@ -221,6 +221,13 @@ def signin():
             flash(u"Неправильный логин или пароль.", "error")
     return render_template("signin.html", form=form, title=u"Вход на сайт")
 
+@app.route("/ajax/activate/remember/later/")
+@login_required
+def ajax_activate_remember_later():
+    later = session["activate_remember_later"] = True
+    return "success"
+
+
 @app.route("/ajax/location/prefetch.json", methods = ["GET"])
 def ajax_location_prefetch():
     locations = [ city.get("city_name") for city in cities().find(fields=["city_name"])]
