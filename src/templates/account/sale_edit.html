@@ -5,7 +5,7 @@
 <!-- <p class="">Редактирвать</p> -->
 
 <div class="row-fluid sale-edit">
-    <div class="span9">
+    <div class="span12">
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
@@ -122,6 +122,11 @@
                   age : {required: true},
                   gender : {required: true}
                }, submit);
+
+
+              $('#desc').textareaCount({
+                'originalStyle': 'textarea-counter', 
+                'displayFormat' : "#input"});
  
 
             //remove action
