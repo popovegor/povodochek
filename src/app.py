@@ -201,7 +201,7 @@ def index():
         title = u"Продажа породистых собак и кошек", mosaic_advs = [adv for adv in mosaic_advs])
     return tmpl
 
-@app.route("/vhod/", methods = ["POST", "GET"])
+@app.route("/signin/", methods = ["POST", "GET"])
 def signin():
     form = SignIn(request.form)
     form.password.description = Markup(u"<a class='' href='%s'>Напомнить пароль</a>" % (url_for("reset_password")))
@@ -375,7 +375,7 @@ def asignin(asign):
     flash(u"Не удалось выполнить автоматический вход на сайт под новым паролем, обратитесь в техподдержку сайта или попробуйте выслать ссылку на смену пароля еще раз.", "error")
     return redirect(url_for("index"))
 
-@app.route("/kabinet/smenit-parol/", methods = ["GET", "POST"])
+@app.route("/account/change-password/", methods = ["GET", "POST"])
 @login_required
 def account_change_password():
     form = ChangePassword(request.form)
@@ -387,7 +387,7 @@ def account_change_password():
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
-@app.route("/kabinet/podtverdit-pochtu/<base64_email>/")
+@app.route("/account/confirm-email/<base64_email>/")
 @login_required
 def account_confirm_email(base64_email):
     new_email = base64.b64decode(base64_email)
@@ -399,7 +399,7 @@ def account_confirm_email(base64_email):
     return redirect(url_for('account_change_email'))
 
 
-@app.route("/kabinet/smenit-pochtu/", methods = ["GET", "POST"])
+@app.route("/account/change-email/", methods = ["GET", "POST"])
 @login_required
 def account_change_email():
     form = ChangeEmail(request.form)
@@ -427,7 +427,7 @@ def test_email_activate():
     return render_template("email/activate.html", confirm = "1")
 
 
-@app.route("/reg/", methods = ["POST", "GET"])
+@app.route("/signup/", methods = ["POST", "GET"])
 def signup_basic():
     form = SignUpBasic(request.form)
     if request.method == "POST" and form.validate():
@@ -455,7 +455,7 @@ def signup():
             return redirect(url_for('signin'))
     return render_template('signup.html', form=form, title=u"Регистрация")
 
-@app.route("/sbros-parolja/", methods = ["GET", "POST"])
+@app.route("/reset-password/", methods = ["GET", "POST"])
 def reset_password():
     form = ResetPassword(request.form)
     if request.method == "POST" and form.validate():
@@ -469,7 +469,7 @@ def reset_password():
             flash(u"Ссылка на смену пароля была успешна отправлена на электронную почту '%s'" %user.get('email') , "info")
     return render_template("reset_password.html", title=u"Сброс пароля", form = form)
 
-@app.route("/vyhod/")
+@app.route("/signout/")
 @login_required
 def signout():
     logout_user()
@@ -650,7 +650,7 @@ def sale_pet(id):
 
 
 
-@app.route("/kabinet/")
+@app.route("/account/")
 @login_required
 def account():
     tmpl = render_template("account/sale.html", title=u"Кабинет")
@@ -677,7 +677,7 @@ def account_user():
     tmpl = render_template("account/user.html", title=u"Учетные данные")
     return tmpl
 
-@app.route("/kabinet/kontakty/", methods = ["GET", "POST"])
+@app.route("/account/contact/", methods = ["GET", "POST"])
 @login_required
 def account_contact():
     user = users().find_one(current_user.id)
@@ -714,7 +714,7 @@ def account_adoption():
     tmpl = render_template("account/adoption.html", title=u"Отдам даром")
     return tmpl
 
-@app.route("/kabinet/prodazha/")
+@app.route("/account/sale/")
 @login_required
 def account_sale():
     sort = lambda adv: adv.get("update_date") or adv.get("add_date")
@@ -763,7 +763,7 @@ def account_sale_extend(id):
 
 
 
-@app.route("/kabinet/prodazha/<id>/remove", methods = ['GET'])
+@app.route("/account/sale/<id>/remove", methods = ['GET'])
 @login_required
 def account_sale_remove(id):
     adv = sales().find_one(
@@ -775,7 +775,7 @@ def account_sale_remove(id):
     return redirect(url_for("account_sale"))
     
 
-@app.route("/kabinet/prodazha/<id>", methods = ['GET', 'POST'])
+@app.route("/account/sale/<id>", methods = ['GET', 'POST'])
 @login_required
 def account_sale_edit(id):
     adv = sales().find_one(
@@ -804,7 +804,7 @@ def account_sale_edit(id):
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
 
-@app.route("/kabinet/prodazha/novoe/", methods = ['GET', 'POST'])
+@app.route("/account/sale/new/", methods = ['GET', 'POST'])
 @login_required
 def account_sale_add():
     form = Sale(request.form)
