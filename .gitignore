@@ -3,4 +3,6 @@
 /venv/
 /mongodump-*/
 *.tmp
+/src/static/gen/
+/src/static/.webassets-cache/
 #*#

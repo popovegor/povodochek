@@ -43,6 +43,7 @@ from dic.breeds import (dogs, get_breed_name)
 from dic.cities import (get_city_region, get_city, get_city_name)
 
 from flaskext.markdown import Markdown
+from flask.ext.assets import Environment, Bundle
 
 photos = UploadSet('photos', IMAGES)
 
@@ -89,6 +90,32 @@ app.config.from_pyfile(config)
 mail = Mail(app)
 
 Markdown(app)
+assets = Environment(app)
+
+assets.debug = app.config['ASSETS_DEBUG']
+
+js = Bundle('js/jquery-2.0.3.min.js', \
+    'js/jquery-ui-1.10.3.custom.min.js', \
+    'select2/select2.min.js', \
+    'select2/select2_locale_ru.js', \
+    'js/jquery.validate.min.js', \
+    'js/jquery.validate.ru.js', \
+    'js/jquery.inputmask.min.js', \
+    'js/moment.min.js', \
+    'js/moment.min.ru.js', \
+    'js/jquery.nouislider.min.js', \
+    'js/jquery.flexslider.min.js', \
+    'js/jquery.touch-punch.min.js', \
+    'js/jquery.shapeshift.js', \
+    'js/jquery.mosaicflow.min.js', \
+    'js/jquery.textareaCounter.plugin.js', \
+    'js/holder.min.js', \
+    'js/bootstrap.min.js', \
+    'js/jquery.carouFredSel.min.js', \
+    'js/povodochek.js', \
+    filters='rjsmin', \
+    output='gen/packed.js')
+assets.register('js_all', js)
 
 configure_uploads(app, (photos))
 

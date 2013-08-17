@@ -35,70 +35,12 @@
   <link href="{{ url_for('static', filename='css/povodochek.less')}}" rel="stylesheet/less">
   <script src="{{ url_for('static', filename='js/less.js')}}"></script>
 
-  <!-- jquery -->
 
-  <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js')}}"></script>
+  <!-- JS -->
 
-
-  <!-- jquery-ui -->
-
-  <script src="{{ url_for('static', filename='js/jquery-ui-1.10.3.custom.min.js')}}"></script>
-  
-
-
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
-  <script src="{{ url_for('static', filename='js/holder.js')}}"></script>
-
-  <script type="text/javascript" src="{{ url_for('static', filename='select2/select2.js')}}"></script>
-
-    <script type="text/javascript" src="{{ url_for('static', filename='select2/select2_locale_ru.js')}}"></script>
-
-
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.validate.js')}}"></script>
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.validate.ru.js')}}"></script>
-
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.inputmask.min.js')}}"></script>
-
-
-
-      <!-- colorbox -->
-    {#<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.colorbox.min.js')}}"></script>
-
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.colorbox.ru.js')}}"></script>#}
-
-
-     <!-- moment.js -->
-    <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.js')}}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/moment.min.ru.js')}}"></script>
-
-      <!-- nouislider -->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.nouislider.min.js')}}"></script>
-
-
-    <!-- flexslider-->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.flexslider.min.js')}}"></script>
-
-
-  <!-- jquery.touch-punch.min.js -->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.touch-punch.min.js')}}"></script>
-
-
-  <!-- shapeshift.js -->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.shapeshift.min.js')}}"></script>
-
-
-        <!-- carouFredSel.js -->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.carouFredSel.min.js')}}"></script>
-
-
-        <!-- jquery.mosaicflow.min.js -->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.mosaicflow.js')}}"></script>
-
-      <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.textareaCounter.plugin.js')}}"></script>
-
-
-  <!-- povodochek.js -->
-      <script type="text/javascript" src="{{ url_for('static', filename='js/povodochek.js')}}"></script>
+  {% assets "js_all" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 
 
   {% endblock %}
@@ -109,6 +51,8 @@
   <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
   </script>
+
+
 
   {% block layout %}
   
