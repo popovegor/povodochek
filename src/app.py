@@ -123,7 +123,7 @@ login_manager = LoginManager()
 
 login_manager.anonymous_user = Anonymous
 login_manager.login_view = "/signin/"
-login_manager.login_message = u"Please log in to access this page."
+login_manager.login_message = u"Пожалуйста, войдите, чтобы уидеть содержимое страницы."
 login_manager.refresh_view = "reauth"
 
 login_manager.setup_app(app)
