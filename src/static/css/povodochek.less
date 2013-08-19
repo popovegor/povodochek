@@ -43,7 +43,7 @@ html, body {
 
         h3 {
             font-size: 19px !important;
-            line-height: 30px !important;
+            line-height: 28px !important;
         }        
 
         h4 {
@@ -52,7 +52,7 @@ html, body {
         }
 
         h5 {
-            font-size: 13px !important;
+            font-size: 14px !important;
             line-height: 20px !important;
         }
 
@@ -253,12 +253,6 @@ form {
 }
 
 
-.pet-post-button {
-    a.btn {
-
-    }
-}
-
 .index5 {
 
     h1 {
@@ -294,6 +288,11 @@ form {
     .pet-post {
 
         margin-top:20px;
+        padding:20px;
+
+        border: dotted 3px #dedede;
+
+        .rounded-corners(5px);
 
         h3 {
             margin-top: 0px;
@@ -323,33 +322,20 @@ form {
         }
     } /*pet-post*/
 
-    .pet-by-cities {
-        .pbc-caption { margin: 0px !important; padding-right: 10px;}
+    .top-breeds {
+        margin-top:30px;
 
-        .city-name { 
-            margin-bottom: 5px;
-            padding-left: 15px;
+        h4 { margin-bottom: 0px !important;}
+
+        .pet-caption  {
+            padding-left: 5%;
         }
 
-        .breeds {
-            margin-bottom: 0px;
-            .breed-name, .breed-more {
-                /*padding-left:5%;*/
-            }
-            td {
-                margin-top: 5px;
-            }
-            .breed-count .badge{
-                background-color: lighten(#999999, 10%);
-            }
-
+        tr td {
+            padding-bottom: 5px;
+            vertical-align: top;
         }
-
-        .cats-by-cities { margin-top: 30px; }
-
-        .dogs-by-cities { margin-top: 35px; }
-
-    } /*pet-by-cities*/
+    }
 
     .pet-mosaic {
 

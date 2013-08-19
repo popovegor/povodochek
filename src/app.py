@@ -39,7 +39,7 @@ from smsgate import send_sms
 from dic.ages import ages
 from dic.genders import genders
 from dic.pets import pets, get_pet_name
-from dic.breeds import (dogs, get_breed_name)
+from dic.breeds import (dogs, get_breed_name, get_composite_breed)
 from dic.cities import (get_city_region, get_city, get_city_name)
 
 from flaskext.markdown import Markdown
@@ -57,6 +57,9 @@ def sales():
 
 def pets_by_cities():
     return db.pets_by_cities
+
+def top_breeds():
+    return db.top_breeds
 
 class User(UserMixin):
     def __init__(self, login, id, active = True, username = None, email = None, new_email = None):
@@ -94,10 +97,8 @@ assets = Environment(app)
 
 assets.debug = app.config['ASSETS_DEBUG']
 
-js = Bundle('js/jquery-2.0.3.min.js', \
+js = Bundle('js/jquery-1.9.1.min.js', \
     'js/jquery-ui-1.10.3.custom.min.js', \
-    'select2/select2.min.js', \
-    'select2/select2_locale_ru.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
     'js/jquery.inputmask.min.js', \
@@ -109,6 +110,8 @@ js = Bundle('js/jquery-2.0.3.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/jquery.textareaCounter.plugin.js', \
+    'select2/select2.js', \
+    'select2/select2_locale_ru.js', \
     'js/holder.min.js', \
     'js/bootstrap.min.js', \
     'js/jquery.carouFredSel.min.js', \
@@ -155,6 +158,7 @@ app.jinja_env.filters['format'] = jinja_format
 app.jinja_env.filters['pet_name'] = get_pet_name
 
 app.jinja_env.filters['breed_name'] = get_breed_name
+app.jinja_env.filters['composite_breed'] = get_composite_breed
 
 def jinja_sorted(iterable, key = None, reverse = False):
     return sorted(iterable, key = eval(key), reverse = reverse) 
@@ -219,12 +223,12 @@ def load_user(id):
 @app.route("/")
 def index():
     mosaic_advs = get_sales_for_index(0, 42)
-    dogs_by_cities = [adv for adv in pets_by_cities().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 3)]
-    cats_by_cities = [adv for adv in pets_by_cities().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 3)]
+    top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 10)]
+    top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 10)]
     tmpl = render_template('index5.html', \
         pet_search_form = SaleSearch(), \
-        dogs_by_cities = dogs_by_cities, \
-        cats_by_cities = cats_by_cities, 
+        top_cats = top_cats, \
+        top_dogs = top_dogs, 
         title = u"Продажа породистых собак и кошек", mosaic_advs = [adv for adv in mosaic_advs])
     return tmpl
 

@@ -1,0 +1,52 @@
+
+{%- macro top_breeds(pets, pet_id) -%}
+
+		
+			<h5 class="text-left clearfix pet-caption">
+				{{pet_id | pet_name | morph_word(["plur"]) | title }}
+			</h5>
+		
+
+		<div class="breeds clearfix">
+			<table style="width:100%">
+				<tbody>
+			
+			{% for pet in pets %}
+				{%set pet_id = pet.get('pet_id') %}
+				{% set breed_id = pet.get('breed_id') %}
+				{%set breed_name = breed_id | breed_name(pet_id) %}
+				<tr>
+					<!-- <td>{{loop.index}}.&nbsp;</td> -->
+					<td class="breed-name">
+						<span class="breed-name"><a href="{{url_for_sale(pet_id, breed = pet_id | composite_breed(breed_id)) }}">{{breed_name}}</a></span>	
+					</td>
+					<td >
+						&nbsp;&nbsp;<span>{{pet.get("count")}}</span>
+					</td>
+				</tr>
+			{% endfor %}
+				</tbody>
+			</table>
+			</div> <!-- cities -->
+
+		{%- endmacro -%}
+
+
+<div class="top-breeds">
+
+	<h4>Популярные породы <small>на продажу</small></h4>
+	
+	<div class="top-dogs clearfix">
+		
+		{{ top_breeds(top_dogs, pet_id = 1)}}
+
+	</div>
+
+	<div class="top-cats  clearfix">
+
+		{{ top_breeds(top_cats, pet_id = 2)}}
+
+	</div>	
+	
+	
+</div> <!-- top-breeds -->

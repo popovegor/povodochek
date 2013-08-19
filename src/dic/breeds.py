@@ -253,6 +253,9 @@ def get_breed_name(breed_id, pet_id):
         breed = cats.get(breed_id)
     return breed or ""
 
+def get_composite_breed(pet_id, breed_id):
+    return "{0}_{1}".format(pet_id, breed_id)
+
 from pymongo import MongoClient
 import random
 from bson.objectid import ObjectId
