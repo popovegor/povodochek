@@ -13,31 +13,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 
-  <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-
-  <!-- Bootstrap -->
-  <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
-
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='select2/select2.css')}}" >
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='select2/select2-bootstrap.css')}}">
-
-  
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nouislider.fox.css')}}">
-
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/rur-arial.css')}}">
-
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/flexslider.css')}}">
-
-  {#<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/colorbox.css')}}">#}
+  <!-- <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic' rel='stylesheet' type='text/css'> -->
 
 
   <!-- LESS -->
   <link href="{{ url_for('static', filename='css/povodochek.less')}}" rel="stylesheet/less">
+
   <script src="{{ url_for('static', filename='js/less.js')}}"></script>
 
 
-  <!-- JS -->
+<!-- CSS -->
+  {% assets "css_all" %}
+  <link rel="stylesheet" type="text/css" href="{{ASSET_URL}}">
+  {% endassets %}
 
+  <!-- JS -->
   {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
   {% endassets %}

@@ -92,12 +92,10 @@ mail = Mail(app)
 Markdown(app)
 assets = Environment(app)
 
-assets.debug = app.config['ASSETS_DEBUG']
-
 js = Bundle('js/jquery-2.0.3.min.js', \
     'js/jquery-ui-1.10.3.custom.min.js', \
-    'select2/select2.min.js', \
-    'select2/select2_locale_ru.js', \
+    'js/select2.min.js', \
+    'js/select2_locale_ru.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
     'js/jquery.inputmask.min.js', \
@@ -114,8 +112,19 @@ js = Bundle('js/jquery-2.0.3.min.js', \
     'js/jquery.carouFredSel.min.js', \
     'js/povodochek.js', \
     filters='rjsmin', \
-    output='gen/packed.js')
+    output='gen/js.js')
 assets.register('js_all', js)
+
+css = Bundle('css/bootstrap.min.css', \
+    'css/select2.css', \
+    'css/select2-bootstrap.css',\
+    'css/nouislider.fox.css', \
+    'css/rur-arial.css', \
+    'css/flexslider.css', \
+    'http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic', \
+    filters = 'cssmin', \
+    output = 'gen/css.css')
+assets.register('css_all', css)
 
 configure_uploads(app, (photos))
 
