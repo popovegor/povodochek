@@ -95,8 +95,6 @@ mail = Mail(app)
 Markdown(app)
 assets = Environment(app)
 
-assets.debug = app.config['ASSETS_DEBUG']
-
 js = Bundle('js/jquery-1.9.1.min.js', \
     'js/jquery-ui-1.10.3.custom.min.js', \
     'js/jquery.validate.min.js', \
@@ -110,15 +108,26 @@ js = Bundle('js/jquery-1.9.1.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/jquery.textareaCounter.plugin.js', \
-    'select2/select2.js', \
-    'select2/select2_locale_ru.js', \
+    'js/select2.js', \
+    'js/select2_locale_ru.js', \
     'js/holder.min.js', \
     'js/bootstrap.min.js', \
     'js/jquery.carouFredSel.min.js', \
     'js/povodochek.js', \
     filters='rjsmin', \
-    output='gen/packed.js')
+    output='gen/js.js')
 assets.register('js_all', js)
+
+css = Bundle('css/bootstrap.min.css', \
+    'css/select2.css', \
+    'css/select2-bootstrap.css',\
+    'css/nouislider.fox.css', \
+    'css/rur-arial.css', \
+    'css/flexslider.css', \
+    'http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic', \
+    filters = 'cssmin', \
+    output = 'gen/css.css')
+assets.register('css_all', css)
 
 configure_uploads(app, (photos))
 
