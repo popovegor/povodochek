@@ -25,7 +25,7 @@ def qoute_rus(msg):
     return Markup(u"&#8222;%s&#8220;" % msg)
 
 def get_thumbnail_filename(filename):
-    return os.path.basename(os.path.splitext(filename)[0] + "_preview.png")
+    return os.path.basename(os.path.splitext(filename)[0] + "_preview.jpg")
 
 def calc_image_size(img, height = None, width = None):
     if height:
@@ -56,7 +56,7 @@ def resize_image(filename, height = None, width = None):
 
 def create_thumbnail(file, filename):
     size =  (150, 100) #width, height
-    out_filename = os.path.splitext(filename)[0] + "_preview.png"
+    out_filename = os.path.splitext(filename)[0] + "_preview.jpg"
     im = None
     infile = None 
     try:
@@ -65,7 +65,7 @@ def create_thumbnail(file, filename):
         im.seek(0)
         infile = Image.open(im)
         im = ImageOps.fit(infile, size, Image.ANTIALIAS)
-        im.save(out_filename, "PNG")
+        im.save(out_filename, "JPEG", quality=30, optimize=True, progressive=True)
     except IOError as e:
         print(e)
         print("cannot create thumbnail for", filename)
