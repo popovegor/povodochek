@@ -40,7 +40,7 @@ from dic.ages import ages
 from dic.genders import genders
 from dic.pets import pets, get_pet_name
 from dic.breeds import (dogs, get_breed_name, get_composite_breed)
-from dic.cities import (get_city_region, get_city, get_city_name)
+from dic.cities import (get_city_region, get_city, get_city_name, format_city_region)
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
@@ -526,10 +526,12 @@ def signout():
 
 def cities_near(city = None, distance = None):
     cities = []
-    if city and distance and city.get("location"):
-        location = city.get("location")
-        geoNear = db.command(SON([("geoNear",  "cities"), ("near", location) ,( "spherical", True ), ("maxDistance", distance * 1000), ("limit", 5000)]))
-        cities = [(geo["obj"], geo["dis"]) for geo in geoNear.get("results")]
+    if city:
+        search_city = db.cities.find_one({'city_id': city.get('city_id')})
+        if search_city and distance and search_city.get("location"):
+            location = search_city.get("location")
+            geoNear = db.command(SON([("geoNear",  "cities"), ("near", location) ,( "spherical", True ), ("maxDistance", distance * 1000), ("limit", 5000)]))
+            cities = [(geo["obj"], geo["dis"]) for geo in geoNear.get("results")]
     return cities
 
 
@@ -634,7 +636,7 @@ def sale(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_field(form.city)
     (form.city.data, form.city.city_id) = \
-        (city.get('city_region'), city.get("city_id")) if city else (None, None)
+        (format_city_region(city), city.get("city_id")) if city else (None, None)
     (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
 
     # sort

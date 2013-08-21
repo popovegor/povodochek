@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from pymongo import MongoClient 
+from pymongo import MongoClient
+from dic.cities import (get_city)
 
 def povodochek():
 	return MongoClient().povodochek
@@ -11,7 +12,9 @@ def aggregate():
 	db.tmp_pets_by_cities.drop()
 
 	for adv in db.sales.find():
-		city = db.cities.find_one({'city_id':adv.get('city_id')})
+		city = get_city(adv.get('city_id'))
+		if not city:
+			continue
 		city_id = city.get('city_id')
 		city_name = city.get('city_name')
 		region_name = city.get('region_name')

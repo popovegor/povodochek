@@ -24,14 +24,11 @@ from dic.breeds import (dogs, cats, get_breed_name)
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city)
 
-def mongo():
+def db():
     return MongoClient().povodochek
 
 def users():
-    return mongo().users
-
-def cities():
-    return mongo().cities
+    return db().users
 
 
 MSG_REQUIRED = u"Это обязательное поле"
@@ -61,12 +58,14 @@ def get_city_by_city_and_region(city_and_region):
     city = None
     if city_and_region: 
         matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
-        city = cities().find_one({"city_region": matcher}, fileds=["city_id", "region_id", "region_name", "city_name", "location"])
+        city = db().cities.find_one({"city_region": matcher}, fileds=["city_id"])
+        return get_city_by_city_id(city.get('city_id'))
     return city
 
 def get_city_by_city_id(city_id):
     city = None
-    if isinstance(city_id, unicode) and city_id.isdigit():
+    if (isinstance(city_id, unicode) and city_id.isdigit()) \
+        or (isinstance(city_id, int)):
         city = get_city(int(city_id))
     return city
 
