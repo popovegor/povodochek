@@ -231,7 +231,7 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    mosaic_advs = get_sales_for_index(0, 42)
+    mosaic_advs = get_sales_for_mosaic(0, 42)
     top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 10)]
     top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 10)]
     tmpl = render_template('index5.html', \
@@ -289,21 +289,21 @@ def url_for_sale_pet(pet_id, adv_id, **kwargs):
 
 app.jinja_env.globals['url_for_sale_pet'] = url_for_sale_pet
 
-def get_sales_for_index(skip, limit = 36, pet_id = None):
+def get_sales_for_mosaic(skip, limit = 36, pet_id = None):
     query = {"photos": {"$nin": [None, []]} }
     if pet_id:
         query["pet_id"] = pet_id
     advs = [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
         'url' : url_for_sale_pet( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
-        't' : adv.get('title'), \
-        'id': str(adv.get('_id')),
-        # 's': get_photo_size(db, adv.get('photos')[0], width = 300) } 
+        'id': str(adv.get('_id')), \
+        'p' : adv.get('price'), \
+        'b' : get_breed_name(adv.get('breed_id'), adv.get('pet_id')), \
         's' : {'h':100, 'w':150}}
         for adv in sales().find(
             query, \
             skip = skip, \
-            fields = ["_id", "photos", "title", "pet_id"], \
+            fields = ["_id", "photos", "title", "pet_id", "price", "breed_id", "pet_id"], \
             limit = limit, \
             sort = [('update_date', -1)]) ]
     return advs
@@ -314,7 +314,7 @@ def get_sales_for_index(skip, limit = 36, pet_id = None):
 @app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
 def ajax_sales_showmore(pet, skip, limit):
     print(pet)
-    advs = get_sales_for_index(skip, limit = limit, pet_id = pet)
+    advs = get_sales_for_mosaic(skip, limit = limit, pet_id = pet)
     return jsonify(advs = advs)
 
 @app.route("/test/location/", methods = ["GET"])

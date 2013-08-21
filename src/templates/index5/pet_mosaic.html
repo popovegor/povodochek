@@ -11,7 +11,7 @@
 
         {% for adv in mosaic_advs %}
        <div class="mosaicflow__item">
-       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" title='{{adv.get("t")}}' style="display:none">
+       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" title='{{ "{0}<br/>Цена &mdash; {1} руб" | format (adv.get("b"), adv.get("p")) }}' style="display:none">
     		<img width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
 	    	</a>
     	</div> 
@@ -48,7 +48,7 @@
 					var adv = $(value);
 					var img = adv.find("img");
 					adv.fadeIn("slow");
-					adv.tooltip({placement:'bottom'});
+					adv.tooltip({placement:'bottom', html:true});
 					adv.attr("data-status", "complete");
 				});
 			});
@@ -59,7 +59,7 @@
 		reinit();
 
 		var get_mosaic_elm = function(adv){
-			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-toggle="tooltip" title="'+ adv['t'] +'" style="display:none" data-status="loading"> <img src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
+			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-toggle="tooltip" title="'+ adv['b'] + '<br/>Цена&nbsp;&mdash; ' + adv['p'] +' руб" style="display:none" data-status="loading"> <img src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
 		}
 
 		var more = $("#more"); 
