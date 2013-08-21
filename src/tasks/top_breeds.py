@@ -23,4 +23,4 @@ def aggregate():
 import sys
 			
 if __name__ == '__main__':
-    eval('{0}()'.format(sys.argv[1]))
+    aggregate()

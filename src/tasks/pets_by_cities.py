@@ -6,7 +6,7 @@ from pymongo import MongoClient
 def povodochek():
 	return MongoClient().povodochek
 
-def aggregate_pets_by_cities():
+def aggregate():
 	db = povodochek()
 	db.tmp_pets_by_cities.drop()
 
@@ -30,4 +30,4 @@ def aggregate_pets_by_cities():
 			
 
 if __name__ == '__main__':
-	aggregate_pets_by_cities()
+	aggregate()
