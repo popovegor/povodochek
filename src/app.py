@@ -247,11 +247,12 @@ def signin():
     form.password.description = Markup(u"<a class='' href='%s'>Напомнить пароль</a>" % (url_for("reset_password")))
     if request.method == "POST" and form.validate():
         (login, password, remember) = (form.login.data, form.password.data, form.remember.data)
-        user = users().find_one({'login': login})
+        matcher = re.compile("^" + re.escape(login) + "$", re.IGNORECASE)
+        user = users().find_one({'login': {'$regex':matcher}})
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
                 if login_user(User(login, user["_id"]), remember=remember):
-                    return redirect(request.args.get("next") or url_for("account_sale"))
+                    return redirect(request.args.get("next") or url_for("account_contact"))
                 else:
                     flash(u"Извините, но вы не можете войти.", "error")
             else:

@@ -80,6 +80,12 @@ def validate_location(form, field):
             field.city_id = city.get("city_id")
             field.location = city.get("location")
 
+def validate_login_used(form, field):
+    matcher = re.compile("^" + re.escape(feild.data) + "$", re.IGNORECASE)
+    user = users().find_one({'login': {'$regex': matcher}})
+    if user:
+        raise ValidationError(u"Логин '%s' занят" % field.data)
+
 
 class ChangePassword(Form):
     current_password = PasswordField(u"Текущий пароль", \
@@ -253,13 +259,10 @@ class SignUpBasic(Form):
     login = TextField(u"Логин", \
         [Required(message=MSG_REQUIRED), \
         Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
-        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],\
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)), \
+        validate_login_used],\
+        filters = lambda x : (x or '').lower(), \
         description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
-
-    def validate_login(form, field):
-        user = users().find_one({'login': field.data})
-        if user:
-            raise ValidationError(u"Логин '%s' занят" % field.data)
 
 
     email = TextField(u'Эл. почта / Email', \
@@ -287,14 +290,10 @@ class SignUp(Form):
     login = TextField(u"Логин", \
         [Required(message=MSG_REQUIRED), \
         Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
-        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],\
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)),\
+        validate_login_used],\
+        filters = lambda x : (x or '').lower(), \
         description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
-
-    def validate_login(form, field):
-        user = users().find_one({'login': field.data})
-        if user:
-            raise ValidationError(u"Логин '%s' занят" % field.data)
-
 
     email = TextField(u'Эл. почта / Email', \
         validators = [Required(message=MSG_REQUIRED),\
