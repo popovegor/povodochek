@@ -970,14 +970,14 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/prodazha-koshek/goroda/')
-def cats_cities():
-    return sale_cities(pet_id = 2) 
+def sale_cats_cities():
+    return sale_pets_cities(pet_id = 2) 
 
 @app.route('/prodazha-sobak/goroda/')
-def dogs_cities():
-    return sale_cities(pet_id = 1) 
+def sale_dogs_cities():
+    return sale_pets_cities(pet_id = 1) 
 
-def sale_cities(pet_id):
+def sale_pets_cities(pet_id):
     pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
     advs = sorted([adv for adv in pets_by_cities().find({'pet_id':pet_id})], \
         key = lambda x : x['city_name'])
