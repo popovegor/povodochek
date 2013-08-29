@@ -39,13 +39,7 @@
 
             {{ form_field(form.breed, class="input-medium") }}
 
-            <div class="hidden-phone">
-                {{ form_field(form.gender,  class="input-medium") }}
-            </div>
-
-            <div class="hidden-phone">
-              {{ form_field(form.age,  class="input-medium") }}
-            </div>
+            
 
             {{ form_field(form.city, placeholder="Город", class="span12") }}
 
@@ -185,22 +179,6 @@
                 jq_breed.select2('val', '');
               });
 
-              var jq_gender = $("#gender");
-              jq_gender.select2({
-                placeholder: "Выберите пол",
-                width: "off",
-                containerCssClass: "span12",
-                allowClear: true
-              });
-
-              var jq_age = $("#age");
-              jq_age.select2({
-                placeholder: "Выберите возраст",
-                width: "off",
-                containerCssClass: "span12",
-                allowClear: true,
-                openOnEnter : false,
-              });
 
                var jq_perpage = $("#perpage");
               jq_perpage.select2({
@@ -305,18 +283,6 @@
                     {% if breed_name %}
                    &nbsp;>&nbsp;
                     <span  title="Порода">{{breed_name | title }}</span>
-                    {%endif%}
-
-                    {% set gender_name = adv.get("gender_id") | gender_name  %}
-                    {% if  gender_name %}
-                    &nbsp;>&nbsp;
-                    <span  title="Пол">{{ gender_name | title }}</span>
-                    {% endif %}
-  
-                     {% set age_name = adv.get("age_id") | age_name %}
-                    {%if age_name %}
-                    &nbsp;>&nbsp;
-                    <span  title="Возраст">{{ age_name | title }}</span>
                     {%endif%}
                     
                     </span>

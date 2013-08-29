@@ -63,18 +63,6 @@
                     <span title="Порода">{{breed_id | breed_name(pet_id) }}</span>
                     {%endif%}
 
-                    {% set gender_id = adv.get("gender_id") %}
-                    {% if  gender_id %}
-                    {{" > "}}
-                    <span title="Пол">{{ gender_id | gender_name }}</span>
-                    {% endif %}
-
-                    {% set age_id = adv.get("age_id") %}
-                    {%if age_id %}
-                    {{" > "}}
-                    <span title="Возраст">{{ age_id | age_name }}</span>
-                    {%endif%}
-
                     </i></small>
                 </li>
                 <li class="adv-desc hidden-phone">

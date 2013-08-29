@@ -87,12 +87,6 @@
         <dt class="">Порода</dt>
         <dd>{{adv.get("breed_id") | breed_name(adv.get('pet_id')) | lower}}</dd>
 
-        <dt class="">Пол</dt>
-        <dd>{{adv.get("gender_id") | gender_name | lower}}</dd>
-
-        <dt class="">Возраст</dt>
-        <dd>{{adv.get("age_id") | age_name | lower}}</dd>
-
         <dt class="">Цена</dt>
         <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span></dd>
 

@@ -1004,15 +1004,11 @@ form {
 .flashed-messages {
     margin-bottom:0px !important;
     margin-top:20px;
-    background-color: lighten(yellow, 30%);
-    border-color: lighten(yellow, 30%);;
-    color: lighten(black, 35%);
+    background-color: lighten(yellow, 30%) !important;
+    border-color: lighten(yellow, 30%) !important;
+    color: lighten(black, 35%) !important;
     text-shadow:none;
     button.close { }
-
-    .flashed-message {
-        /*margin-left:10px;*/
-    }
 }
 
 .flashed-messages-error {
@@ -1021,6 +1017,11 @@ form {
     color: lighten(black, 15%) !important;
 }
 
+.flashed-messages-success {
+    background-color: lighten(green, 60%) !important;
+    border-color: lighten(green, 60%) !important;
+    color: lighten(black, 15%) !important;
+}
 
 .error-404 {
 

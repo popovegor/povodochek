@@ -140,14 +140,7 @@ class SaleSearch(Form):
 
     #TODO: показывать только те породы, по которым есть объявления
     breed = SelectField(u'Порода', \
-        choices = [("", [("","")] )]  + pets_breeds())    
-
-    gender = SelectField(u"Пол", \
-        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()]
-        )
-
-    age = SelectField(u"Возраст", \
-        choices = [(u"", u"")] + [ (str(age_id), age_name) for age_id, age_name in ages.items()])
+        choices = [("", [("","")] )]  + pets_breeds())
 
     city = TextField(u"Местоположение")
 
@@ -176,18 +169,16 @@ class Sale(Form):
         validators = [Required(message=MSG_REQUIRED)], \
         description = u"Перед тем как выбрать породу, укажите тип животного выше.")    
 
-    gender = SelectField(u"Пол", \
-        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()], \
-        validators = [Required(message=MSG_REQUIRED)])
+    # gender = SelectField(u"Пол", \
+    #     choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()], \
+    #     validators = [Required(message=MSG_REQUIRED)])
 
     # заголовок объявления
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
-        # description = Markup(u'Введите заголовок объявления длиной от 10 до 80 символов. <abbr title="Подобные слова не несут никакой полезной информации для покупателей, а только замусоривают страницы и создают дополнительный шум.">Не используйте слова "продать" или "купить"</abbr> и схожие с ними.'))
          description = u"Не более 80 символов."
          )
 
     desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))], \
-        # description = Markup(u'При детальном описании объявления, пожалуйста, не дублируйте информацию, для которой отведены отдельные поля, например, пол или возраст, если у вас нет на то веских причин. Также <abbr title="Размешяя свои контактные данные в открытом виде, вы рискуете стать жертвой машенников. Используйте для этих целей специальные поля, которые можно заполнить в своем профиле.">не указывайте ваши персональные данные</abbr>, например, адрес или телефонный номер.')
         description = u"Не менее 120 символов."
     )
 
@@ -199,9 +190,9 @@ class Sale(Form):
     city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
         description = u"Введите населенный пункт, в котором продается питомец.")
 
-    age = SelectField(u"Возраст", \
-        choices = [(u"", u"")] + [ (str(age_id), age_name) for age_id, age_name in ages.items()], \
-        validators = [Required(message=MSG_REQUIRED)])
+    # age = SelectField(u"Возраст", \
+    #     choices = [(u"", u"")] + [ (str(age_id), age_name) for age_id, age_name in ages.items()], \
+    #     validators = [Required(message=MSG_REQUIRED)])
 
 class Contact(Form):
     username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])

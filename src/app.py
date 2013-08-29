@@ -536,13 +536,11 @@ def cities_near(city = None, distance = None):
     return cities
 
 
-def sale_find(pet_id = None, gender_id = None, age_id=None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None, skip = None, limit = None):
+def sale_find(pet_id = None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None, skip = None, limit = None):
 
     _filter = {}
     extend_filter = lambda k,v: _filter.update({k:v}) if v else None
     extend_filter("pet_id", num(pet_id))
-    extend_filter("gender_id", num(gender_id))
-    extend_filter("age_id", num(age_id))
     extend_filter("breed_id", num(breed_id))
 
     price_form = num(price_from)
@@ -645,8 +643,6 @@ def sale(sale_search_form = None):
     
     (advs, count, total) = sale_find(pet_id = pet_id or form.pet.data, \
         breed_id = breed_id, \
-        age_id = form.age.data, \
-        gender_id = form.gender.data, \
         city = city, \
         distance = form.distance.data + 0.01, \
         photo = form.photo.data, \
@@ -790,10 +786,19 @@ def sale_save(form, id = None):
 
     (pet_id, breed_id) = form.breed.data.split("_")
     now = datetime.utcnow()
-    sale = {'user': str(current_user.id), 'pet_id': num(pet_id), 'breed_id': num(breed_id), 'title':form.title.data, 'desc': form.desc.data, 'photos': filenames, 'price'   : form.price.data, 'gender_id': num(form.gender.data), 'update_date':now, "city_id": form.city.city_id, 'age_id': num(form.age.data)}
+    sale = {'user': str(current_user.id), \
+        'pet_id': num(pet_id), \
+        'breed_id': num(breed_id), \
+        'title':form.title.data, \
+        'desc': form.desc.data, \
+        'photos': filenames, \
+        'price' : form.price.data, \
+        'update_date':now, \
+        "city_id": form.city.city_id}
     if id:
         sales().update(
-            {'_id': ObjectId(id), 'user': {'$in': [current_user.id, str(current_user.id)]} } 
+            {'_id': ObjectId(id), \
+            'user': {'$in': [current_user.id, str(current_user.id)]} } 
             , {'$set': sale}, upsert=True)
     else:
         sale["add_date"] = now
@@ -847,10 +852,10 @@ def account_sale_edit(id):
         form.title.data = adv.get("title")
         form.desc.data = adv.get('desc')
         form.price.data = num(adv.get('price'))
-        form.gender.data = str(num(adv.get('gender_id')) or '')
+        # form.gender.data = str(num(adv.get('gender_id')) or '')
         form.photos.data = ",".join(adv.get("photos"))
         form.city.data = get_city_region(adv.get("city_id"))
-        form.age.data = str(num(adv.get("age_id")))
+        # form.age.data = str(num(adv.get("age_id")))
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
 

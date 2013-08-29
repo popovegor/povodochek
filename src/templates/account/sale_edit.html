@@ -15,9 +15,9 @@
 
           {{ form_field(form.breed) }}
 
-          {{ form_field(form.gender) }}
+          {# {{ form_field(form.gender) }} #}
 
-          {{ form_field(form.age) }}
+          {# {{ form_field(form.age) }} #}
 
           {{ form_field(form.city, placeholder="Введите название населенного пункта", class="input-xxlarge") }}
           
@@ -92,12 +92,12 @@
                 containerCssClass: "input-xlarge"
               });
 
-              var jq_age = $("#age");
-              jq_age.select2({
-                placeholder: "Выберите возраст",
-                width: "off",
-                containerCssClass: "input-xlarge"
-              });
+              // var jq_age = $("#age");
+              // jq_age.select2({
+              //   placeholder: "Выберите возраст",
+              //   width: "off",
+              //   containerCssClass: "input-xlarge"
+              // });
 
 
             //validation
@@ -119,7 +119,7 @@
                   title: { required: true, rangelength: [10, 80] },
                   desc : { required: true, minlength: 120 },
                   price : { required: true, range: [10, 900000] }, 
-                  age : {required: true},
+                  // age : {required: true},
                   gender : {required: true}
                }, submit);
 
