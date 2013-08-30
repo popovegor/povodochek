@@ -51,10 +51,10 @@
 
                 </li>
                 <li class="adv-dict hidden-phone">
-                    <small><i>
+                    <small>
                     {% set pet_id = adv.get("pet_id") %}
                     {% if pet_id %}
-                     <span title="Вид">{{pet_id | pet_name}}</span>
+                     <span title="Тип животного">{{pet_id | pet_name}}</span>
                     {%endif%}
 
                     {% set breed_id = adv.get("breed_id") %}
@@ -63,7 +63,13 @@
                     <span title="Порода">{{breed_id | breed_name(pet_id) }}</span>
                     {%endif%}
 
-                    </i></small>
+                     {% set gender_id = adv.get("gender_id") %}
+                    {% if  gender_id %}
+                    {{" > "}}
+                    <span title="Пол">{{ gender_id | gender_name }}</span>
+                    {% endif %}
+
+                    </small>
                 </li>
                 <li class="adv-desc hidden-phone">
                     {{ adv["desc"] }}

@@ -20,9 +20,9 @@
 
             {{form_field(form.subject,  class="input-xxlarge") }}
             {{form_field(form.message,  class="input-xxlarge", rows=5) }}
-            {%if seller.get("phone_adv_sms") %}
+            {#{%if seller.get("phone_adv_sms") %}
               {{form_field(form.sms_alert) }}
-            {%endif%}
+            {%endif%}#}
             {{form_field(form.username,  class="input-large") }}
             {{form_field(form.email,  class="input-large") }}
             

@@ -134,13 +134,14 @@ class SaleSearch(Form):
     pet = SelectField(u'Тип животного', \
         choices = [(u"", u"")] + [(str(pet_id), pet_name) for pet_id, pet_name in pets.items() ])
 
-    # pet = RadioField(u'Вид', \
-    #     choices = [(u"", u"")] + [(str(pet["id"]), pet["name"]) for pet in pets().find() ])
-
-
     #TODO: показывать только те породы, по которым есть объявления
     breed = SelectField(u'Порода', \
         choices = [("", [("","")] )]  + pets_breeds())
+
+    gender = SelectField(u"Пол", \
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
+        gender_id, gender_name in genders.items()])
+
 
     city = TextField(u"Местоположение")
 
@@ -167,11 +168,11 @@ class Sale(Form):
     breed = SelectField(u'Порода', \
         choices = [("", [("","")] )]  + pets_breeds(), \
         validators = [Required(message=MSG_REQUIRED)], \
-        description = u"Перед тем как выбрать породу, укажите тип животного выше.")    
+        description = u"Перед тем как выбрать породу, укажите тип животного выше.") 
 
-    # gender = SelectField(u"Пол", \
-    #     choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()], \
-    #     validators = [Required(message=MSG_REQUIRED)])
+    gender = SelectField(u"Пол", \
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()])
+   
 
     # заголовок объявления
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
@@ -190,9 +191,9 @@ class Sale(Form):
     city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
         description = u"Введите населенный пункт, в котором продается питомец.")
 
-    # age = SelectField(u"Возраст", \
-    #     choices = [(u"", u"")] + [ (str(age_id), age_name) for age_id, age_name in ages.items()], \
-    #     validators = [Required(message=MSG_REQUIRED)])
+    phone = TextField(u"Телефонный номер")
+    skype = TextField(u"Skype")
+
 
 class Contact(Form):
     username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])

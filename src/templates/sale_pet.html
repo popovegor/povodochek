@@ -22,7 +22,7 @@
 
   {%if adv.get('photos') | length > 0%}
 
-  <div class="left-side span5">    
+  <div class="left-side span6">    
 
     <div class="photos">
 
@@ -60,7 +60,7 @@
 
   {%endif%}
 
-  <div class="right-side {{'span7' if adv.get('photos') | length > 0 else 'span12'}}">
+  <div class="right-side {{'span6' if adv.get('photos') | length > 0 else 'span12'}}">
 
       <div class="sale-pet-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
         Цена&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;<span>{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
@@ -74,70 +74,64 @@
     <p class="adv=desc">{{adv.get("desc") }}</p>
 
 
+
     <div class="adv-info">
-      <h4>Детальная информация о {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h4>
+      <h4>Информация о {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h4>
 
       <dl class='dl-horizontal'>
-        <dt class="">Местоположение</dt>
-        <dd>{{adv.get("city_id") | city_region}}</dd>
 
-        <dt class="">Тип животного</dt>
-        <dd>{{adv.get("pet_id") | pet_name | lower}}</dd>
+       {%set city = adv.get("city_id")%}
+          {%if  city %}
+          <dt class="">Местоположение</dt>
+          <dd>{{ city | city_region}}</dd>
+          {%endif%}
 
         <dt class="">Порода</dt>
-        <dd>{{adv.get("breed_id") | breed_name(adv.get('pet_id')) | lower}}</dd>
+        <dd>{{adv.get("breed_id") | breed_name(adv.get('pet_id'))}}</dd>
+
+        {%if adv.get("gender_id") %}
+         <dt class="">Пол</dt>
+         <dd>{{adv.get("gender_id") | gender_name | title }}</dd>
+        {%endif%}
 
         <dt class="">Цена</dt>
-        <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span></dd>
+        <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span>
 
       </dl>
     </div> <!-- adv-info -->
+
 
     {% if seller %}
     <h4>Контактная информация</h4>
     <div class="seller-block row-fluid">  
   
-      <div class="span8">
+      <div class="span12">
         
         <dl class='dl-horizontal'>
           <dt class="">Продавец</dt>
           <dd>{{seller.get("username")}}</dd>
 
-          {%if seller.get("phone") and seller.get("phone_visible") %}
-          <dt class="">Телефон</dt>
-          <dd>{{seller.get("phone")}}</dd>
-          {%endif%}
+          {%set phone = adv.get("phone")%}
 
-          {%if seller.get("phone") %}
+          {%if phone  %}
           <dt class="">Телефонный номер</dt>
           <dd>
-            {% if not seller.get("phone_adv_hide") %}
-              {{seller.get("phone")}}
-            {%else%}
-              <abbr title='Телефонный номер скрыт настройками приватности. Воспользуйтесь кнопкой "Написать письмо".'><small>скрыт</small></abbr>
-            {%endif%}
+              {{phone}}
              </dd>
           {%endif%}
 
-           {%if seller.get("skype") %}
+          {% set skype = adv.get("skype") %}
+           {%if skype %}
           <dt class="">Skype</dt>
           <dd>
-            {% if not seller.get("skype_adv_hide") %}
-              {{seller.get("skype")}}
-            {%else%}
-              <abbr title='Skype-номер скрыт настройками приватности. Воспользуйтесь кнопкой "Написать письмо".'><small>скрыт</small></abbr>
-            {%endif%}
+              {{skype}}
              </dd>
-          {%endif%}
+          {% endif %}
 
-          {%if seller.get("city_id") and not seller.get("city_adv_hide") %}
-          <dt class="">Город</dt>
-          <dd>{{seller.get("city_id") | city_region}}</dd>
-          {%endif%}
         </dl>   
       </div>
 
-      <div class="seller-contact text-left span4">
+      <div class="seller-contact text-left span12">
         <a class="btn btn-info" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
       </div>
 

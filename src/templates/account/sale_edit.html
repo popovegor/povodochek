@@ -15,11 +15,11 @@
 
           {{ form_field(form.breed) }}
 
-          {# {{ form_field(form.gender) }} #}
+          {{ form_field(form.gender) }}
+
+           {{ form_field(form.city, placeholder="Введите название населенного пункта", class="input-xxlarge") }}
 
           {# {{ form_field(form.age) }} #}
-
-          {{ form_field(form.city, placeholder="Введите название населенного пункта", class="input-xxlarge") }}
           
           {{ form_field(form.title, class="input-xxlarge" )}}
 
@@ -38,6 +38,12 @@
               <abbr class="label main-photo" title="Главная фотография - это первая по счету фотография, и  именно она будет показана в списке объявлений. Вы можете перетащить любую из загруженных фотографий в эту позицию.">главная фотография</abbr>
               {% include "uploader.html" %}
           </div>  
+
+        <h2 class="page-header">Контактная ифнормация</h2>
+
+          {{ form_field(form.phone, class="input-large", placeholder = "Введите тел. номер") }}
+
+          {{ form_field(form.skype, class="input-large", placeholder="Введите skype-имя") }}
 
         <div class="actions">
           <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
@@ -112,15 +118,21 @@
                   });
                 };
 
+               $(function(){
+                $("#phone").inputmask({"mask": "+7(999)999-9999", 
+                }); 
+              });
+
               povodochek.validate($("form"), {
                   pet : {required : true }, 
                   breed: { required: true },
-                  city : {required: true}, 
                   title: { required: true, rangelength: [10, 80] },
                   desc : { required: true, minlength: 120 },
                   price : { required: true, range: [10, 900000] }, 
                   // age : {required: true},
-                  gender : {required: true}
+                  // gender : {required: true},
+                  city : {required: true}, 
+                  phone : {_phone: true}
                }, submit);
 
 

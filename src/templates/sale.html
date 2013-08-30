@@ -39,7 +39,10 @@
 
             {{ form_field(form.breed, class="input-medium") }}
 
-            
+             <div class="hidden-phone">
+               {{ form_field(form.gender,  class="input-medium") }}
+            </div>
+                      
 
             {{ form_field(form.city, placeholder="Город", class="span12") }}
 
@@ -186,6 +189,15 @@
                 containerCssClass: "span12"
               });
 
+              var jq_gender = $("#gender");
+              jq_gender.select2({
+                placeholder: "Выберите пол",
+                width: "off",
+                containerCssClass: "span12",
+                allowClear: true
+              });
+
+
             });
 
 
@@ -273,19 +285,25 @@
 
                 </li>                
                 <li class="adv-params">
-                    <span>
+                  
                     {% set pet_name = adv.get("pet_id") | pet_name %}
                     {% if pet_name %}
-                      <span title="Вид">{{pet_name | morph_word(["plur"]) }}</span>
+                      <span title="Тип животного">{{pet_name | morph_word(["plur"]) }}</span>
                     {%endif%}
 
                     {% set breed_name = adv.get("breed_id") | breed_name(adv.get("pet_id")) %}
                     {% if breed_name %}
                    &nbsp;>&nbsp;
-                    <span  title="Порода">{{breed_name | title }}</span>
+                    <span  title="Порода">{{breed_name }}</span>
                     {%endif%}
                     
-                    </span>
+                    {% set gender_name = adv.get("gender_id") | gender_name  %}
+                    {% if  gender_name %}
+                      &nbsp;>&nbsp;
+                    <span  title="Пол">{{ gender_name | title }}</span>
+                    {% endif %}
+
+                    
                 </li>
                 <li class="adv-desc hidden-phone">
                     {{ adv["desc"] | truncate(120) }}

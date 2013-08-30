@@ -17,29 +17,29 @@
 
               {{ form_field(form.phone, class="input-large", placeholder = "Введите тел. номер") }}
               
-                <div class="phone-options">
+                {#<div class="phone-options">
                   {{ form_field(form.phone_adv_hide) }}
-                  {#{ form_field(form.phone_adv_sms) }#}   
+                  { form_field(form.phone_adv_sms) }
                 </div>
-              </div>  
+              </div>  #}
 
                <div class="skype">
           
                    {{ form_field(form.skype, class="input-xlarge", placeholder="Введите skype-имя") }}
 
-                   <div class="skype-options">
+                   {#<div class="skype-options">
                      {{ form_field(form.skype_adv_hide) }} 
-                   </div>
+                   </div>#}
 
-               </div> 
+               </div>
 
                 <div class="city">
 
                    {{ form_field(form.city, class="input-xxlarge", placeholder="Введите название населенного пункта") }}
 
-                   <div class="city-options">
+                   {#<div class="city-options">
                      {{ form_field(form.city_adv_hide) }} 
-                   </div>
+                   </div>#}
 
                </div>
 
@@ -68,11 +68,7 @@
     });
 
     $(function(){
-        /*var mask = $("#phone").mask('+7(999)999-9999', {
-          completed: function(){alert(this.val());}
-        });*/
       $("#phone").inputmask({"mask": "+7(999)999-9999", 
-        'oncompleted': function() {} 
       }); 
     });
 

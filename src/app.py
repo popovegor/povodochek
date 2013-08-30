@@ -62,13 +62,16 @@ def top_breeds():
     return db.top_breeds
 
 class User(UserMixin):
-    def __init__(self, login, id, active = True, username = None, email = None, new_email = None):
+    def __init__(self, login, id, active = True, username = None, email = None, new_email = None, city_id = None, phone = None, skype = None):
         self.name = login
         self.username = username
         self.id = id
         self.active = active
         self.email = email
         self.new_email = new_email
+        self.city_id = city_id
+        self.phone = phone
+        self.skype = skype
 
     def is_signed(self):
         return True
@@ -227,7 +230,7 @@ def debug_write(msg):
 def load_user(id):
     # print("user id = %s" % str(id))
     user = users().find_one({'_id':ObjectId(id)})
-    return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email")  ) if user else Anonymous
+    return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email"), city_id = user.get("city_id"), phone= user.get("phone"), skype = user.get("skype") ) if user else Anonymous
 
 @app.route("/")
 def index():
@@ -536,11 +539,14 @@ def cities_near(city = None, distance = None):
     return cities
 
 
-def sale_find(pet_id = None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None, skip = None, limit = None):
+def sale_find(pet_id = None, gender_id = None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None, skip = None, limit = None):
 
     _filter = {}
     extend_filter = lambda k,v: _filter.update({k:v}) if v else None
     extend_filter("pet_id", num(pet_id))
+    if num(gender_id):
+        extend_filter('$or', [{'gender_id' : num(gender_id)}, {'gender_id' : {'$exists': False}}])
+
     extend_filter("breed_id", num(breed_id))
 
     price_form = num(price_from)
@@ -598,7 +604,7 @@ def sale_find_header(form):
     breed = get_breed_name(breed_id, pet_id)
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed = Markup(u" породы {0}".format(breed).lower())
+        breed = Markup(u" породы {0}".format(breed))
 
     city = get_city_name(form.city.city_id, "p") if form.city.city_id else u''
     if city:
@@ -643,11 +649,12 @@ def sale(sale_search_form = None):
     
     (advs, count, total) = sale_find(pet_id = pet_id or form.pet.data, \
         breed_id = breed_id, \
+        gender_id = form.gender.data, \
         city = city, \
         distance = form.distance.data + 0.01, \
         photo = form.photo.data, \
         price_from = form.price_from.data  * 1000, \
-        price_to = (form.price_to.data if num(form.price_to.data) < 100 else 0) * 1000,\
+        price_to = (form.price_to.data if num(form.price_to.data) < 100 else 0) * 1000, \
         sort = session.get("sale_sort"),
         skip = (form.page.data - 1) * form.perpage.data, \
         limit = form.perpage.data
@@ -683,13 +690,16 @@ def sale_pet(id):
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
         get_city_name(adv.get("city_id"), "p")
     )
-    header =  Markup(u"{0} &#8212; {1}".format(name, \
-        u"<abbr class='price' title='Цена'>{0}&nbsp;{1}</abbr>".format(jinja_format_price(adv.get("price")), morph_word(u"рубль", count=adv.get("price"))))) 
+    header = Markup(u"Продам {0} породы {1} в {2}".format( \
+        morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
+        get_breed_name(adv.get("breed_id"), adv.get("pet_id")),\
+        get_city_name(adv.get("city_id"), "p")
+    ))
     title = u"{0} - {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
     seller = users().find_one(ObjectId(adv.get("user")))
     return render_template("sale_pet.html", \
-        header = name,
+        header = header,
         title = title,
         adv = adv,
         seller = seller)
@@ -793,8 +803,11 @@ def sale_save(form, id = None):
         'desc': form.desc.data, \
         'photos': filenames, \
         'price' : form.price.data, \
-        'update_date':now, \
-        "city_id": form.city.city_id}
+        'update_date' : now, \
+        "city_id": form.city.city_id, \
+        "phone" : form.phone.data, \
+        "skype" : form.skype.data, \
+        "gender_id": num(form.gender.data)}
     if id:
         sales().update(
             {'_id': ObjectId(id), \
@@ -852,10 +865,12 @@ def account_sale_edit(id):
         form.title.data = adv.get("title")
         form.desc.data = adv.get('desc')
         form.price.data = num(adv.get('price'))
-        # form.gender.data = str(num(adv.get('gender_id')) or '')
+        form.gender.data = str(num(adv.get('gender_id')) or '')
         form.photos.data = ",".join(adv.get("photos"))
         form.city.data = get_city_region(adv.get("city_id"))
         # form.age.data = str(num(adv.get("age_id")))
+        form.phone.data = adv.get("phone")
+        form.skype.data = adv.get("skype")
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
 
@@ -869,6 +884,10 @@ def account_sale_add():
         id = sale_save(form)
         flash(u"Объявление '%s' добавлено." % form.title.data, "info")
         return redirect(url_for('account_sale'))
+    else:
+        form.city.data = get_city_region(current_user.city_id)
+        form.phone.data = current_user.phone
+        form.skype.data = current_user.skype
     return render_template("/account/sale_edit.html", form=form, title=u"Новое объявление о продаже", btn_name = u"Добавить")
 
 @app.route("/poleznoe/")
