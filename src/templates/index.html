@@ -2,24 +2,34 @@
 
 {%  block content %}
 
-<h1>Продажа породистых собак и кошек</h1>
+<div class="index">
 
-<div class="row-fluid">
 
-        <div class="span8">
+	{%if not current_user.is_signed() %}
 
-          {% include "index/search.html" %}
-          {% include "index/latest.html" %}
+	<h1 class="text-center tagline hidden-phone">Поводочек&nbsp;&mdash; портал о&nbsp;продаже породистых собак и&nbsp;кошек</h1>
 
-        </div><!--/span-->
+	{% endif %}
 
-        <div class="span4">
-            {% include "index/add_adv.html" %}    
-            
-            {% include "index/events.html" %}    
-        </div><!--/span-->
+	<div class="row-fluid">
+		<div class="span9">
+			{%include "index/pet_search.html" %}
+			
+			<div class="hidden-phone">
+				{%include "index/pet_mosaic.html" %}
+			</div>
 
-      </div><!--/row-->
-</div>
+		</div>
+	
+		<div class="span3">
+			{%include "index/pet_post.html" %}
+
+			{%include "index/pet_top_breeds.html" %}			
+		</div>
+	
+	</div>	
+
+
+</div> <!-- index -->
 
 {%  endblock %}
