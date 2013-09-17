@@ -81,7 +81,7 @@ def validate_location(form, field):
             field.location = city.get("location")
 
 def validate_login_used(form, field):
-    matcher = re.compile("^" + re.escape(feild.data) + "$", re.IGNORECASE)
+    matcher = re.compile("^" + re.escape(field.data) + "$", re.IGNORECASE)
     user = users().find_one({'login': {'$regex': matcher}})
     if user:
         raise ValidationError(u"Логин '%s' занят" % field.data)
@@ -253,7 +253,7 @@ class SignUpBasic(Form):
         Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)), \
         validate_login_used],\
-        filters = lambda x : (x or '').lower(), \
+        filters = [lambda x : (x or '').lower()], \
         description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
 
 
