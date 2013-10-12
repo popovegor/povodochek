@@ -1,5 +1,5 @@
 jQuery.validator.addMethod("_login", function(value, element) {
-  return this.optional(element) || /^[a-zA-Z0-9_-.]+$/.test(value);
+  return this.optional(element) || /^[.a-zA-Z0-9_-]+$/.test(value);
 }, "Неправильный формат: только латинские буквы, цифры, дефисы, подчеркивания и точки.");
 
 jQuery.validator.addMethod("_phone", function(value, element) {
