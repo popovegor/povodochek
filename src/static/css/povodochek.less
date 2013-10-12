@@ -1,7 +1,7 @@
 @brand-font : 'Lobster', cursive !important;
 @brand-color: darken(#86b6cd, 10%);
 @photo-thumbail-width : 150px;
-@bottom-height : 130px;
+@bottom-height : 160px;
 
 .opacity (@opacity) {
     @opacityPercentage: @opacity * 100;
@@ -930,14 +930,34 @@ form {
     .error-404-logo {
         font-family: @brand-font;
         color:gray;
+        text-decoration: none;
         font-size: 3em;
+        &:focus, &:hover {
+            color: @brand-color;
+        }
     }
 
     .error-404-number {
-        font-size: 1.2em;
+        font-size: 5.2em;
     }
 
     .error-text {
 
+    }
+}
+
+
+.advice-article {
+    h2 {
+        margin-top: 2em !important;
+    }
+}
+
+.advice {
+    .media-list {
+        .media-object {
+            height: 112px;
+            width:150px;
+        }
     }
 }

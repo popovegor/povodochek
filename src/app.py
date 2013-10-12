@@ -892,11 +892,16 @@ def account_sale_add():
 
 @app.route("/poleznoe/")
 def advice():
-    return ""
+    return render_template("/advice.html", title=u"Полезные статьи о животных")
 
-@app.route("/ajax/")
-def ajax():
-    pass
+@app.route("/poleznoe/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka")
+def advice_article_1():
+    return render_template("/advice/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka.html")
+
+
+@app.route("/poleznoe/kalendar-sobachej-beremennosti")
+def advice_article_2():
+    return render_template("/advice/kalendar-sobachej-beremennosti.html")
 
 # @app.route("/acount/stud/add", methods = ["POST", "GET"])
 # @login_required
@@ -1010,8 +1015,7 @@ def sale_pets_cities(pet_id):
 
 @app.route('/tos/')
 def tos():
-    return render_template("/tos.html", \
-        title=u"Пользовательское соглашение")
+    return render_template("/tos.html")
 
 @app.route('/kontakty/')
 def contacts():

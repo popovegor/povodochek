@@ -250,11 +250,11 @@ class SignIn(Form):
 class SignUpBasic(Form):
     login = TextField(u"Логин", \
         [Required(message=MSG_REQUIRED), \
-        Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
+        Regexp(u"^[.a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы, подчеркивания и точки."), \
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)), \
         validate_login_used],\
         filters = [lambda x : (x or '').lower()], \
-        description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
+        description = u'Допускается вводить латинские буквы, цифры, дефисы, подчёркивания и точки, от 6 до 36 символов.')
 
 
     email = TextField(u'Эл. почта / Email', \
@@ -281,11 +281,11 @@ class SignUp(Form):
 
     login = TextField(u"Логин", \
         [Required(message=MSG_REQUIRED), \
-        Regexp(u"^[a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы и подчеркивания."), \
+        Regexp(u"^[.a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы, подчеркивания и точки."), \
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)),\
         validate_login_used],\
         filters = lambda x : (x or '').lower(), \
-        description = u'Допускается вводить латинские буквы, цифры, дефисы и подчёркивания, от 6 до 36 символов.')
+        description = u'Допускается вводить латинские буквы, цифры, дефисы, подчёркивания и точки, от 6 до 36 символов.')
 
     email = TextField(u'Эл. почта / Email', \
         validators = [Required(message=MSG_REQUIRED),\

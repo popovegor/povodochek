@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="advice">
+
+	<h1 class="">{{title}}</h1>
+
+	<ul class="media-list">
+	  <li class="media">
+	  	{%set  url = url_for('advice_article_1')%}
+	  	<a class="pull-left" href="{{url}}">
+	      <img class="media-object" src="{{url_for('static', filename='img/articles/article_1_min.jpg')}}">
+	    </a>
+	    <div class="media-body">
+	      <h4 class="media-heading"><a href="{{url}}">Десять ошибок, которых следует избегать, покупая породистого щенка</a></h4>
+	      <p>Если вы решились купить породистого щенка, то воодушевленные этой идеей, вы буквально не можете дождаться того момента, когда приведете его домой, и ваше дружное семейство восторженно ахнет от увиденного чуда и ринется играться с ним. Приобретение домашнего питомца всегда является незабываемым и приятным событием для вас и ваших близких...</p>
+	    </div>
+	  </li>
+	  <li class="media">
+		  {%set  url = url_for('advice_article_2')%}
+	  	<a class="pull-left" href="{{url}}">
+	      <img class="media-object" src="{{url_for('static', filename='img/articles/article_2_min.jpg')}}">
+	    </a>
+	    <div class="media-body">
+	      <h4 class="media-heading"><a href="{{url}}">Календарь собачьей беременности</a></h4>
+	      <p>
+	      		Итак, проведя недели или даже месяцы в скрупулезном поиске отца для ваших будущих щенков, вы все-таки нашли достойного кобеля и готовы сосватать его своей суке, которая при успешной вязке разродится очаровательными щенками уже через 60 дней. Это фантастическое и одновременно волнительное время для вас и для вашего питомца!..	
+
+	      </p>
+	    </div>
+	  </li>
+	</ul>
+
+</div> <!-- contacts -->
+
+{% endblock %}
