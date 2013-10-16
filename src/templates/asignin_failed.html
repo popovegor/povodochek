@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}      
+
+<h1>{{title}}</h1>
+
+
+<div class="row-fluid">
+    <div class="span12">
+        <p class="">
+            Не удалось выполнить автоматический вход на сайт под новым паролем, обратитесь в техподдержку сайта или попробуйте выслать <a href="{{url_for('reset_password')}}">ссылку на смену пароля</a> еще раз.
+        </p>
+  </div>
+</div>
+
+{% endblock %} 

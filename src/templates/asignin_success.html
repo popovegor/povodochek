@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}      
+
+<h1>{{title}}</h1>
+
+
+<div class="row-fluid">
+    <div class="span12">
+        <p class="">
+            Новый пароль был успешно активирован. Теперь вы можете перейти в личный кабинет и <a href="{{url_for('account_change_password')}}">сменить пароль</a> на более удоный вам.
+        </p>
+  </div>
+</div>
+
+{% endblock %} 

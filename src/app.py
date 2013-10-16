@@ -417,14 +417,13 @@ def activate(confirm):
 @app.route("/asignin/<asign>/", methods = ["GET"])
 def asignin(asign):
     user = users().find_one({'asign': asign})
+    title=u"Активация нового пароля"
     if user:
         users().update({'_id': user["_id"]}, \
             {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], 'asign_pwd_hash': ''} })
         if login_user(User(user.get("login"), user.get("_id"))):
-            flash(u"Новый пароль был успешно активирован", "info")
-            return redirect(url_for("account_change_password"))
-    flash(u"Не удалось выполнить автоматический вход на сайт под новым паролем, обратитесь в техподдержку сайта или попробуйте выслать ссылку на смену пароля еще раз.", "error")
-    return redirect(url_for("index"))
+            return render_template("asignin_success.html", title = title)
+    return render_template("asignin_failed.html", title=title)
 
 @app.route("/account/change-password/", methods = ["GET", "POST"])
 @login_required
@@ -509,16 +508,17 @@ def signup():
 @app.route("/reset-password/", methods = ["GET", "POST"])
 def reset_password():
     form = ResetPassword(request.form)
+    title = u"Сброс пароля"
     if request.method == "POST" and form.validate():
-        email_or_login = form.email_or_login.data
+        email = form.email.data
         password = str(hash(str(uuid1())) % 10000000)
         asign = str(uuid4())
-        user = users().find_and_modify({'$or' : [{'email': email_or_login}, {'login': email_or_login}]}, \
+        user = users().find_and_modify({'email': email}, \
             {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
         if user:
             send_reset_password(user.get('email'), user.get("login"), asign, password)
-            flash(u"Ссылка на смену пароля была успешна отправлена на электронную почту '%s'" %user.get('email') , "info")
-    return render_template("reset_password.html", title=u"Сброс пароля", form = form)
+            return render_template("reset_password_sent.html", title=title, email = user.get('email'))
+    return render_template("reset_password.html", title=title, form = form)
 
 @app.route("/signout/")
 @login_required
@@ -896,12 +896,13 @@ def advice():
 
 @app.route("/poleznoe/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka")
 def advice_article_1():
-    return render_template("/advice/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka.html")
+    return render_template("/advice/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka.html", \
+        title = u"Десять ошибок, которых следует избегать, покупая породистого щенка")
 
 
 @app.route("/poleznoe/kalendar-sobachej-beremennosti")
 def advice_article_2():
-    return render_template("/advice/kalendar-sobachej-beremennosti.html")
+    return render_template("/advice/kalendar-sobachej-beremennosti.html", title = u"Календарь собачьей беременности")
 
 # @app.route("/acount/stud/add", methods = ["POST", "GET"])
 # @login_required
