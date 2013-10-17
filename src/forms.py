@@ -273,7 +273,7 @@ class SignUpBasic(Form):
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],
         description = u"Длина пароля от 6 до 36 символов.")
 
-    accept_tos = BooleanField(Markup(u'С <a target="_blank" href="/tos/">правилами</a> согласен'), [Required(u"Требуется ваше согласие")])
+    accept_tos = BooleanField(Markup(u'Я согласен с <a target="_blank" href="/tos/">правилами</a>'), [Required(u"Требуется ваше согласие")])
 
 class SignUp(Form):
 

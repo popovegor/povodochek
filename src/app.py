@@ -1016,7 +1016,7 @@ def sale_pets_cities(pet_id):
 
 @app.route('/tos/')
 def tos():
-    return render_template("/tos.html")
+    return render_template("/tos.html", title = u"Пользовательское соглашение")
 
 @app.route('/kontakty/')
 def contacts():
