@@ -186,7 +186,7 @@ class Sale(Form):
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
     price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))], \
-        description = Markup(u'Указывайте <abbr title="Указываю реальную цену, вы многократно повышаете свои шансы успешной продажи, так как покупатели проявят больше интереса к вашему объявлению.">достоверную цену</abbr>!'))
+        description = Markup(u'Указывайте <abbr data-status="loading" id="price-desc" data-toggle="tooltip" title="Указываю реальную цену, вы многократно повышаете свои шансы успешной продажи, так как покупатели проявят больше интереса к вашему объявлению.">достоверную цену</abbr>!'))
 
     city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
         description = u"Введите населенный пункт, в котором продается питомец.")
