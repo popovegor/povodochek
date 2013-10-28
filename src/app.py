@@ -510,10 +510,10 @@ def reset_password():
     form = ResetPassword(request.form)
     title = u"Сброс пароля"
     if request.method == "POST" and form.validate():
-        email = form.email.data
+        email_or_login = form.email_or_login.data
         password = str(hash(str(uuid1())) % 10000000)
         asign = str(uuid4())
-        user = users().find_and_modify({'email': email}, \
+        user = users().find_and_modify({'$or' : [{'email': email_or_login}, {'login': email_or_login}]}, \
             {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
         if user:
             send_reset_password(user.get('email'), user.get("login"), asign, password)
@@ -944,7 +944,7 @@ def thumbnail(filename):
     return send_file(path)
     
 @app.route('/photo/<filename>/', defaults = {'width': None})
-@app.route('/photo/<filename>/<int:width>/')
+# @app.route('/photo/<filename>/<int:width>/')
 def photo(filename, width):
     if width:
         (name, ext) = os.path.splitext(filename)
@@ -1026,7 +1026,6 @@ def contacts():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', title = u"Страница не найдена"), 404
-
 
 if __name__ == "__main__":
     app.debug = True

@@ -119,14 +119,14 @@ class ChangeEmail(Form):
         [ Required(message=MSG_REQUIRED), EqualTo('new_email', message=u'Адреса эл. почты не совпадают')])
 
 class ResetPassword(Form):
-    email = TextField(u"Электронная почта / Email", \
+    email_or_login = TextField(u"Электронная почта или Логин", \
         [Required(message=MSG_REQUIRED)], \
         filters = [lambda x : (x or '').lower()])
 
-    def validate_email(form, field):
-        user = users().find_one({'email': field.data})
+    def validate_email_or_login(form, field):
+        user = users().find_one({'$or': [{'email': field.data}, {'login':field.data}]})
         if not user:
-            raise ValidationError(u"Электронная почта '%s' не найдена" % field.data)
+            raise ValidationError(u"Электронная почта или Логин '%s' не найдены" % field.data)
 
 
 class SaleSearch(Form):
