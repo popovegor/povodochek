@@ -1,0 +1,27 @@
+{% extends "layout_base.html" %}
+
+{%block layout %}
+  <div id="wrap">
+
+  <div class="container" id="content">
+
+  	<div>{{current_user.name}}</div>
+
+    {% include "flashed_messages.html" %}
+
+    <h1>{{title}}</h1>
+
+    {% block content %}
+
+    {% endblock %}
+ 
+ 
+  </div>
+
+  <div id="push">&nbsp;</div>
+
+</div> <!-- wrap -->
+
+
+{%endblock%}
+

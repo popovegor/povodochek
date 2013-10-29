@@ -248,7 +248,7 @@
                 
                 {% set photo = (adv.get('photos') or [])[0]%}
                 {% if photo %}
-                    <a title='{{adv.get("title")}}' href="{{url_for_sale_pet(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" class="photo-img thumbnail">
+                    <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" class="photo-img thumbnail">
                         <img src="{{url_for('thumbnail', filename=photo)}}">
                        <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                     </a>  
@@ -268,7 +268,7 @@
 
         <div class="media-body">
 
-            <a href="{{url_for_sale_pet(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'><h4 class="media-heading">{{adv.get("title")}}</h4></a>
+            <a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'><h4 class="media-heading">{{adv.get("title")}}</h4></a>
             <ul class="unstyled">
               <li class="adv-city">
                     {% set city_id = adv.get("city_id") %}

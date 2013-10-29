@@ -1,6 +1,6 @@
-{% extends "account/layout.html" %}
+{% extends "admin/layout.html" %}
 
-{% block account_content %}
+{% block content %}
 
 <!-- <p class="">Редактирвать</p> -->
 
@@ -38,20 +38,19 @@
               <span class="text-warning main-photo" title="Главная фотография - это первая по счету фотография, и  именно она будет показана в списке объявлений. Вы можете перетащить любую из загруженных фотографий в эту позицию.">главная фотография</span>
               {% include "uploader.html" %}
           </div>  
+        <h2 class="page-header">Контактная ифнормация</h2>
 
-        <h2>Контактная ифнормация</h2>
+            {{ form_field(form.username, class="input-large", placeholder = "Введите имя пользователя") }}
 
-          <p>Контактная информация не является обязательной для заполнения, так как с вами всегда смогут связаться по электронной почте, которую вы указали при регистрации.</p>
+            {{ form_field(form.email, class="input-large", placeholder="Введите email") }}
 
-          {{ form_field(form.phone, class="input-large", placeholder = "Введите тел. номер") }}
+            {{ form_field(form.phone, class="input-large", placeholder = "Введите тел. номер") }}
 
-          {{ form_field(form.skype, class="input-large", placeholder="Введите skype-имя") }}
-
-
+            {{ form_field(form.skype, class="input-large", placeholder="Введите skype-имя") }}
         <div class="actions">
           <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
           &nbsp;
-          <a class="btn" href="{{url_for('account_sale')}}" id="cancel">Отменить</a>
+          <a class="btn" href="{{url_for('admin_sale')}}" id="cancel">Отменить</a>
         </div>
 
             <script type="text/javascript">
@@ -136,8 +135,7 @@
                   // gender : {required: true},
                   city : {required: true}, 
                   phone : {_phone: true}, 
-                  email : {email: true, required : true},
-                  username : {required : true}
+                  email : {email:true}
                }, submit);
 
 

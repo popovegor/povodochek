@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, send_file, abort, jsonify, Markup, make_response)
-from flask_login import (LoginManager, current_user, login_required,
-                            login_user, logout_user, UserMixin, AnonymousUser,
+from flask_login import (LoginManager, current_user,
+                            login_user, logout_user, login_required, UserMixin, AnonymousUser,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
@@ -78,6 +78,7 @@ class User(UserMixin):
 
     def is_active(self):
         return True
+
 
 
 class Anonymous(AnonymousUser):
@@ -288,10 +289,10 @@ def ajax_location_typeahead():
     return jsonify(items = locations )    
 
 
-def url_for_sale_pet(pet_id, adv_id, **kwargs):
-    return url_for('sale_dog', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_cat', id = adv_id, **kwargs)
+def url_for_sale_show(pet_id, adv_id, **kwargs):
+    return url_for('sale_show_dog', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_show_cat', id = adv_id, **kwargs)
 
-app.jinja_env.globals['url_for_sale_pet'] = url_for_sale_pet
+app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
 
 def get_sales_for_mosaic(skip, limit = 36, pet_id = None):
     query = {"photos": {"$nin": [None, []]} }
@@ -299,7 +300,7 @@ def get_sales_for_mosaic(skip, limit = 36, pet_id = None):
         query["pet_id"] = pet_id
     advs = [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
-        'url' : url_for_sale_pet( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
+        'url' : url_for_sale_show( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
         'id': str(adv.get('_id')), \
         'p' : adv.get('price'), \
         'b' : get_breed_name(adv.get('breed_id'), adv.get('pet_id')), \
@@ -362,15 +363,16 @@ def send_reset_password(email, login, asign, password):
     msg.html = render_template("email/reset_password.html", login = login, password = password, asign = asign)
     mail.send(msg)
 
-def send_from_sale(email, username, sale_id, seller, subject, message):
+def send_from_sale(email, username, sale_id, seller_email, seller_username, subject, message):
     adv = sales().find_one(ObjectId(sale_id))
-    if adv and seller and seller.get('email'):
-        msg = Message(subject, recipients=[seller.get('email')], cc = [email])
+    if adv and seller_email:
+        msg = Message(subject, recipients=[seller_email], cc = [email])
         msg.html = render_template("email/from_sale.html", \
             subject = subject, \
             message = message, \
             adv = adv, \
-            seller = seller, \
+            seller_email = seller_email, \
+            seller_username = seller_username, \
             email = email, \
             username = username, \
             date = datetime.now().date())
@@ -388,7 +390,7 @@ def test_email_from_sale():
         adv = adv, \
         username = u'Егор Попов АТИ', \
         email = u'popovegor@gmail.com', \
-        seller = users().find_one(ObjectId(adv.get('user'))), \
+        seller = users().find_one(ObjectId(adv.get('user_id'))), \
         date = datetime.now().date())
     # mail.send(msg)
     return msg.html
@@ -676,14 +678,14 @@ def url_for_sale(pet_id, **kwargs):
 app.jinja_env.globals['url_for_sale'] = url_for_sale
 
 @app.route('/prodazha-sobak/<id>/')
-def sale_dog(id):
-    return sale_pet(id)
+def sale_show_dog(id):
+    return sale_show(id)
 
 @app.route('/prodazha-koshek/<id>/')
-def sale_cat(id):
-    return sale_pet(id)
+def sale_show_cat(id):
+    return sale_show(id)
 
-def sale_pet(id):
+def sale_show(id):
     adv = sales().find_one({'_id': ObjectId(id)}) if id else None
     name = u"Продам {0} породы {1} в {2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
@@ -697,8 +699,8 @@ def sale_pet(id):
     ))
     title = u"{0} - {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
-    seller = users().find_one(ObjectId(adv.get("user")))
-    return render_template("sale_pet.html", \
+    seller = users().find_one(ObjectId(adv.get("user_id")))
+    return render_template("sale_show.html", \
         header = header,
         title = title,
         adv = adv,
@@ -775,8 +777,8 @@ def account_adoption():
 def account_sale():
     sort = lambda adv: adv.get("update_date") or adv.get("add_date")
     advs = sales().find(
-        {'user': {'$in' : [str(current_user.id), current_user.id]} },\
-        sort = [("update_date", -1)])
+        {'user_id': {'$in' : [str(current_user.id), current_user.id]} },\
+        sort = [("update_date", DESCENDING)], limit = 10)
 
     tmpl = render_template("account/sale.html", \
         title=u"Мои объявления о продаже", \
@@ -784,7 +786,7 @@ def account_sale():
     return tmpl
 
 
-def sale_save(form, id = None):
+def sale_save(form, id = None, moderator = None):
     filenames = []
     if form.photos.data:
         filenames = form.photos.data.split(',')
@@ -796,10 +798,10 @@ def sale_save(form, id = None):
 
     (pet_id, breed_id) = form.breed.data.split("_")
     now = datetime.utcnow()
-    sale = {'user': str(current_user.id), \
+    sale = {
         'pet_id': num(pet_id), \
         'breed_id': num(breed_id), \
-        'title':form.title.data, \
+        'title': form.title.data, \
         'desc': form.desc.data, \
         'photos': filenames, \
         'price' : form.price.data, \
@@ -808,10 +810,16 @@ def sale_save(form, id = None):
         "phone" : form.phone.data, \
         "skype" : form.skype.data, \
         "gender_id": num(form.gender.data)}
+    if moderator:
+        sale['username'] = form.username.data
+        sale['email'] = form.email.data
+        sale['moderator_id'] = str(moderator.id)
+        sale['moderate_date'] = now
+    else:
+        sale['user_id'] = str(current_user.id)
     if id:
         sales().update(
-            {'_id': ObjectId(id), \
-            'user': {'$in': [current_user.id, str(current_user.id)]} } 
+            {'_id': ObjectId(id)} 
             , {'$set': sale}, upsert=True)
     else:
         sale["add_date"] = now
@@ -823,7 +831,7 @@ def sale_save(form, id = None):
 def account_sale_extend(id):
     adv = sales().find_one(
         {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user': {'$in': [current_user.id, str(current_user.id)]}})
+        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
     if adv:
         sales().update({"_id": adv["_id"]}, {"$set": {"update_date": datetime.utcnow()}})
         flash(u"Объявление '%s' продлено на две недели." % adv["title"], "info")
@@ -836,19 +844,19 @@ def account_sale_extend(id):
 def account_sale_remove(id):
     adv = sales().find_one(
         {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user': {'$in': [current_user.id, str(current_user.id)]}})
+        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
     if adv:
         sales().remove(adv)
         flash(u"Объявление '%s' удалено." % adv["title"], "info")
     return redirect(url_for("account_sale"))
     
 
-@app.route("/account/sale/<id>", methods = ['GET', 'POST'])
+@app.route("/account/sale/<id>/", methods = ['GET', 'POST'])
 @login_required
 def account_sale_edit(id):
     adv = sales().find_one(
         {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user': {'$in': [current_user.id, str(current_user.id)]}})
+        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
     if not adv:
         abort(404)
 
@@ -869,8 +877,8 @@ def account_sale_edit(id):
         form.photos.data = ",".join(adv.get("photos"))
         form.city.data = get_city_region(adv.get("city_id"))
         # form.age.data = str(num(adv.get("age_id")))
-        form.phone.data = adv.get("phone")
-        form.skype.data = adv.get("skype")
+        form.phone.data = adv.get("phone") or current_user.phone
+        form.skype.data = adv.get("skype") or current_user.skype
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
 
 
@@ -878,12 +886,13 @@ def account_sale_edit(id):
 @login_required
 def account_sale_add():
     form = Sale(request.form)
-    if request.method == "POST" and form.validate():
-        print(request.form)
-        (pet, breed) = form.breed.data.split('_')
-        id = sale_save(form)
-        flash(u"Объявление '%s' добавлено." % form.title.data, "info")
-        return redirect(url_for('account_sale'))
+    if request.method == "POST":
+        if  form.validate():
+            print("validated")
+            (pet, breed) = form.breed.data.split('_')
+            id = sale_save(form)
+            flash(u"Объявление '%s' добавлено." % form.title.data, "info")
+            return redirect(url_for('account_sale'))
     else:
         form.city.data = get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
@@ -910,7 +919,7 @@ def advice_article_2():
 #     form = Stud(request.form)
 #     if request.method == "POST" and form.validate():
 #         print(request.form)
-#         id = sales().insert({'user': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'ps': form.photos.data.split(",")})
+#         id = sales().insert({'user_id': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'ps': form.photos.data.split(",")})
 #         flash(u"Объявление %s добавлено." % str(id), "info")
 #         return redirect(url_for('account_sale'))
 #     return render_template("/account/sale_adv.html", form=form, title=u"Новое объявление")
@@ -973,21 +982,24 @@ def mail_sale(id):
     if not adv:
         abort(404)
 
-    seller = users().find_one(ObjectId(adv.get("user")))
-    if not seller:
+    seller = users().find_one(ObjectId(adv.get("user_id")))
+    if not seller and not adv.get('email'):
         abort(404)
+    seller_email = adv.get('email') or seller.get('email')
+    seller_username = adv.get('username') or seller.get('username') 
+    print("seller_username", seller_username)
 
     if request.method == "POST":
         if form.validate():
-            send_from_sale(form.email.data, form.username.data, adv.get('_id'), seller, form.subject.data, form.message.data)
-            if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
-                send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
-                    [seller.get('phone')] )
+            send_from_sale(form.email.data, form.username.data, adv.get('_id'), seller_email, seller_username, form.subject.data, form.message.data)
+            # if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
+            #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
+            #         [seller.get('phone')] )
             return render_template("/mail_sale.html", title = u"Сообщение успешно отправлено")
     else:
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template("/mail_sale.html", form = form, seller = seller, title=u"Написать письмо")
+    return render_template("/mail_sale.html", form = form, seller_email = seller_email, seller_username = seller_username, title=u"Написать письмо")
 
 @app.route('/favicon.ico')
 def favicon():
@@ -1026,6 +1038,88 @@ def contacts():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', title = u"Страница не найдена"), 404
+
+# admin
+
+from functools import wraps
+
+def admin_requried(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if current_user.name != 'popovegor':
+            abort(401)
+        return func(*args, **kwargs)
+    return decorated_view
+
+    # if app.current_user:
+    #     abort(401)
+    # return func(*args, **kwargs)
+
+
+@app.route('/admin/sale/')
+@admin_requried
+def admin_sale():
+    page = int(request.args.get("page") or 1)
+    total = sales().count()
+    perpage = 100
+    advs = [adv for adv in sales().find(sort = [('update_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
+    for seller in users().find({'_id':{'$in' : [ObjectId(adv.get('user_id')) for adv in advs if adv.get('user_id') ]}}):
+        for adv in [adv for adv in advs if not adv.get('email')]:
+            # print(seller['email'])
+            if ObjectId(adv['user_id']) == seller['_id']:
+                adv['email'] = seller['email']
+                adv['username'] = seller['username']
+
+    return render_template('/admin/sale.html', title = Markup(u"Админка: объявления о продаже"), advs = advs, total = total, perpage = perpage, page = page)
+
+
+@app.route('/admin/sale/new/', methods = ['GET', 'POST'])
+@admin_requried
+def admin_sale_add():
+    form = Sale(request.form)
+    if request.method == "POST" and form.validate():
+        (pet, breed) = form.breed.data.split('_')
+        id = sale_save(form, moderator = current_user)
+        flash(u"Объявление '%s' добавлено." % form.title.data, "info")
+        return redirect(url_for('admin_sale'))
+    return render_template("/admin/sale_edit.html", form = form, title = Markup(u"Админка: добавить объявление о продаже"), btn_name = u"Добавить")
+
+@app.route('/admin/sale/ban/<adv_id>/')
+@admin_requried
+def admin_sale_ban(adv_id):
+    return ""
+
+
+@app.route('/admin/sale/edit/<adv_id>/', methods = ["GET","POST"])
+@admin_requried
+def admin_sale_edit(adv_id):
+    adv = sales().find_one({'_id': ObjectId(adv_id)})
+    if not adv:
+        abort(404)
+
+    form = Sale(request.form)
+    if request.method == "POST":
+        print(form.price.data)
+        if form.validate():
+            sale_save(form, adv_id, moderator = current_user)
+            flash(u"Объявление '%s' обновлено." % form.title.data, "info")
+            return redirect(url_for("admin_sale"))
+    else:
+        form.pet.data = str(num(adv.get("pet_id")))
+        form.breed.data = u"{0}_{1}".format(num(adv.get("pet_id")), num(adv.get("breed_id")))
+        form.title.data = adv.get("title")
+        form.desc.data = adv.get('desc')
+        form.price.data = num(adv.get('price'))
+        form.gender.data = str(num(adv.get('gender_id')) or '')
+        form.photos.data = ",".join(adv.get("photos"))
+        form.city.data = get_city_region(adv.get("city_id"))
+        # form.age.data = str(num(adv.get("age_id")))
+        form.phone.data = adv.get("phone")
+        form.skype.data = adv.get("skype")
+        form.email.data = adv.get("email")
+        form.username.data = adv.get("username")
+    return render_template("/admin/sale_edit.html", form = form, title=u"Админка: редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
+    
 
 if __name__ == "__main__":
     app.debug = True

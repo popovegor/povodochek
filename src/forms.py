@@ -159,6 +159,20 @@ class SaleSearch(Form):
 
     perpage = SelectField(u"Объявлений на стр.", default = 15, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
 
+class Contact(Form):
+    username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
+
+    city = TextField(u"Город", validators = [validate_location])    
+    city_adv_hide = BooleanField(u"Не показывать город в объявлениях")
+
+    phone = TextField(u"Телефонный номер")
+    phone_adv_hide = BooleanField(u"Не показывать телефонный номер в объявлениях")
+    phone_adv_sms = BooleanField(Markup(u"Присылать sms-оповещения об отликах на объявления (<i>бесплатно</i>)"))
+
+    skype = TextField(u"Skype")
+    skype_adv_hide = BooleanField(u"Не показывать skype-номер в объявлениях")
+
+
 class Sale(Form):
 
     pet = SelectField(u'Тип животного',\
@@ -173,8 +187,6 @@ class Sale(Form):
     gender = SelectField(u"Пол", \
         choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()])
    
-
-    # заголовок объявления
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
          description = u"Не более 80 символов."
          )
@@ -194,20 +206,8 @@ class Sale(Form):
     phone = TextField(u"Телефонный номер")
     skype = TextField(u"Skype")
 
-
-class Contact(Form):
-    username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
-
-    city = TextField(u"Город", validators = [validate_location])    
-    city_adv_hide = BooleanField(u"Не показывать город в объявлениях")
-
-    phone = TextField(u"Телефонный номер")
-    phone_adv_hide = BooleanField(u"Не показывать телефонный номер в объявлениях")
-    phone_adv_sms = BooleanField(Markup(u"Присылать sms-оповещения об отликах на объявления (<i>бесплатно</i>)"))
-
-    skype = TextField(u"Skype")
-    skype_adv_hide = BooleanField(u"Не показывать skype-номер в объявлениях")
-
+    email = TextField(u"Электронная почта / Email")
+    username = TextField(u"Имя пользователя")
 
 
 class Activate(Form): 

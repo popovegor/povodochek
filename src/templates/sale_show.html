@@ -101,7 +101,6 @@
     </div> <!-- adv-info -->
 
 
-    {% if seller %}
     <h4>Контактная информация</h4>
     <div class="seller-block row-fluid">  
   
@@ -109,7 +108,7 @@
         
         <dl class='dl-horizontal'>
           <dt class="">Продавец</dt>
-          <dd>{{seller.get("username")}}</dd>
+          <dd>{{adv.get('username') or seller.get("username")}}</dd>
 
           {%set phone = adv.get("phone")%}
 
@@ -135,9 +134,7 @@
         <a class="btn btn-info" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
       </div>
 
-    </div>  <!-- seller-block -->
-
-    {%endif%}
+    </div>  <!-- contact-block -->
 
   </div> <!-- right-side -->
 
