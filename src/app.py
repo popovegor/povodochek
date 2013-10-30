@@ -778,7 +778,7 @@ def account_sale():
     sort = lambda adv: adv.get("update_date") or adv.get("add_date")
     advs = sales().find(
         {'user_id': {'$in' : [str(current_user.id), current_user.id]} },\
-        sort = [("update_date", DESCENDING)], limit = 10)
+        sort = [("update_date", DESCENDING)])
 
     tmpl = render_template("account/sale.html", \
         title=u"Мои объявления о продаже", \
