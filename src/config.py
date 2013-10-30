@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 UPLOADED_PHOTOS_DEST = '/tmp'
-SECRET_KEY = "yeah, not actually a secret"
+SECRET_KEY = "p\xe6\x9b\xf4\xa9\xfd\x10\x1b\xaaE%\xf2LX\x80\xd7\x91\x8e\x81\xa4\x95\n}\xad"
 
 # email server
 MAIL_SERVER = u'smtp.yandex.ru'
