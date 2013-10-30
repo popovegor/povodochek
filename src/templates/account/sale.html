@@ -72,7 +72,9 @@
                     </small>
                 </li>
                 <li class="adv-desc hidden-phone">
-                    {{ adv["desc"] }}
+                    {% autoescape false %}
+                      {{adv.get('desc') | safe | replace("\r\n", "<br>")| replace("\r", "<br>") | replace("\n", "<br>") }}
+                    {% endautoescape %}
                 </li>
                 <li class="adv-actions row-fluid">
                     <p class="span12">

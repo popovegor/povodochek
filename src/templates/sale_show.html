@@ -71,7 +71,11 @@
     </h2>
 
     <!-- description -->
-    <p class="adv=desc">{{adv.get("desc") }}</p>
+    <p class="adv-desc">
+    {% autoescape false %}
+      {{adv.get('desc') | safe | replace("\r\n", "<br>") | replace("\r", "<br>") | replace("\n", "<br>") }}
+    {% endautoescape %}
+    </p>
 
 
 
