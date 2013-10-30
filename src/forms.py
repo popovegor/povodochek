@@ -24,6 +24,8 @@ from dic.breeds import (dogs, cats, get_breed_name)
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city)
 
+import config
+
 def db():
     return MongoClient().povodochek
 
@@ -112,7 +114,9 @@ class ChangeEmail(Form):
 
     def validate_new_email(form, field):
         print("validate confirm email %s" % field.data)
-        if users().find_one({'email': field.data}):
+        check = config.DOMAIN_NAME_CHECK and config.DOMAIN_NAME in field.data
+        user = users().find_one({'email': field.data})
+        if check or user:
             raise ValidationError(u"Адрес '%s' уже зарегистрирован" % field.data)
 
     repeat_new_email = TextField(u'Повторить эл. почту', \
@@ -257,7 +261,7 @@ class SignUpBasic(Form):
         description = u'Допускается вводить латинские буквы, цифры, дефисы, подчёркивания и точки, от 6 до 36 символов.')
 
 
-    email = TextField(u'Эл. почта / Email', \
+    email = TextField(u'Электронная почта / Email', \
         validators = [Required(message=MSG_REQUIRED),\
         Email(message=MSG_EMAIL)], \
         filters = [lambda x : (x or '').lower()], \
@@ -265,7 +269,8 @@ class SignUpBasic(Form):
 
     def validate_email(form, field):
         user = users().find_one({'email': field.data})
-        if user:
+        check = config.DOMAIN_NAME_CHECK and config.DOMAIN_NAME in field.data
+        if check or user:
             raise ValidationError(u"Адрес '%s' занят" % field.data)
 
     password = PasswordField(u"Пароль", \

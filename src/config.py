@@ -12,6 +12,9 @@ MAIL_USE_SSL = True
 MAIL_DEFAULT_SENDER = u'Поводочек <noreply@povodochek.com>'
 MAIL_USERNAME = u'noreply@povodochek.com'
 MAIL_PASSWORD = u'gd8HUunlVA3D97rz'
+DOMAIN_NAME = 'povodochek.com'
+DOMAIN_NAME_CHECK = True
+ADMIN_EMAILS = ['egor@povodochek.com', 'vika@povodochek.com', 'admin@povodochek.com']
 
 
 ASSETS_DEBUG = False
