@@ -686,7 +686,15 @@ def sale_show_cat(id):
     return sale_show(id)
 
 def sale_show(id):
-    adv = sales().find_one({'_id': ObjectId(id)}) if id else None
+    adv = None
+    try:
+        adv = sales().find_one({'_id': ObjectId(id)}) if id else None
+    except Exception, e:
+        print(e)
+    
+    if not adv:
+        abort(404)
+
     name = u"Продам {0} породы {1} в {2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
@@ -979,6 +987,7 @@ def photo(filename, width):
 def mail_sale(id):
     form = SendMail(request.form)
     adv = sales().find_one(ObjectId(id))
+    
     if not adv:
         abort(404)
 

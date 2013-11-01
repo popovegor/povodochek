@@ -5,23 +5,28 @@
 
 <div class="error-404"> 
     <div>
-      <a href="/" class="error-404-logo">
-        Поводочек
-      </a>
+        <h1 class="error-404-number">404</h1>
+      <p class="lead">К сожалению, нам не удалось найти запрашиваемую вами страницу, возможно, она была удалена или был указан неправильный адрес.</p>
       </div>
-      <br/>
       <div class="error-text"> 
 	     
-	      			
-				<p class="lead"> Мы искали, но не нашли запрашиваемой вами страницы.
-				</p>
-				<p class="lead">
-		        Вернитесь, пожалуйста, на <a href="{{url_for('index')}}">главную</a>.</p>
-
-
-	      		
-        
-      </div>
+        <p>Вернитесь обратно или перейдите на один из следующих разделов сайта: </p>
+			   <ul class="nav nav-pills nav-stacked"><li>
+            <a href="{{url_for('index')}}">Главная</a>   
+         </li>
+          <li>
+            <a href="{{url_for('sale_dogs')}}">Объявления о продаже собак</a>
+          </li>
+          <li>
+            <a href="{{url_for('sale_cats')}}">Объявления о продаже кошек</a>
+          </li>
+          <li>
+            <a href="{{url_for('advice')}}">Полезные статьи о животных</a>
+          </li>
+           <li>
+            <a href="{{url_for('contacts')}}">Контакты</a>
+          </li>
+         </ul>
       
 </div>
 
