@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}  
+
+<h1>{{title}}</h1>
+
+<div>
+  <div class="form-inline">
+    <input type="text" value="http://www.avito.ru/sankt-peterburg/sobaki/yaponskaya_haski_akita_inu_239016456" id="url"/> <button id="parse" class="btn">Parser</button>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    $("#parse").click(function(){
+      var url = $("#url")[0].value;
+      $.get("{{url_for('ajax_avito_parse', url = '')}}" + url, parse);
+    });
+  });
+
+  function parse(data) {
+    alert('12');
+  }
+
+</script>
+
+{% endblock %} 

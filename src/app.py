@@ -44,6 +44,7 @@ from dic.cities import (get_city_region, get_city, get_city_name, format_city_re
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
+from advs_parser import parse_avito_adv
 
 photos = UploadSet('photos', IMAGES)
 
@@ -235,7 +236,7 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    mosaic_advs = get_sales_for_mosaic(0, 42)
+    mosaic_advs = get_sales_for_mosaic(0, 6)
     top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 10)]
     top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 10)]
     tmpl = render_template('index.html', \
@@ -1129,6 +1130,19 @@ def admin_sale_edit(adv_id):
         form.username.data = adv.get("username")
     return render_template("/admin/sale_edit.html", form = form, title=u"Админка: редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
     
+@app.route('/test/parser/avito/')
+def test_parser_avito():
+    response = make_response(render_template('/test/parser_avito.html', title = u"Parsing from avito"))
+    response.headers['Access-Control-Allow-Origin'] = "*"
+    return response
+
+@app.route('/ajax/avito/parse/')
+def ajax_avito_parse():
+    adv_url = request.args["url"]
+    if adv_url:
+        adv = parse_avito_adv(adv_url)
+    return jsonify(adv)
+
 
 if __name__ == "__main__":
     app.debug = True
