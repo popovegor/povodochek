@@ -6,3 +6,5 @@
 /src/static/gen/
 /src/static/.webassets-cache/
 \#*\#
+/bootstrap/node_modules/
+/bootstrap/bower_components/
