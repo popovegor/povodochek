@@ -7,18 +7,18 @@
 <h1>{{title}}</h1>
 <p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже питомцев.</p>
 
-<div class="row">
-    <div class="col-lg-5">
+<div class="">
+    <div class="">
 
         {% from "forms.html" import form_field_boolean, form_field %}
 
         <form class="form-signup" method="post" role="form" action="{{request.url}}" >
 
-          {{ form_field(form.login, placeholder="Введите логин", class="form-control") }}
+          {{ form_field(form.login, placeholder="Введите логин", class="form-control", size="col-sm-5") }}
 
-          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="form-control") }}
+          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="form-control", size="col-sm-5") }}
 
-          {{ form_field(form.password, placeholder="Введите пароль", class="form-control") }}
+          {{ form_field(form.password, placeholder="Введите пароль", class="form-control", size="col-sm-5") }}
 
           {{ form_field(form.accept_tos, checked="checked") }}
 

@@ -3,6 +3,7 @@
 /venv/
 /mongodump-*/
 *.tmp
+*.TMP
 src/bootstrap/node_modules/
 src/bootstrap/bower_components/
 src/bootstrap/.csscomb.json
@@ -11,4 +12,5 @@ src/bootstrap/.editorconfig
 src/bootstrap/.gitattributes
 src/static/gen/
 src/static/.webassets-cache/
+src/config.py
 \#*\#

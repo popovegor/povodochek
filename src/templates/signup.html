@@ -4,22 +4,22 @@
 
 <h1>{{title}}</h1>
 
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-5 col-sm-5 col-lg-4">
 <p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже ваших питомцев.</p>
         {% from "forms.html" import form_field_boolean, form_field %}
 
         <form class="form-signup" method="post" action="{{request.url}}" >
 
-          {{ form_field(form.username, placeholder="Введите ваше имя", class="input-xlarge") }}
+          {{ form_field(form.username, placeholder="Введите ваше имя") }}
 
-          {{ form_field(form.login, placeholder="Введите логин", class="input-xlarge") }}
+          {{ form_field(form.login, placeholder="Введите логин") }}
 
-          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="input-xlarge") }}
+          {{ form_field(form.email, placeholder="Введите адрес электронной почты") }}
 
-          {{ form_field(form.password, placeholder="Введите пароль", class="input-xlarge") }}
+          {{ form_field(form.password, placeholder="Введите пароль") }}
 
-          {{ form_field(form.repeat_password, placeholder="Введите пароль еще раз", class="input-xlarge") }}
+          {{ form_field(form.repeat_password, placeholder="Введите пароль еще раз") }}
 
           {{ form_field(form.accept_tos)}}
 
