@@ -1,23 +1,28 @@
-<div class="pet-post-button row-fluid">
-		<a class="btn btn-larg btn-danger" id="pet_post" href="{{'#signed' if not current_user.is_signed() else url_for('account_sale_add') }}" {{'data-toggle=modal data-target=#signed' if not current_user.is_signed()}}><span class="hidden-tablet">Разместить&nbsp;объявление</span><span class="visible-tablet"> <i class="icon-plus icon-white"></i> Oбъявление</span></a>
+<div class="pet-post-button" style="position: relative;width: 220px;margin-right: auto;margin-left: auto;">
+		<a type="button" class="btn btn-md btn-link" style="position: absolute;top: 46px;" id="pet_post" href="{{'#myModal' if not current_user.is_signed() else url_for('account_sale_add') }}" {{'data-toggle=modal data-target=#myModal' if not current_user.is_signed()}}><span class="glyphicon glyphicon-flash">&nbsp;</span>Разместить объявление</a>
 </div> <!-- pet-post -->
 
 
-{% if not current_user.is_signed() %}
+{% if not current_user.is_signed() %}	
 
-	<div id="signed" class="modal hide fade text-left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	    <h3 id="myModalLabel">Разместите свое объявление</h3>
-	  </div>
-	  <div class="modal-body">
-	    <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки, необходимо войти на сайт или зарегистрироваться.</p>
-	    <a class="btn btn-link btn-large" href="{{url_for('signin', next=url_for('account_sale_add') )}}">Войти</a> <span class="">или</span> <a class="btn btn-link btn-large" href="{{url_for('signup_basic', next = url_for('account_sale_add'))}}">Зарегистрироваться</a>
-	  </div>
-	  <div class="modal-footer">
-	    <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
-	  </div>
-	</div>
+
+<div class="modal fade" aria-hidden="true"  id="myModal" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="myModalLabel">Разместите свое объявление</h3>
+      </div>
+      <div class="modal-body">
+         <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки, необходимо войти на сайт или зарегистрироваться.</p>
+	    <a class="btn btn-link btn-lg" href="{{url_for('signin', next=url_for('account_sale_add') )}}">Войти</a> <span style="">или</span> <a class="btn btn-link btn-lg" href="{{url_for('signup_basic', next = url_for('account_sale_add'))}}">Зарегистрироваться</a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 {%endif%}
 

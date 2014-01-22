@@ -1,7 +1,6 @@
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
   margin-bottom: 0;
-  box-shadow: none !important;
 }
 
 .tt-dropdown-menu {

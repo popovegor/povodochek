@@ -12,6 +12,10 @@ from pymorphy2 import MorphAnalyzer
 import re
 
 
+thumbnail_size =  (300, 200) #width, height
+thumbnail_quality = 60
+
+
 def num(value, default = None):
     if (isinstance(value, str) or  isinstance(value, unicode)) and value.isdigit():
         return int(value)
@@ -25,7 +29,7 @@ def qoute_rus(msg):
     return Markup(u"&#8222;%s&#8220;" % msg)
 
 def get_thumbnail_filename(filename):
-    return os.path.basename(os.path.splitext(filename)[0] + "_preview.jpg")
+    return "{0}_{1[0]}_{1[1]}_{2}_preview.jpg".format(os.path.splitext(os.path.basename(filename))[0], thumbnail_size, thumbnail_quality)
 
 def calc_image_size(img, height = None, width = None):
     if height:
@@ -54,9 +58,9 @@ def resize_image(filename, height = None, width = None):
     
     return os.path.basename(filename)
 
-def create_thumbnail(file, filename):
-    size =  (150, 100) #width, height
-    out_filename = os.path.splitext(filename)[0] + "_preview.jpg"
+def create_thumbnail(file, filename, photo_path):
+    out_filename = get_thumbnail_filename(filename)
+    print("================", out_filename, "================")
     im = None
     infile = None 
     try:
@@ -64,8 +68,8 @@ def create_thumbnail(file, filename):
         im.write(file)
         im.seek(0)
         infile = Image.open(im)
-        im = ImageOps.fit(infile, size, Image.ANTIALIAS)
-        im.save(out_filename, "JPEG", quality=30, optimize=True, progressive=True)
+        im = ImageOps.fit(infile, thumbnail_size, Image.ANTIALIAS)
+        im.save(os.path.join(photo_path, out_filename), "JPEG", quality=thumbnail_quality, optimize=True, progressive=True)
     except IOError as e:
         print(e)
         print("cannot create thumbnail for", filename)

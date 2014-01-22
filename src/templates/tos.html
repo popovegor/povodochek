@@ -2,10 +2,15 @@
 
 {% block content %}
 
+<div class="container">
+
 <h1>{{title}}</h1>
 
+<div class="row">
 
-<div class="tos">
+<div class="tos col-lg-9">
+
+
 
 	{%filter markdown %}
 
@@ -78,4 +83,7 @@
 
 </div> <!-- tos -->
 
+</div> <!-- row -->
+
+</div><!--  </contaner> -->
 {% endblock %}

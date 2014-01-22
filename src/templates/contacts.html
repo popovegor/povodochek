@@ -2,16 +2,19 @@
 
 {% block content %}
 
-<div class="contacts">
+<div class="contacts container">
 
 	<h1 class="">{{title}}</h1>
 
-	<ul class="thumbnails">
-		  <li class="span4">
-		     <div class="">
-		      		<img src="{{url_for('static', filename='img/egor.jpg')}}" alt="Егор Попов">
-			      <div class="caption">
-				      <h2>Егор Попов</h2>
+	<ul class="thumbnails list-unstyled row" style="margin-top:40px">
+		  <li class="col-sm-4" style="margin-bottom:40px">
+		     <div class="row">
+		     		<div class="col-md-12">
+		     			<img src="{{url_for('static', filename='img/egor.jpg')}}" alt="Егор">	
+		     		</div>
+		      		
+			      <div class="caption col-md-12">
+				      <h2>Егор</h2>
 				      <p>Наш разработчик: flask, mongodb, bootstrap and so&nbsp;on, если вы&nbsp;понимаете о&nbsp;чем&nbsp;я...</p>
 				      <p><span>Email:</span>
 				      	<a href="mailto:egor@povodochek.com">egor@povodochek.com</a>
@@ -19,11 +22,11 @@
 			      </div>
 		    </div>
 		  </li>
-		  <li class="span4">
+		  <li class="col-sm-4" style="margin-bottom:40px">
 		    <div class="">
-		      		<img src="{{url_for('static', filename='img/vika.jpg')}}" alt="Виктория Попова">
+		      		<img src="{{url_for('static', filename='img/vika.jpg')}}" alt="Виктория">
 			      <div class="caption">
-				      <h2>Виктория Попова</h2>
+				      <h2>Виктория</h2>
 				      <p>Наш &laquo;креативный центр&raquo;&nbsp;&mdash; всегда ищет новое, обдумывает, создает и&nbsp;вдохновляет!</p>
 				      <p><span>Email:</span>
 				      	<a href="mailto:vika@povodochek.com">vika@povodochek.com</a>
@@ -31,11 +34,11 @@
 			      </div>
 		    </div>
 		  </li>
-		  <li class="span4">
+		  <li class="col-sm-4" style="margin-bottom:40px">
 		    <div class="">
-		      		<img src="{{url_for('static', filename='img/polina.jpg')}}" alt="Полина Дуглас">
+		      		<img src="{{url_for('static', filename='img/polina.jpg')}}" alt="Полина">
 			      <div class="caption">
-				      <h2>Полина Дуглас</h2>
+				      <h2>Полина</h2>
 				      <p>Наш персональный заводчик, грумер, хендлер&nbsp;&mdash; она знает о&nbsp;собаках все :-)</p>
 				      <p><span>Email:</span>
 				      	<a href="mailto:polina@povodochek.com">polina@povodochek.com</a>
@@ -45,7 +48,7 @@
 		  </li>
 	</ul>
 
-	<p>
+	<p style="margin-top:40px">
 		Если у&nbsp;вас есть вопросы, пожелания, предложения, комментарии, но&nbsp;вы&nbsp;не&nbsp;знаете к&nbsp;кому из&nbsp;нас обратиться, то&nbsp;оправляйте их&nbsp;по&nbsp;адресу <a href="mailto:support@povodochek.com">support@povodochek.com</a> 
 	</p>
 

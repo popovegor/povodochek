@@ -3,9 +3,11 @@
 {% block content %}  
 
 
-<div class="sale-cities"> 
+<div class="container">
 
 <h1>{{title}}</h1>
+
+<div class="sale-cities"> 
     
     <div class="cities">
 
@@ -40,7 +42,8 @@
                     <div class="span3 breed-column">                  
                     {%for breed_id, breeds in column %}
                       <div class="breed">
-                        <a class="breed-name" target="_blank" href="{{url_for_sale(pet_id = adv.get('pet_id') ,  breed = '{0}_{1}' | format(adv.get('pet_id'), breed_id), city = city_id, distance = 1)}}">{{breed_id | breed_name(adv.get('pet_id')) }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
+                      {% set breed_name = breed_id | breed_name(adv.get('pet_id')) %}
+                        <a class="breed-name" target="_blank" href="{{url_for_sale(pet_id = adv.get('pet_id') ,  breed = breed_name, city = city_id, distance = 1)}}">{{breed_name }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
                       </div> <!-- breed -->
                     {%endfor%}
                     </div> <!-- breed-column -->
@@ -62,10 +65,14 @@
    
 </div> <!-- sale-cities -->
 
+</div>
+
   <script type="text/javascript">
   $(window).load(function(){
 
   });
   </script>
+
+
 
   {% endblock %} 

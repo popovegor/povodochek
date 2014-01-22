@@ -1,0 +1,79 @@
+
+<div class="navbar navbar-default" role="navigation" id="menu" style="{{'margin-bottom:0px' if current_user.is_signed() else 'margin-bottom:30px'}}">
+<div class="container" style="position:relative">
+
+
+  
+
+  <!-- Brand and toggle get grouped for better mobile display -->
+   
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Развернуть</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+
+
+    
+      {#<a title="Портал о продаже породистых собак и кошек" class="navbar-brand" href="{{url_for('index')}}">Поводочек<noindex><sub style="font-family: Arial black; color: red; font-size:10px; display:none">beta</sub><noindex></a>#}
+
+      {% set brand_tag = 'span' if request.path == url_for('index') else 'a' %}
+        <{{brand_tag}} title="Портал о продаже породистых собак и кошек" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;">Поводочек</{{brand_tag}}>
+
+  </div>
+
+
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+
+               <li class="{{'active' if url_for('sale_dogs') in request.path else ''}}"><a href="{{url_for('sale_dogs')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
+               <li class="{{'active' if url_for('sale_cats') in request.path else ''}}"><a href="{{url_for('sale_cats')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
+               <li class=" {{'active' if url_for('advice') in request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
+      
+    </ul>
+
+    <ul class="nav navbar-nav pull-right" style="position:relative">  
+
+       
+
+
+    <!-- current.user -->
+              {%if current_user.is_signed() %}
+                <li class="dropdown {{'active' if url_for('account') in request.path}}">
+                  <a title="{{current_user.username}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i><span class="">&nbsp;{{current_user.username | truncate(length=12, killwords = False)}}&nbsp;</span><b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{url_for('account_sale')}}">Объявления</a></li>
+                    <li><a href="{{url_for('account_contact')}}">Профиль</a></li>
+                    <li><a href="{{url_for('signout', url = request.url)}}">Выйти</a></li>
+                  </ul>
+                </li>
+
+                {%else%}
+                  <!-- anonymous -->
+                  <li class="{{'active' if url_for('signup_basic') in request.path }}">
+                     <a href="{{url_for('signup_basic')}}" class="hidden-phone signup">Регистрация</a>
+                   </li>
+                   <li class="divider-vertical hidden-phone"></li>
+                   <li class="{{'active' if url_for('signin') in request.path  }}">
+                       <a class="signin" href="{{url_for('signin')}}">Вход</a>
+                  </li>
+                {%endif%}
+           
+          </ul> <!-- current.user -->
+ 
+
+
+  <!-- /.navbar-collapse -->
+
+  
+    </div>
+ 
+
+</div>
+
+
+  </div> <!-- /.container-->

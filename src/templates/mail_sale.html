@@ -3,42 +3,33 @@
 {% block layout %}
   <div class="container">
 
-    {%if not form %}
-        <fieldset>
-        <legend>{{title}}</legend>
 
-        <a href="#" class="btn" aria-hidden="true" data-dismiss="modal" onclick="window.close();">Закрыть</a>
-      </fieldset>
-    {%else%}
+  <h1 class="page-header">{{title}}</h1>
 
     <div id="send_mail" class="send-mail">
 
-      <form id="contact" method="post" action="{{request.url}}">
-          <fieldset>
-            <legend>Написать письмо пользователю {{seller_username}}</legend>
-             {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+    	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-            {{form_field(form.subject,  class="input-xxlarge") }}
-            {{form_field(form.message,  class="input-xxlarge", rows=5) }}
+      <form id="contact" method="post" role="form"  action="{{request.url}}">
+          
+
+            {{form_field(form.message,  size="col-md-7", rows=5) }}
+
             {#{%if seller.get("phone_adv_sms") %}
               {{form_field(form.sms_alert) }}
             {%endif%}#}
-            {{form_field(form.username,  class="input-large") }}
-            {{form_field(form.email,  class="input-large") }}
-            
 
-          </fieldset>
-
-              <br/>
-               
-              <button href="#" class="btn btn-primary" type="submit">Отправить</button>
-              <a href="#" class="btn" aria-hidden="true" data-dismiss="modal" onclick="window.close();">Закрыть</a>
+            {{form_field(form.username,  size="col-xs-5") }}
+            {{form_field(form.email,  size="col-xs-5") }}
+       
+                           
+          <button class="btn btn-primary" type="submit">Отправить</button>
+          <a href="#" class="btn" aria-hidden="true" data-dismiss="modal" onclick="window.close();">Закрыть</a>
 
         </form>
       </div> <!-- send-mail -->
 
 
-      {%endif%}
 
     </div> <!-- container -->
 

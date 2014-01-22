@@ -38,8 +38,8 @@ from smsgate import send_sms
 
 from dic.ages import ages
 from dic.genders import genders
-from dic.pets import pets, get_pet_name
-from dic.breeds import (dogs, get_breed_name, get_composite_breed)
+from dic.pets import (pets, get_pet_name, DOG_ID, CAT_ID)
+from dic.breeds import (dogs, get_breed_name, get_composite_breed, cats, get_breed_by_name)
 from dic.cities import (get_city_region, get_city, get_city_name, format_city_region)
 
 from flaskext.markdown import Markdown
@@ -113,23 +113,21 @@ js = Bundle('js/jquery-1.9.1.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/jquery.textareaCounter.plugin.js', \
-    'js/select2.js', \
-    'js/select2_locale_ru.js', \
     'js/holder.min.js', \
     'js/bootstrap.min.js', \
     'js/jquery.carouFredSel.min.js', \
+    'js/bootstrap3-typeahead.min.js', \
     'js/povodochek.js', \
     filters='rjsmin', \
     output='gen/js.js')
 assets.register('js_all', js)
 
 css = Bundle('css/bootstrap.min.css', \
-    'css/select2.css', \
-    'css/select2-bootstrap.css',\
+    'css/typeahead.js-bootstrap.css', \
     'css/nouislider.fox.css', \
     'css/rur-arial.css', \
     'css/flexslider.css', \
-    'http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic', \
+    'http://fonts.googleapis.com/css?family=Russo+One&subset=cyrillic', \
     filters = 'cssmin', \
     output = 'gen/css.css')
 assets.register('css_all', css)
@@ -239,7 +237,7 @@ def index():
     mosaic_advs = get_sales_for_mosaic(0, 6)
     top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 10)]
     top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 10)]
-    tmpl = render_template('index.html', \
+    tmpl = render_template('index1.html', \
         pet_search_form = SaleSearch(), \
         top_cats = top_cats, \
         top_dogs = top_dogs, 
@@ -249,7 +247,6 @@ def index():
 @app.route("/signin/", methods = ["POST", "GET"])
 def signin():
     form = SignIn(request.form)
-    form.password.description = Markup(u"<a class='' href='%s'>Напомнить пароль</a>" % (url_for("reset_password")))
     if request.method == "POST" and form.validate():
         (login, password, remember) = (form.login.data, form.password.data, form.remember.data)
         matcher = re.compile("^" + re.escape(login) + "$", re.IGNORECASE)
@@ -274,21 +271,33 @@ def ajax_activate_remember_later():
     return "success"
 
 
-@app.route("/ajax/location/prefetch.json", methods = ["GET"])
+@app.route("/ajax/typeahead/location/prefetch.json", methods = ["GET"])
 def ajax_location_prefetch():
-    locations = [ city.get("city_name") for city in cities().find(fields=["city_name"])]
+    locations = [ city.get("city_region") for city in db.cities.find(fields=["city_region"])]
     return jsonify(items = locations ) 
 
-@app.route("/ajax/location/typeahead/", methods = ["GET"])
-def ajax_location_typeahead():
-    # print(str(request.args.get("query")))
+@app.route("/ajax/typeahead/location/", methods = ["GET"])
+def ajax_typeahead_location():
     query = (request.args.get("query") or u"").strip()
-    limit = int(request.args.get("limit") or 8)
+    limit = max(int(request.args.get("limit") or 8), 8)
     matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
     locations = [ city.get("city_region") \
         for city in db.cities.find({'city_region': {"$regex": matcher}}, limit=limit, fields=["city_region"])]
     return jsonify(items = locations )    
 
+@app.route("/ajax/typeahead/breed/", defaults={'pet_id':None}, methods = ["GET"])
+@app.route("/ajax/typeahead/breed/<int:pet_id>/", methods = ["GET"])
+def ajax_typeahead_breed(pet_id = None):
+    # print(str(request.args.get("query")))
+    query = (request.args.get("query") or u"").strip()
+    limit = max(int(request.args.get("limit") or 8), 8)
+    matcher = query.lower()
+    breeds = []
+    if not pet_id or pet_id == DOG_ID:
+        breeds = breeds + [u"{0}{1}".format(dog, u", Собаки") for dog in dogs.values() if matcher in dog.lower() ] 
+    if not pet_id or pet_id == CAT_ID:
+        breeds = breeds + [u"{0}{1}".format(cat, u", Кошки") for cat in cats.values() if matcher in cat.lower() ]
+    return jsonify(items = breeds )  
 
 def url_for_sale_show(pet_id, adv_id, **kwargs):
     return url_for('sale_show_dog', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_show_cat', id = adv_id, **kwargs)
@@ -592,65 +601,64 @@ def sale_find(pet_id = None, gender_id = None, breed_id = None, city = None, dis
     return (advs, count, total)
 
 
-def sale_find_header(form):
+def sale_find_header(form, pet_id, breed_id):
     # generate title
-    header = u"Купить <span class='muted'>(продают)</span> {0}{1}{2}"
+    header = u"Купить <small class='text-muted'>(продают)</small> {0}{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
-    (pet_id, breed_id) = form.breed.data.split('_') if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
 
-    if (pet_id or form.pet.data) == "1":
+    if pet_id == DOG_ID:
         pet = u"собаку/щенка"
-    elif (pet_id or form.pet.data) == "2":
+    elif pet_id == CAT_ID:
         pet = u"кошку/котенка"
 
     breed = get_breed_name(breed_id, pet_id)
+    breed_header = breed
+    breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed = Markup(u" породы {0}".format(breed))
+        breed_header = Markup(u" породы <abbr title='Порода' class=''>%s</abbr>" % breed.lower() )
+        breed_title = Markup(u" породы {0}".format(breed.lower()))
 
-    city = get_city_name(form.city.city_id, "p") if form.city.city_id else u''
+    city = get_city_name(form.city.city_id, "i") if form.city.city_id else u''
     if city:
-        city = u" в {0}".format(city)
+        city = u" в г. {0}".format(city)
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
 
-    return (header.format(pet, breed, city), title.format(pet, breed, morph_word(pet, {"gent", "plur"}), city), pet, breed) 
+    return (header.format(pet, breed_header, city), title.format(pet, breed_title, morph_word(pet, {"gent", "plur"}), city), pet, breed) 
 
 @app.route("/kupit-sobaku-koshku/")
 def kupit_sobaku_koshku():
     form = SaleSearch()
-    args = MultiDict([(form.pet.name, 2)] + [(name, value) for name, value in request.args.iteritems()])
-    form = SaleSearch(args)
+    form = SaleSearch(request.args)
     return sale(form)
 
 
 @app.route("/prodazha-sobak/")
 def sale_dogs():
     form = SaleSearch()
-    args = MultiDict([(form.pet.name, 1)] + [(name, value) for name, value in request.args.iteritems()])
-    form = SaleSearch(args)
-    return sale(form)
+    form = SaleSearch(request.args)
+    return sale(form, DOG_ID)
 
 @app.route("/prodazha-koshek/")
 def sale_cats():
     form = SaleSearch()
-    args = MultiDict([(form.pet.name, 2)] + [(name, value) for name,value in request.args.iteritems()])
-    form = SaleSearch(args)
-    return sale(form)
+    form = SaleSearch(request.args)
+    return sale(form, CAT_ID)
 
 @app.route("/prodazha-koshek-sobak/")
-def sale(sale_search_form = None):
+def sale(sale_search_form = None, pet = None):
     form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_field(form.city)
     (form.city.data, form.city.city_id) = \
         (format_city_region(city), city.get("city_id")) if city else (None, None)
-    (pet_id, breed_id) = form.breed.data.split("_") if form.breed.data and len(form.breed.data.split("_")) > 1 else (None, None)
-
+    (breed_id, pet_id) = get_breed_by_name(form.breed.data)
+    pet_id = pet_id or pet
     # sort
     session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
     
-    (advs, count, total) = sale_find(pet_id = pet_id or form.pet.data, \
+    (advs, count, total) = sale_find(pet_id = pet_id, \
         breed_id = breed_id, \
         gender_id = form.gender.data, \
         city = city, \
@@ -663,11 +671,12 @@ def sale(sale_search_form = None):
         limit = form.perpage.data
         )
 
-    (header, title, pet_name, breed_name) = sale_find_header(form)
+    (header, title, pet_name, breed_name) = sale_find_header(form, pet_id, breed_id)
 
     tmpl = render_template("sale.html", header=Markup(header), \
-      title=title, form= form, advs = advs, \
+      title=title, form = form, advs = advs, \
       pet = pet_name, breed = breed_name, \
+      pet_id = pet_id, \
       sort = session.get("sale_sort"), \
       count = count, total = total )
     return tmpl
@@ -696,17 +705,17 @@ def sale_show(id):
     if not adv:
         abort(404)
 
-    name = u"Продам {0} породы {1} в {2}".format( \
+    name = u"Продам {0} породы {1} в г. {2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
-        get_city_name(adv.get("city_id"), "p")
+        get_city_name(adv.get("city_id"), "i")
     )
-    header = Markup(u"Продам {0} породы {1} в {2}".format( \
+    header = Markup(u"Продам {0} породы {1} в г.&nbsp;{2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")),\
-        get_city_name(adv.get("city_id"), "p")
+        get_city_name(adv.get("city_id"), "i")
     ))
-    title = u"{0} - {1}".format(name, \
+    title = u"{0} за {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
     seller = users().find_one(ObjectId(adv.get("user_id")))
     return render_template("sale_show.html", \
@@ -805,11 +814,10 @@ def sale_save(form, id = None, moderator = None):
                 with open(photos.path(filename)) as file:
                     save_photo(db, file)
 
-    (pet_id, breed_id) = form.breed.data.split("_")
     now = datetime.utcnow()
     sale = {
-        'pet_id': num(pet_id), \
-        'breed_id': num(breed_id), \
+        'pet_id': form.breed.pet_id, \
+        'breed_id': form.breed.breed_id, \
         'title': form.title.data, \
         'desc': form.desc.data, \
         'photos': filenames, \
@@ -871,21 +879,18 @@ def account_sale_edit(id):
 
     form = Sale(request.form)
     if request.method == "POST":
-        print(form.price.data)
         if form.validate():
             sale_save(form, id)
             flash(u"Объявление '%s' обновлено." % form.title.data, "info")
             return redirect(url_for("account_sale"))
     else:
-        form.pet.data = str(num(adv.get("pet_id")))
-        form.breed.data = u"{0}_{1}".format(num(adv.get("pet_id")), num(adv.get("breed_id")))
+        form.breed.data = get_breed_name(adv.get("breed_id"), adv.get("pet_id"))
         form.title.data = adv.get("title")
         form.desc.data = adv.get('desc')
         form.price.data = num(adv.get('price'))
         form.gender.data = str(num(adv.get('gender_id')) or '')
         form.photos.data = ",".join(adv.get("photos"))
         form.city.data = get_city_region(adv.get("city_id"))
-        # form.age.data = str(num(adv.get("age_id")))
         form.phone.data = adv.get("phone") or current_user.phone
         form.skype.data = adv.get("skype") or current_user.skype
     return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
@@ -897,8 +902,6 @@ def account_sale_add():
     form = Sale(request.form)
     if request.method == "POST":
         if  form.validate():
-            print("validated")
-            (pet, breed) = form.breed.data.split('_')
             id = sale_save(form)
             flash(u"Объявление '%s' добавлено." % form.title.data, "info")
             return redirect(url_for('account_sale'))
@@ -953,11 +956,11 @@ def thumbnail(filename):
     if not os.path.exists(path):  
         (name, file) = get_photo(db, filename)
         if name and file:
-            create_thumbnail(file, photos.path(name))
+            _name = create_thumbnail(file, photos.path(name), app.config['UPLOADED_PHOTOS_DEST'])
         else:
             if os.path.exists(photos.path(filename)):
                 with open(photos.path(filename)) as f:
-                    create_thumbnail(f.read(), photos.path(filename))
+                    create_thumbnail(f.read(), photos.path(filename), app.config['UPLOADED_PHOTOS_DEST'])
 
     return send_file(path)
     
@@ -1001,15 +1004,15 @@ def mail_sale(id):
 
     if request.method == "POST":
         if form.validate():
-            send_from_sale(form.email.data, form.username.data, adv.get('_id'), seller_email, seller_username, form.subject.data, form.message.data)
+            send_from_sale(form.email.data, form.username.data, adv.get('_id'), seller_email, seller_username, u"Сообщение от пользователя сайта Поводочек", form.message.data)
             # if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
             #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
             #         [seller.get('phone')] )
-            return render_template("/mail_sale.html", title = u"Сообщение успешно отправлено")
+            return render_template("/mail_sale_sent.html", title = u"Сообщение успешно отправлено")
     else:
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template("/mail_sale.html", form = form, seller_email = seller_email, seller_username = seller_username, title=u"Написать письмо")
+    return render_template("/mail_sale.html", form = form, seller_email = seller_email, seller_username = seller_username, header = u"Написать письмо пользователю %s" % seller_username, title=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
 
 @app.route('/favicon.ico')
 def favicon():

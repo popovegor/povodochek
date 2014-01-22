@@ -2,20 +2,23 @@
 
 {% block content %}      
 
-<h1>{{title}}</h1>
+<div class="container">
 
-<div class="row-fluid">
-    <div class="span12">
-<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже ваших питомцев.</p>
+<h1>{{title}}</h1>
+<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже питомцев.</p>
+
+<div class="row">
+    <div class="col-lg-5">
+
         {% from "forms.html" import form_field_boolean, form_field %}
 
-        <form class="form-signup" method="post" action="{{request.url}}" >
+        <form class="form-signup" method="post" role="form" action="{{request.url}}" >
 
-          {{ form_field(form.login, placeholder="Введите логин", class="input-xlarge") }}
+          {{ form_field(form.login, placeholder="Введите логин", class="form-control") }}
 
-          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="input-xlarge") }}
+          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="form-control") }}
 
-          {{ form_field(form.password, placeholder="Введите пароль", class="input-xlarge") }}
+          {{ form_field(form.password, placeholder="Введите пароль", class="form-control") }}
 
           {{ form_field(form.accept_tos, checked="checked") }}
 
@@ -42,5 +45,6 @@
   
 </script>
 
+</div>
 
 {% endblock %} 

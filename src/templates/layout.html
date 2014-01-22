@@ -3,27 +3,33 @@
 {%block layout %}
   <div id="wrap">
 
-    <!-- header -->
-    {% include "header.html" %}
 
-  <div class="container" id="content">
+
+  {%if not current_user.is_signed() %}
+
+	{% include "pet_post_button.html"%}
+
+	{%endif%}
+
+    <!-- menu -->
+    {% include "menu.html" %}
 
     {% include "flashed_messages.html" %}
 
     {% block content %}
 
     {% endblock %}
+
  
- 
-  </div>
 
   <div id="push">&nbsp;</div>
+
 
 </div> <!-- wrap -->
 
 {% include "footer.html"%}
 
-{% include "reformal.html" %}
+
 
 {%endblock%}
 

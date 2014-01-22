@@ -1,0 +1,204 @@
+<div class="advs" style="margin-top:10px;">
+  
+
+
+
+{%if count <= 0 %}
+
+            <p class="text-left advs-empty lead"><small>К сожалению, не найдено ни одного объявления.</small>
+            </p>
+
+            {% else %}
+
+            <div class="advs-sort pull-right">
+              <span class="" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
+              {% for (value, name) in form.sort.choices %}
+              {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
+              {% if sort == value %}
+              &nbsp;<small title="{{title}}" class="label label-default">{{name}}</small>
+              {%else%}
+              <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
+              {%endif%}
+              {% endfor %}
+            </div> <!-- advs-sort -->
+
+            <div class="advs-found pull-left hidden-xs"><span>Найдено {{count}} {{"объявление" | morph_word(count = count) }}</span>
+            </div> <!-- advs-found -->
+
+            <div class="clearfix"></div>
+           
+              {% for adv in advs %}   
+
+                <hr/>
+
+                  <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
+
+                   <div class="col-sm-3 col-md-3" style="margin-bottom:20px">
+                      <div class="text-center photo">
+
+                        {% set photo = (adv.get('photos') or [])[0]%}
+                        {% if photo %}
+                        <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" class="photo-img">
+                          <img src="{{url_for('thumbnail', filename=photo)}}">
+                          <div class="photo-count hidden-sm"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
+                        </a>  
+                        {% else %}
+                        <img style="width:100% !important;height: 100% !important;" class="hidden-xs" data-src='/static/js/holder.js/150x100/text:Нет фото' alt="{{adv['title']}}">
+                        {%endif%}
+
+
+                      </div> 
+
+                   </div>
+
+                   <div class="col-sm-9 col-md-9">
+
+                      <div class="row">
+                          <div class="col-md-8 col-lg-9 col-sm-8" style="margin-bottom:10px;">
+
+                              <a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'><h4 style="overflow:hidden" class="adv-head">{{adv.get("title")}}</h4></a>
+                            
+
+                              <p class="adv-city">
+                                {% set city_id = adv.get("city_id") %}
+
+                                {% if city_id %}
+                                <b title="Местоположение">{{ city_id | city_region }}</b>
+
+                                {% if adv.get("distance") and adv.get("distance") > 0 %}
+                                (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г.{{form.city.city_id | city_name("i") }})
+                                {% endif %}
+
+                              </span>
+                              {%endif%}
+
+                            </p>                
+                            {#% set breed_name = adv.get("breed_id") | breed_name(adv.get("pet_id")) %}
+                            {% if breed_name %}
+                            <p class="adv-breed">
+
+                              <small class="text-muted">Порода: </small><span>{{breed_name | lower }}</span>                              
+                            </p>
+                            {%endif%}
+
+                            {% set gender_name = adv.get("gender_id")  | gender_name %}
+                              
+                            {%if gender_name %}
+                            <p class="adv-gender">
+
+                              <small class="text-muted">Пол: </small><span>{{gender_name | lower if gender_name}}</span>
+                            </p>
+
+                            {%endif%#}
+
+                            {% if adv.get("desc") %}
+                            <p class="" style="">
+                               <span>{{adv.get("desc") | truncate (120, end='...', killwords = False)}} </span>
+                            </p>
+                            {%endif%}
+
+
+
+                          </div>
+
+
+                          <div class="col-md-4 col-lg-3 col-sm-4 text-right">
+                            {%set price = (adv.get("price") or "") | int  %}
+                            <p class="adv-price" style="" title='Цена: {{"{0:,}" | format(price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
+                             <span class="price">{{ price | format_price() }}&nbsp;<span class="rur">руб</span></span>
+                           </p>  
+
+                           <p class="adv-dates">
+                                {% set update_date = adv.get("update_date") 
+                                %}
+                                {% set add_date = adv.get("add_date") 
+                                %}
+
+                                {% if update_date and  
+                                adv.get("update_date") 
+                                %}
+                                <small class="text-muted">Обновлено: </small> <b style="white-space: nowrap;"><small>{{ momentjs(update_date or add_date).fromNow() }}</small></b> 
+
+                                {% endif%}
+
+                           </p>
+
+                           <p class="pull-right text-right">
+                              <a class="btn btn-default"  target="_blank"href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}">Подробнее</a>
+                           </p>
+
+                          </div>
+
+                      </div> <!-- row -->
+
+                      
+                  </div> <!-- right-side -->
+
+                  
+
+                </div>
+
+              {% endfor %}
+        
+
+        {% endif %}
+
+
+         {%- macro pagination(pages, current_page, page_range, paging_class) -%}
+          
+          <ul class="pagination {{paging_class}}">
+
+            {% set page_range_left = (current_page - page_range / 2 ) | int | max(1) %}
+            {% set page_range_right = (current_page + page_range / 2 ) | int | min(pages) %}
+
+            {% if page_range_left != 1 %}
+            <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
+            </li>
+            {%endif%}
+            {%if page_range_left > 2 %}
+            <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
+            {% endif %}
+
+            {%for page in range(page_range_left, page_range_right + 1)%}
+            <li class="{{'active' if current_page == page else ''}}">
+              <a href="{{request.url | change_query(form.page.name, current_page, page)}}">{{page}}</a>
+            </li>
+            {%endfor%}
+
+            {%if  page_range_right < pages  %}
+
+            <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
+
+            <li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
+            </li>
+           
+           {% endif %}
+
+          </ul>                
+
+        {%- endmacro -%}
+
+
+         {%set pages = (count / form.perpage.data) | round(0) | int %}
+
+        {% if pages > 1 %}
+          <div style="margin-top:20px">Страницы:</div>
+
+            <!-- desktop -->
+          {{ pagination(pages, form.page.data, 15, paging_class="advs-paging pagination-left hidden-sm hidden-xs") }}
+          <!-- tablet -->
+          {{ pagination(pages, form.page.data, 10, paging_class="advs-paging pagination-left visible-sm") }}
+          <!-- phone --> 
+          {{ pagination(pages, form.page.data, 3, paging_class="advs-paging pagination-left visible-xs") }}
+
+         {%endif%}
+
+
+
+
+        
+
+
+       
+
+</div>

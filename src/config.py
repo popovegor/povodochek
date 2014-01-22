@@ -17,4 +17,4 @@ DOMAIN_NAME_CHECK = True
 ADMIN_EMAILS = ['egor@povodochek.com', 'vika@povodochek.com', 'admin@povodochek.com']
 
 
-ASSETS_DEBUG = False
+ASSETS_DEBUG = True

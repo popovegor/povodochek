@@ -4,8 +4,8 @@
 
 <p class="">После того, как вы поменяете адрес электронной почты, не забудьте активировать ее, перейдя по ссылке в отправленном на новый адрес письме.</p>
 
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-6 col-sm-6 col-lg-5">
 
          {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
@@ -17,9 +17,9 @@
             </p>
 
 
-            {{ form_field(form.new_email, class="input-large", placeholder="Введите новую эл. почту") }}
+            {{ form_field(form.new_email, placeholder="Введите новую эл. почту") }}
 
-            {{ form_field(form.repeat_new_email, class="input-large", placeholder="Повторите эл. почту") }}
+            {{ form_field(form.repeat_new_email, placeholder="Повторите эл. почту") }}
 
               <button type="submit" class="btn btn-primary" id="save" data-loading-text="Изменяется...">Изменить</button>
 

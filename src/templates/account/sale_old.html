@@ -1,0 +1,135 @@
+{% extends "account/layout.html" %}
+
+{% block account_content %}
+
+<div class="account-sale">
+
+<p class="span12">На этой странице вы можете управлять своими объявлениями о продаже собак и кошек.</p>
+
+<p>
+    <a href="{{url_for('account_sale_add')}}" class="btn btn"><i class="icon-plus icon-"></i>&nbsp;Новое объявление</a> 
+</p>
+
+    {% for adv in advs %}
+
+    <div class="media clearfix adv">
+
+        <div class="pull-left">
+            
+            <div class="text-center photo">
+
+                {% if (adv['photos'] | length) > 0 %}
+                    {%set photo = adv.get("photos")[0] %}
+                        <a target="_self" href="{{url_for('account_sale_edit', id = adv.get('_id'))}}" adv-id="{{adv['_id']}}" title="Просмотреть объявление">
+                            <img src="{{url_for('thumbnail', filename=photo)}}">
+                            <div class="photo-count"><small><b>{{adv["photos"] | length }}&nbsp; фото</b></small></div>
+                        </a>  
+                {% else %}
+                    <img data-src='/static/js/holder.js/150x100/text:Нет фото' alt="{{adv['title']}}">
+                {%endif%}
+              
+             
+            </div>
+
+              <div class="adv-price">
+                  <span class="price">{{ adv.get("price") | int | format_price()  }} <span class="rur">руб</span></span>
+            </div>    
+
+        </div>
+
+        <div class="media-body">
+
+            <h4 class="media-heading">{{adv.get("title")}}</h4>
+            <ul class="unstyled">
+                 <li class="adv-location">
+                    {% set city_id = adv.get("city_id") %}
+                    {% if city_id %}
+                    <small><i class="icon-map-marker"></i>&nbsp;<b><span title="Местоположение">{{ city_id | city_region }}</span></b></small>
+                    {%endif%}
+
+                </li>
+                <li class="adv-dict hidden-phone">
+                    <small>
+                    {% set pet_id = adv.get("pet_id") %}
+                    {% if pet_id %}
+                     <span title="Тип животного">{{pet_id | pet_name}}</span>
+                    {%endif%}
+
+                    {% set breed_id = adv.get("breed_id") %}
+                    {% if breed_id %}
+                    {{" > "}}
+                    <span title="Порода">{{breed_id | breed_name(pet_id) }}</span>
+                    {%endif%}
+
+                     {% set gender_id = adv.get("gender_id") %}
+                    {% if  gender_id %}
+                    {{" > "}}
+                    <span title="Пол">{{ gender_id | gender_name }}</span>
+                    {% endif %}
+
+                    </small>
+                </li>
+                <li class="adv-desc hidden-phone">
+                    {% autoescape false %}
+                      {{adv.get('desc') | safe | replace("\r\n", "<br>")| replace("\r", "<br>") | replace("\n", "<br>") }}
+                    {% endautoescape %}
+                </li>
+                <li class="adv-actions row-fluid">
+                    <p class="span12">
+                        <a class="btn btn-mini btn-primary" href="{{url_for('account_sale_edit', id = adv.get('_id'))}}" title="Редактировать объявление"><i class="icon-edit icon-white"></i><span class="">&nbsp;&nbsp;Изменить</span></a>
+                     
+                        <a class="btn btn-mini" target="_self" href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv.get('_id'))}}" title="Просмотреть объявление"><i class="icon-eye-open"></i><span class="">&nbsp;&nbsp;Просмотр</span></a>
+
+                        <a class="btn btn-mini btn-danger" href='{{url_for("account_sale_remove", id = adv["_id"])}}' action="remove" title="Удалить объявление"><i class="icon-trash icon-white"></i><span class="hidden-desktop">&nbsp;&nbsp;Удалить</span></a>
+
+                    </p> 
+                    {#<p class="span6">
+                        <small>Активно&nbsp;до&nbsp;{{adv.get("active_date") | format_datetime("%d.%m")  }}</small>
+                        {%if adv.get("update_date") | date != utcnow() | date %}
+                        <span>&thinsp;</span>
+                        <a class="btn btn-mini" target="_self" href="{{url_for('account_sale_extend', id = adv.get('_id'))}}" title="Обновить объявление"><i class="icon-refresh"></i><span class="hidden-desktop">&nbsp;&nbsp;Обновить</span></a>
+                        {% endif %}
+                    </p>#}
+                </li>
+                <li class="adv-dates text-left">
+                    <small class="muted">
+                        {% set update_date = adv.get("update_date") 
+                        %}
+                        {% set add_date = adv.get("add_date") 
+                        %}
+                        
+                        {% if update_date and  
+                            adv.get("update_date") | date != add_date | date 
+                          %}
+                            Обновлено&nbsp;{{ update_date | format_datetime("%d.%m") }}
+                            <span>&ensp;</span>    
+                        {% endif %}
+                        {% if add_date %}
+                            Добавлено&nbsp;{{add_date | format_datetime("%d.%m")  }} 
+                         {% endif %}
+                    </small>
+                </li>
+                
+            </ul>
+            
+        </div>
+    </div>
+
+
+
+{% endfor %}
+
+</div>
+
+<script type="text/javascript">
+
+    $(function(){
+        $("a[action='remove']").click(function(){
+            return confirm("Вы уверены, что хотите удалить объявление?");
+        });
+    });
+    
+</script>
+
+
+{% endblock%}

@@ -55,10 +55,10 @@ povodochek.validate = function (form, rules, submit){
          $("#" + element.attr("id") + "_field .form-field-errors").append(error);
        },
        highlight: function(element, errorClass) {
-          $("#" + element.id + "_field").addClass("error").removeClass('success');
+          $("#" + element.id + "_field").addClass("has-error").removeClass('has-success');
        },
        unhighlight: function(element, errorClass) {
-          $("#" + element.id + "_field").removeClass("error").addClass("success");
+          $("#" + element.id + "_field").removeClass("has-error").addClass("has-success");
        },
        submitHandler: function(form) {
           var btn = $(":submit").button("loading");

@@ -2,15 +2,19 @@
 
 {% block content %}  
 
+<div class="container">
+  
 
-<div class="sale-pet"> 
+
+
+<div class="sale-pet-show"> 
 
    <!-- крошки -->
-    <div class="clearfix container" id="breadcrumbs">
-          <ul class="breadcrumb hidden-phone" >
-            <li><a href="{{url_for('index')}}">Главная</a> <span class="divider">/</span></li>
-            <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'))}}">Продажа {{adv.get('pet_id') | pet_name | morph_word(["plur", "gent"])  | lower }}</a> <span class="divider">/</span></li>
-            <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'), pet=adv.get('pet_id') | int, breed='{0}_{1}'.format(adv.get('pet_id') | int,  adv.get('breed_id') | int ) )}}">{{adv.get('breed_id') | breed_name(adv.get('pet_id')) }}</a> <span class="divider">/</span></li>
+    <div class="clearfix" id="breadcrumbs">
+          <ul class="breadcrumb hidden-xs" >
+            <li><a href="{{url_for('index')}}">Главная</a> <span class="divider"></span></li>
+            <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'))}}">Продажа {{adv.get('pet_id') | pet_name | morph_word(["plur", "gent"])  | lower }}</a> <span class="divider"></span></li>
+            <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'), breed = adv.get('breed_id') | breed_name(adv.get('pet_id'))  )}}">{{adv.get('breed_id') | breed_name(adv.get('pet_id')) }}</a> <span class="divider"></span></li>
             <li class="active">{{adv.get("title")}}</li>
           </ul>
     </div> 
@@ -18,11 +22,11 @@
 
   <h1>{{header}}</h1>
 
-  <div class="sale-pet-container row-fluid"> 
+  <div class="sale-pet-container row"> 
 
   {%if adv.get('photos') | length > 0%}
 
-  <div class="left-side span6">    
+  <div class="left-side col-md-6 col-sm-6">    
 
     <div class="photos">
 
@@ -46,7 +50,7 @@
         <ul class="slides ">
           {%for photo in adv.get('photos') %}
           <li class="text-center photo">
-             <img id="{{'main_photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
+             <img class="{{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
           </li>
           {%endfor%}
         </ul>
@@ -60,10 +64,10 @@
 
   {%endif%}
 
-  <div class="right-side {{'span6' if adv.get('photos') | length > 0 else 'span12'}}">
+  <div class="right-side {{'col-md-6 col-sm-6' if adv.get('photos') | length > 0 else 'col-md-12'}}">
 
       <div class="sale-pet-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
-        Цена&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;<span>{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
+        <small class="">Цена</small>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
       </div> <!-- price -->
     
     <h2 class="adv-title">
@@ -80,14 +84,14 @@
 
 
     <div class="adv-info">
-      <h4>Информация о {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h4>
+      <h3>Информация о {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h3>
 
       <dl class='dl-horizontal'>
 
-       {%set city = adv.get("city_id")%}
-          {%if  city %}
+       {%set city = adv.get("city_id") | city_region %}
+          {%if city %}
           <dt class="">Местоположение</dt>
-          <dd>{{ city | city_region}}</dd>
+          <dd>{{ city }}</dd>
           {%endif%}
 
         <dt class="">Порода</dt>
@@ -99,20 +103,20 @@
         {%endif%}
 
         <dt class="">Цена</dt>
-        <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span>
+        <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span> </dd>
 
       </dl>
     </div> <!-- adv-info -->
 
 
-    <h4>Контактная информация</h4>
-    <div class="seller-block row-fluid">  
+    <h3>Контактная информация</h3>
+    <div class="seller-block row">  
   
-      <div class="span12">
-        
+      <div class="col-md-12">
+      <noindex>  
         <dl class='dl-horizontal'>
           <dt class="">Продавец</dt>
-          <dd>{{adv.get('username') or seller.get("username")}}</dd>
+          <dd>{{adv.get('username') or seller.get("username") if seller}}</dd>
 
           {%set phone = adv.get("phone")%}
 
@@ -133,10 +137,11 @@
 
         </dl>   
       </div>
-
-      <div class="seller-contact text-left span12">
-        <a class="btn btn-info" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+      
+      <div class="seller-contact text-left col-md-12">
+        <a class="btn btn-primary" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
       </div>
+      </noindex>
 
     </div>  <!-- contact-block -->
 
@@ -145,6 +150,8 @@
   </div> <!-- sale-pet-container -->  
 
 </div> <!-- sale-pet -->
+
+</div> <!-- container -->
 
   <script type="text/javascript">
   $(window).load(function(){

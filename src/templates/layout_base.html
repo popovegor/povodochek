@@ -13,21 +13,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 
-  <!-- <link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic' rel='stylesheet' type='text/css'> -->
-
-
-  <!-- LESS -->
-  <link href="{{ url_for('static', filename='css/povodochek.less')}}" rel="stylesheet/less">
-
-  <script src="{{ url_for('static', filename='js/less.js')}}"></script>
-
-
 <!-- CSS -->
   {% assets "css_all" %}
   <link rel="stylesheet" type="text/css" href="{{ASSET_URL}}">
   {% endassets %}
 
-  <!-- JS -->
+    <!-- JS -->
   {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
   {% endassets %}
@@ -47,6 +38,7 @@
   {% block layout %}
   
   {% endblock%}
+
 
   {%include "metrika.html"%}
 

@@ -242,14 +242,29 @@ cats = {
     48:u"Японский бобтейл",
 }
 
+
+from dic.pets import (pets, DOG_ID, CAT_ID)
+
+def get_breed_by_name(name):
+    if name:
+        name = name.lower()
+        _dogs = [dog_id for (dog_id, dog_name) in dogs.items() if dog_name.lower() in name]
+        if _dogs:
+            return (_dogs[0], DOG_ID)
+        _cats = [cat_id for (cat_id, cat_name) in cats.items() if cat_name.lower() in name]
+        if _cats:
+            return (_cats[0], CAT_ID)
+
+    return (None, None)
+
 def get_breed_name(breed_id, pet_id):
     # print(breed_id, pet_id)
     breed_id = int(breed_id or 0)
     pet_id = int(pet_id or 0)
     breed = None
-    if pet_id == 1:
+    if pet_id == DOG_ID:
         breed = dogs.get(breed_id)
-    elif pet_id == 2:
+    elif pet_id == CAT_ID:
         breed = cats.get(breed_id)
     return breed or ""
 

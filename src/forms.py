@@ -20,7 +20,7 @@ from security import hash_password, check_password
 from helpers import (num, morph_word)
 from dic.genders import genders
 from dic.ages import ages
-from dic.breeds import (dogs, cats, get_breed_name)
+from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name)
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city)
 
@@ -61,7 +61,8 @@ def get_city_by_city_and_region(city_and_region):
     if city_and_region: 
         matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
         city = db().cities.find_one({"city_region": matcher}, fileds=["city_id"])
-        return get_city_by_city_id(city.get('city_id'))
+        if city:
+            return get_city_by_city_id(city.get('city_id'))
     return city
 
 def get_city_by_city_id(city_id):
@@ -81,6 +82,16 @@ def validate_location(form, field):
         else:
             field.city_id = city.get("city_id")
             field.location = city.get("location")
+
+
+def validate_breed(form, field):
+    if field.data:
+        (breed_id, pet_id) = get_breed_by_name(field.data)
+        if not breed_id or not pet_id:
+            raise ValidationError(u'Неправильно указана порода')
+        else:
+            field.pet_id = pet_id
+            field.breed_id = breed_id
 
 def validate_login_used(form, field):
     matcher = re.compile("^" + re.escape(field.data) + "$", re.IGNORECASE)
@@ -135,12 +146,8 @@ class ResetPassword(Form):
 
 class SaleSearch(Form):
 
-    pet = SelectField(u'Тип животного', \
-        choices = [(u"", u"")] + [(str(pet_id), pet_name) for pet_id, pet_name in pets.items() ])
-
     #TODO: показывать только те породы, по которым есть объявления
-    breed = SelectField(u'Порода', \
-        choices = [("", [("","")] )]  + pets_breeds())
+    breed = TextField(u'Порода')
 
     gender = SelectField(u"Пол", \
         choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
@@ -149,7 +156,7 @@ class SaleSearch(Form):
 
     city = TextField(u"Местоположение")
 
-    distance = IntegerField(u"Расстояние, км", default = 150)
+    distance = IntegerField(u"Удаленность, км", default = 150)
 
     photo = BooleanField(u"Только с фото")
 
@@ -179,14 +186,8 @@ class Contact(Form):
 
 class Sale(Form):
 
-    pet = SelectField(u'Тип животного',\
-        choices = [(u"", u"")] + [(str(pet_id), pet_name) for pet_id, pet_name in pets.items() ], \
-        validators = [Required(message=MSG_REQUIRED)])
-
-    breed = SelectField(u'Порода', \
-        choices = [("", [("","")] )]  + pets_breeds(), \
-        validators = [Required(message=MSG_REQUIRED)], \
-        description = u"Перед тем как выбрать породу, укажите тип животного выше.") 
+    breed = TextField(u'Порода', \
+        validators = [Required(message=MSG_REQUIRED), validate_breed]) 
 
     gender = SelectField(u"Пол", \
         choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()])
@@ -202,7 +203,7 @@ class Sale(Form):
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
     price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))], \
-        description = Markup(u'Указывайте <abbr data-status="loading" id="price-desc" data-toggle="tooltip" title="Указываю реальную цену, вы многократно повышаете свои шансы успешной продажи, так как покупатели проявят больше интереса к вашему объявлению.">достоверную цену</abbr>!'))
+        description = Markup(u'Указывая реальную цену, покупатели проявят больше интереса к вашему объявлению!'))
 
     city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
         description = u"Введите населенный пункт, в котором продается питомец.")
@@ -318,11 +319,8 @@ class SendMail(Form):
     username = TextField(u"Ваше имя", \
         validators = [Required(message=MSG_REQUIRED)])
 
-    subject = TextField(u"Тема", \
-        default = u"Сообщение от пользователя сайта Поводочек", \
-        validators = [Required(message=MSG_REQUIRED)])
-
-    message = TextAreaField(u"Сообщение")
+    message = TextAreaField(u"Сообщение", \
+    	validators = [Required(message=MSG_REQUIRED)])
 
     email = TextField(u'Ваша электронная почта', \
         validators = [Required(message=MSG_REQUIRED),\
