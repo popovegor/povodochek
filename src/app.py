@@ -105,6 +105,7 @@ js = Bundle('js/jquery-1.9.1.min.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
     'js/jquery.inputmask.min.js', \
+    'js/jquery.textareaCounter.plugin.js', \
     'js/moment.min.js', \
     'js/moment.min.ru.js', \
     'js/jquery.nouislider.min.js', \
@@ -112,11 +113,10 @@ js = Bundle('js/jquery-1.9.1.min.js', \
     'js/jquery.touch-punch.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
-    'js/jquery.textareaCounter.plugin.js', \
+    'js/bootstrap3-typeahead.min.js', \
     'js/holder.min.js', \
     'js/bootstrap.min.js', \
     'js/jquery.carouFredSel.min.js', \
-    'js/bootstrap3-typeahead.min.js', \
     'js/povodochek.js', \
     filters='rjsmin', \
     output='gen/js.js')
@@ -603,21 +603,21 @@ def sale_find(pet_id = None, gender_id = None, breed_id = None, city = None, dis
 
 def sale_find_header(form, pet_id, breed_id):
     # generate title
-    header = u"Купить <small class='text-muted'>(продают)</small> {0}{1}{2}"
+    header = u"Купить <small>(Продают)</small> {0}{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
 
     if pet_id == DOG_ID:
-        pet = u"собаку/щенка"
+        pet = u"собаку"
     elif pet_id == CAT_ID:
-        pet = u"кошку/котенка"
+        pet = u"кошку"
 
     breed = get_breed_name(breed_id, pet_id)
     breed_header = breed
     breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed_header = Markup(u" породы <abbr title='Порода' class=''>%s</abbr>" % breed.lower() )
+        breed_header = Markup(u" породы %s" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
     city = get_city_name(form.city.city_id, "i") if form.city.city_id else u''

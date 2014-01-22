@@ -73,10 +73,9 @@
 
 
    var rewrite_search_url = function(breed_name) {
-    if (breed_name.indexOf(', Собаки')) {
+    if (breed_name.indexOf(', Собаки') > 0) {
       $("#search").attr("action", "{{url_for('sale_dogs')}}");
-    }
-    else {
+    } else {
       $("#search").attr("action", "{{url_for('sale_cats')}}");
     }
   }
