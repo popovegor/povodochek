@@ -8,3 +8,8 @@
 \#*\#
 /bootstrap/node_modules/
 /bootstrap/bower_components/
+/bootstrap/.csscomb.json
+/bootstrap/.csslintrc
+/bootstrap/.editorconfig
+/bootstrap/.gitattributes
+
