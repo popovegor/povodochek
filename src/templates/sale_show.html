@@ -26,7 +26,7 @@
 
   {%if adv.get('photos') | length > 0%}
 
-  <div class="left-side col-md-6 col-sm-6">    
+  <div class="left-side col-md-7">    
 
     <div class="photos">
 
@@ -64,7 +64,7 @@
 
   {%endif%}
 
-  <div class="right-side {{'col-md-6 col-sm-6' if adv.get('photos') | length > 0 else 'col-md-12'}}">
+  <div class="right-side {{'col-md-5' if adv.get('photos') | length > 0 else 'col-md-12'}}">
 
       <div class="sale-pet-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
         <small class="">Цена</small>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
@@ -116,7 +116,7 @@
       <noindex>  
         <dl class='dl-horizontal'>
           <dt class="">Продавец</dt>
-          <dd>{{adv.get('username') or seller.get("username") if seller}}</dd>
+          <dd>{{adv.get('username') or (seller.get("username") if seller else '')}}</dd>
 
           {%set phone = adv.get("phone")%}
 

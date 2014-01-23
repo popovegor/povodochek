@@ -14,7 +14,7 @@ MAIL_USERNAME = u'noreply@povodochek.com'
 MAIL_PASSWORD = u'gd8HUunlVA3D97rz'
 DOMAIN_NAME = 'povodochek.com'
 DOMAIN_NAME_CHECK = True
-ADMIN_EMAILS = ['egor@povodochek.com', 'vika@povodochek.com', 'admin@povodochek.com']
+ADMIN_EMAILS = ['egor@povodochek.com', 'vika@povodochek.com', 'admin@povodochek.com', 'popovegor@gmail.com']
 
 
 ASSETS_DEBUG = False

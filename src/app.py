@@ -100,7 +100,7 @@ mail = Mail(app)
 Markdown(app)
 assets = Environment(app)
 
-js = Bundle('js/jquery-1.9.1.min.js', \
+js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery-ui-1.10.3.custom.min.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
@@ -729,8 +729,7 @@ def sale_show(id):
 @app.route("/account/")
 @login_required
 def account():
-    tmpl = render_template("account/sale.html", title=u"Кабинет")
-    return tmpl
+    return redirect(url_for('account_sale'))
 
 
 @app.route("/account/stud/")
@@ -1012,7 +1011,7 @@ def mail_sale(id):
     else:
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template("/mail_sale.html", form = form, seller_email = seller_email, seller_username = seller_username, header = u"Написать письмо пользователю %s" % seller_username, title=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
+    return render_template("/mail_sale.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
 
 @app.route('/favicon.ico')
 def favicon():
@@ -1079,7 +1078,7 @@ def admin_sale():
     for seller in users().find({'_id':{'$in' : [ObjectId(adv.get('user_id')) for adv in advs if adv.get('user_id') ]}}):
         for adv in [adv for adv in advs if not adv.get('email')]:
             # print(seller['email'])
-            if ObjectId(adv['user_id']) == seller['_id']:
+            if ObjectId(adv.get('user_id')) == seller['_id']:
                 adv['email'] = seller['email']
                 adv['username'] = seller['username']
 
@@ -1091,7 +1090,6 @@ def admin_sale():
 def admin_sale_add():
     form = Sale(request.form)
     if request.method == "POST" and form.validate():
-        (pet, breed) = form.breed.data.split('_')
         id = sale_save(form, moderator = current_user)
         flash(u"Объявление '%s' добавлено." % form.title.data, "info")
         return redirect(url_for('admin_sale'))
@@ -1118,8 +1116,7 @@ def admin_sale_edit(adv_id):
             flash(u"Объявление '%s' обновлено." % form.title.data, "info")
             return redirect(url_for("admin_sale"))
     else:
-        form.pet.data = str(num(adv.get("pet_id")))
-        form.breed.data = u"{0}_{1}".format(num(adv.get("pet_id")), num(adv.get("breed_id")))
+        form.breed.data = get_breed_name(adv.get("breed_id"), adv.get("pet_id"))
         form.title.data = adv.get("title")
         form.desc.data = adv.get('desc')
         form.price.data = num(adv.get('price'))

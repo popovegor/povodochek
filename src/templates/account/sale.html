@@ -18,12 +18,12 @@
 
 
     <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
-                   <div class="col-sm-3 col-md-3">
+                   <div class="col-sm-3">
                       <div class="text-center photo">
 
                         {% set photo = (adv.get('photos') or [])[0]%}
                         {% if photo %}
-                        <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" class="photo-img thumbnail">
+                        <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" class="photo-img">
                           <img src="{{url_for('thumbnail', filename=photo)}}">
                           <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                         </a>  
@@ -36,7 +36,7 @@
 
                    </div>
 
-                   <div class="col-sm-9 col-md-9">
+                   <div class="col-sm-9">
 
                       <div class="row">
                           <div class="col-md-8 col-lg-9 col-sm-8">

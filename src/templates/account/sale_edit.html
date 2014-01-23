@@ -20,10 +20,10 @@
               {{ form_field(form.city, size="col-md-6", placeholder="Введите название населенного пункта") }}
             
 
-        {{ form_field(form.title, size="col-md-10", placeholder="Коротко опишите название объявления")}}
+        {{ form_field(form.title, size="col-md-8", placeholder="Коротко опишите название объявления")}}
             
 
-          {{ form_field(form.desc, rows="6") }}    
+          {{ form_field(form.desc, rows="6", size="col-md-8") }}    
 
           {{ form_field(form.price, size="col-lg-2 col-md-3 col-sm-4") }}
                 
@@ -68,7 +68,7 @@
             <script type="text/javascript">
             
             //location with autocomplete built on typeahead.js
-            $(window).load(function(){
+            $(document).ready(function(){
 
               $("#{{form.city.id}}").typeahead({
                 minLength: 1,

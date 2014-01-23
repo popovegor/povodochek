@@ -4,28 +4,30 @@
 
 <!-- <p class="">Редактирвать</p> -->
 
-<div class="row-fluid sale-edit">
-    <div class="span12">
+<div class="sale-edit row">
+    <div class="col-md-12">
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
         <form class="form-sale-adv" id="adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
 
-          {{ form_field(form.pet) }}
-
-          {{ form_field(form.breed) }}
-
-          {{ form_field(form.gender) }}
-
-           {{ form_field(form.city, placeholder="Введите название населенного пункта", class="input-xxlarge") }}
-
-          {# {{ form_field(form.age) }} #}
           
-          {{ form_field(form.title, class="input-xxlarge" )}}
+              {{ form_field(form.breed, size="col-md-5", placeholder="Введите породу собаки или кошки") }}        
+            
+              {{ form_field(form.gender, size="col-lg-3 col-md-3 col-sm-4") }}
+              
+          
+              {{ form_field(form.city, size="col-md-6", placeholder="Введите название населенного пункта") }}
+            
 
-          {{ form_field(form.desc, rows="6", class="input-xxlarge") }}    
+          {{ form_field(form.title, size="col-md-8", placeholder="Коротко опишите название объявления")}}
+            
 
-          {{ form_field(form.price, class="input-small") }}
+          {{ form_field(form.desc, rows="6", size="col-md-8") }}    
+
+          {{ form_field(form.price, size="col-lg-2 col-md-3 col-sm-4") }}
+                
+
 
           <div style="display:none">
             {{ form_field(form.photos) }}
@@ -40,13 +42,13 @@
           </div>  
         <h2 class="page-header">Контактная ифнормация</h2>
 
-            {{ form_field(form.username, class="input-large", placeholder = "Введите имя пользователя") }}
+            {{ form_field(form.username, size="col-sm-4", placeholder = "Введите имя пользователя") }}
 
-            {{ form_field(form.email, class="input-large", placeholder="Введите email") }}
+            {{ form_field(form.email, size="col-sm-4", placeholder="Введите email") }}
 
-            {{ form_field(form.phone, class="input-large", placeholder = "Введите тел. номер") }}
+            {{ form_field(form.phone, size="col-sm-4", placeholder = "Введите тел. номер") }}
 
-            {{ form_field(form.skype, class="input-large", placeholder="Введите skype-имя") }}
+            {{ form_field(form.skype, size="col-sm-4", placeholder="Введите skype-имя") }}
         <div class="actions">
           <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
           &nbsp;
@@ -56,56 +58,29 @@
             <script type="text/javascript">
             
             //location with autocomplete built on typeahead.js
-            $(window).load(function(){
-              $("#city").typeahead({
+            $(document).ready(function(){
+
+
+             $("#{{form.city.id}}").typeahead({
                 minLength: 1,
                 limit: 8,
                 source: function (query, process) {
-                  return $.getJSON('/ajax/location/typeahead',  {limit: 8, query: query}, function (data) { return process(data.items);
-                  }); //getJSON
-                } //source
-              }); //typeahead  
+                  return $.getJSON("{{url_for('ajax_typeahead_location')}}",
+                    {limit: 8, query: query },
+                    function (data) { return process(data.items);}); //getJSON
+                  } //source
+                }); //typeahead  
           
             
-            //select2 for dropdowns 
-           
-
-              var jq_breed = $("#breed");
-              jq_breed.select2({
-                placeholder: "Выберите породу",
-                width: "off",
-                containerCssClass : "input-xlarge",
-                matcher: function(term, text, option) {
-                  var pet_id = jq_pet.val();
-                  return text.toUpperCase().indexOf(term.toUpperCase())>=0 && option.val().split("_")[0] === pet_id; 
-                  },
-                sortResults : povodochek.select2_breed_sort
-               });
-
-              var jq_pet = $("#pet");
-              jq_pet.select2({
-                placeholder:"Выберите тип животного",
-                width: "off",
-                containerCssClass : "input-xlarge"
-              });
-
-              jq_pet.on('change', function(e){
-                jq_breed.select2('val', '');
-              });
-
-              var jq_gender = $("#gender");
-              jq_gender.select2({
-                placeholder: "Выберите пол",
-                width: "off",
-                containerCssClass: "input-xlarge"
-              });
-
-              // var jq_age = $("#age");
-              // jq_age.select2({
-              //   placeholder: "Выберите возраст",
-              //   width: "off",
-              //   containerCssClass: "input-xlarge"
-              // });
+            $("#{{form.breed.id}}").typeahead({
+              minLength: 1,
+              limit: 8,
+              source: function (query, process) {
+                return $.getJSON("{{url_for('ajax_typeahead_breed')}}",
+                  {limit: 8, query: query },
+                  function (data) { return process(data.items);}); //getJSON
+                } //source
+              }); //typeahead  
 
 
             //validation
@@ -126,7 +101,6 @@
               });
 
               povodochek.validate($("form"), {
-                  pet : {required : true }, 
                   breed: { required: true },
                   title: { required: true, rangelength: [10, 80] },
                   desc : { required: true, minlength: 120 },
@@ -151,7 +125,7 @@
                 return confirm("Вы уверены, что хотите удалить объявление?");
               });
 
-              debugger;
+              
               $("#price-desc").tooltip({placement:'bottom', html:false})
             });
 
