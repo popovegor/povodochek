@@ -376,7 +376,7 @@ def send_reset_password(email, login, asign, password):
 def send_from_sale(email, username, sale_id, seller_email, seller_username, subject, message):
     adv = sales().find_one(ObjectId(sale_id))
     if adv and seller_email:
-        msg = Message(subject, recipients=[seller_email], cc = [email])
+        msg = Message(subject, recipients=[seller_email])
         msg.html = render_template("email/from_sale.html", \
             subject = subject, \
             message = message, \
