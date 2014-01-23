@@ -17,11 +17,16 @@
 
   <h1>{{adv.get("title")}}</h1>
 
-  <p class="adv-desc">
+  <div class="row">
+      <div class="adv-desc col-md-9">
     {% autoescape false %}
       {{adv.get('desc') | safe | replace("\r\n", "<br>") | replace("\r", "<br>") | replace("\n", "<br>") }}
     {% endautoescape %}
-    </p>
+    </div>
+
+  </div>
+
+  
 
   <div class="sale-pet-container row"> 
 
