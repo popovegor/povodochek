@@ -53,10 +53,10 @@ $(function() {
         }
         var file_url = "/photo/" + file_name;
         var thumbnail_url  = '/thumbnail/' + file_name;
-        var preview = $(".upload-add").before("<div file-id='" + file_id + "' class='preview' file-name='" + file_name + "'><img src='"+ thumbnail_url +"' /><i title='Удалить' class='icon-remove-sign' file-name='" + file_name + "'></i></div>");
+        var preview = $(".upload-add").before("<div file-id='" + file_id + "' class='preview' file-name='" + file_name + "'><img src='"+ thumbnail_url +"' /><span title='Удалить' class='glyphicon glyphicon-remove-circle' file-name='" + file_name + "'></span></div>");
 
         //remove uploaded photo
-        $("i[file-name='" + file_name + "']").bind("click", function(){
+        $("span[file-name='" + file_name + "']").bind("click", function(){
             uploader.remove(file_name);});
 
         uploader.reshape();
