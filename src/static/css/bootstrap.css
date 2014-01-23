@@ -6353,10 +6353,10 @@ form .textarea-counter {
   /*margin-top: 20px !important;*/
 }
 .sale-pet-show .sale-pet-container {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 .sale-pet-show .sale-pet-price {
-  margin-bottom: 20px;
+  margin-bottom: 0;
   font-family: "Georgia";
   font-weight: normal;
   /*margin-top:10px;*/
@@ -6468,7 +6468,7 @@ form .textarea-counter {
   width: 100%;
 }
 .tbl-key-value tbody tr td {
-  margin-bottom: 10px;
+  padding-bottom: 5px;
   vertical-align: top;
 }
 .upload-files .shapeshift {
