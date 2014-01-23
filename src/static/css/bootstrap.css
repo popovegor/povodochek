@@ -3460,7 +3460,6 @@ textarea.input-group-sm > .input-group-btn > .btn {
   position: relative;
   display: block;
   padding: 10px 15px;
-  padding-left: 20px;
 }
 .nav > li > a:hover,
 .nav > li > a:focus {
@@ -3573,7 +3572,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a,
 .nav-pills > li.active > a:hover,
 .nav-pills > li.active > a:focus {
-  padding-left: 15px;
+  padding-left: 10px;
   border-color: #ccc;
   /*color: @nav-pills-active-link-hover-color;
         background-color: @nav-pills-active-link-hover-bg;*/
@@ -6457,23 +6456,20 @@ form .textarea-counter {
   margin-bottom: 10px;
   /*margin-top:35px;*/
 }
-.sale-pet-show .adv-info {
+.sale-pet-show .adv-block {
   margin-top: 20px !important;
   margin-bottom: 10px;
 }
-.sale-pet-show .adv-info h4 {
+.sale-pet-show .adv-block h4 {
   padding-top: 0 !important;
   /*padding-bottom: 10px !important;*/
 }
-.sale-pet-show dl {
-  margin-top: 0 !important;
+.tbl-key-value {
+  width: 100%;
 }
-.sale-pet-show dl dt {
-  padding-bottom: 2px !important;
-  color: #595959;
-}
-.sale-pet-show dl dd {
-  margin-bottom: 2px !important;
+.tbl-key-value tbody tr td {
+  margin-bottom: 10px;
+  vertical-align: top;
 }
 .upload-files .shapeshift {
   position: relative;

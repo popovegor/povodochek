@@ -2,12 +2,7 @@
 
 {% block content %}  
 
-<div class="container">
-  
-
-
-
-<div class="sale-pet-show"> 
+<div class="sale-pet-show container"> 
 
    <!-- крошки -->
     <div class="clearfix" id="breadcrumbs">
@@ -20,13 +15,19 @@
     </div> 
 
 
-  <h1>{{header}}</h1>
+  <h1>{{adv.get("title")}}</h1>
+
+  <p class="adv-desc">
+    {% autoescape false %}
+      {{adv.get('desc') | safe | replace("\r\n", "<br>") | replace("\r", "<br>") | replace("\n", "<br>") }}
+    {% endautoescape %}
+    </p>
 
   <div class="sale-pet-container row"> 
 
   {%if adv.get('photos') | length > 0%}
 
-  <div class="left-side col-md-7">    
+  <div class="left-side col-md-8">    
 
     <div class="photos">
 
@@ -64,94 +65,94 @@
 
   {%endif%}
 
-  <div class="right-side {{'col-md-5' if adv.get('photos') | length > 0 else 'col-md-12'}}">
+  <div class="right-side {{'col-md-4' if adv.get('photos') | length > 0 else 'col-md-12'}}">
 
       <div class="sale-pet-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
-        <small class="">Цена</small>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
+        <span class="">Цена</span>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
       </div> <!-- price -->
     
-    <h2 class="adv-title">
-      {{adv.get("title")}}
-    </h2>
+    <div class="adv-block">
+      <h3>О {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h3>
 
-    <!-- description -->
-    <p class="adv-desc">
-    {% autoescape false %}
-      {{adv.get('desc') | safe | replace("\r\n", "<br>") | replace("\r", "<br>") | replace("\n", "<br>") }}
-    {% endautoescape %}
-    </p>
-
-
-
-    <div class="adv-info">
-      <h3>Информация о {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h3>
-
-      <dl class='dl-horizontal'>
-
-       {%set city = adv.get("city_id") | city_region %}
-          {%if city %}
-          <dt class="">Местоположение</dt>
-          <dd>{{ city }}</dd>
+      <table class="tbl-key-value">
+      <tbody>
+        {%set city = adv.get("city_id") | city_region %}
+          {% if city %}
+          <tr>
+              <td style="width:135px"><small>Местоположение</small></td>
+              <td>{{ city }}</td>
+          </tr>
           {%endif%}
 
-        <dt class="">Порода</dt>
-        <dd>{{adv.get("breed_id") | breed_name(adv.get('pet_id'))}}</dd>
+          <tr>
+            <td><small>Порода</small></td>
+            <td>{{adv.get("breed_id") | breed_name(adv.get('pet_id'))}}</td> 
+          </tr>
+           
+             {%if adv.get("gender_id") %}
+           <tr>
+             <td ><small>Пол</small></td>
+             <td>{{adv.get("gender_id") | gender_name | title }}</td>
+           </tr>
+            {%endif%}
 
-        {%if adv.get("gender_id") %}
-         <dt class="">Пол</dt>
-         <dd>{{adv.get("gender_id") | gender_name | title }}</dd>
-        {%endif%}
+           <tr>
+              <td><small>Цена</small></td>
+              <td title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span> </td>
+           </tr>
 
-        <dt class="">Цена</dt>
-        <dd title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span> </dd>
-
-      </dl>
+      </tbody>
+      </table>
     </div> <!-- adv-info -->
 
 
-    <h3>Контактная информация</h3>
-    <div class="seller-block row">  
-  
-      <div class="col-md-12">
-      <noindex>  
-        <dl class='dl-horizontal'>
-          <dt class="">Продавец</dt>
-          <dd>{{adv.get('username') or (seller.get("username") if seller else '')}}</dd>
+    <div class="seller-block">  
+      <h3>Контакты</h3>      
+        <noindex>  
+        <table class="tbl-key-value">
+        <tbody>
+        <tr>
+          <td style="width:135px">
+            <small>Продавец</small>
+          </td>
+          <td>
+            {{adv.get('username') or (seller.get("username") if seller else '')}}
+          </td>
+        </tr>
 
           {%set phone = adv.get("phone")%}
-
           {%if phone  %}
-          <dt class="">Телефонный номер</dt>
-          <dd>
-              {{phone}}
-             </dd>
+          <tr>
+            <td class=""><small>Телефонный номер</small></td>
+            <td>{{phone}}</td>
+          </tr>
           {%endif%}
 
           {% set skype = adv.get("skype") %}
            {%if skype %}
-          <dt class="">Skype</dt>
-          <dd>
-              {{skype}}
-             </dd>
+           <tr>
+              <td class=""><small>Skype</small></td>
+              <td>{{skype}}</td>   
+           </tr>
           {% endif %}
-
-        </dl>   
-      </div>
+          </tbody>
+        </table>
+        </noindex>
+      </div> 
       
-      <div class="seller-contact text-left col-md-12">
+      <noindex> 
+
+      <div class="text-left" style="margin-top:20px">
         <a class="btn btn-primary" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
       </div>
       </noindex>
-
-    </div>  <!-- contact-block -->
-
   </div> <!-- right-side -->
+
+    
 
   </div> <!-- sale-pet-container -->  
 
 </div> <!-- sale-pet -->
-
-</div> <!-- container -->
 
   <script type="text/javascript">
   $(window).load(function(){
