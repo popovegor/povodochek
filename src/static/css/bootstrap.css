@@ -4367,10 +4367,13 @@ a.list-group-item.active > .badge,
 }
 .jumbotron {
   padding: 30px;
+  padding-top: 30px - 10px;
   margin-top: 30px;
   margin-bottom: 30px;
+  margin-left: -10px;
   color: inherit;
   background-color: #dfdfff;
+  border-left: 10px solid #ccc;
 }
 .jumbotron h1,
 .jumbotron .h1 {
@@ -4384,7 +4387,7 @@ a.list-group-item.active > .badge,
   font-weight: 200;
 }
 .container .jumbotron {
-  border-radius: 6px;
+  border-radius: 0;
 }
 .jumbotron .container {
   max-width: 100%;

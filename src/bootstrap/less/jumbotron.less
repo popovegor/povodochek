@@ -9,6 +9,9 @@
   color: @jumbotron-color;
   background-color: @jumbotron-bg;
   margin-top: 30px;
+  border-left: 10px solid #ccc;
+  margin-left:-10px;
+  padding-top: @jumbotron-padding - 10px;
 
   h1,
   .h1 {
@@ -23,7 +26,7 @@
   }
 
   .container & {
-    border-radius: @border-radius-large; // Only round corners at higher resolutions if contained in a container
+    border-radius: 0px; // Only round corners at higher resolutions if contained in a container
   }
 
   .container {
