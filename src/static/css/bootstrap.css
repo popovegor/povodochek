@@ -3643,7 +3643,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   position: relative;
   min-height: 45px;
   margin-bottom: 20px;
-  border: 1px solid transparent;
+  border: 1px dotted transparent;
 }
 @media (min-width: 768px) {
   .navbar {
@@ -3958,11 +3958,14 @@ textarea.input-group-sm > .input-group-btn > .btn {
   color: #333;
   background-color: transparent;
 }
+.navbar-default .navbar-nav > .active > a {
+  border-bottom: solid 3px;
+}
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
   color: #555;
-  background-color: #dfdfff;
+  background-color: transparent;
 }
 .navbar-default .navbar-nav > .disabled > a,
 .navbar-default .navbar-nav > .disabled > a:hover,
@@ -3988,7 +3991,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #555;
-  background-color: #dfdfff;
+  background-color: transparent;
 }
 @media (max-width: 767px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
@@ -4003,7 +4006,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #555;
-    background-color: #dfdfff;
+    background-color: transparent;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,
@@ -4360,7 +4363,7 @@ a.list-group-item.active > .badge,
 }
 .jumbotron {
   padding: 30px;
-  margin-top: 40px;
+  margin-top: 30px;
   margin-bottom: 30px;
   color: inherit;
   background-color: #dfdfff;
@@ -6585,24 +6588,12 @@ form .textarea-counter {
 .pet-post-button a {
   font-family: Georgia;
   font-style: italic;
-  border-bottom: dotted 1px;
-          border-radius: 0;
-
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-      -ms-border-radius: 0;
-       -o-border-radius: 0;
+  /*.rounded-corners(0px);*/
+  /*border-bottom:dotted 1px;*/
 }
 .pet-post-button a:focus,
 .pet-post-button a:hover {
-  border-right: solid 1px;
-  border-bottom: solid 1px;
-  border-left: solid 1px;
-          border-radius: 0 0 5px 5px;
-
-  -webkit-border-radius: 0 0 5px 5px;
-     -moz-border-radius: 0 0 5px 5px;
-      -ms-border-radius: 0 0 5px 5px;
-       -o-border-radius: 0 0 5px 5px;
+  /*.rounded-corners(5px);*/
+  /*border:solid 1px;*/
 }
 /*# sourceMappingURL=bootstrap.css.map */

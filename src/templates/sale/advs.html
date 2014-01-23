@@ -10,6 +10,8 @@
 
             {% else %}
 
+            <div class="clearfix" style="margin-bottom:20px">
+
             <div class="advs-sort pull-right">
               <span class="" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
               {% for (value, name) in form.sort.choices %}
@@ -24,12 +26,11 @@
 
             <div class="advs-found pull-left hidden-xs"><span>Найдено {{count}} {{"объявление" | morph_word(count = count) }}</span>
             </div> <!-- advs-found -->
+            </div>
 
-            <div class="clearfix"></div>
+            
            
               {% for adv in advs %}   
-
-                <hr/>
 
                   <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
 
@@ -134,8 +135,10 @@
                       
                   </div> <!-- right-side -->
 
-                  
+                </div>
 
+                <div style="width:20%; margin:0 auto">
+                      <hr/>
                 </div>
 
               {% endfor %}
