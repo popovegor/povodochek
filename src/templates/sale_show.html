@@ -15,71 +15,64 @@
     </div> 
 
 
-  <h1>{{adv.get("title")}}</h1>
+  <h1>{{header}}</h1>
 
   <div class="row">
-      <div class="adv-desc col-md-8">
-    {% autoescape false %}
-      {{adv.get('desc') | safe | replace("\r\n", "<br>") | replace("\r", "<br>") | replace("\n", "<br>") }}
-    {% endautoescape %}
+      <div class="col-md-7">
+        
+
+      <!-- photo -->
+        {%if adv.get('photos') | length > 0%}    
+
+        <div class="photos" style="margin-top:20px">
+
+          {%if adv.get("photos") | length > 1%}
+
+          <div id="carousel" class="flexslider hidden-phone">
+            <ul class="slides">
+              {%for photo in adv.get('photos') %}
+              <li>
+                <img src="{{url_for('thumbnail', filename = photo)}}" />
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+
+          {%endif%}
+
+        <p class="text-left"><small>Фотография <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}}</small></p>
+
+          <div id="slider" class="flexslider">
+            <ul class="slides ">
+              {%for photo in adv.get('photos') %}
+              <li class="text-center photo">
+                 <img class="{{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+
+         
+
+        </div> <!-- photos -->
+
+    {%endif%}
+    <!-- / photo -->
     </div>
-    <div class="col-md-4">
-      <div class="sale-pet-price text-left" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
-        <span class="">Цена</span>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'рубль' | morph_word(count = adv.get('price') | int) }}</span>
-      </div> <!-- price -->
-    
-    </div>
 
-  </div>
+    <div class="right-side {{'col-md-5' if adv.get('photos') | length > 0 else 'col-md-8'}}">
 
-  
+    <div class="sale-pet-price" style="" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
+          <span class="">Цена:</span>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'руб'}}</span>
+        </div> <!-- price -->
 
-  <div class="sale-pet-container row"> 
-
-  {%if adv.get('photos') | length > 0%}
-
-  <div class="left-side col-md-8">    
-
-    <div class="photos">
-
-      {%if adv.get("photos") | length > 1%}
-
-      <div id="carousel" class="flexslider hidden-phone">
-        <ul class="slides">
-          {%for photo in adv.get('photos') %}
-          <li>
-            <img src="{{url_for('thumbnail', filename = photo)}}" />
-          </li>
-          {%endfor%}
-        </ul>
-      </div>
-
-      {%endif%}
-
-    <p class="text-left"><small>Фотография <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}}</small></p>
-
-      <div id="slider" class="flexslider">
-        <ul class="slides ">
-          {%for photo in adv.get('photos') %}
-          <li class="text-center photo">
-             <img class="{{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
-          </li>
-          {%endfor%}
-        </ul>
-      </div>
-
-     
-
-    </div> <!-- photos -->
-
-  </div> <!-- left-side -->
-
-  {%endif%}
-
-  <div class="right-side {{'col-md-4' if adv.get('photos') | length > 0 else 'col-md-12'}}">
-
+      <h3>{{adv.get("title")}}</h3>
       
-    <div class="adv-block">
+      <div style="margin-bottom:20px">
+        <p>{{adv.get('desc') | trim }}</p>
+      </div>
+
+      <div class="adv-block">
       <h3>О {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h3>
 
       <table class="tbl-key-value">
@@ -114,7 +107,7 @@
     </div> <!-- adv-info -->
 
 
-    <div class="seller-block">  
+      <div class="seller-block">  
       <h3>Контакты</h3>      
         <noindex>  
         <table class="tbl-key-value">
@@ -146,14 +139,31 @@
           </tbody>
         </table>
         </noindex>
-      </div> 
+      </div>  <!-- /seller-block -->
       
-      <noindex> 
 
+      <noindex> 
       <div class="text-left" style="margin-top:20px">
         <a class="btn btn-primary" href="{{url_for('mail_sale', id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
       </div>
       </noindex>
+
+
+    </div> <!-- right-side -->
+    
+    
+
+  </div>
+
+  
+
+  <div class="sale-pet-container row"> 
+
+  
+  <div class="">
+
+      
+   
   </div> <!-- right-side -->
 
     
