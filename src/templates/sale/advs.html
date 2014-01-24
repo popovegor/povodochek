@@ -12,29 +12,31 @@
 
             <div class="clearfix" style="margin-bottom:20px">
 
-            <div class="advs-sort pull-right">
-              <span class="" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
-              {% for (value, name) in form.sort.choices %}
-              {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
-              {% if sort == value %}
-              &nbsp;<small title="{{title}}" class="label label-default">{{name}}</small>
-              {%else%}
-              <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
-              {%endif%}
-              {% endfor %}
-            </div> <!-- advs-sort -->
+              <div class="advs-sort pull-right">
+                <span class="" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
+                {% for (value, name) in form.sort.choices %}
+                {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
+                {% if sort == value %}
+                &nbsp;<small title="{{title}}" class="label label-default">{{name}}</small>
+                {%else%}
+                <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
+                {%endif%}
+                {% endfor %}
+              </div> <!-- advs-sort -->
 
-            <div class="advs-found pull-left hidden-xs"><span>Найдено {{count}} {{"объявление" | morph_word(count = count) }}</span>
-            </div> <!-- advs-found -->
+              <div class="advs-found pull-left hidden-xs"><span>Найдено {{count}} {{"объявление" | morph_word(count = count) }}</span>
+              </div> <!-- advs-found -->
             </div>
 
             
            
               {% for adv in advs %}   
 
-               <div style="width:20%; margin:0 auto">
-                      <hr/>
+                {% if loop.index > 1 %}
+               <div class="delimiter">
+                      <hr class=""/>
                 </div>
+                {%endif%}
 
                   <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
 
@@ -59,7 +61,7 @@
                    <div class="col-md-9">
 
                       <div class="row">
-                          <div class="col-md-8 col-lg-9 col-sm-8" style="margin-bottom:10px;">
+                          <div class="col-md-8 col-lg-9 col-sm-8" style="">
 
                               <a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" title='{{adv.get("title")}}'><h4 style="overflow:hidden" class="adv-head">{{adv.get("title")}}</h4></a>
                             
