@@ -32,6 +32,10 @@
            
               {% for adv in advs %}   
 
+               <div style="width:20%; margin:0 auto">
+                      <hr/>
+                </div>
+
                   <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
 
                    <div class="col-md-3" style="margin-bottom:20px">
@@ -135,10 +139,6 @@
                       
                   </div> <!-- right-side -->
 
-                </div>
-
-                <div style="width:20%; margin:0 auto">
-                      <hr/>
                 </div>
 
               {% endfor %}
