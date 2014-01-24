@@ -5,8 +5,8 @@
 
 {%if count <= 0 %}
 
-            <p class="text-left advs-empty lead"><small>К сожалению, не найдено ни одного объявления.</small>
-            </p>
+            <div class="text-center"><b>К сожалению, не найдено ни одного объявления.</b>
+            </dic>
 
             {% else %}
 
@@ -34,7 +34,7 @@
 
                   <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
 
-                   <div class="col-sm-3 col-md-3" style="margin-bottom:20px">
+                   <div class="col-md-3" style="margin-bottom:20px">
                       <div class="text-center photo">
 
                         {% set photo = (adv.get('photos') or [])[0]%}
@@ -52,7 +52,7 @@
 
                    </div>
 
-                   <div class="col-sm-9 col-md-9">
+                   <div class="col-md-9">
 
                       <div class="row">
                           <div class="col-md-8 col-lg-9 col-sm-8" style="margin-bottom:10px;">
@@ -103,7 +103,7 @@
                           </div>
 
 
-                          <div class="col-md-4 col-lg-3 col-sm-4 text-right">
+                          <div class="col-md-4 col-lg-3 text-right">
                             {%set price = (adv.get("price") or "") | int  %}
                             <p class="adv-price" style="" title='Цена: {{"{0:,}" | format(price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
                              <span class="price">{{ price | format_price() }}&nbsp;<span class="rur">руб</span></span>
