@@ -61,9 +61,9 @@
                    <div class="col-md-9">
 
                       <div class="row">
-                          <div class="col-md-8 col-lg-9 col-sm-8" style="">
+                          <div class="col-lg-9 col-sm-9" style="">
 
-                              <a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" title='{{adv.get("title")}}'><h4 style="overflow:hidden" class="adv-head">{{adv.get("title")}}</h4></a>
+                              <h4 style="overflow:hidden" class="adv-head"><a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" title='{{adv.get("title")}}'>{{adv.get("title")}}</a></h4>
                             
 
                               <p class="adv-city">
@@ -109,7 +109,7 @@
                           </div>
 
 
-                          <div class="col-md-4 col-lg-3 text-right">
+                          <div class="col-sm-3 col-lg-3 text-right">
                             {%set price = (adv.get("price") or "") | int  %}
                             <p class="adv-price" style="" title='Цена: {{"{0:,}" | format(price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
                              <span class="price">{{ price | format_price() }}&nbsp;<span class="rur">руб</span></span>
