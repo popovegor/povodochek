@@ -6181,6 +6181,10 @@ form .textarea-counter {
   width: 20%;
   margin-left: 80%;
 }
+.pet-sale .delimiter hr,
+.account-pet-sale .delimiter hr {
+  margin-top: 10px;
+}
 .pet-sale .adv,
 .account-pet-sale .adv {
   /*padding: 20px 0px 10px 0px;*/
