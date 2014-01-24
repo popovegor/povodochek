@@ -164,7 +164,7 @@ class SaleSearch(Form):
     price_from = IntegerField(u"Цена, тыс руб", default = 0)
     price_to = IntegerField(u"Цена до", default = 100)
 
-    sort = SelectField(u"Сортировка", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"Новее")], coerce = int)
+    sort = SelectField(u"Сортировка", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"По дате")], coerce = int)
 
     page = IntegerField(u"Страница", default = 1)
 
