@@ -16,11 +16,8 @@
     </button>
 
 
-    
-      {#<a title="Портал о продаже породистых собак и кошек" class="navbar-brand" href="{{url_for('index')}}">Поводочек<noindex><sub style="font-family: Arial black; color: red; font-size:10px; display:none">beta</sub><noindex></a>#}
-
       {% set brand_tag = 'span' if request.path == url_for('index') else 'a' %}
-        <{{brand_tag}} title="Портал о продаже породистых собак и кошек" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;">Поводочек</{{brand_tag}}>
+        <{{brand_tag}} title="Портал о продаже породистых собак и кошек" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;">Поводочек.рф</{{brand_tag}}>
 
   </div>
 
