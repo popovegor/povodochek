@@ -47,7 +47,7 @@
                         {% if photo %}
                         <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" class="photo-img">
                           <img src="{{url_for('thumbnail', filename=photo)}}">
-                          <div class="photo-count hidden-sm"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
+                          <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                         </a>  
                         {% else %}
                         <img style="width:100% !important;height: 100% !important;" class="hidden-xs" data-src='/static/js/holder.js/150x100/text:Нет фото' alt="{{adv['title']}}">
