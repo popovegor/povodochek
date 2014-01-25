@@ -13,7 +13,7 @@
             <div class="clearfix" style="margin-bottom:20px">
 
               <div class="advs-sort pull-right">
-                <span class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
+                <small class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text | lower}}</small>:
                 {% for (value, name) in form.sort.choices %}
                 {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
                 {% if sort == value %}
@@ -24,7 +24,7 @@
                 {% endfor %}
               </div> <!-- advs-sort -->
 
-              <div class="advs-found pull-left hidden-xs text-muted"><small>{{count}} {{"объявление" | morph_word(count = count) }}</small>
+              <div class="advs-found pull-left hidden-xs text-muted"><small>найдено {{count}} {{"объявление" | morph_word(count = count) }}</small>
               </div> <!-- advs-found -->
             </div>
 
