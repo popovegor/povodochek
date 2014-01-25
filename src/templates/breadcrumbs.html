@@ -1,12 +1,14 @@
-{% if title %}
+<div class="container hidden-xs" style="margin-top:30px">
 
-    <div class="">
-       <!--  <ul class="breadcrumb visible-phone">
-          <li><a href="#">Home</a> <span class="divider">/</span></li>
-          <li><a href="#">Library</a> <span class="divider">/</span></li>
-          <li class="active">Data</li>
-      </ul> -->
+      <div class="row">
+        <div class="col-md-9 col-sm-8">
+            {% block breadcrumbs%}
+
+            {% endblock%}
+        </div>
+        <div class="col-md-3 col-sm-4 text-right">
+            {% include "pet_post_button.html"%}
+        </div> 
     </div>
-</div>
 
-{% endif%}
+  </div>

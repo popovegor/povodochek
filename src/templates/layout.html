@@ -4,15 +4,30 @@
   <div id="wrap">
 
 
-
-  {%if not current_user.is_signed() %}
-
-	{% include "pet_post_button.html"%}
-
-	{%endif%}
-
     <!-- menu -->
     {% include "menu.html" %}
+
+    {% if 'account' not in request.path %}
+
+   <div class="container hidden-xs" style="margin-top:30px">
+
+      <div class="row">
+        <div class="col-md-9 col-sm-8">
+            {% block breadcrumbs %}
+              <ol class="breadcrumb" >
+                <li><a href="{{url_for('index')}}">Главная</a> </li>
+                <li class="active">{{title}}</li>
+            </ol>
+            {% endblock %}
+        </div>
+        <div class="col-md-3 col-sm-4 text-right">
+            {% include "pet_post_button.html"%}
+        </div> 
+    </div>
+
+  </div>
+
+  {%endif%}
 
     {% include "flashed_messages.html" %}
 

@@ -1,18 +1,21 @@
 {% extends "layout.html" %}
 
-{% block content %}  
 
-<div class="sale-pet-show container"> 
-
-   <!-- крошки -->
-    <div class="clearfix" id="breadcrumbs">
-          <ul class="breadcrumb hidden-xs" >
+{%block breadcrumbs %}
+    
+          <ol class="breadcrumb" >
             <li><a href="{{url_for('index')}}">Главная</a> <span class="divider"></span></li>
             <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'))}}">Продажа {{adv.get('pet_id') | pet_name | morph_word(["plur", "gent"])  | lower }}</a> <span class="divider"></span></li>
             <li><a href="{{url_for_sale(pet_id = adv.get('pet_id'), breed = adv.get('breed_id') | breed_name(adv.get('pet_id'))  )}}">{{adv.get('breed_id') | breed_name(adv.get('pet_id')) }}</a> <span class="divider"></span></li>
             <li class="active">{{adv.get("title")}}</li>
-          </ul>
-    </div> 
+          </ol>
+    
+    {%endblock%}
+
+
+{% block content %}  
+
+<div class="sale-pet-show container"> 
 
 
   <h1>{{header}}</h1>

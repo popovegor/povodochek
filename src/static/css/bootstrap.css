@@ -3963,6 +3963,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   background-color: transparent;
 }
 .navbar-default .navbar-nav > .active > a {
+  padding-bottom: 9px;
   border-bottom: solid 3px #ccc;
 }
 .navbar-default .navbar-nav > .active > a,
