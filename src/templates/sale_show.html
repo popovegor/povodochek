@@ -20,6 +20,13 @@
 
   <h1>{{header}}</h1>
 
+  
+          <div style="font-family:Georgia; font-size:1.2em; font-style:italic">
+              <span style="white-space:nowrap; margin-right:20px" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><small class="text-muted">цена:</small>&nbsp;{{adv.get('price') | format_price() }}&nbsp;руб</span>
+            <span style="white-space:nowrap"><small class="text-muted">размещено:</small>&nbsp;{{ momentjs(adv.get("update_date") or adv.get("add_date")).fromNow() }} </span>
+          </div>
+          
+  
   <div class="row">
       <div class="col-md-7">
         
@@ -31,7 +38,7 @@
 
           {%if adv.get("photos") | length > 1%}
 
-          <div id="carousel" class="flexslider hidden-phone">
+          <div id="carousel" class="flexslider hidden-xs">
             <ul class="slides">
               {%for photo in adv.get('photos') %}
               <li>
@@ -43,7 +50,7 @@
 
           {%endif%}
 
-        <p class="text-left"><small>Фотография <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}}</small></p>
+        <p class="text-left">Фотография <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}}</p>
 
           <div id="slider" class="flexslider">
             <ul class="slides ">
@@ -54,9 +61,7 @@
               {%endfor%}
             </ul>
           </div>
-
          
-
         </div> <!-- photos -->
 
     {%endif%}
@@ -64,10 +69,6 @@
     </div>
 
     <div class="right-side {{'col-md-5' if adv.get('photos') | length > 0 else 'col-md-8'}}">
-
-    <div class="sale-pet-price" style="" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
-          <span class="">Цена:</span>&nbsp;&nbsp;<span class="price-number">{{adv.get('price') | format_price() }}</span>&nbsp;&nbsp;<span class="price-rate">{{ 'руб'}}</span>
-        </div> <!-- price -->
 
       <h3>{{adv.get("title")}}</h3>
       

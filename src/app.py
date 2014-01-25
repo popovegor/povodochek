@@ -675,8 +675,8 @@ def sale(sale_search_form = None, pet = None):
 
     tmpl = render_template("sale.html", header=Markup(header), \
       title=title, form = form, advs = advs, \
-      pet = pet_name, breed = breed_name, \
-      pet_id = pet_id, \
+      pet = pet_name, pet_id = pet_id, \
+      breed = breed_name, breed_id = breed_id, \
       sort = session.get("sale_sort"), \
       count = count, total = total )
     return tmpl
@@ -712,7 +712,7 @@ def sale_show(id):
     )
     header = Markup(u"Продам {0} породы {1} в г.&nbsp;{2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
-        get_breed_name(adv.get("breed_id"), adv.get("pet_id")),\
+        get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
         get_city_name(adv.get("city_id"), "i")
     ))
     title = u"{0} за {1}".format(name, \

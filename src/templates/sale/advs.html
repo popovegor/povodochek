@@ -13,7 +13,7 @@
             <div class="clearfix" style="margin-bottom:20px">
 
               <div class="advs-sort pull-right">
-                <span class="" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
+                <span class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>:
                 {% for (value, name) in form.sort.choices %}
                 {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
                 {% if sort == value %}
@@ -24,7 +24,7 @@
                 {% endfor %}
               </div> <!-- advs-sort -->
 
-              <div class="advs-found pull-left hidden-xs">Найдено <b>{{count}}</b> {{"объявление" | morph_word(count = count) }}
+              <div class="advs-found pull-left hidden-xs text-muted"><small>{{count}} {{"объявление" | morph_word(count = count) }}</small>
               </div> <!-- advs-found -->
             </div>
 
@@ -122,7 +122,7 @@
                                 %}
 
                                 {% if update_date and  
-                                adv.get("update_date") 
+                                adv.get("update_date")
                                 %}
                                 <small class="text-muted">Обновлено: </small> <b style="white-space: nowrap;"><small>{{ momentjs(update_date or add_date).fromNow() }}</small></b> 
 
