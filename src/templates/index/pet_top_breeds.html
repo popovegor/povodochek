@@ -1,9 +1,9 @@
 
 {%- macro top_breeds(pets, pet_id) -%}
 		
-		<h4 class="text-left clearfix" style="padding-left:5%">
-			{{pet_id | pet_name | morph_word(["plur"]) | title }}
-		</h4>
+		<h5 class="text-left clearfix" style="">
+			<b>{{pet_id | pet_name | morph_word(["plur"]) | title }}</b>
+		</h5>
 		
 
 		<div class="breeds clearfix">
@@ -17,12 +17,12 @@
 				<tr>
 					<!-- <td>{{loop.index}}.&nbsp;</td> -->
 					<td class="breed-name" style="width:60%">
-						<span class="breed-name"><a href="{{url_for_sale(pet_id, breed = breed_name) }}">{{breed_name}}</a></span>	
+						<h4 class="breed-name"><a href="{{url_for_sale(pet_id, breed = breed_name) }}">{{breed_name}}</a></h4>	
 					</td>
 
 					<td style="width:50px">&nbsp;</td>
-					<td class="breed-counter" style="text-align:left;vertical-align:center">
-						&nbsp;&nbsp;<span>{{pet.get("count")}}</span>&nbsp;&nbsp;
+					<td class="breed-counter" style="text-align:left;">
+						<span class="badge">{{pet.get("count")}}</span>
 					</td>
 				</tr>
 			{% endfor %}
@@ -37,7 +37,7 @@
 	
 <div class="top-breeds">
 
-		<h3 style="padding: 0 0 20px 0%">Популярные породы <small>на&nbsp;продажу</small></h3>
+		<h6 style="">Популярные породы на продажу</h6>
 
 		<div class="row">
 	
