@@ -4375,6 +4375,7 @@ a.list-group-item.active > .badge,
   color: inherit;
   background-color: #dfdfff;
   border-left: 10px solid #ccc;
+  border-radius: 5px;
 }
 .jumbotron h1,
 .jumbotron .h1 {
@@ -5958,24 +5959,12 @@ form .textarea-counter {
 #footer .copyright {
   margin-top: 20px;
 }
-/*@media (max-width: 767px) {
-    #footer {
-        margin-left: -20px;
-        margin-right: -20px;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-}
-*/
 .index {
   /*pet-post*/
   /*pet-mosaic*/
 }
 .index .pet-post {
   margin-top: 0;
-  /*padding:20px;*/
-  /*border: dotted 2px #dedede;*/
-  /*.rounded-corners(5px);*/
 }
 .index .pet-post h3 {
   margin-top: 0;
@@ -6028,9 +6017,6 @@ form .textarea-counter {
   margin-top: 20px;
   overflow: visible;
 }
-.index .pet-mosaic #advs .no-advs {
-  margin-top: 60px;
-}
 .index .pet-mosaic #advs .ajax-loader {
   width: 100%;
   height: 30px;
@@ -6053,17 +6039,12 @@ form .textarea-counter {
 }
 .index .pet-mosaic #advs .adv {
   display: block;
-  padding: 10px;
+  padding: 20px;
   /*background-color: #f5f5f5;*/
   /*border:10px solid #f5f5f5;*/
 }
 .index .pet-mosaic #advs .adv img {
-          border-radius: 5px;
-
-  -webkit-border-radius: 5px;
-     -moz-border-radius: 5px;
-      -ms-border-radius: 5px;
-       -o-border-radius: 5px;
+  border-radius: 5px;
 }
 .index .pet-mosaic #advs .adv:hover,
 .index .pet-mosaic #advs .adv:focus {
@@ -6071,21 +6052,11 @@ form .textarea-counter {
   /*margin: 2px;*/
   padding: 8px;
   border: 2px solid #08c;
-          border-radius: 0;
-
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-      -ms-border-radius: 0;
-       -o-border-radius: 0;
+  border-radius: 0;
 }
 .index .pet-mosaic #advs .adv:hover img,
 .index .pet-mosaic #advs .adv:focus img {
-          border-radius: 0;
-
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-      -ms-border-radius: 0;
-       -o-border-radius: 0;
+  border-radius: 0;
 }
 .index .pet-mosaic .show-more {
   margin: 30px 0 0 0;
@@ -6184,11 +6155,9 @@ form .textarea-counter {
 }
 .pet-sale .adv,
 .account-pet-sale .adv {
-  /*padding: 20px 0px 10px 0px;*/
-  padding-top: 10px;
-  /*&:hover, &:focus {
-            background-color: #f7f7f7;
-        }*/
+  padding: 25px 25px 15px 25px;
+  margin-bottom: 20px;
+  border-radius: 5px;
 }
 .pet-sale .adv .adv-actions,
 .account-pet-sale .adv .adv-actions,
@@ -6241,6 +6210,10 @@ form .textarea-counter {
 .account-pet-sale .adv .adv-head {
   margin-top: 0;
 }
+.pet-sale .adv div.photo,
+.account-pet-sale .adv div.photo {
+  margin-bottom: 20px;
+}
 .pet-sale .adv div.photo .photo-count,
 .account-pet-sale .adv div.photo .photo-count {
   /*visibility: hidden;        */
@@ -6250,10 +6223,6 @@ form .textarea-counter {
 .pet-sale .adv .adv-breed,
 .account-pet-sale .adv .adv-breed {
   margin-bottom: 5px;
-}
-.pet-sale .advs-empty,
-.account-pet-sale .advs-empty {
-  /*padding-top:10px;*/
 }
 .pet-sale .advs-paging .adv-paging-title,
 .account-pet-sale .advs-paging .adv-paging-title {
@@ -6278,7 +6247,17 @@ form .textarea-counter {
 }
 .pet-sale .adv-odd,
 .account-pet-sale .adv-odd {
-  /*background-color: #f7f7f7;*/
+  background-color: #f5f5f5;
+}
+.pet-sale .adv-even,
+.account-pet-sale .adv-even {
+  background-color: #fcf5e1;
+}
+.pet-sale .filter,
+.account-pet-sale .filter {
+  padding: 15px;
+  background-color: #dfdfff;
+  border-radius: 5px;
 }
 .pet-sale .filter form,
 .account-pet-sale .filter form {
@@ -6359,16 +6338,7 @@ form .textarea-counter {
 }
 .sale-pet-show .sale-pet-container {
   margin-top: 20px;
-}
-.sale-pet-show .sale-pet-price {
-  margin-bottom: 10px;
-  font-family: "Georgia";
-  font-weight: normal;
-  /*margin-top:7px;*/
-}
-.sale-pet-show .sale-pet-price .price-number {
-  font-size: 36px !important;
-  /*line-height: 24px;*/
+  white-space: nowrap;
 }
 .sale-pet-show .photos {
   margin-bottom: 20px;

@@ -117,23 +117,6 @@ form {
     }
 }
 
-/*@media (max-width: 767px) {
-    #footer {
-        margin-left: -20px;
-        margin-right: -20px;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-}
-*/
-.rounded-corners (@radius: 5px) {
-  -webkit-border-radius: @radius;
-  -moz-border-radius: @radius;
-  -ms-border-radius: @radius;
-  -o-border-radius: @radius;
-  border-radius: @radius;
-}
-
 .index {
 
     .pet-search {
@@ -142,13 +125,7 @@ form {
     }
 
     .pet-post {
-
         margin-top:0px;
-        /*padding:20px;*/
-
-        /*border: dotted 2px #dedede;*/
-
-        /*.rounded-corners(5px);*/
 
         h3 {
             margin-top: 0px;
@@ -214,9 +191,6 @@ form {
             min-height: 110px;
             overflow: visible;
 
-            .no-advs{
-                margin-top: 60px;
-            }
 
             .ajax-loader {
                 margin-top: 80px;
@@ -242,12 +216,12 @@ form {
 
             .adv {
                 display: block;
-                padding: 10px;
+                padding: 20px;
                  /*background-color: #f5f5f5;*/
                  /*border:10px solid #f5f5f5;*/
             
                 img {
-                    .rounded-corners(5px);
+                    border-radius:5px;
                 }
 
                 &:hover, &:focus {
@@ -255,9 +229,9 @@ form {
                     /*margin: 2px;*/
                     padding: 8px;
                     border:2px solid #0088cc;
-                    .rounded-corners(0px);
+                    border-radius:0px;
                     img {
-                        .rounded-corners(0px);
+                        border-radius:0px;
                     }
                 }
             }
@@ -364,13 +338,10 @@ form {
     }
 
     .adv {
+        border-radius:5px;
 
-         /*padding: 20px 0px 10px 0px;*/
-         padding-top:10px;
-
-        /*&:hover, &:focus {
-            background-color: #f7f7f7;
-        }*/
+         padding:25px 25px 15px 25px;
+         margin-bottom:20px;
 
         .adv-actions,  .adv-desc {
             margin-top:15px;
@@ -407,11 +378,10 @@ form {
             line-height:16px;
         }
 
-        
-
         .adv-head { margin-top: 0px;}
 
         div.photo {
+            margin-bottom:20px;
             .photo-count {
                 /*visibility: hidden;        */
             }   
@@ -420,12 +390,6 @@ form {
         .adv-city, .adv-breed { margin-bottom: 5px; }
     }
 
-    .pet-sale-grid {
-    }
-
-    .advs-empty {
-        /*padding-top:10px;*/
-    }
 
     .advs-paging {
         .adv-paging-title {
@@ -444,9 +408,16 @@ form {
      
     .adv-number {padding-left: 10px;}
 
-    .adv-odd { /*background-color: #f7f7f7;*/}
+
+    .adv-odd { background-color: #f5f5f5; }
+    .adv-even { background-color: #fcf5e1; }
     
     .filter {
+
+        border-radius:5px;
+
+        background-color: @jumbotron-bg;
+        padding: 15px;
 
         form {
             margin-bottom: 0px !important;
@@ -536,19 +507,8 @@ form {
 
     .sale-pet-container {
         margin-top: 20px;
+        white-space: nowrap;
     }
-
-    .sale-pet-price {
-        margin-bottom: 10px;
-        font-family: "Georgia";
-        font-weight: normal;
-        /*margin-top:7px;*/
-        .price-number{
-             font-size:36px !important;
-             /*line-height: 24px;*/
-        }
-
-    } 
 
     .photos {
 

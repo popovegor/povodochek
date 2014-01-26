@@ -16,8 +16,9 @@
 
     {% for adv in advs %}
 
+    <div class="adv {{loop.cycle('adv-odd', 'adv-even')}}">
 
-    <div class="row clearfix adv {{loop.cycle('adv-odd', 'adv-even')}}" >
+    <div class="row clearfix" >
                    <div class="col-sm-3">
                       <div class="text-center photo">
 
@@ -131,6 +132,7 @@
 
                 </div>
 
+              </div>
 
     {% endfor %}
 
