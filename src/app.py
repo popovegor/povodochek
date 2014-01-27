@@ -603,7 +603,7 @@ def sale_find(pet_id = None, gender_id = None, breed_id = None, city = None, dis
 
 def sale_find_header(form, pet_id, breed_id):
     # generate title
-    header = u"Купить <span class='text-muted'>(Продают)</span> {0}{1}{2}"
+    header = u"Купить <span>(продают)</span> {0}{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
 

@@ -409,14 +409,14 @@ form {
     .adv-number {padding-left: 10px;}
 
 
-    .adv-odd { background-color: #f5f5f5; }
-    .adv-even { background-color: #fcf5e1; }
+    .adv-odd { background-color: lighten(@state-info-bg, 5%); }
+    .adv-even { background-color: @state-warning-bg; }
     
     .filter {
 
         border-radius:5px;
 
-        background-color: @jumbotron-bg;
+        background-color: @gray-lighter;
         padding: 15px;
 
         form {

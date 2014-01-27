@@ -3,12 +3,12 @@
 
             <div class="clearfix" style="margin:0px 0 20px 0">
 
-              <div class="advs-sort pull-right">
-                <small class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text | lower}}</small>:
+              <div class="advs-sort pull-right" style="white-space:nowrap">
+                <small class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text | lower}}</small>
                 {% for (value, name) in form.sort.choices %}
                 {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
                 {% if sort == value %}
-                &nbsp;<small title="{{title}}" class="label label-default">{{name}}</small>
+                <small title="{{title}}" class="label label-default">{{name}}</small>
                 {%else%}
                 <a title="{{title}}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
                 {%endif%}
@@ -33,7 +33,10 @@
        
 {%else%}    
               {% for adv in advs %}   
-              <div class="adv {{loop.cycle('adv-odd', 'adv-even')}}">
+              <div class="adv {{loop.cycle('adv-odd', 'adv-even')}}" style="position:relative">
+                  <div style="position:absolute; top:5px; left:5px">
+                    <small class="text-muted">{{(form.page.data - 1) * form.perpage.data + loop.index}}</small>
+                  </div>
                   <div class="row clearfix" >
 
                    <div class="col-md-3">
@@ -181,7 +184,7 @@
         {%- endmacro -%}
 
 
-         {%set pages = (count / form.perpage.data) | round(0) | int %}
+         {%set pages = (count / form.perpage.data ) | round(0, 'ceil') | int %}
 
         {% if pages > 1 %}
           <div style="margin-top:20px">Страницы:</div>
