@@ -196,8 +196,8 @@ class Sale(Form):
          description = u"Не более 80 символов."
          )
 
-    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=120, message=MSG_MIN_LENGTH.format(120))], \
-        description = u"Не менее 120 символов."
+    desc = TextAreaField(u"Подробное описание", [Required(message=MSG_REQUIRED), Length(min=100, message=MSG_MIN_LENGTH.format(100))], \
+        description = u"Не менее 100 символов."
     )
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
