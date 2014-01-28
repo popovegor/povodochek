@@ -6,7 +6,7 @@
 {% if not current_user.is_signed() %}	
 
 
-<div class="modal fade" aria-hidden="true"  id="myModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade text-left" aria-hidden="true"  id="myModal" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -14,7 +14,7 @@
         <h3 class="modal-title" id="myModalLabel">Разместите свое объявление</h3>
       </div>
       <div class="modal-body">
-         <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки, необходимо войти на сайт или зарегистрироваться.</p>
+         <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки, необходимо войти на сайт или зарегистрироваться. <b>Это займет у вас не более 2 минут.</b></p>
 	    <a class="btn btn-link btn-lg" href="{{url_for('signin', next=url_for('account_sale_add') )}}">Войти</a> <span style="">или</span> <a class="btn btn-link btn-lg" href="{{url_for('signup_basic', next = url_for('account_sale_add'))}}">Зарегистрироваться</a>
       </div>
       <div class="modal-footer">

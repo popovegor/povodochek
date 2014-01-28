@@ -1143,6 +1143,11 @@ def ajax_avito_parse():
         adv = parse_avito_adv(adv_url)
     return jsonify(adv)
 
+@app.route('/sitemap.xml')
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, request.path[1:])
+
 
 if __name__ == "__main__":
     app.debug = True
