@@ -1063,9 +1063,16 @@ def admin_requried(func):
         return func(*args, **kwargs)
     return decorated_view
 
-    # if app.current_user:
-    #     abort(401)
-    # return func(*args, **kwargs)
+
+@app.route('/admin/users/')
+@admin_requried
+def admin_users():
+    page = int(request.args.get("page") or 1)
+    total = users().count()
+    perpage = 100
+    u = [user for user in users().find(sort = [('signup_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
+
+    return render_template('/admin/users.html', title = Markup(u"Админка: пользователи"), users = u, total = total, perpage = perpage, page = page)
 
 
 @app.route('/admin/sale/')
@@ -1074,7 +1081,7 @@ def admin_sale():
     page = int(request.args.get("page") or 1)
     total = sales().count()
     perpage = 100
-    advs = [adv for adv in sales().find(sort = [('update_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
+    advs = [adv for adv in users().find(sort = [('update_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
     for seller in users().find({'_id':{'$in' : [ObjectId(adv.get('user_id')) for adv in advs if adv.get('user_id') ]}}):
         for adv in [adv for adv in advs if not adv.get('email')]:
             # print(seller['email'])
