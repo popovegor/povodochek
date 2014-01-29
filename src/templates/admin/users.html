@@ -1,0 +1,55 @@
+{% extends "admin/layout.html" %}
+
+    {% block content %}
+
+   
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Пользователь</th>
+          <th>Email</th>
+          <th>Login</th>
+          <th>Регистрация</th>
+          <th>Активация</th>
+          <th>Телефон</th>
+          <th>Скайп</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {% for user in users %}
+
+          <tr>
+          <td>{{user.get('_id')}}</td>
+            <td>{{user.get('username')}}</td>
+            <td>{{user.get("email")}}</td>
+            <td>{{user.get("login")}}</td>
+            <td>{{user.get("signup_date")}}</td>
+            <td>{{user.get("activate_date")}}</td>
+            <td>{{user.get("phone")}}</td>
+            <td>{{user.get("skype")}}</td>
+          </tr>
+
+        {%endfor%}
+
+      </tbody>
+
+    </table>
+
+
+    <div class="">
+      {%set page_count = total // perpage %}
+      <ul class="pagination-mini pagination">
+        {%for page_number in range(1, page_count) %}
+        <li class="{{'active' if page_number == page or ''}}"><a href="{{url_for('admin_sale', page = page_number)}}">{{page_number}}</a></li>
+        {%endfor%}
+      </ul>
+    </div>
+
+
+
+    {% endblock %}
+ 
+
+
