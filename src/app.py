@@ -406,7 +406,7 @@ def test_email_from_sale():
     return msg.html
 
 @app.route("/activate/", defaults={'confirm': None}, methods=["GET", "POST"])
-@app.route("/activate/<confirm>", methods = ["GET", "POST"])
+@app.route("/activate/<confirm>/", methods = ["GET", "POST"])
 def activate(confirm):
     form = Activate(request.form)
     if request.method == "POST":

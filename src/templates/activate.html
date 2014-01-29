@@ -2,20 +2,22 @@
 
 {% block content %}      
 
+<div class="container">	
+
 <h1>{{title}}</h1>
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-8">
       {% if user %}
           <p><span class="text-transform:capitalize">{{user.get("username") }}, ваша регистрация завершена. Теперь вы можете перейти в раздел <a href="{{url_for('account_sale')}}">свои объявления</a>, введя логин и пароль.</p>
       {% else %}
         <p>
-        {%if user %} Не удалось активировать регистрацию, так как ссылка устарела или неверна. {%endif%}Вы можете повторно запросить ссылку на активацию, введя свой адрес электронной почты и нажав кнопку "Выслать".</p>
+        Не удалось активировать регистрацию, так как ссылка устарела или неверна. Вы можете повторно запросить ссылку на активацию, введя свой адрес электронной почты и нажав кнопку "Выслать".</p>
 
       {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
         <form method="post" action="{{request.path}}">
 
-          {{ form_field(form.email, placeholder="Введите эл. почту: your.mail@yandex.ru", class="input-xlarge", value = current_user.email) }}
+          {{ form_field(form.email, placeholder="Введите эл. почту", size="col-sm-5 col-md-5", value = current_user.email) }}
 
           <button type="submit" class="btn btn-primary" data-loading-text="Отправляется...">Выслать</button>
         </form>
@@ -25,6 +27,7 @@
 
 </div>
 
+</div>
 
 
 <script type="text/javascript">

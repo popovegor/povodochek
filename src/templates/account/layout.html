@@ -52,19 +52,25 @@
   {% if not current_user.active and not session["activate_remember_later"] %}
 
 
-  <div id="activate_remember" class="modal hide fade text-left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div id="activate_remember" class="modal fade text-left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_rem" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        
+      
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-      <h3 id="myModalLabel">Напоминание o подтверждении регистрации</h3>
+      <h3 id="myModalLabel_rem">Напоминание o подтверждении регистрации</h3>
     </div>
     <div class="modal-body">
       <p style="line-height:20px">Ваша электронная почта все еще не подтверждена! Не забудьте это сделать в ближайшее время, перейдя по ссылке в письме, которое было отправленно при регистрации, или <a href="{{url_for('activate')}}" target='_blank'>вышлете новую ссылку</a>.</p>
     </div>
     <div class="modal-footer">
-      <button class="btn" id="activate_remember_later">Напомнить позже</button>
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Закрыть</button>
+      <button class="btn btn-default" id="activate_remember_later">Напомнить позже</button>
+      <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Закрыть</button>
     </div>
-  </div>
+    </div>  
+    </div> <!--modal-dialog-->
+  </div> <!--modal-->
 
     <script type="text/javascript">
 
