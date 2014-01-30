@@ -21,19 +21,13 @@
 
               {{ form_field(form.phone, placeholder = "Введите тел. номер") }}
               
-                {#<div class="phone-options">
-                  {{ form_field(form.phone_adv_hide) }}
-                  { form_field(form.phone_adv_sms) }
-                </div>
-              </div>  #}
+             
 
                <div class="skype">
           
                    {{ form_field(form.skype, placeholder="Введите skype-имя") }}
 
-                   {#<div class="skype-options">
-                     {{ form_field(form.skype_adv_hide) }} 
-                   </div>#}
+             
 
                </div>
 
@@ -41,9 +35,6 @@
 
                    {{ form_field(form.city, placeholder="Введите название населенного пункта") }}
 
-                   {#<div class="city-options">
-                     {{ form_field(form.city_adv_hide) }} 
-                   </div>#}
 
                </div>
 
@@ -62,24 +53,21 @@
 <script type="text/javascript">
 
     $(function(){
-      $("#city").typeahead({
-        minLength: 1, 
-        limit: 8,
-        source: function (query, process) {
-          return $.getJSON('/ajax/location/typeahead',  {limit: 8, query: query}, function (data) { return process(data.items);
-          }); //getJSON
-        } //source
-      }); //typeahead  
-    });
 
-    $(function(){
+	    $("#{{form.city.id}}").typeahead({
+	    minLength: 1,
+	    limit: 8,
+	    source: function (query, process) {
+	      return $.getJSON("{{url_for('ajax_typeahead_location')}}",
+	        {limit: 8, query: query },
+	        function (data) { return process(data.items);}); //getJSON
+	      } //source
+	    }); //typeahead 
+
+	    
       $("#phone").inputmask({"mask": "+7(999)999-9999", 
-      }); 
-    });
-
-
-      //validation
-    $(function(){
+      });
+      
       povodochek.validate($("form"),  {
          username : {required: true},
          phone : {_phone: true}
