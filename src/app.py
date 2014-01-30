@@ -525,7 +525,7 @@ def reset_password():
         email_or_login = form.email_or_login.data
         password = str(hash(str(uuid1())) % 10000000)
         asign = str(uuid4())
-        user = users().find_and_modify({'$or' : [{'email': email_or_login}, {'login': email_or_login}]}, \
+        user = users().find_and_modify(form.email_or_login.user, \
             {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
         if user:
             send_reset_password(user.get('email'), user.get("login"), asign, password)

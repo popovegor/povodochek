@@ -22,7 +22,7 @@
 
           {{ form_field(form.accept_tos, checked="checked") }}
 
-            <button class="btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрироваться</button>
+            <button class="btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрировать</button>
      
       </form>
   </div>
@@ -36,7 +36,7 @@
   $(function(){
 
     povodochek.validate($("form"), {
-        login : {required : true, rangelength: [6, 36], _login: true},
+        login : {required : true, rangelength: [6, 36]},
         email : {required : true , email: true},
         password: {required: true, rangelength: [6, 36]},
         accept_tos: {required: true}

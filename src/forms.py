@@ -134,14 +134,17 @@ class ChangeEmail(Form):
         [ Required(message=MSG_REQUIRED), EqualTo('new_email', message=u'Адреса эл. почты не совпадают')])
 
 class ResetPassword(Form):
-    email_or_login = TextField(u"Электронная почта или Логин", \
+    email_or_login = TextField(u"Электронная почта или логин", \
         [Required(message=MSG_REQUIRED)], \
-        filters = [lambda x : (x or '').lower()])
+        filters = [lambda x : (x or '')])
 
     def validate_email_or_login(form, field):
-        user = users().find_one({'$or': [{'email': field.data}, {'login':field.data}]})
+        matcher = re.compile("^" + re.escape(field.data) + "$", re.IGNORECASE)
+        user = users().find_one({'$or': [{'email': {'$regex' : matcher}},{'login': {'$regex' : matcher}}]})
         if not user:
-            raise ValidationError(u"Электронная почта или Логин '%s' не найдены" % field.data)
+            raise ValidationError(u"Электронная почта или логин '%s' не найдены" % field.data)
+        else:
+            field.user = user
 
 
 class SaleSearch(Form):
@@ -254,12 +257,11 @@ class SignIn(Form):
 
 class SignUpBasic(Form):
     login = TextField(u"Логин", \
-        [Required(message=MSG_REQUIRED), \
-        Regexp(u"^[.a-zA-Z0-9_-]+$", message=u"Неправильный формат: только цифры, латинские буквы, дефисы, подчеркивания и точки."), \
+        [Required(message=MSG_REQUIRED), 
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)), \
         validate_login_used],\
-        filters = [lambda x : (x or '').lower()], \
-        description = u'Допускается вводить латинские буквы, цифры, дефисы, подчёркивания и точки, от 6 до 36 символов.')
+        filters = [lambda x : (x or '')], \
+        description = u'Длина логина от 6 до 36 символов.')
 
 
     email = TextField(u'Электронная почта / Email', \
