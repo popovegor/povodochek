@@ -444,7 +444,7 @@ def account_change_password():
     if request.method == "POST" and form.validate():
         users().find_and_modify({"_id": ObjectId(current_user.id)}, \
             {"$set": {"pwd_hash": hash_password(form.new_password.data)}})
-        flash(u"Пароль успешно изменен.", "info")
+        flash(u"Пароль успешно изменен.", "success")
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
@@ -454,7 +454,7 @@ def account_confirm_email(base64_email):
     new_email = base64.b64decode(base64_email)
     if new_email and current_user.new_email == new_email:
         users().update({"_id": ObjectId(current_user.id)}, {"$set": {'new_email': None, "email": new_email}})
-        flash(u"Новый почтовый адрес подтвержден.", "info")
+        flash(u"Новый почтовый адрес подтвержден.", "success")
     else:
         flash(u"Новый почтовый адрес не удалось подтвердить!", "error")
     return redirect(url_for('account_change_email'))
@@ -864,7 +864,7 @@ def account_sale_remove(id):
         'user_id': {'$in': [current_user.id, str(current_user.id)]}})
     if adv:
         sales().remove(adv)
-        flash(u"Объявление '%s' удалено." % adv["title"], "info")
+        flash(u"Объявление '%s' удалено." % adv["title"], "success")
     return redirect(url_for("account_sale"))
     
 
@@ -881,7 +881,7 @@ def account_sale_edit(id):
     if request.method == "POST":
         if form.validate():
             sale_save(form, id)
-            flash(u"Объявление '%s' обновлено." % form.title.data, "info")
+            flash(u"Объявление '%s' обновлено." % form.title.data, "success")
             return redirect(url_for("account_sale"))
     else:
         form.breed.data = get_breed_name(adv.get("breed_id"), adv.get("pet_id"))
