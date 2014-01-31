@@ -4368,9 +4368,8 @@ a.list-group-item.active > .badge,
 }
 .jumbotron {
   padding: 30px;
-  padding-top: 30px - 10px;
   margin-top: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: inherit;
   background-color: #eee;
 }
@@ -4402,7 +4401,8 @@ a.list-group-item.active > .badge,
   }
   .jumbotron h1,
   .jumbotron .h1 {
-    font-size: 49px;
+    font-size: 49.699999999999996px;
+    text-indent: -3px;
   }
 }
 .thumbnail {
