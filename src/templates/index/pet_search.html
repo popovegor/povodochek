@@ -1,7 +1,8 @@
 <div class="pet-search container ">
+
   <div class="jumbotron ">
-    <h1 style="text-indent:-3px">Объявления о&nbsp;продаже собак&nbsp;и&nbsp;кошек</h1>
-    <p class="hidden-xs"><small>Поиск объявлений о продаже породистых собак и кошек по всей России.</small></p>
+    <h1 style="">Поиск объявлений о&nbsp;продаже кошек&nbsp;и&nbsp;собак</h1>
+    {#<p class="hidden-xs"><small>Поиск объявлений о продаже породистых собак и кошек по всей России.</small></p>#}
 
     <form method="get" id="search" action="{{url_for('sale')}}">
 
@@ -9,13 +10,13 @@
 
       <div class="row">
 
-        <div class="col-sm-4">
+        <div class="col-md-5">
           <div class="form-group">
             <label for="{{pet_search_form.breed.id}}">Порода</label>
             <input type="text" class="form-control" id="{{pet_search_form.breed.id}}" placeholder="Укажите породу собаки или кошки" name="{{pet_search_form.breed.name}}">
           </div>
         </div>
-        <div class="col-sm-5">
+        <div class="col-md-5">
 
             <div class="form-group">
             <label for="{{pet_search_form.city.id}}">Местоположение</label>
@@ -24,8 +25,8 @@
 
         </div>
             
-          <div class="col-sm-3 row">
-              <div class="col-sm-12 hidden-xs">
+          <div class="col-md-2 row">
+              <div class="col-sm-12 hidden-sm">
                 &nbsp;
               </div>
               <div class="col-sm-12" style="margin-top:5px">
