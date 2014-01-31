@@ -64,6 +64,13 @@
 
                               <h4 style="overflow:hidden" class="adv-head"><a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" title='{{adv.get("title")}}'>{{adv.get("title")}}</a></h4>
                             
+                            {% set pet_id = adv.get("pet_id")%}        
+                            {% set breed_name = adv.get("breed_id") | breed_name(pet_id) %}
+                            {% if breed_name %}
+                            <p class="adv-breed">
+                              <span>{{breed_name }}</span> 
+                            </p>
+                            {%endif%}
 
                               <p class="adv-city">
                                 {% set city_id = adv.get("city_id") %}
@@ -78,16 +85,10 @@
                               </span>
                               {%endif%}
 
-                            </p>                
-                            {#% set breed_name = adv.get("breed_id") | breed_name(adv.get("pet_id")) %}
-                            {% if breed_name %}
-                            <p class="adv-breed">
+                            </p>        
+                            
 
-                              <small class="text-muted">Порода: </small><span>{{breed_name | lower }}</span>                              
-                            </p>
-                            {%endif%}
-
-                            {% set gender_name = adv.get("gender_id")  | gender_name %}
+                            {#% set gender_name = adv.get("gender_id")  | gender_name %}
                               
                             {%if gender_name %}
                             <p class="adv-gender">

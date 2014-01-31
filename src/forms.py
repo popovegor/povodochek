@@ -20,7 +20,7 @@ from security import hash_password, check_password
 from helpers import (num, morph_word)
 from dic.genders import genders
 from dic.ages import ages
-from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name)
+from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed_by_id)
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city)
 
@@ -47,6 +47,14 @@ def pets_breeds():
         [("%s_%s" % (2, cat_id), cat_name) for cat_id, cat_name in cats.items()])]
     return _dogs + _cats
 
+
+def get_breed_by_form_field(field):
+	(breed, pet) = (None, None)
+	if field.data:
+		(breed, pet) = get_breed_by_id(field.data)
+		if not breed or not pet:
+			(breed, pet) = get_breed_by_name(field.data)
+	return (breed, pet)
 
 def get_city_by_city_field(field):
     city = None

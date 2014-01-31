@@ -7,7 +7,7 @@ from flask_login import (LoginManager, current_user,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_field, SendMail, ChangeEmail, SignUpBasic)
+from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_field, SendMail, ChangeEmail, SignUpBasic, get_breed_by_form_field)
 from pymongo import (MongoClient, ASCENDING, DESCENDING)
 from bson.objectid import ObjectId
 from bson.son import SON
@@ -39,7 +39,7 @@ from smsgate import send_sms
 from dic.ages import ages
 from dic.genders import genders
 from dic.pets import (pets, get_pet_name, DOG_ID, CAT_ID)
-from dic.breeds import (dogs, get_breed_name, get_composite_breed, cats, get_breed_by_name)
+from dic.breeds import (dogs, get_breed_name, cats, get_breed_by_name)
 from dic.cities import (get_city_region, get_city, get_city_name, format_city_region)
 
 from flaskext.markdown import Markdown
@@ -170,7 +170,6 @@ app.jinja_env.filters['format'] = jinja_format
 app.jinja_env.filters['pet_name'] = get_pet_name
 
 app.jinja_env.filters['breed_name'] = get_breed_name
-app.jinja_env.filters['composite_breed'] = get_composite_breed
 
 def jinja_sorted(iterable, key = None, reverse = False):
     return sorted(iterable, key = eval(key), reverse = reverse) 
@@ -653,7 +652,9 @@ def sale(sale_search_form = None, pet = None):
     city = get_city_by_city_field(form.city)
     (form.city.data, form.city.city_id) = \
         (format_city_region(city), city.get("city_id")) if city else (None, None)
-    (breed_id, pet_id) = get_breed_by_name(form.breed.data)
+    (breed_id, pet_id) = get_breed_by_form_field(form.breed)
+    if breed_id and pet_id:
+    	form.breed.data = get_breed_name(breed_id, pet_id)
     pet_id = pet_id or pet
     # sort
     session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
@@ -768,7 +769,7 @@ def account_contact():
                 'skype' : form.skype.data, \
                 'skype_adv_hide': form.skype_adv_hide.data if form.skype.data else None, \
                 'city_adv_hide': form.city_adv_hide.data if form.city.data else None}})
-            flash(u"Контактная информация обновлена.", "info")
+            flash(u"Контактная информация обновлена.", "success")
             return redirect(url_for("account_contact"))
     else:
         form.city.data = get_city_region(user.get("city_id"))
