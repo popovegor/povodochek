@@ -235,8 +235,8 @@ def load_user(id):
 @app.route("/")
 def index():
     mosaic_advs = get_sales_for_mosaic(0, 6)
-    top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 10)]
-    top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 10)]
+    top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 15)]
+    top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 15)]
     tmpl = render_template('index1.html', \
         pet_search_form = SaleSearch(), \
         top_cats = top_cats, \
