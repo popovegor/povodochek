@@ -253,7 +253,7 @@ def signin():
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
                 if login_user(User(login, user["_id"]), remember=remember):
-                    return redirect(request.args.get("next") or url_for("account_contact"))
+                    return redirect(request.args.get("next") or url_for("account_sale"))
                 else:
                     flash(u"Извините, но вы не можете войти.", "error")
             else:
@@ -497,7 +497,7 @@ def signup_basic():
         send_signup(username, login, email, password, confirm)
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
         if login_user(User(login, user_id), remember = True):
-            return redirect(request.args.get('next') or url_for('account_contact'))
+            return redirect(request.args.get('next') or url_for('account_sale'))
         else:
             return redirect(url_for('signin'))
     return render_template('signup_basic.html', form=form, title=u"Регистрация")
@@ -511,7 +511,7 @@ def signup():
         send_signup(username, login, email, password, confirm)
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
         if login_user(User(login, user_id), remember = True):
-            return redirect(request.args.get('next') or url_for('account_contact'))
+            return redirect(request.args.get('next') or url_for('account_sale'))
         else:
             return redirect(url_for('signin'))
     return render_template('signup.html', form=form, title=u"Регистрация")

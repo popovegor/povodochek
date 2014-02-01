@@ -4392,9 +4392,9 @@ a.list-group-item.active > .badge,
 }
 @media screen and (min-width: 768px) {
   .jumbotron {
-    padding-top: 48px;
+    padding-top: 39px;
     padding-bottom: 48px;
-    margin-bottom: 10px;
+    margin-bottom: 40px;
   }
   .container .jumbotron {
     padding-right: 60px;
@@ -4402,7 +4402,8 @@ a.list-group-item.active > .badge,
   }
   .jumbotron h1,
   .jumbotron .h1 {
-    font-size: 49.699999999999996px;
+    font-family: Impact, Impact, Charcoal, sans-serif;
+    font-size: 56px;
     text-indent: -3px;
   }
 }
