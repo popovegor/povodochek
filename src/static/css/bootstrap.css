@@ -3572,11 +3572,11 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a,
 .nav-pills > li.active > a:hover,
 .nav-pills > li.active > a:focus {
-  padding-left: 10px;
-  border-color: #ccc;
-  /*color: @nav-pills-active-link-hover-color;
-        background-color: @nav-pills-active-link-hover-bg;*/
-  border-left: solid 5px;
+  color: #fff;
+  background-color: #428bca;
+  /*border-left:solid 5px;
+        border-color: #ccc;
+        padding-left: 10px;*/
   border-radius: 0;
 }
 .nav-stacked > li {
