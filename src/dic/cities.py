@@ -590,6 +590,7 @@ cities = {
 5844: { 'city_id': 5844, 'city_name': u'Зуевка', 'region_id': 38, 'region_name': u'Кировская область', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 58.3969993, 'longitude': 51.1443598, 'city_name_i' : u'Зуевка', 'city_name_r' : u'Зуевки', 'city_name_d' : u'Зуевке',  'city_name_v' : u'Зуевку',  'city_name_t' : u'Зуевкой',  'city_name_p' : u'Зуевке' },
 3928: { 'city_id': 3928, 'city_name': u'Ибреси', 'region_id': 59, 'region_name': u'Республика Чувашия', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 55.3015212, 'longitude': 47.0383188, 'city_name_i' : u'Ибреси', 'city_name_r' : u'Ибреси', 'city_name_d' : u'Ибреси',  'city_name_v' : u'Ибреси',  'city_name_t' : u'Ибреси',  'city_name_p' : u'Ибреси' },
 9240: { 'city_id': 9240, 'city_name': u'Иваново', 'region_id': 66, 'region_name': u'Владимирская область', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 56.1828192, 'longitude': 41.4779587, 'city_name_i' : u'Иваново', 'city_name_r' : u'Иванова', 'city_name_d' : u'Иваново',  'city_name_v' : u'Иваново',  'city_name_t' : u'Иваново',  'city_name_p' : u'Иванове' },
+70: { 'city_id': 70, 'city_name': u'Иваново', 'region_id': 69, 'region_name': u'Ивановская область', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 56.9924086, 'longitude': 40.9677888, 'city_name_i' : u'Иваново', 'city_name_r' : u'Иванова', 'city_name_d' : u'Иваново',  'city_name_v' : u'Иваново',  'city_name_t' : u'Иваново',  'city_name_p' : u'Иванове' },
 1263: { 'city_id': 1263, 'city_name': u'Ивантеевка', 'region_id': 1, 'region_name': u'Московская область', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 55.9869117, 'longitude': 37.9695399, 'city_name_i' : u'Ивантеевка', 'city_name_r' : u'Ивантеевки', 'city_name_d' : u'Ивантеевке',  'city_name_v' : u'Ивантеевку',  'city_name_t' : u'Ивантеевкой',  'city_name_p' : u'Ивантеевке' },
 5845: { 'city_id': 5845, 'city_name': u'Иванцево', 'region_id': 38, 'region_name': u'Кировская область', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 59.1261901, 'longitude': 51.0018502, 'city_name_i' : u'Иванцево', 'city_name_r' : u'Иванцева', 'city_name_d' : u'Иванцево',  'city_name_v' : u'Иванцево',  'city_name_t' : u'Иванцево',  'city_name_p' : u'Иванцеве' },
 212: { 'city_id': 212, 'city_name': u'Ивдель', 'region_id': 21, 'region_name': u'Свердловская область', 'country_id' : 1, 'country_name': u'Россия', 'latitude': 60.6968308, 'longitude': 60.4266813, 'city_name_i' : u'Ивдель', 'city_name_r' : u'Ивдели', 'city_name_d' : u'Ивдели',  'city_name_v' : u'Ивдели',  'city_name_t' : u'Ивделем',  'city_name_p' : u'Ивделе' },
@@ -2104,19 +2105,21 @@ def format_city_region(city):
 
 def update_db():
 	db = povodochek()
-	db.cities.drop()
+	db.cities_tmp.drop()
 
 	for c in cities.values():
 		location = {'type': "Point", 'coordinates' : [ c['longitude'], c['latitude'] ] }
-		db.cities.update({'city_id': c['city_id']}, \
+		db.cities_tmp.update({'city_id': c['city_id']}, \
 			{'$set' : { 'city_id': c['city_id'], \
 			'city_region' : format_city_region(c), \
 			'location' :  location }}, \
 			upsert=True)
 
-		db.cities.ensure_index([("location", GEOSPHERE)])
+		db.cities_tmp.ensure_index([("location", GEOSPHERE)])
 
-		db.cities.ensure_index([("city_id", ASCENDING)])
+		db.cities_tmp.ensure_index([("city_id", ASCENDING)])
+
+	db.cities_tmp.rename('cities', dropTarget=True)
 
 import sys
 
