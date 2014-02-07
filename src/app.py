@@ -281,7 +281,10 @@ def ajax_typeahead_location():
     limit = max(int(request.args.get("limit") or 8), 8)
     matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
     locations = [ city.get("city_region") \
-        for city in db.cities.find({'city_region': {"$regex": matcher}}, limit=limit, fields=["city_region"])]
+        for city in db.cities.find({'city_region': {"$regex": matcher}}, \
+        	limit = limit, \
+        	fields = ["city_region"], \
+        	sort = [('city_size', DESCENDING)] )]
     return jsonify(items = locations )    
 
 @app.route("/ajax/typeahead/breed/", defaults={'pet_id':None}, methods = ["GET"])
