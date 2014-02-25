@@ -30,8 +30,6 @@
 
 </head>
 <body>
-
-  {% include "clicktale_top_part.html" %}
   
   <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -47,9 +45,8 @@
   {%include "metrika.html"%}
 
   {%include "analytics.html"%}
-
-  {% include "clicktale_bottom_part.html" %}
   
+  {%include "mousestat.html"%}
   
 </body>
 </html>
