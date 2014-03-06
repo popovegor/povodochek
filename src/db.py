@@ -247,7 +247,7 @@ def find_dog_advs(
     if price_from or price_to:
         extend_filter("price", \
             {"$gte" : price_from if price_from > 0 else 0,\
-             "$lte" : price_to if price_to else maxint })
+             "$lte" : price_to if price_to else sys.maxint })
     near_cities = []
     if city and distance:
         near_cities = get_near_cities(city, distance)
