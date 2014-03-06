@@ -24,7 +24,7 @@ from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city)
 from dic.countries import (countries, get_countries_for_dog_adv)
-from dic.docs import (dog_docs)
+from dic.pet_docs import (dog_docs)
 
 import config
 
