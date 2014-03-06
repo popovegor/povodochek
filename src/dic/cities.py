@@ -3053,7 +3053,7 @@ cities = {
 7550: {"city_id": 7550,"city_name": u"Мосальск","region_name": u"Калужская область","region_id": 36,"country_name": u"Россия","country_id":1,"latitude": 54.4896088,"longitude": 34.9905282,"city_size": 1},
 9526: {"city_id": 9526,"city_name": u"Мосейково","region_name": u"Вологодская область","region_id": 33,"country_name": u"Россия","country_id":1,"latitude": 58.3437402,"longitude": 35.5366516,"city_size": 1},
 9527: {"city_id": 9527,"city_name": u"Москаленки","region_name": u"Омская область","region_id": 81,"country_name": u"Россия","country_id":1,"latitude": 54.9378511,"longitude": 71.9243699,"city_size": 1},
-3611: {"city_id": 3611,"city_name": u"Москва","region_name": u"Москва [регион]","region_id": 151,"country_name": u"Россия","country_id":1,"latitude": 55.7535590,"longitude": 37.6092180,"city_size": 6},
+3611: {"city_id": 3611,"city_name": u"Москва","region_name": u"Москва [регион]","region_id": 151,"country_name": u"Россия","country_id":1,"latitude": 55.7535590,"longitude": 37.6092180,"city_size": 7},
 1273: {"city_id": 1273,"city_name": u"Москва [МКАД 1 км]","region_name": u"Московская область","region_id": 1,"country_name": u"Россия","country_id":1,"latitude": 55.7765730,"longitude": 37.8424930,"city_size": 0},
 1272: {"city_id": 1272,"city_name": u"Москва [МКАД 105 км]","region_name": u"Московская область","region_id": 1,"country_name": u"Россия","country_id":1,"latitude": 55.8136772,"longitude": 37.8388023,"city_size": 1},
 4221: {"city_id": 4221,"city_name": u"Москва [МКАД 11 км]","region_name": u"Московская область","region_id": 1,"country_name": u"Россия","country_id":1,"latitude": 55.6869720,"longitude": 37.8303909,"city_size": 1},
@@ -5727,6 +5727,7 @@ def update_db():
 		location = {'type': "Point", 'coordinates' : [ c['longitude'], c['latitude'] ] }
 		db.cities_tmp.update({'city_id': c['city_id']}, \
 			{'$set' : { 'city_id': c['city_id'], \
+			'city_name' : c['city_name'], \
 			'city_region' : format_city_region(c), \
 			'city_size' : c['city_size'], \
 			'location' :  location }}, \

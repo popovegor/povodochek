@@ -1,0 +1,73 @@
+
+{%- macro top_breeds(pets, pet_id) -%}
+		
+		<div style="margin-top:30px">
+			
+			<div class="" style="">
+				<h5 class="text-left" style="">
+			<b>{{pet_id | pet_name | morph_word(["plur"]) | title }}</b>
+				</h5>
+			</div>
+		
+
+		<div class="row breeds" style="margin-bottom:20px">
+			
+			<div class="col-md-12 small">
+				<table style="width:100%"><tbody>
+				{% for pet in pets %}
+					{%set pet_id = pet.get('pet_id') %}
+					{% set breed_id = pet.get('breed_id') %}
+					{%set breed_name = breed_id | breed_name(pet_id) %}
+					<tr>
+						<!-- <td>{{loop.index}}.&nbsp;</td> -->
+						<td class="breed-name" style="width:60%;">
+							<p><a href="{{url_for('dog_search' if pet_id == 1 else 'cat_search' , breed = breed_id) }}">{{breed_name}}</a></p>	
+						</td>
+
+						{#<td style="width:50px">&nbsp;</td>
+						<td class="breed-counter" style="text-align:left;">
+							<span class="">{{pet.get("count")}}</span>
+						</td>#}
+					</tr>
+				{% endfor %}
+				</tbody></table>	
+			</div>
+			
+			</div> <!-- cities -->
+		</div>
+
+		{%- endmacro -%}
+
+
+
+	
+<div class="top-breeds" style="margin-top:30px">
+
+
+		
+			<div class="" style="">
+				<h4 class="text-left" style="">Популярные породы на&nbsp;продажу</h4>
+
+
+		
+			</div>
+		
+			<div class="row" style="margin-top:20px">
+	
+				<div class="col-sm-6">
+					
+					{{ top_breeds(top_dogs, pet_id = 1)}}
+
+				</div>
+
+				<div class="col-sm-5 col-sm-push-1">
+
+					{{ top_breeds(top_cats, pet_id = 2)}}
+
+				</div>	
+
+			</div>
+	
+	
+</div> <!-- top-breeds -->
+

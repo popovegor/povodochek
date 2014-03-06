@@ -5,7 +5,9 @@
 {% endblock %}
 
 {%block breadcrumbs %}
-	
+
+	 <div style="{#font-family:Georgia; #}font-style:italic; margin:0px 0px 10px 0px; padding:7px 0px" class="">Продажа и покупка породистых собак и кошек по&nbsp;всей&nbsp;России!</div>
+	 
 {%endblock%}
 
 {%  block content %}
@@ -13,19 +15,44 @@
 
 	<div class="index">
 			
+			<div class="row">	
 
-			{%include "index/pet_search.html" %}		
-			
+			{% from "index/pet_top_breeds_1.html" import top_breeds %}
 
-			<div class="container">	
+			<div class="col-sm-2">
+				{{ top_breeds(top_dogs, pet_id = 1)}}
+			</div>
+
+			<div class="col-sm-8">
+				{%include "index/pet_search.html" %}	
+
+
+				{% include "index/pet_mosaic_1.html" %}	
+			</div>
+
+			<div class="col-sm-2">
+				{{ top_breeds(top_cats, pet_id = 2)}}
+			</div>
+
+			{#<div class="col-md-4">
+					{%include "index/pet_top_breeds_1.html" %}
+			</div>#}
+			</div>
 
 			<div class="row">
-				<div class="col-sm-12">
-					{%include "index/pet_top_breeds.html" %}		
+				<div class="col-md-12">
+					
 				</div>
 			</div>
 
+
+			<div class="row">
+				<div class="col-md-12">
+							
+				</div>
 			</div>
+
+			
 			
 
 	</div>

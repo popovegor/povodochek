@@ -152,9 +152,10 @@
 
 .navbar-brand {
   float: left;
-  padding: @navbar-padding-vertical @navbar-padding-horizontal;
+  padding: @navbar-padding-vertical @navbar-padding-horizontal (@navbar-padding-vertical - 3px) @navbar-padding-horizontal;
   font-size: @font-size-large;
   line-height: @line-height-computed;
+  font-family: @font-brand-family;
 
   &:hover,
   &:focus {
@@ -175,6 +176,12 @@
     }
   }
 }
+
+span.navbar-brand {
+  border-bottom: solid 3px #ccc;
+}
+
+
 
 
 // Navbar toggle

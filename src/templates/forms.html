@@ -1,20 +1,22 @@
 {%- macro form_field_label(field) -%}
+	{%if field.label.text %}
     <label for="{{ field.id }}" style="{{kwargs.get('lbl_style')}}" class="form-field-name {{kwargs.get('lbl_class')}}">{{ field.label.text }}
     {%- if field.flags.required -%}
         <!-- <abbr title="Обязательное поле">*</abbr> -->
           <!-- <sub class="required">*</sub> -->
           <span class="glyphicon glyphicon-asterisk small" style="color:red"></span>
     {%- endif %}</label>
+    {%endif%}
 {%- endmacro -%}
  
 {%- macro form_field_description(field) -%}
     {% if field.description %}
-        <p class="help-block">{{ field.description }}</p>
+        <span class="form-field-desc small">{{field.description.msg if field.description is mapping else field.description }}</span>
     {% endif %}
 {%- endmacro -%}
  
 {%- macro form_field_error(field) -%}
-  <ul class="form-field-errors list-unstyled">
+  <ul class="form-field-errors list-unstyled small">
     {% if field.errors %}      
         {%- for error in field.errors -%}
             <li class="form-field-error">{{ error }}
@@ -23,13 +25,30 @@
     {% endif %}
   </ul>
 {%- endmacro -%}
+
+{%- macro form_field_help(field) -%}
+ 
+  <span style="" class="glyphicon glyphicon-info-sign form-field-help" data-toggle="tooltip" title="{{kwargs.get('help')}}" data-html="html" data-placement="{{ kwargs.get('help_placement') or 'left' }}"></span>
+ 
+{%- endmacro -%}
+
  
 {%- macro form_field_boolean(field) -%}
-    <label>
-      {{ field(**kwargs) }} {{ field.label.text }}
-      {{ form_field_description(field) }}
-      {{ form_field_error(field) }}
-    </label>
+
+      <label class="">
+        {{ field(**kwargs) }} {{ field.label.text }}
+
+         {% if kwargs.get('help') %}
+        <span style="padding-left:10px">
+        {{ form_field_help(field, **kwargs) }}
+        </span>
+        {% endif %}
+
+        {{ form_field_description(field) }}
+        {{ form_field_error(field) }}
+      </label>
+      
+
 {%- endmacro -%}
  
 {%- macro action_buttons(submit_title, cancel_href, cancel_title="Отменить", submit_class="success") -%}
@@ -49,28 +68,80 @@
         {% if field.type == 'BooleanField' %}
             {{ form_field_boolean(field, **kwargs) }}
         {% else %}
-            {{ form_field_label(field, **kwargs) }}
-            {{ form_field_error(field) }}          
-
-            {% if field.type == 'RadioField' %}
-                {{ field(class='radio-group', **kwargs) }}
-            {% else %}  
-                  {% if 'size' in kwargs %}
-                    <div class="row">
-                      <div class="{{kwargs.get('size')}}">
-                          {{ field(class='form-control', **kwargs) }}  
-                      </div>
-                    </div> 
-                    {% else %}
-                          {{ field(class='form-control', **kwargs) }}  
-                  {%endif%}
-            {% endif %}
-            {{ form_field_description(field) }}
-
-
+            {{form_another_field(field, **kwargs)}}
         {% endif %}
     {% endif %}
   </div>
+{%- endmacro -%}
+
+
+
+{%- macro form_another_field(field) -%}
+
+    {% set horizontal = kwargs.get("horizontal") %}
+    {% set leftside_class = horizontal.get("l") if horizontal %}
+    {% set rightside_class = horizontal.get("r") if horizontal %}
+
+    {%if horizontal %}
+      <div class="row">
+          <div class="{{leftside_class}}">
+    {%endif%}
+            {{ form_field_label(field, **kwargs) }}  
+    {%if horizontal %}
+          </div>
+          <div class="{{rightside_class}}">
+    {%endif%}
+            
+            {% if field.type == 'RadioField' %}
+                {{ field(class='radio-group', **kwargs) }}
+            {% else %}
+              {% if 'size' in kwargs %}
+                      <div class="row">
+                        <div class="{{kwargs.get('size')}}">
+              {% endif %}  
+            <table style="width:100%"> <tbody><tr>
+                  
+                  <td>
+
+                    {% set addon_r = kwargs.get('addon_right')%}
+                    {% set addon_l = kwargs.get('addon_left')%}
+
+
+
+                    <div class="{{'input-group' if addon_r or addon_l}}">
+
+                    {% if addon_l %}
+                        <span class="input-group-addon">{{addon_l}}</span>
+                    {% endif %}
+
+                    {{ field(class='form-control', **kwargs) }}   
+                    
+                    {% if addon_r %}
+                      <span class="input-group-addon">{{addon_r}}</span>
+                    {%endif%}
+                    </div>
+                    
+
+                  </td> 
+            {% if kwargs.get('help') %}
+            <td style="width:10px" class=""></td>
+            <td style="width:20px;" class="">{{ form_field_help(field,  **kwargs) }}</td>
+            {%endif%}
+          </tr></tbody></table>
+          {% if 'size' in kwargs %}
+              </div>
+                    </div> 
+          {%endif%}
+            {% endif %}
+            {{ form_field_description(field) }}
+            {{ form_field_error(field) }}          
+
+    {%if horizontal %}
+          </div>
+      </div>
+
+    {%endif%}
+           
 {%- endmacro -%}
  
 {%- macro form_fields(fields, class=None, legend=None) -%}

@@ -11,6 +11,10 @@
     
     <div class="cities">
 
+    {% if breeds_by_cities | length <=0 %}
+          К сожалению, пока не добавлено ни одного объявления о продаже {{pet_name}}.
+    {% endif %}
+
         <div class="city-navigation">
           
           {% for letter, advs in breeds_by_cities %}
@@ -42,8 +46,10 @@
                     <div class="span3 breed-column">                  
                     {%for breed_id, breeds in column %}
                       <div class="breed">
-                      {% set breed_name = breed_id | breed_name(adv.get('pet_id')) %}
-                        <a class="breed-name" target="_blank" href="{{url_for_sale(pet_id = adv.get('pet_id') ,  breed = breed_id, city = city_id, distance = 1)}}">{{breed_name }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
+                      {% set breed_name = breed_id | breed_name(pet_id) %}
+                      {%set url = url_for('dog_search' if pet_id == 1 else 'cat_search', breed = breed_id, city = city_id, distance = 1)%}
+                        <a class="breed-name" target="_blank" href="{{url}}">{{breed_name }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
+                      
                       </div> <!-- breed -->
                     {%endfor%}
                     </div> <!-- breed-column -->

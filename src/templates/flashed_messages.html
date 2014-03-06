@@ -1,14 +1,16 @@
 {%- macro render_flahed_messages(category) -%}
  {% with messages = get_flashed_messages(category_filter=[category]) %}
 {% if messages %}
-<div class="container">
-<div class="well well-small flashed-messages flashed-messages-{{category}}">
-  <button type="button" class="close" data-dismiss="alert">&times;</button> 
+
     {% for message in messages %}
-    <b class="flashed-message">{{ message }}</b>
+    <div class="row">
+		<div class="col-md-8 col-md-push-2 well well-small flashed-messages flashed-messages-{{category}}">
+		  <button type="button" class="close" data-dismiss="alert">&times;</button> 
+	    <span class="flashed-message">{{ message }}</span>
+	    </div>
+	</div>
     {% endfor %}
-</div>
-</div>
+
 {% endif %}
 {% endwith %}
 {%- endmacro -%}

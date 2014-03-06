@@ -1,11 +1,12 @@
 {% extends "account/layout.html" %}
 
+{%block page_desc %}
+
+<span class="">Контактная информация будет подставляться в блок с вашими контактными данными при добавлении новых объявлений.</span>    
+
+{%endblock%}
+
 {% block account_content %}
-
-
-
-<p class="">Контактная информация будет подставляться в блок с вашими контактными данными при добавлении новых объявлений.</p>    
-
 
 
 <div class="account-contact row">
@@ -15,17 +16,17 @@
 
         <form action="{{request.url}}" method="POST" id="contact" role="form">
 
-            {{ form_field(form.username, placeholder="Введите ваше имя") }}         
+            {{ form_field(form.username, placeholder="Введите ваше имя", size = "col-sm-9") }}         
 
              <div class="phone">
 
-              {{ form_field(form.phone, placeholder = "Введите тел. номер") }}
+              {{ form_field(form.phone, placeholder = "Введите тел. номер", size = "col-sm-6") }}
               
              
 
                <div class="skype">
           
-                   {{ form_field(form.skype, placeholder="Введите skype-имя") }}
+                   {{ form_field(form.skype, placeholder="Введите skype-имя", size = "col-sm-6") }}
 
              
 
@@ -33,7 +34,7 @@
 
                 <div class="city">
 
-                   {{ form_field(form.city, placeholder="Введите название населенного пункта") }}
+                   {{ form_field(form.city, placeholder="Введите название населенного пункта", size = "col-sm-12") }}
 
 
                </div>
@@ -55,8 +56,9 @@
     $(function(){
 
 	    $("#{{form.city.id}}").typeahead({
-	    minLength: 1,
+	    minLength: 0,
 	    limit: 8,
+      autoSelect : false,
 	    source: function (query, process) {
 	      return $.getJSON("{{url_for('ajax_typeahead_location')}}",
 	        {limit: 8, query: query },

@@ -1,56 +1,70 @@
-<div class="pet-search container ">
 
-  <div class="jumbotron ">
-    <h1 style="">Поиск объявлений о&nbsp;продаже кошек&nbsp;и&nbsp;собак</h1>
-    {#<p class="hidden-xs"><small>Поиск объявлений о продаже породистых собак и кошек по всей России.</small></p>#}
+<div class="pet-search">
 
-    <form method="get" id="search" action="{{url_for('sale')}}">
+  <div class="bg-info " style="padding:30px 20px 20px 20px; margin:30px 0px; border-radius:5px;">
+
+  <div class="row">
+    
+    <div class="col-lg-10 col-lg-push-1">
+      <h1 class="alert-warning" style="top:0px;left:0px;margin:0px;width:100%; padding:10px 20px; border-radius: 0px; {#color:#555;#}">Найдите своего идеального питомца</h1>
+
+    <form method="get" id="search" action="" style="margin-top:20px; padding:0px 20px">
 
       {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-      <div class="row">
+      <div class="">
 
-        <div class="col-md-5">
+        <div class="">
           <div class="form-group">
-            <label for="{{pet_search_form.breed.id}}">Порода</label>
-            <input type="text" class="form-control" id="{{pet_search_form.breed.id}}" placeholder="Порода собаки или кошки" name="{{pet_search_form.breed.name}}">
+            {% set breed = ( breeds | random) %}
+            <label for="{{pet_search_form.breed.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Какой породы? Например, <a tabindex="-1"  style="{#text-decoration:underline#}" href="#" title="{{breed.get('name') + ', '  + breed.get('pet') | pet_name | morph_word(['plur']) }}" id="breed_example">{{breed.get('name') | truncate(40, killwords = True)}}</a>.</label>
+            <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.breed.id}}" placeholder="Укажите породу собаки или кошки" name="{{pet_search_form.breed.name}}">
           </div>
         </div>
-        <div class="col-md-5">
+        <div class="">
 
             <div class="form-group">
-            <label for="{{pet_search_form.city.id}}">Местоположение</label>
-            <input type="text" class="form-control" id="{{pet_search_form.city.id}}" placeholder="Населенный пункт, город" name="{{pet_search_form.city.name}}">
+
+            {% set city = (large_cities | random).get("city_name")%}
+
+            <label for="{{pet_search_form.city.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Из какого города? Например, <a title="{{city}}" id="city_example" tabindex="-1" href="#" style="{#text-decoration:underline#}">{{city}}</a>.</label>
+            <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.city.id}}" placeholder="Укажите населенный пункт" name="{{pet_search_form.city.name}}">
           </div>
 
         </div>
             
-          <div class="col-md-2 row">
-              <div class="col-sm-12 hidden-sm">
-                &nbsp;
-              </div>
-              <div class="col-sm-12" style="margin-top:5px">
-                  <button type="submit" class="btn btn-primary btn-md" id="pet_find">Найти&nbsp;питомца</button>
-              </div>
-                
-
-          </div>
-
             
-      
       </div>
+
+      <div class="" style="margin-top:25px">
+              {#<div class="col-sm-12 hidden-sm hidden-xs" style="margin-top:23px">
+                
+              </div>#}
+
+              <div class="text-right" style="; white-space:nowrap" id="pet_find_block" data-toggle="tooltip" >
+              {#<button class="btn btn-success btn-lg pull-left">Подать объявление</button>#}
+                    <button type="submit" class="btn btn-primary btn-md" style="" id="pet_find"><span class="glyphicon glyphicon-search" style="padding-right:10px"></span>Найти питомца</button>
+              </div>
+          </div>    
     </form>
+    </div>
+
+  </div>
+
+    
 
   </div>
 </div> <!-- pet-search -->
+
 
 <script type="text/javascript">
 
   $(document).ready(function(){
 
    $("#{{pet_search_form.city.id}}").typeahead({
-    minLength: 1,
-    limit: 8,
+    minLength: 0,
+    items: 8,
+    autoSelect : false,
     source: function (query, process) {
       return $.getJSON("{{url_for('ajax_typeahead_location')}}",
         {limit: 8, query: query },
@@ -59,27 +73,59 @@
     }); //typeahead  
 
     $("#{{pet_search_form.breed.id}}").typeahead({
-    minLength: 1,
-    limit: 8,
+    minLength: 0,
+    items: 8,
+    autoSelect : false,
     source: function (query, process) {
       return $.getJSON("{{url_for('ajax_typeahead_breed')}}",
         {limit: 8, query: query },
         function (data) { return process(data.items);}); //getJSON
       }, //source
       updater : function(item ) {
-        rewrite_search_url(item);
-        return item.substring(0, item.indexOf(","));
+        breed_name = on_select_breed(item);
+        return breed_name;
       }
     }); //typeahead  
 
-
-   var rewrite_search_url = function(breed_name) {
-    if (breed_name.indexOf(', Собаки') > 0) {
-      $("#search").attr("action", "{{url_for('sale_dogs')}}");
-    } else {
-      $("#search").attr("action", "{{url_for('sale_cats')}}");
+    var on_select_breed = function(breed_name) {
+      $("#{{pet_search_form.breed.id}}").tooltip("destroy");
+      if (breed_name.indexOf(', Собаки') > 0) {
+        $("#search").attr("action", "{{url_for('dog_search')}}");
+      } else if (breed_name.indexOf(', Кошки') > 0){
+        $("#search").attr("action", "{{url_for('cat_search')}}");      
+      } 
+      return breed_name.substring(0, breed_name.indexOf(","));
     }
-  }
+
+    $("#pet_find").click(function(){
+      var breed = $("#{{pet_search_form.breed.id}}");
+      if(breed.val() == "")
+      {
+        breed.focus();
+        $("#{{pet_search_form.breed.id}}").tooltip({
+          title: "Пожалуйста, укажите породу собаки или кошки",
+          html : true,
+          placement : "top",
+          trigger : "click"
+        }).tooltip("show");
+        return false;
+      }
+    });
+
+    $("#city_example").click(function(){
+      var city_name = $(this).attr("title");
+      $("#{{pet_search_form.city.id}}").val(city_name);
+      return false;
+    });
+
+    $("#breed_example").click(function(){
+      var breed_name = on_select_breed($(this).attr("title"));
+      $("#{{pet_search_form.breed.id}}").val(breed_name);
+      return false;
+    });
+
+
+   
 
 });
 

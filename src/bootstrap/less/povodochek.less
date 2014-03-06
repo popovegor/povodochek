@@ -14,6 +14,7 @@
 
 html, body {
     height: 100%;
+    min-width: 750px;
 
     .table-hover {
         tr {
@@ -22,13 +23,6 @@ html, body {
             }
         }
     }
-}
-
-.ajax-link {
-    border-bottom: dotted 1px; 
-    &:focus, &:hover {
-        text-decoration: none !important;
-    };   
 }
 
 #menu {
@@ -57,11 +51,8 @@ form {
     }*/
 
     .form-field-desc {
-        margin-top: -0px !important;
-        padding-left: 5px;
-        line-height: 18px !important;
-        color: lighten(#000000, 40%);
-        /*font-size: 0.96em;*/
+        text-indent:3px;
+        margin-top:3px;
     }
 
     .form-field-errors {
@@ -69,17 +60,25 @@ form {
         .form-field-error {
             margin-bottom: 10px !important;
             color:red;
-            font-weight: bold;
         }
     }
 
+    .form-field-help {
+        /*vertical-align:bottom;*/
+        /*font-size:1.2em;*/
+        color:#aaa;
+        cursor:help;
+    }
+
     .textarea-counter {
-        margin-top: -30px;
+        margin-top: 0px;
         text-align: right;
         font-size: 0.9em;
         position: absolute;
-        color:#999999;
+        color:#999;
         padding-right: 5px;
+        right:35px;
+        width:auto !important;
     }
 }
 
@@ -186,7 +185,7 @@ form {
 
         #advs {
 
-            margin-top:20px;
+            margin-top:10px;
             position: relative;
             min-height: 110px;
             overflow: visible;
@@ -194,7 +193,7 @@ form {
 
             .ajax-loader {
                 margin-top: 80px;
-                height: 30px;
+                height: 100px;
                 width: 100%;
                 background-image: url(../img/ajax-loader.gif);
                 background-repeat: no-repeat;
@@ -203,7 +202,7 @@ form {
 
             .fade-white {
                 /*display: none;*/
-                height: 30px;
+                height: 20px;
                 width: 100%;
                 position: absolute;
                 bottom: 0;
@@ -216,19 +215,19 @@ form {
 
             .adv {
                 display: block;
-                padding: 20px;
+                padding: 10px;
                  /*background-color: #f5f5f5;*/
                  /*border:10px solid #f5f5f5;*/
             
                 img {
-                    border-radius:5px;
+                    /*border-radius:5px;*/
                 }
 
                 &:hover, &:focus {
                     /*margin: 5px;*/
                     /*margin: 2px;*/
-                    padding: 8px;
-                    border:2px solid #0088cc;
+                    padding: 9px;
+                    border:1px solid #0088cc;
                     border-radius:0px;
                     img {
                         border-radius:0px;
@@ -329,7 +328,7 @@ form {
      z-index: 2;
 }
 
-.pet-sale, .account-pet-sale {
+.pet-sale, .account-pet-sale, .dog-search {
 
     .delimiter {
         width:20%;
@@ -409,14 +408,14 @@ form {
     .adv-number {padding-left: 10px;}
 
 
-    .adv-odd { background-color: lighten(@state-info-bg, 5%); }
+    .adv-odd { background-color: @panel-default-heading-bg; }
     .adv-even { background-color: @state-warning-bg; }
     
     .filter {
 
         border-radius:5px;
 
-        background-color: @gray-lighter;
+        background-color: #f5f5f5;
         padding: 15px;
 
         form {
@@ -464,8 +463,8 @@ form {
     .main-photo {
         margin-bottom:5px;
         /*display: inline-block;*/
-        width: @photo-thumbail-width - 10;
-        text-align: center;
+        /*width: @photo-thumbail-width - 10;*/
+        /*white-space:nowrap;*/
     }
 
     .actions {
@@ -493,9 +492,44 @@ form {
     }
 }
 
-.sale-pet-show {
+.dog-adv-show, .sale-pet-show {
     /*margin-top:30px;*/
     margin-bottom: 25px;
+
+    .cat-show-misc {
+        font-family:@font-family-serif;
+        font-size:1.2em; 
+        font-style:italic
+    }
+
+    .dog-info, .doc-info, .dog-father, 
+    .dog-mother, .seller-block {
+        dl dt {
+            padding-top:2px;
+            width:140px;
+            font-size:@font-size-small;
+            font-weight: normal;
+            text-align: left;
+            &.float {
+                padding-right: 20px; 
+                width:180px;
+            }
+        }
+        dl dd { 
+            margin-bottom: 8px; 
+            margin-left:160px;
+            &.float {
+                margin-left: 0px; 
+            }
+        }
+    }
+
+    .das-price {
+        white-space:nowrap;
+        /*font-family:@font-family-serif; */
+        /*font-style:italic; */
+        font-size:(@font-size-base * 2)
+    }
 
     #breadcrumbs {
         margin-top:30px;
@@ -515,24 +549,22 @@ form {
         margin-bottom: 20px;
 
         #carousel {
-            border: none !important;
+            border: none;
             margin: 0 0 10px;
             background: #fff;
-            border: 4px solid #fff;
+            /*border: 4px solid #fff;*/
+            
             position: relative;
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            -o-border-radius: 4px;
-            border-radius: 4px;
-            box-shadow: 0 0px 0px rgba(0,0,0,.2);
-            -webkit-box-shadow: 0 0px 0px rgba(0,0,0,.2);
-            -moz-box-shadow: 0 0px 0px rgba(0,0,0,.2);
-            -o-box-shadow: 0px 0px 0px rgba(0,0,0,.2);
+            /*border-radius: 4px;*/
+            /*box-shadow: 0 0px 0px rgba(0,0,0,.2);*/
+            box-shadow: none;
             zoom: 1;
         }
 
         #slider {
             /*height: auto !important;*/
+            border:none;
+            box-shadow: none;
             .flex-direction-nav a {
                 width: 20% !important;
             }
@@ -547,14 +579,20 @@ form {
             }
         }
 
+        .flex-active-slide {
+            background-color: #fff;
+        }
+
         .photo {
+             overflow: hidden;
             /*cursor:  pointer;*/
             img {
-                /*max-height: 350px;*/
-                width:auto !important;
-                display: inline-block !important;
-                overflow: hidden;
-                max-width: 100% !important;
+                max-height: 450px;
+                min-height: 300px;
+                width:auto;
+                display: block;
+               margin: 0 auto;
+                /*max-width: 100% !important;*/
             }
         }
 
@@ -608,11 +646,19 @@ form {
     
 }
 
-.tbl-key-value {
+.info-block {
     width:100%;
-    tbody tr td {
+    tr th {
+        padding:2px 15px 10px 0px;
+        color:@gray-semi-lighter;
+        font-weight: normal;
         vertical-align: top;
-        padding-bottom:5px;
+        text-align: left;
+        font-size:@font-size-small;
+    }
+    tr td {
+        padding:0px 0px 10px 0px;
+        vertical-align: top;
     }
 }
 
@@ -641,13 +687,17 @@ form {
             }
             span {
                 text-decoration: none;
-                white-space: nowrap;
-                text-indent: 100%;
-                position: absolute;
-                cursor: pointer;
-                right: -9px;
-                top: -9px;
-                overflow: hidden;
+				white-space: nowrap;
+				position: absolute;
+				cursor: pointer;
+				right: -10px;
+				top: -10px;
+				overflow: hidden;
+				background: #fff;
+				width: 21px;
+				height: 20px;
+				border-radius: 32px;
+				font-size: 18px;
                 &:hover, &:focus {
                     color:#ff0000;
                 }
@@ -726,7 +776,7 @@ form {
 .flashed-messages-success {
     background-color: lighten(green, 60%) !important;
     border-color: lighten(green, 60%) !important;
-    color: lighten(black, 15%) !important;
+    color: #555;
 }
 
 .error-404 {
@@ -760,16 +810,10 @@ form {
     }
 }
 
-.pet-post-button{
-    a {
-       font-family: Georgia;
-       font-style: italic; 
-       /*.rounded-corners(0px);*/
-       /*border-bottom:dotted 1px;*/
+.pet-post-button {}
 
-       &:focus, &:hover {
-            /*.rounded-corners(5px);*/
-            /*border:solid 1px;*/
-       }
-    }
+.block-heading {
+	margin:30px 0px 20px 0; 
+	padding:15px; 
+	background-color:@panel-default-heading-bg;
 }

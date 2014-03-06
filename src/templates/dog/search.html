@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block breadcrumbs%}
+
+
+          <ol class="breadcrumb" >
+            <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
+            {%if not breed %}
+            <li class="active">Продажа {{pet | morph_word(["plur", "gent"])  | lower }}</li>
+            {%else%}
+              <li><a href="{{url_for('dog_search')}}">Продажа {{pet | morph_word(["plur", "gent"])  | lower }}</a> <span class="divider"></span></li>
+              <li class="active">{{breed}}</li>
+            {%endif%}
+
+          </ol>
+
+              
+{% endblock%}
+
+{% block content %}  
+
+<div class="dog-search">
+    
+      <div class="" style="max-width:920px; margin:10px 0 30px">
+          {% include 'dog/search_filter_horizontal.html' %}
+      </div>
+    
+
+  <h1 class="">{{header}}</h1>
+  
+    <div style="margin-top:30px;">
+
+      {% include 'dog/search_advs.html'%}
+
+    </div>
+
+</div>
+
+{% endblock %} 

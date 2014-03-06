@@ -6,21 +6,35 @@ from pymongo import MongoClient
 def povodochek():
 	return MongoClient().povodochek
 
-def aggregate():
+def aggregate(pet):
 	db = povodochek()
-	db.tmp_top_breeds.drop()
+	advs = db['%s_advs' % pet]
+	tmp_top_breeds_name = 'tmp_top_%s_breeds' % pet
+	tmp_top_breeds = db[tmp_top_breeds_name]
+	top_breeds_name = 'top_%s_breeds' % pet
+	top_breeds = db[top_breeds_name]
+	tmp_top_breeds.drop()
 
-	for adv in db.sales.find():
+	for adv in advs.find():
 		breed_id = adv.get('breed_id')
-		pet_id = adv.get('pet_id')
-		query = {'pet_id': pet_id, 'breed_id' : breed_id}
-		db.tmp_top_breeds.update(query, {'$inc': {'count': 1}, \
-			'$set': {'pet_id': pet_id, \
-			'breed_id': breed_id},  }, upsert = True)
+		query = {'breed_id' : breed_id}
+		tmp_top_breeds.update(query, \
+			{'$inc': {'count': 1}, \
+			'$set': {'breed_id': breed_id},  }, \
+			upsert = True)
 
-	db.tmp_top_breeds.rename('top_breeds', dropTarget=True)
+	if tmp_top_breeds_name in db.collection_names():
+		tmp_top_breeds.rename(\
+			top_breeds_name, dropTarget=True)
+	else:
+		top_breeds.drop()
+
+
+	
+
 		
 import sys
 			
 if __name__ == '__main__':
-    aggregate()
+    aggregate('cat')
+    aggregate('dog')

@@ -1,0 +1,151 @@
+<div style="margin:0px 0 20px" class="hidden-xs">
+    <small class="text-muted">фильтр</small>
+</div>
+<div class="panel-default filter" style="margin-bottom:20px">
+  <div class="" style="">
+      {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+      <form action="" method="get" class="" role="form">
+        
+        {{ form_field(form.breed, placeholder="Введите породу", class="input-sm form-control") }}
+
+        {#<div class="hidden-xs">
+         {{ form_field(form.gender, class="form-control") }}
+       </div>#}
+
+
+       {{ form_field(form.city, placeholder="Введите город", class="input-sm form-control") }}
+
+       <!-- distance -->
+       <div class="row filter-distance hidden-xs" style="display:none">
+        <div class="col-md-12">
+          {{ form_field(form.distance, style="display:none") }}
+          <p class="text-center slider-legend"><small class="pull-left">1</small> <span id="distanceValue">{{form.distance.data}}</span> <small class="pull-right">500</small></p>
+          <div id="disatnceSlider" class="noUiSlider horizontal"></div>
+        </div>
+      </div>
+
+      <!-- price -->
+      <div class="row filter-price hidden-xs">
+        <div class="col-md-12">
+          {{ form_field(form.price_from, style="display:none") }}
+          <div style="display:none">
+            {{ form_field(form.price_to, style="display:none") }}
+          </div>
+          <p class="text-center slider-legend"><small class="pull-left">0</small> <span id="priceValue">{{form.distance.data}}</span> <small class="pull-right">100+</small></p>
+          <div id="priceSlider" class="noUiSlider horizontal"></div>
+        </div>
+      </div>
+
+      <div class="clearfix filter-misc hidden-phone" >
+        <strong>Дополнительно</strong>
+        {{ form_field(form.photo) }}
+      </div>
+
+
+      <div class="text-left form-actions">
+        <button type="submit" class="btn btn-primary" style="">Показать</button>&nbsp;
+        <a  type="reset" class="btn btn-sm" href="{{request.path}}">Сбросить</a>
+      </div>
+
+    </form>
+
+     <script type="text/javascript">
+
+    var showDistance = function() {
+      $("#distanceValue").html("<b>" + $("#distance").val() + "</b><small> км</small>");
+    };
+
+    $(function(){
+      $("#disatnceSlider").noUiSlider({
+        range: [1,500], 
+        handles : 1, 
+        connect: "lower",
+        start: $("#distance").val(),
+        serialization : {to: $("#distance"), resolution : 1},
+        slide : showDistance,
+        step: 1
+      });
+
+      showDistance();
+
+      var showPrice = function() {
+        var to = parseInt($("#price_to").val());
+        var from = parseInt($("#price_from").val());
+        var price_html = "";
+        if (to === 100){
+          if(from === 0) {
+            price_html = "любая"
+          } else {
+           price_html = "<small><b>более</b></small><b> " + $("#price_from").val() + "</b><small> тыс руб</small>"
+         }
+       } else {
+        if(from === 0) {
+          price_html = "<small><b>менее</b> </small><b>" + $("#price_to").val() + "</b><small> тыс руб</small>"
+        } else {
+          price_html = "<b>" + $("#price_from").val() + "-" + $("#price_to").val() + "</b><small> тыс руб</small>"
+        }
+      }
+      $("#priceValue").html(price_html);
+    };
+
+    $("#priceSlider").noUiSlider({
+      range: [0,100], 
+      handles : 2, 
+      connect: "upper",
+      start: [$("#price_from").val(), $("#price_to").val()], 
+      serialization : {to: [$("#price_from"), $("#price_to")], resolution : 1},
+      slide : showPrice,
+      step: 1
+    });
+
+    showPrice();
+
+
+  });
+
+
+      //location with autocomplete built on typeahead.js
+      $(function(){
+
+        $("#{{form.city.id}}").typeahead({
+          minLength: 1,
+          limit: 8,
+          autoSelect : false,
+          source: function (query, process) {
+            return $.getJSON("{{url_for('ajax_typeahead_location')}}",
+              {limit: 8, query: query },
+                function (data) { return process(data.items);}); //getJSON
+              }, //source
+            }); //typeahead  
+
+        $("#{{form.breed.id}}").typeahead({
+		    minLength: 0,
+		    limit: 8,
+        autoSelect : false,
+		    source: function (query, process) {
+		      return $.getJSON("{{url_for('ajax_typeahead_cat')}}",
+		        {limit: 8, query: query },
+		        function (data) { return process(data.items);}); //getJSON
+		      }, //source
+          updater : function(item ) {return item.substring(0, item.indexOf(","));}
+		    }); //typeahead 
+
+        $("#{{form.city.id}}").change(function() {
+          if (this.value === "") {$(".filter-distance").hide("fast");} else {$(".filter-distance").show("fast");}
+        });
+
+        {%if form.city.data %}
+          $(".filter-distance").show();
+        {%endif%}
+
+      });
+
+
+
+
+          </script>
+
+
+  </div>
+</div>

@@ -1,35 +1,37 @@
 {% extends "account/layout.html" %}
 
+{%block page_desc%}
+
+	<span class="">На этой странице вы можете просматривать, редактировать и удалять свои объявления о продаже кошек.</span>
+
+{%endblock%}
+
 {% block account_content %}
 
 <div class="account-pet-sale">
 
-    <p class="">На этой странице вы можете просматривать, редактировать и удалять свои объявления о продаже собак и кошек.</p>
 
-
-
-    {%if advs | count <= 0 %}
-    <p class="text-left" style="margin-top:30px">
-        <a href="{{url_for('account_sale_add')}}" class="btn btn-success">Добавить объявление</a> 
+    <p class="text-left" style="margin-bottom:30px">
+        <a target="_self" href="{{url_for('account_cat_adv_new')}}" class="btn btn-success">Добавить новое объявление</a> 
     </p>
-    {%endif%}
+
 
     {% for adv in advs %}
 
     <div class="adv {{loop.cycle('adv-odd', 'adv-even')}}">
 
     <div class="row clearfix" >
-                   <div class="col-sm-3">
+                   <div class="col-md-3">
                       <div class="text-center photo">
 
                         {% set photo = (adv.get('photos') or [])[0]%}
                         {% if photo %}
-                        <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" class="photo-img">
+                        <a title='{{adv.get("title")}}' href="{{url_for('cat_adv_show', adv_id = adv['_id'])}}" target="_blank" class="photo-img">
                           <img src="{{url_for('thumbnail', filename=photo)}}">
                           <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                         </a>  
                         {% else %}
-                        <img class="hidden-xs" data-src='/static/js/holder.js/150x100/text:Нет фото' alt="{{adv['title']}}">
+                        <img src="/static/img/no_photo.png" class="img-thumbnail" style="margin:0 auto" />
                         {%endif%}
 
 
@@ -37,14 +39,21 @@
 
                    </div>
 
-                   <div class="col-sm-9">
+                   <div class="col-md-9">
 
                       <div class="row">
                           <div class="col-md-8 col-lg-9 col-sm-8">
 
-                              <a href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'><h4 class="adv-head">{{adv.get("title")}}</h4></a>
+                              <a href="{{url_for('cat_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'><h4 class="adv-head">{{adv.get("title")}}</h4></a>
                             
+                              <p class="adv-breed">
 
+                              {% set breed_name = adv.get("breed_id") | breed_cat_name %}
+                              {% if breed_name %}
+                              <span  title="Порода">{{breed_name }}</span>
+                              {%endif%}
+                            </p>
+                            
                               <p class="adv-city">
                                 {% set city_id = adv.get("city_id") %}
 
@@ -59,26 +68,7 @@
                               {%endif%}
 
                             </p>                
-                            <p class="adv-breed">
-
-                              {% set pet_name = adv.get("pet_id") | pet_name %}
-                              {% if pet_name %}
-                              <span title="Тип животного">{{pet_name | morph_word(["plur"]) }}</span>
-                              {%endif%}
-
-                              {% set breed_name = adv.get("breed_id") | breed_name(adv.get("pet_id")) %}
-                              {% if breed_name %}
-                              &nbsp;>&nbsp;
-                              <span  title="Порода">{{breed_name }}</span>
-                              {%endif%}
-
-                              {% set gender_name = adv.get("gender_id") | gender_name  %}
-                              {% if  gender_name %}
-                              &nbsp;>&nbsp;
-                              <span  title="Пол">{{ gender_name | title }}</span>
-                              {% endif %}
-
-                            </p>
+                            
 
                             {% if adv.get("desc") %}
                             <p class="hidden-xs hidden-sm">
@@ -113,11 +103,11 @@
                            </p>
 
                            <div class="btn-group btn-group-justified btn-group-sm">
-                              <a type="button" target="_self" title="Редактировать" class="btn btn-default"  target="_blank"href="{{url_for('account_sale_edit', id = adv['_id'])}}"><span class="glyphicon glyphicon-pencil"></span></a>
+                              <a type="button" target="_self" title="Редактировать" class="btn btn-default"  target="_blank"href="{{url_for('account_cat_adv_edit', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-pencil"></span></a>
 
-                               <a type="button" title="Посмотреть" class="btn btn-default"  target="_self" href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-eye-open"></span></a>
+                               <a type="button" title="Посмотреть" class="btn btn-default"  target="_self" href="{{url_for('cat_adv_show', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-eye-open"></span></a>
 
-                              <a action="remove" type="button" title="Удалить" class="btn btn-danger"  target="_self" href="{{url_for('account_sale_remove', id = adv['_id'])}}"><span class="glyphicon glyphicon-trash"></span></a>
+                              <a action="remove" type="button" title="Удалить" class="btn btn-danger"  target="_self" href="{{url_for('account_cat_adv_remove', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-trash"></span></a>
 
                            </div>
 

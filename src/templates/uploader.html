@@ -21,7 +21,7 @@ $(function() {
         filters : [
         {title : "Image files", extensions : "jpg,jpeg,gif,png"}
         ],
-        resize : {width : 640, height : 480, quality : 90}
+        // resize : {width : 640, height : 480, quality : 90}
     });
 
     uploader.getFileNames = function(){
@@ -53,7 +53,7 @@ $(function() {
         }
         var file_url = "/photo/" + file_name;
         var thumbnail_url  = '/thumbnail/' + file_name;
-        var preview = $(".upload-add").before("<div file-id='" + file_id + "' class='preview' file-name='" + file_name + "'><img src='"+ thumbnail_url +"' /><span title='Удалить' class='glyphicon glyphicon-remove-circle' file-name='" + file_name + "'></span></div>");
+        var preview = $(".upload-add").before("<div file-id='" + file_id + "' class='preview' file-name='" + file_name + "'><img src='"+ thumbnail_url +"' /><span title='Удалить' class='glyphicon glyphicon-remove-sign' file-name='" + file_name + "'></span></div>");
 
         //remove uploaded photo
         $("span[file-name='" + file_name + "']").bind("click", function(){
@@ -111,8 +111,13 @@ $(function() {
 
 <div class="input upload-files" id="upload">
     <div class="shapeshift" id="upload_files">
-        <div class="upload-add"> 
-            <a id="uploadAdd" href="{{request.url}}#" class="thumbnail"><img data-src='/static/js/holder.js/140x90/text:Загрузить фото'>
+        <div class="upload-add" > 
+            <a id="uploadAdd" style="color:#555" href="{{request.url}}#" class="thumbnail"><div style="
+			    width: 140px;height: 90px;display: block;text-align: center;">
+			  <p class="glyphicon glyphicon-plus-sign" style="font-size: 3em;padding-top: 15px;
+			"></p>
+			  <p>добавить фото</p>
+			</div>
             </a>
         </div>
     </div>

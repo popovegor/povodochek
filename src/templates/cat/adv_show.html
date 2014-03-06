@@ -1,0 +1,219 @@
+{% extends "layout.html" %}
+
+
+{%block breadcrumbs %}
+    
+   <ol class="breadcrumb" >
+      <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
+      <li><a href="{{url_for('cat_search')}}">Продажа кошек</a> <span class="divider"></span></li>
+      <li><a href="{{url_for('cat_search', breed = adv.get('breed_id')  )}}">{{adv.get('breed_id') | breed_cat_name }}</a> <span class="divider"></span></li>
+      <li class="active">{{adv.get("title")}}</li>
+  </ol>
+    
+{%endblock%}
+
+
+{% block content %}  
+
+<div class="sale-pet-show container"> 
+
+
+  <h1>{{header}}</h1>
+
+  
+          <div style="font-family:Georgia; font-size:1.2em; font-style:italic">
+              <span style="white-space:nowrap; margin-right:20px" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><small class="text-muted">цена:</small>&nbsp;{{adv.get('price') | format_price() }}&nbsp;руб</span>
+            <span style="white-space:nowrap"><small class="text-muted">размещено:</small>&nbsp;{{ momentjs(adv.get("update_date") or adv.get("add_date")).fromNow() }} </span>
+          </div>
+          
+  
+  <div class="row">
+      <div class="col-md-7">
+        
+
+      <!-- photo -->
+        {%if adv.get('photos') | length > 0%}    
+
+        <div class="photos" style="margin-top:20px">
+
+          {%if adv.get("photos") | length > 1%}
+
+          <div id="carousel" class="flexslider hidden-xs">
+            <ul class="slides">
+              {%for photo in adv.get('photos') %}
+              <li>
+                <img src="{{url_for('thumbnail', filename = photo)}}" />
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+
+          {%endif%}
+
+        <p class="text-left">Фотография <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}}</p>
+
+          <div id="slider" class="flexslider">
+            <ul class="slides ">
+              {%for photo in adv.get('photos') %}
+              <li class="text-center photo">
+                 <img class="img-responsive {{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+         
+        </div> <!-- photos -->
+
+    {%endif%}
+    <!-- / photo -->
+    </div>
+
+    <div class="right-side {{'col-md-5' if adv.get('photos') | length > 0 else 'col-md-8'}}">
+
+      <h3>{{adv.get("title")}}</h3>
+      
+      <div style="margin-bottom:20px">
+        <p style="white-space:pre-wrap">{{adv.get('desc') | trim }}</p>
+      </div>
+
+      <div class="adv-block">
+      <h3>О {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h3>
+
+      <table class="tbl-key-value">
+      <tbody>
+        {%set city = adv.get("city_id") | city_region %}
+          {% if city %}
+          <tr>
+              <td style="width:135px"><small>Местоположение</small></td>
+              <td>{{ city }}</td>
+          </tr>
+          {%endif%}
+
+          <tr>
+            <td><small>Порода</small></td>
+            <td>{{adv.get("breed_id") | breed_name(adv.get('pet_id'))}}</td> 
+          </tr>
+           
+             {%if adv.get("gender_id") %}
+           <tr>
+             <td ><small>Пол</small></td>
+             <td>{{adv.get("gender_id") | gender_name | title }}</td>
+           </tr>
+            {%endif%}
+
+           <tr>
+              <td><small>Цена</small></td>
+              <td title='{{ "{0:,}".format(adv.get("price")) | replace(",", " ") }} рублей'>{{adv.get("price") | format_price }}&nbsp;<span class="rur">руб</span> </td>
+           </tr>
+
+      </tbody>
+      </table>
+    </div> <!-- adv-info -->
+
+
+      <div class="seller-block">  
+      <h3>Контакты</h3>      
+        <noindex>  
+        <table class="tbl-key-value">
+        <tbody>
+        <tr>
+          <td style="width:135px">
+            <small>Продавец</small>
+          </td>
+          <td>
+            {{adv.get('username') or (seller.get("username") if seller else '')}}
+          </td>
+        </tr>
+
+          {%set phone = adv.get("phone")%}
+          {%if phone  %}
+          <tr>
+            <td class=""><small>Телефонный номер</small></td>
+            <td>{{phone}}</td>
+          </tr>
+          {%endif%}
+
+          {% set skype = adv.get("skype") %}
+           {%if skype %}
+           <tr>
+              <td class=""><small>Skype</small></td>
+              <td>{{skype}}</td>   
+           </tr>
+          {% endif %}
+          </tbody>
+        </table>
+        </noindex>
+      </div>  <!-- /seller-block -->
+      
+
+      <noindex> 
+      <div class="text-left" style="margin-top:20px">
+        <a class="btn btn-primary" href="{{url_for('cat_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+      </div>
+      </noindex>
+
+
+    </div> <!-- right-side -->
+    
+    
+
+  </div>
+
+  
+
+  <div class="sale-pet-container row"> 
+
+  
+  <div class="">
+
+      
+   
+  </div> <!-- right-side -->
+
+    
+
+  </div> <!-- sale-pet-container -->  
+
+</div> <!-- sale-pet -->
+
+  <script type="text/javascript">
+  $(window).load(function(){
+    $('#carousel').flexslider({
+      animation: "slide",
+      controlNav: false,
+      animationLoop: false,
+      slideshow: false,
+      itemMargin: 5,
+      itemWidth: 100,
+      asNavFor: '#slider'
+    });
+
+    $('#slider').flexslider({
+      animation: 'fade',
+      controlNav: false,
+      animationLoop: false,
+      slideshow: false,
+      sync: "#carousel",
+      smoothHeight: true,
+      animationSpeed : 400,
+      touch: false, 
+      after: function(slider){
+        $("#currentPhotoNumber").html(slider.currentSlide+1);
+      }
+    });
+
+    $("#slider .flex-prev").click(function(){
+      var slider = $('#slider').data('flexslider');
+      slider.flexslider("prev");
+    });
+
+    $("#slider .flex-next").click(function(){
+      var slider = $('#slider').data('flexslider');
+      slider.flexslider("next");
+    });
+
+
+  });
+  </script>
+
+  {% endblock %} 

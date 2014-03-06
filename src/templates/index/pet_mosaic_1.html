@@ -1,0 +1,185 @@
+<div class="pet-mosaic">
+
+	<div id="filters" class="" style="padding-bottom:10px">
+		
+
+		<table style="width:100%">
+			<tr>
+				<td class="">
+					<span class="" style="padding-left:0px">Недавно добавленные объявления о продаже</span>	
+				</td>
+				<td style="width:150px" class="text-right">
+					<div class="btn-group btn-group-sm text-right"> {#<button id="filter_all" class=" btn btn-default active ajax-link" href="#">Все</button>#}<button id="filter_dogs" class=" btn btn-default ajax-link active" href="#">Собаки</button>
+					<button id="filter_cats" class=" btn btn-default ajax-link" href="#">Кошки</button>
+					
+					</div>	
+				</td>
+			</tr>
+		</table>
+				
+			
+		
+	</div>
+
+    <div class="clearfix" id="advs">
+
+        {% for adv in mosaic_advs %}
+       <div class="mosaicflow__item">
+       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" data-placement="top" title='{{ "{0}<br/>Цена&nbsp;{1} руб" | format (adv.get("b"), adv.get("p")) }}' style="display:none">
+    		<img class="img-responsive" width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
+	    	</a>
+    	</div> 
+        {% endfor %}
+
+        <ins class="fade-white"></ins>
+    </div>
+
+
+    <div class="show-more text-center">
+    	<button class="btn btn-default btn-sm" id="more" pet_id="0" skip="{{mosaic_advs | length}}" data-loading-text="Загружаю...">Показать еще</button>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+	$(function(){
+
+		var mosaic;
+
+		var reinit = function() {
+
+			mosaic = null;
+
+			mosaic = $("#advs").mosaicflow({
+			    itemSelector: '.mosaicflow__item',
+			    minItemWidth: 150,
+			    itemHeightCalculation : 'attribute'
+			});
+
+			mosaic.on('mosaicflow-layout', function(){
+				$(".adv[data-status='loading']").each(function(key, value) {
+					var adv = $(value);
+					var img = adv.find("img");
+					adv.fadeIn("slow");
+					adv.tooltip({placement:'top', html:true});
+					adv.attr("data-status", "complete");
+				});
+			});
+
+			mosaic.trigger("mosaicflow-layout");
+		}
+
+		reinit();
+
+		var get_mosaic_elm = function(adv) {
+			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-placement="top" data-toggle="tooltip" title="'+ adv['b'] + '<br/>Цена&nbsp; ' + adv['p'] +' руб" style="display:none" data-status="loading"> <img class"img-responsive" src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
+		}
+
+		var more = $("#more"); 
+
+		more.click(function() {
+			more.button('loading');
+			$.getJSON('/ajax/sales/showmore/' + more.attr("pet_id") +  '/' + more.attr("skip") + "/"
+				, function(data) {
+			  		var advs = data["advs"];
+			 		// var advs = data;
+			 		
+			  		$.each(advs, function(key, adv) {
+			  			var elm = get_mosaic_elm(adv);
+						mosaic.mosaicflow('add', elm)
+			  		});
+
+			  		more.button('reset');
+			  		if (advs.length === 0){
+			  			more.hide();
+			  		} else {
+			  			more.attr('skip', parseInt(more.attr('skip')) + advs.length)
+			  		}
+			});
+			
+			return false;
+
+		}); //more click
+
+
+		var filter_advs = function(button, url, pet_id){
+			more.hide();
+			{#$(".filter").removeClass("label label-default");
+			$(button).addClass("label label-default");#}
+
+			$(".ajax-link").removeClass("active");
+			$(button).addClass("active");
+
+			$(".fade-white").remove();
+
+			$(".adv").each(function(key, value){
+				var elm = $(value);
+				mosaic.mosaicflow("remove", elm);
+				elm.remove();
+			});
+
+			$("#advs").remove();
+	  		$("#filters").after("<div id='advs' class='clearfix'><div class='ajax-loader'></div>")
+
+
+			$.getJSON(url
+				, function(data) {
+			  		var advs = data["advs"];
+			  		// var advs = data;
+
+			  		if (advs.length <= 0 ){
+			  			$("#advs").append("<p class='text-center no-advs'>Нет подходящих объявлений</p>")
+			  		} else {
+
+				  		$.each(advs, function(key, adv) {
+				  			var elm = get_mosaic_elm(adv);
+				  			$("#advs").append(elm);
+				  		});
+
+				  		reinit();
+
+				  		$("#advs").append('<ins class="fade-white"></ins>');
+				  		more.attr('skip', advs.length);
+				  		more.show();
+			  		}
+
+			  		$(".ajax-loader").remove();
+	
+			}); /*getJSON*/
+
+			more.attr('pet_id', pet_id);
+
+			return false;
+		}
+
+
+		$("#filter_dogs").click(function(event){
+			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 1)}}', 1);
+			event.stopPropagation();
+			return false;
+		});
+
+		$("#filter_all").click(function(event){
+			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 0)}}', 0);
+			event.stopPropagation();
+			return false;
+		});
+
+		$("#filter_cats").click(function(event){
+			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 2)}}', 2);
+			event.stopPropagation();
+			return false;
+		});
+
+
+		{#$(window).scroll(function() {
+		    if( $(window).scrollTop() 
+		    	== $(document).height() - $(window).height()) {
+		          more.click();
+		    }
+		});#}
+
+	});
+
+</script>
