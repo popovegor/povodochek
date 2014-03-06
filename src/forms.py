@@ -335,7 +335,7 @@ class Dog(Form):
     phone = TextField(u"Телефонный номер")
     skype = TextField(u"Skype")
 
-    username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED)])
+    username = TextField(u"Контактное лицо", validators = [Required(message=MSG_REQUIRED)])
 
 class Activate(Form): 
 

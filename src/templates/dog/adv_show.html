@@ -111,7 +111,7 @@
     </span>
     </span>#}
 
-     <span style="white-space:nowrap;padding-right:15px"><span class="small text-muted">Размещено</span> {{momentjs(adv.get("add_date")).format('L') }}</span>
+     <span style="white-space:nowrap;padding-right:15px"><span class="small text-muted">Размещено</span> {{momentjs(adv.get("add_date")).format('LL') }}</span>
 
     {%if adv.get("update_date") %}
     <span style="white-space:nowrap;"><span class="small text-muted">Обновлено</span> {{ momentjs(adv.get("update_date")).fromNow() }}</span>
@@ -214,24 +214,24 @@
 
 
 {%-  macro doc_info(adv) -%}
-    <div class="doc-info" style="margin-bottom:30px">
+    <div class="row doc-info" style="margin-bottom:30px">
    {% set doc = adv.get("doc_id") %}
         {% if not doc %}
-          <div class="bg-warning" style="padding: 10px 20px; border-radius:5px">
+          <div class="bg-warning col-lg-11" style="padding: 10px 20px; border-radius:5px">
           <table>
             <tr>
-              
-
+              <td style="">
+                <span style="font-size:3em" class=" glyphicon glyphicon-exclamation-sign text-danger"></span>
+            </td>
+            <td style="width:20px"></td>
             <td>
                 <h3 class="text-danger">
                    Нет документов о происхождении собаки!
                 </h3>
-                <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки. Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.</p>
+                <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки.{# Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.#}</p>
             </td>
-             <td style="width:20px"></td>
-            <td style="">
-                <span style="font-size:4em" class=" text-right glyphicon glyphicon-exclamation-sign text-danger"></span>
-            </td>
+             
+            
             
             </tr>
           </table>
@@ -426,12 +426,12 @@
             {%endif%}
           </dd>
 
-          {% set color = adv.get("color") %}
+          {% set color = adv.get("color") or "" | lower %}
               <dt>
                 Окрас
               </dt>
               <dd>
-                {{ color or "<span class='text-muted' >не указан</span>" | safe }}
+                {{ color  or "<span class='text-muted' >не указан</span>" | safe  }}
               </dd>
 
 

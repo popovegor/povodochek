@@ -1324,10 +1324,10 @@ def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
     else:
        return None
 
-@app.route("/ajax/sales/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":10, 'skip': 0})
-@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":10})
-@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
-def ajax_sales_showmore(pet, skip, limit):
+@app.route("/ajax/mosaic/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":10, 'skip': 0})
+@app.route("/ajax/mosaic/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":10})
+@app.route("/ajax/mosaic/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
+def ajax_mosaic_showmore(pet, skip, limit):
     print(pet)
     advs = get_pet_advs_for_mosaic(skip, limit = limit, pet_id = pet)
     return jsonify(advs = advs)

@@ -6417,8 +6417,8 @@ form .textarea-counter {
 }
 .index .pet-mosaic #advs .ajax-loader {
   width: 100%;
-  height: 100px;
-  margin-top: 80px;
+  height: 50px;
+  margin-top: 40px;
   background-image: url(../img/ajax-loader.gif);
   background-repeat: no-repeat;
   background-position: center 50%;

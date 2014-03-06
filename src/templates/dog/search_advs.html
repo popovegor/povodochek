@@ -29,7 +29,7 @@
 
       </div>
 
-      <div class="small text-muted">
+      <div class="small">
 
         {#<span style="white-space: nowrap;padding-right:10px">№ {{adv | short_adv_id}}</span>#}
 
@@ -37,11 +37,11 @@
           {% set add_date = adv.get("add_date") %}
 
           {% if add_date %}
-          <span style="white-space: nowrap;padding-right:10px">Добавлено {{ momentjs(add_date).format("L" if update_date else "LL") }}</span>
+          <span style="white-space: nowrap;padding-right:10px"><span class="text-muted">Размещено</span>&nbsp;{{ momentjs(add_date).format("ll") }}</span>
           {% endif%}
 
           {% if update_date %}
-          <span style="white-space: nowrap;">Обновлено {{ momentjs(update_date).fromNow() }}</span> 
+          <span style="white-space: nowrap;"><span class="text-muted">Обновлено</span>&nbsp;{{ momentjs(update_date).fromNow() }}</span> 
           {% endif%}
 
        </div> 
