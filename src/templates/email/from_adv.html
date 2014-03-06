@@ -11,7 +11,7 @@
             <ul style="list-style:none">   
                 <li style="padding-bottom:10px"><b>От кого</b>: {{username}} <a href="mailto:{{email}}" style="color:#494949;font-weight:normal" target="_blank">&lt;{{email}}&gt;</a></li>
                 <li style="padding-bottom:10px"><b>Кому</b>: {{seller_username}} <a href="mailto:{{seller_email}}" style="color:#494949;font-weight:normal" target="_blank">&lt;{{seller_email}}&gt;</a></li>
-                <li style="padding-bottom:10px"><b>Дата</b>: {{date}}</li>
+                <li style="padding-bottom:10px"><b>Дата</b>: {{date | format_datetime("%d.%m.%Y %H:%M")}}</li>
                 <li style="padding-bottom:10px"><b>Тема</b>: {{subject}}</li>
                 {%if message %}
                 <li style="padding-bottom:10px"><b>Сообщение</b>: {{message}}</li>

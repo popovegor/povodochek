@@ -302,7 +302,7 @@ def find_cat_advs(pet_id = 2, gender_id = None, \
     if price_from or price_to:
         extend_filter("price", \
             {"$gte" : price_from if price_from > 0 else 0,\
-             "$lt" : price_to if price_to else maxint })
+             "$lt" : price_to if price_to else sys.maxint })
     near_cities = []
     if city and distance:
         near_cities = get_near_cities(city, distance)

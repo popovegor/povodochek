@@ -109,7 +109,7 @@
       $(function(){
 
         $("#{{form.city.id}}").typeahead({
-          minLength: 1,
+          minLength: 0,
           limit: 8,
           autoSelect : false,
           source: function (query, process) {
@@ -127,8 +127,7 @@
 		      return $.getJSON("{{url_for('ajax_typeahead_cat')}}",
 		        {limit: 8, query: query },
 		        function (data) { return process(data.items);}); //getJSON
-		      }, //source
-          updater : function(item ) {return item.substring(0, item.indexOf(","));}
+		      } //source
 		    }); //typeahead 
 
         $("#{{form.city.id}}").change(function() {

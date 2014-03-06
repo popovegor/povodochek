@@ -413,23 +413,23 @@ def send_from_sale(adv_id, adv_url, email, username, \
             seller_username = seller_username, \
             email = email, \
             username = username, \
-            date = datetime.now().date())
+            date = datetime.now())
         mail.send(msg)
 
     
-@app.route("/test/email/from_sale")
-def test_email_from_sale():
+@app.route("/test/email/from_dog_adv/")
+def test_email_from_dog_adv():
     msg = Message(u"Сообщение от %s сайта Поводочек" % (u'пользователя' if current_user.is_signed() else u'гостя'), \
         recipients=["popovegor@gmail.com"])
-    adv = sales().find(limit=1)[0]
-    msg.html = render_template("email/from_sale.html", \
+    adv = db.dog_advs.find(limit=1)[0]
+    msg.html = render_template("email/from_adv.html", \
         subject = u"Сообщение от пользователя сайта Поводочек", \
         message = u"Некоторое тестовое сообщение.", \
         adv = adv, \
         username = u'Егор Попов АТИ', \
         email = u'popovegor@gmail.com', \
         seller = db.get_user(adv.get('user_id')), \
-        date = datetime.now().date())
+        date = datetime.now())
     # mail.send(msg)
     return msg.html
 
