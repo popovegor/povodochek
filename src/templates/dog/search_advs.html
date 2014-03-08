@@ -36,12 +36,12 @@
           {% set update_date = adv.get("update_date") %}
           {% set add_date = adv.get("add_date") %}
 
-          {% if add_date %}
-          <span style="white-space: nowrap;padding-right:10px"><span class="text-muted">Размещено</span>&nbsp;{{ momentjs(add_date).format("ll") }}</span>
-          {% endif%}
+          {#% if add_date %}
+          <span style="padding-right:10px"><span class="text-muted">Размещено</span>&nbsp;<span style="white-space: nowrap;">{{ momentjs(add_date).format("L") }}</span></span>
+          {% endif%#}
 
           {% if update_date %}
-          <span style="white-space: nowrap;"><span class="text-muted">Обновлено</span>&nbsp;{{ momentjs(update_date).fromNow() }}</span> 
+          <span class="text-muted" style="padding-right:5px">Обновлено</span><span style="white-space: nowrap;">{{ momentjs(update_date).fromNow() }}</span>
           {% endif%}
 
        </div> 
