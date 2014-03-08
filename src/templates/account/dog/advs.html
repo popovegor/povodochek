@@ -11,7 +11,7 @@
 <div class="account-pet-sale">
 
     <p class="text-left" style="margin-bottom:30px">
-        <a target="_blank" href="{{url_for('account_dog_adv_new')}}" class="btn btn-success">Добавить новое объявление</a> 
+        <a target="_blank" href="{{url_for('account_dog_adv_new')}}" class="btn btn-success">Подать новое объявление</a> 
     </p>
     
 
@@ -142,10 +142,10 @@
   <div class="row" style="border-top:1px solid #e5e5e5; margin:10px -25px 0px -25px; padding:15px 0px 0px 0px">
   
   <div class="col-sm-12 text-left">
-       <a type="button" title="Посмотреть" class="btn btn-link btn-xs"  target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-eye-open" style="padding-right:7px"></span>Посмотреть</a>
-        <a type="" target="_blank" title="Редактировать" class="btn btn-primary btn-xs"  target="_self"href="{{url_for('account_dog_adv_edit', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-pencil" style="padding-right:7px"></span>Редактировать</a>
+       <a type="button" title="Посмотреть" class="small" style="margin:10px 10px"  target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-eye-open" style="padding-right:7px"></span>Посмотреть</a>
+        <a type="" target="_blank" title="Редактировать" class="btn btn-sm btn-primary"  target="_self" style="{#margin:10px 10px#}" href="{{url_for('account_dog_adv_edit', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-pencil" style="padding-right:7px"></span>Редактировать</a>
 
-        <a action="remove" type="button" title="Удалить" class="btn btn-danger btn-xs" style=""  target="_self" href="{{url_for('account_dog_adv_remove', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-trash" style="padding-right:7px;"></span>Удалить</a>
+        <a action="remove" type="button" title="Удалить" class="btn btn-sm btn-danger" style="{#margin:10px 10px#}"  target="_self" href="{{url_for('account_dog_adv_remove', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-trash" style="padding-right:7px;"></span>Удалить</a>
   </div>
 
   <div class="col-sm-7 text-right">

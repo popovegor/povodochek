@@ -41,7 +41,7 @@
     <!-- current.user -->
               {%if current_user.is_signed() %}
                 <li class="dropdown {{'active' if url_for('account') in request.path}}">
-                  <a title="{{current_user.username}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i><span class="">&nbsp;{{current_user.username | truncate(length=12, killwords = False)}}&nbsp;</span><b class="caret"></b></a>
+                  <a title="{{current_user.username}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><span class="">&nbsp;&nbsp;Личный кабинет&nbsp;&nbsp;</span><b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="{{url_for('account_dog_advs')}}">Мои собаки</a></li>
                      <li><a href="{{url_for('account_cat_advs')}}">Мои кошки</a></li>

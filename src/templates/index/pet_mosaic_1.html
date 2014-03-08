@@ -6,10 +6,10 @@
 		<table style="width:100%">
 			<tr>
 				<td class="">
-					<span class="" style="padding-left:0px">Недавно добавленные</span>	
+					<span class="" style="padding-left:0px">Недавно добавлены</span>	
 				</td>
 				<td style="width:150px" class="text-right">
-					<div class="btn-group btn-group-sm text-right"> {#<button id="filter_all" class=" btn btn-default active ajax-link" href="#">Все</button>#}<button id="filter_dogs" class=" btn btn-default ajax-link active" href="#">Собаки</button>
+					<div class="btn-group btn-group-sm text-right"> {#<button id="filter_all" class="filter btn btn-default active ajax-link" href="#">Все</button>#}<button id="filter_dogs" class="filter btn btn-default ajax-link active" href="#">Собаки</button>
 					<button id="filter_cats" class=" btn btn-default ajax-link" href="#">Кошки</button>
 					
 					</div>	
@@ -84,7 +84,7 @@
 
 		more.click(function() {
 			more.button('loading');
-			$.getJSON('/ajax/sales/showmore/' + more.attr("pet_id") +  '/' + more.attr("skip") + "/"
+			$.getJSON('/ajax/mosaic/showmore/' + more.attr("pet_id") +  '/' + more.attr("skip") + "/"
 				, function(data) {
 			  		var advs = data["advs"];
 			 		// var advs = data;
@@ -109,10 +109,8 @@
 
 		var filter_advs = function(button, url, pet_id){
 			more.hide();
-			{#$(".filter").removeClass("label label-default");
-			$(button).addClass("label label-default");#}
 
-			$(".ajax-link").removeClass("active");
+			$(".filter").removeClass("active");
 			$(button).addClass("active");
 
 			$(".fade-white").remove();

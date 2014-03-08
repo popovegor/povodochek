@@ -13,8 +13,8 @@
 
   <div id="wrap" class="container">
 
-
-    {% if 'account' not in request.path %}
+    
+    
 
    <div class="hidden-xs" style="margin-top:30px">
     
@@ -39,9 +39,9 @@
 
   </div>
 
-  {%endif%}
-
-    {% include "flashed_messages.html" %}
+  
+  {% include "flashed_messages.html" %}
+    
 
     {% block content %}
 
@@ -57,10 +57,6 @@
 {% include "footer.html"%}
 
 {%include "reformal.html"%}
-
-<div class="text-left" style="margin-top:-30px;">
-    {% include "liveinternet.html"%}
-</div>
 
 {%endblock%}
 

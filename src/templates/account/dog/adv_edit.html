@@ -151,75 +151,67 @@
 	
 		{{form_field(form.doc, horizontal ={"l":"col-sm-3", "r":"col-sm-9"}, size="col-md-6 col-lg-5")}}
 
-<div id="doc_fields" style="margin-bottom:20px; {{'display:none' if not form.doc.data else ''}}">
+<div id="doc_fields" class="bg-info" style="padding:10px 20px 20px 20px; margin-bottom:20px; {{'display:none' if not form.doc.data else ''}}">
 
-		<div class="row">
+		<h3 id="doc_name">{{form.doc.data | doc_dog_name }}</h3>
 
-		<div class="col-sm-push-3 col-sm-9" style=" " >
-			<div class="row" style="margin-top:-10px; ">
-				<div class="col-sm-4 col-md-3" id="{{form.pedigree.id}}_block" style="{{'display:none' if form.doc.data not in dog_pedigree_docs else ''}}">
-					{{ form_field(form.pedigree)}}
+		
+			
+			<div class="row" style="margin-top:20px; ">
+				<div class="col-sm-3" id="{{form.pedigree.id}}_block" style="{{'display:none' if form.doc.data not in dog_pedigree_docs else ''}}">
+					{{ form_field(form.pedigree, style="width:150px")}}
 				</div>
-				<div class="col-sm-4 col-md-3">
+				<div class="col-sm-3">
 					
-					{{ form_field(form.tatoo, help_placement="top") }}
-				</div>				
+					{{ form_field(form.tatoo, help_placement="top", style="width:150px") }}
+				</div>	
+				<div style="margin-top:10px" class="col-sm-6">
+					{{ form_field(form.breeding) }} 
+					{{ form_field(form.show) }}
+					</div>			
 			</div> 
 			
-			<div style="margin-top:-10px">
-			{{ form_field(form.breeding) }} 
-			{{ form_field(form.show) }}
-			</div>
+			
+		
 
-		</div>
-
-		</div> 
-
-		<div class="row" style="">
-			<div class="col-sm-3 text-right" style="padding-top:5px">
-				<b>Отец</b>
-			</div>
-			<div class="col-sm-9">
-				<div class="row">
-					<div class="col-md-5">
+		
+			<h4>Отец</h4>
+			<div class="row">
+					<div class="col-sm-5">
 						{{form_field(form.father_name, class="form-control")}}		
 					</div>
-					<div class="col-md-4">
+					<div class="col-sm-4">
 						{{form_field(form.father_country, class="form-control")}}
 					</div>
-					<div class="col-md-3 col-sm-4 col-xs-6">
+					<div class="col-sm-3">
 						{{form_field(form.father_pedigree, class="form-control")}}	
 					</div>
 				</div>
 
 				{{form_field(form.father_misc, class="form-control", rows = 2)}}
 		
-			</div>
-		</div> <!-- father -->
+
+	
 
 
 				
-			<div class="row" style="">
-				<div class="col-sm-3 text-right" style="padding-top:5px">
-					<b>Мать</b>
-				</div>
-				<div class="col-sm-9">
+	
+				<h4>Мать</h4>
+			
 		   			<div class="row">
-						<div class="col-md-5">
+						<div class="col-sm-5">
 							{{form_field(form.mother_name, class="form-control")}}			
 						</div>
-						<div class="col-md-4">
+						<div class="col-sm-4">
 							{{form_field(form.mother_country, class="form-control")}}
 						</div>
-						<div class="col-md-3 col-sm-4 col-xs-6">
+						<div class="col-sm-3">
 							{{form_field(form.mother_pedigree, class="form-control")}}	
 						</div>
 					</div>
 				
 				{{form_field(form.mother_misc, class="form-control", rows = 2)}}
-			
-			   </div>
-		   </div> <!-- mother -->
+		
 	
 
 </div> <!-- doc-fields -->
@@ -261,8 +253,11 @@ $(document).ready(function(){
 
 		if(this.value > 0) {
 			$("#doc_fields").show("fast");
+			$("#doc_name").text($("#{{form.doc.id}} option:selected").html());
+
 		} else {
 			$("#doc_fields").hide("fast");
+			$("#doc_name").text();
 		}
 		
 	});

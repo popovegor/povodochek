@@ -14,8 +14,8 @@
       
       </div>
       <div class="modal-footer">
+        <a class="btn btn-primary btn-lg" href="{{url_for('signup_basic', next = target_url)}}">Зарегистрироваться</a>
         <a class="btn btn-default btn-lg" href="{{url_for('signin', next=target_url )}}">Войти</a>
-        <a class="btn btn-default btn-lg" href="{{url_for('signup_basic', next = target_url)}}">Зарегистрироваться</a>
         {#<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>#}
       </div>
     </div><!-- /.modal-content -->

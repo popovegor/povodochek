@@ -1,9 +1,17 @@
 {% extends "layout.html" %}
 
+{% block breadcrumbs %}
+  <ol class="breadcrumb" >
+    <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> 
+    <li class="active">Личный кабинет</li>
+</ol>
+{% endblock %}  
+
 
 {% macro render_nav_item(title, path) -%}
-    <li {% if request.path  == path %} class="active" {% endif %}><a href="{{path}}">{{title}}</a></li>
+    <li {% if request.path  == path %} class="active" {% endif %}><a href="{{path}}" >{{title}}</a></li>
 {%- endmacro %}
+
 
 
 {% block content %}      
@@ -16,8 +24,7 @@
         
       <ul class="nav nav-pills nav-stacked" >
         
-        {% for (title, path) in [("Мои собаки", url_for('account_dog_advs'))
-          ] 
+        {% for (title, path) in [("Мои собаки", url_for('account_dog_advs'))] 
         %}
 
           {{render_nav_item(title, path)}}

@@ -1005,9 +1005,9 @@ def account_cat_adv_new():
     form = Cat(request.form)
     if request.method == "POST":
         if  form.validate():
-            id = save_cat(form)
+            id = save_cat_adv(form)
             flash(u"Объявление '%s' добавлено." % form.title.data, "success")
-            return redirect(url_for('account_sale'))
+            return redirect(url_for('account_cat_advs'))
     else:
         form.city.data = get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
@@ -1163,11 +1163,11 @@ def favicon():
 
 @app.route('/prodazha-koshek/goroda/')
 def sale_cats_cities():
-    return sale_pets_cities(pet_id = 2) 
+    return sale_pets_cities(pet_id = CAT_ID) 
 
 @app.route('/prodazha-sobak/goroda/')
 def sale_dogs_cities():
-    return sale_pets_cities(pet_id = 1) 
+    return sale_pets_cities(pet_id = DOG_ID) 
 
 def sale_pets_cities(pet_id):
     pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
