@@ -186,16 +186,20 @@
             <ul class="slides">
               {%for photo in adv.get('photos') %}
               <li>
-                <img src="{{url_for('thumbnail', filename = photo)}}" />
+                <img width="100" src="{{url_for('thumbnail', filename = photo)}}" />
               </li>
               {%endfor%}
             </ul>
           </div>
 
-           <p class="text-left small">(фото <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}})</p>
+          {%else%}
+
+            {% set photo = adv.get('photos')[0]%}
+            <img style="padding-bottom:10px" width="100" src="{{url_for('thumbnail', filename = photo)}}" />
 
           {%endif%}
 
+           <p class="text-left small">(фото <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}})</p>
           
 
           <div id="slider" class="flexslider">
