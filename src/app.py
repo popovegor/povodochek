@@ -1069,9 +1069,10 @@ def thumbnail(filename):
 
     return send_file(path)
     
-@app.route('/photo/<filename>/', defaults = {'width': None})
-# @app.route('/photo/<filename>/<int:width>/')
+@app.route('/photo/<filename>/', defaults = {'width': 600})
+@app.route('/photo/<filename>/<int:width>/')
 def photo(filename, width):
+    width = min(width, 1200)
     if width:
         (name, ext) = os.path.splitext(filename)
         path = photos.path(name + str(width) + ext)
