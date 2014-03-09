@@ -114,18 +114,21 @@
     {% set add_date = adv.get("add_date") %}
     {% set update_date = adv.get("update_date") %}
 
-     <span style="white-space:nowrap;padding-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format('D MMM, H:mm') }}&nbsp;&mdash;&nbsp;{{momentjs(add_date).fromNow()}}</span>
+    
+
+     <span style="white-space:nowrap;padding-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).fromNow()}}&nbsp;({{momentjs(add_date).format("DD.MM в H:mm")}})</span>
 
      {#{[add_date, update_date]}#}
 
-
-
-    {%if update_date != add_date %}
+     {%if update_date != add_date %}
     <br/>
-    <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMM, H:mm")}}&nbsp;&mdash;&nbsp;{{momentjs(update_date).fromNow()}}</span>
+    <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).fromNow()}}&nbsp;({{momentjs(update_date).format("DD.MM в H:mm")}})</span>
+
     {%else%}
 
     {%endif%}     
+
+    
     
 </p>
 {%- endmacro -%}
