@@ -1,18 +1,30 @@
 <div class="pet-mosaic">
 
-	<div id="filters" class="">
-		<p><b id="">Новые<span class="hidden-phone"> объявления</span></b> <a id="filter_all" class="filter label hidden-phone ajax-link" href="#">Вперемешку</a><a id="filter_dogs" class="filter hidden-phone ajax-link" href="#">Собаки</a>
+	<div id="filters" class="" style="padding-bottom:30px">
+		{#<p>Недавно добавленные <a id="filter_all" class="filter label label-default hidden-phone ajax-link" href="#">Вперемешку</a><a id="filter_dogs" class="filter hidden-phone ajax-link" href="#">Собаки</a>
 		<a id="filter_cats" class="filter hidden-phone ajax-link" href="#">Кошки</a>
-		{#<a href="{{url_for('sale')}}" class="pull-right show-all">Все объявления &rarr;</a>
 		</p>#}
+
+
+		<div style="row">
+			<div class="col-sm-6" style="margin-top:5px">
+				<span class="" style="padding-right:20px;">Недавно добавленные объявления</span>
+			</div>
+			<div class="col-sm-6 text-right">
+				<div class="btn-group btn-group-sm text-right"> <button id="filter_all" class=" btn btn-default active ajax-link" href="#">Все</button><button id="filter_dogs" class=" btn btn-default ajax-link" href="#">Собаки</button>
+				<button id="filter_cats" class=" btn btn-default ajax-link" href="#">Кошки</button>
+				
+				</div>
+			</div>
+		</div>
 	</div>
 
     <div class="clearfix" id="advs">
 
         {% for adv in mosaic_advs %}
        <div class="mosaicflow__item">
-       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" title='{{ "{0}<br/>Цена &mdash; {1} руб" | format (adv.get("b"), adv.get("p")) }}' style="display:none">
-    		<img width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
+       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" data-placement="top" title='{{ "{0}<br/>Цена&nbsp;{1} руб" | format (adv.get("b"), adv.get("p")) }}' style="display:none">
+    		<img class="img-responsive" width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
 	    	</a>
     	</div> 
         {% endfor %}
@@ -22,7 +34,7 @@
 
 
     <div class="show-more text-center">
-    	<a class="btn btn-info btn-small" id="more" pet_id="0" skip="{{mosaic_advs | length}}" data-loading-text="Загружаю...">Показать еще</a>
+    	<button class="btn btn-default btn-sm" id="more" pet_id="0" skip="{{mosaic_advs | length}}" data-loading-text="Загружаю...">Показать еще</button>
     </div>
 
 </div>
@@ -39,7 +51,7 @@
 
 			mosaic = $("#advs").mosaicflow({
 			    itemSelector: '.mosaicflow__item',
-			    minItemWidth: 130,
+			    minItemWidth: 150,
 			    itemHeightCalculation : 'attribute'
 			});
 
@@ -48,7 +60,7 @@
 					var adv = $(value);
 					var img = adv.find("img");
 					adv.fadeIn("slow");
-					adv.tooltip({placement:'bottom', html:true});
+					adv.tooltip({placement:'top', html:true});
 					adv.attr("data-status", "complete");
 				});
 			});
@@ -58,8 +70,8 @@
 
 		reinit();
 
-		var get_mosaic_elm = function(adv){
-			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-toggle="tooltip" title="'+ adv['b'] + '<br/>Цена&nbsp;&mdash; ' + adv['p'] +' руб" style="display:none" data-status="loading"> <img src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
+		var get_mosaic_elm = function(adv) {
+			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-placement="top" data-toggle="tooltip" title="'+ adv['b'] + '<br/>Цена&nbsp; ' + adv['p'] +' руб" style="display:none" data-status="loading"> <img class"img-responsive" src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
 		}
 
 		var more = $("#more"); 
@@ -90,8 +102,11 @@
 
 		var filter_advs = function(button, url, pet_id){
 			more.hide();
-			$(".filter").removeClass("label");
-			$(button).addClass("label");
+			{#$(".filter").removeClass("label label-default");
+			$(button).addClass("label label-default");#}
+
+			$(".ajax-link").removeClass("active");
+			$(button).addClass("active");
 
 			$(".fade-white").remove();
 
@@ -135,18 +150,21 @@
 		}
 
 
-		$("#filter_dogs").click(function(){
+		$("#filter_dogs").click(function(event){
 			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 1)}}', 1);
+			event.stopPropagation();
 			return false;
 		});
 
-		$("#filter_all").click(function(){
+		$("#filter_all").click(function(event){
 			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 0)}}', 0);
+			event.stopPropagation();
 			return false;
 		});
 
-		$("#filter_cats").click(function(){
+		$("#filter_cats").click(function(event){
 			filter_advs(this, '{{url_for("ajax_sales_showmore", skip = 0, limit = mosaic_advs | length, pet = 2)}}', 2);
+			event.stopPropagation();
 			return false;
 		});
 

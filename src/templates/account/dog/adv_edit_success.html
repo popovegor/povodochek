@@ -1,0 +1,16 @@
+ {% extends "layout_base.html" %}
+
+{% block layout %}
+
+<script type="text/javascript">
+	if (opener) {
+		opener.location.reload(); 
+		// or opener.location.href = opener.location.href;
+		window.close();
+	} else {
+		window.location.href = "{{url_for('account_dog_advs')}}";
+	}
+</script>
+
+{%endblock%}
+

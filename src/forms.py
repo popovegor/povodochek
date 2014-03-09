@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField, RadioField)
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField, RadioField, DateField)
 
 from wtforms.validators import *
 
@@ -23,6 +23,8 @@ from dic.ages import ages
 from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed_by_id)
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city)
+from dic.countries import (countries, get_countries_for_dog_adv)
+from dic.pet_docs import (dog_docs)
 
 import config
 
@@ -37,8 +39,10 @@ MSG_REQUIRED = u"Обязательное поле"
 MSG_MIN = u"Пожалуйста, введите число, большее или равное {0}"
 MSG_RANGE = u"Пожалуйста, введите число от {0} до {1}"
 MSG_RANGE_LENGTH = u"Пожалуйста, введите значение длиной от {0} до {1} символов"
-MSG_MIN_LENGTH = u"Пожалуйста, введите не меньше {0} символов" 
+MSG_MIN_LENGTH = u"Пожалуйста, введите не меньше {0} символов"
+MSG_MAX_LENGTH = u"Пожалуйста, введите не больше {0} символов" 
 MSG_EMAIL = u"Пожалуйста, введите корректный адрес электронной почты"
+MSG_CHOISE = u""
 
 def pets_breeds():
     _dogs = [(morph_word(get_pet_name(1), ["plur"]), \
@@ -154,6 +158,36 @@ class ResetPassword(Form):
         else:
             field.user = user
 
+class DogSearch(Form):
+
+    #TODO: показывать только те породы, по которым есть объявления
+    breed = TextField(u'Порода', default = u"")
+
+    gender = SelectField(u"Пол", \
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
+        gender_id, gender_name in genders.items()])
+
+
+    city = TextField(u"Местоположение", default = u"")
+
+    distance = IntegerField(u"удаленность", default = 150)
+
+    photo = BooleanField(u"Только с фото")
+
+    # photo = BooleanField(u"С документами")
+
+    # price
+    price_from = IntegerField(u"Цена")
+    price_to = IntegerField(u"до")
+
+    price_unit = SelectField(u"", choices = [(0, u"руб"), (1, u"тыс руб")])
+
+    sort = SelectField(u"Сортировка", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"По дате")], coerce = int)
+
+    page = IntegerField(u"Страница", default = 1)
+
+    perpage = SelectField(u"Объявлений на стр.", default = 15, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
+
 
 class SaleSearch(Form):
 
@@ -185,17 +219,13 @@ class Contact(Form):
     username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
 
     city = TextField(u"Город", validators = [validate_location])    
-    city_adv_hide = BooleanField(u"Не показывать город в объявлениях")
-
+    
     phone = TextField(u"Телефонный номер")
-    phone_adv_hide = BooleanField(u"Не показывать телефонный номер в объявлениях")
-    phone_adv_sms = BooleanField(Markup(u"Присылать sms-оповещения об отликах на объявления (<i>бесплатно</i>)"))
-
+    
     skype = TextField(u"Skype")
-    skype_adv_hide = BooleanField(u"Не показывать skype-номер в объявлениях")
+    
 
-
-class Sale(Form):
+class Cat(Form):
 
     breed = TextField(u'Порода', \
         validators = [Required(message=MSG_REQUIRED), validate_breed]) 
@@ -223,8 +253,89 @@ class Sale(Form):
     skype = TextField(u"Skype")
 
     email = TextField(u"Электронная почта / Email")
-    username = TextField(u"Имя пользователя")
+    username = TextField(u"Имя")
 
+class Dog(Form):
+
+    # breed = SelectField(u'Порода', \
+    #     choices = [(0, u"")] + [ (dog_id, dog_name) for (dog_id, dog_name) in dogs.items()], \
+    #     coerce = int, 
+    #     validators = [Required(message=MSG_REQUIRED)])
+
+
+    breed = TextField(u'Порода', \
+        validators = [Required(message=MSG_REQUIRED), validate_breed]) 
+
+    gender = SelectField(u"Пол", \
+        choices = [(0, u'')] + [ (gender_id, gender_name) \
+        for gender_id, gender_name in genders.items()], coerce=int)
+   
+    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
+         description = u"От 10 до 80 символов")
+
+    desc = TextAreaField(u"Текст рекламного объявления", \
+        [Required(message=MSG_REQUIRED), Length(max=500, message=MSG_MAX_LENGTH.format(500))], \
+        description = u"Не более 500 символов")
+
+    photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
+
+    price = IntegerField(u"Цена", [Required(message=MSG_REQUIRED), NumberRange(min=5000, max=300000, message=MSG_RANGE.format(5000, 300000))], \
+        description = {"msg": Markup(u'От 5&nbsp;000 до 300&nbsp;000 руб. Объявление с нереальной ценой будет <span style="color:red">удалено!</span>'), \
+            "help" : u"" })
+
+    price_haggle = BooleanField(u"Возможен торг") #Торг
+    price_hp =  BooleanField(u"Рассрочка") #рассрочка hire purchase
+
+    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
+        description = u"Населенный пункт, в котором можно посмотреть и купить собаку.")
+
+    
+    color = TextField(u"Окрас", description = {'msg': u""\
+        #, "help" : u"Официальное название окраса можно посмотреть в метрике или родословной вашей собаки."
+        })
+
+    contract = BooleanField(u"Договор купли-продажи")
+    delivery = BooleanField(u"Возможна доставка в другой город")
+    
+    father_name = TextField(Markup(u"<small>Кличка</small>"))
+
+    father_country = SelectField(Markup(u"<small>Страна происхождения</small>"), \
+        choices = [(0, u"")] + get_countries_for_dog_adv(), \
+        coerce = int)
+    father_misc = TextAreaField(Markup(u"<small>Прочее</small>"))
+
+    father_pedigree = TextField(Markup(u"<small>№ родословной</small>"))
+
+    mother_name = TextField(Markup(u"<small>Кличка</small>"))
+    mother_country = SelectField(Markup(u"<small>Страна происхождения</small>"), \
+        choices = [(0, u"")] + get_countries_for_dog_adv(), \
+        coerce = int)
+    mother_misc = TextAreaField(Markup(u"<small>Прочее</small>"))
+    mother_pedigree = TextField(Markup(u"<small>№ родословной</small>"))
+
+    birthday = TextField(Markup(u"Дата рождения"), description = u"Дата в формате день/месяц/год, например, 24/11/2014")
+
+    doc = SelectField(u"Документы о происхождении", \
+        choices = [(0, u"нет документов")] + \
+       [(doc_id , doc_name) for (doc_id, doc_name) in dog_docs.items()], coerce = int)
+
+    tatoo = TextField(Markup(u"<small>№ клейма</small>"))
+
+    pedigree = TextField(Markup(u"<small>№ родословной</small>"))
+    
+    vaccination = BooleanField(u"Вакцинация (прививки) по возрасту")
+
+    vetpassport = BooleanField(u"Ветеринарный паспорт")
+    microchip = BooleanField(u"Микрочип")
+
+    breeding = BooleanField(Markup(u"<small>Допуск в разведение</small>"))
+
+    show = BooleanField(Markup(u"<small>Подходит для выставок</small>"))
+
+    phone = TextField(u"Телефонный номер")
+    skype = TextField(u"Skype")
+
+    username = TextField(u"Контактное лицо", validators = [Required(message=MSG_REQUIRED)])
 
 class Activate(Form): 
 
@@ -258,7 +369,7 @@ class SignIn(Form):
     login = TextField(u"Логин", \
         [Required(message=MSG_REQUIRED)])
 
-    remember = BooleanField(u"Запомнить меня")
+    remember = BooleanField(u"Запомнить меня", default = True)
 
     password = PasswordField(u'Пароль', \
         [Required(message=MSG_REQUIRED)])

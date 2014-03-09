@@ -1,31 +1,47 @@
-<div class="pet-post-button" style="">
-		<a type="button" class="btn btn-danger" style="" id="pet_post" href="{{'#myModal' if not current_user.is_signed() else url_for('account_sale_add') }}" {{'data-toggle=modal data-target=#myModal' if not current_user.is_signed()}}><span class="glyphicon glyphicon-flash"></span> Разместить&nbsp;объявление</a>
-</div> <!-- pet-post -->
 
-
-{% if not current_user.is_signed() %}	
-
+{%- macro modal_adv_new(pet, target_url) -%}
 <noindex>
-<div class="modal fade text-left" aria-hidden="true"  id="myModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade text-left" aria-hidden="true"  id="myModal_{{pet}}" role="dialog" aria-labelledby="myModalLabel_{{pet}}">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 class="modal-title" id="myModalLabel">Разместите свое объявление</h3>
+        <h3 class="modal-title" id="myModalLabel_{{pet}}">Разместите свое объявление</h3>
       </div>
       <div class="modal-body">
-         <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки, необходимо войти на сайт или зарегистрироваться. <b>Это займет у вас не более 2 минут.</b></p>
-	    <a class="btn btn-link btn-lg" href="{{url_for('signin', next=url_for('account_sale_add') )}}">Войти</a> <span style="">или</span> <a class="btn btn-link btn-lg" href="{{url_for('signup_basic', next = url_for('account_sale_add'))}}">Зарегистрироваться</a>
+         <p style="line-height:20px">Для того чтобы разместить свое объявление о продаже кошки или собаки, вам необходимо войти на сайт или зарегистрироваться. <b>Это займет у вас 2 минуты.</b></p>
+      {# <span style="">или</span> #}
+      
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <a class="btn btn-primary btn-lg" href="{{url_for('signup_basic', next = target_url)}}">Зарегистрироваться</a>
+        <a class="btn btn-default btn-lg" href="{{url_for('signin', next=target_url )}}">Войти</a>
+        {#<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>#}
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 </noindex>
 
+{%-  endmacro -%}
+
+
+
+
+<div class="pet-post-button btn-group" style="margin-bottom:10px">
+		<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-flash"></span> Подать&nbsp;объявление&nbsp;&nbsp;<span class="caret"></span></button>
+		<ul class="dropdown-menu" role="menu">
+	    <li><a class="text-left" href="{{'#myModal_dog' if not current_user.is_signed() else url_for('account_dog_adv_new') }}" {{'data-toggle=modal data-target=#myModal_dog' if not current_user.is_signed()}}>о продаже собаки</a></li>
+	    <li><a class="text-left" href="{{'#myModal_cat' if not current_user.is_signed() else url_for('account_cat_adv_new') }}" {{'data-toggle=modal data-target=#myModal_cat' if not current_user.is_signed()}}>о продаже кошки</a></li>
+	  </ul>
+</div> <!-- pet-post -->
+
+
+
+{% if not current_user.is_signed() %}	
+
+  {{modal_adv_new("dog", url_for('account_dog_adv_new'))}}
+  {{modal_adv_new("cat", url_for('account_cat_adv_new'))}}
+
 {%endif%}
-
-
 

@@ -2,14 +2,14 @@
 
 {%block breadcrumbs%}
 	<ol class="breadcrumb" >
-        <li><a href="{{url_for('index')}}">Главная</a> </li>
+        <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
         <li><a href="{{url_for('advice')}}">Полезные статьи о животных</a> </li>
         <li class="active" title="{{title}}">{{title | truncate(50)}}</li>
     </ol>
 {%endblock%}
 
 {% block content %}
-<div class="container">
+
 
 <div class="row">
 
@@ -22,6 +22,5 @@
 </div> <!-- advice -->
 
 </div> <!-- /row -->
-</div> <!-- container -->
 
 {% endblock %}

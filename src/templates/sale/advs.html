@@ -28,8 +28,9 @@
 
 
 {%if count <= 0%}
-
-  <b>Объявления по вашему запросу, к сожалению, не найдены :(</b>
+	<div style="margin-top:50px" class="text-center">
+  <span>Объявления по вашему запросу, к сожалению, не найдены :(</span>
+  </div>
        
 {%else%}    
               {% for adv in advs %}   
@@ -44,7 +45,7 @@
 
                         {% set photo = (adv.get('photos') or [])[0]%}
                         {% if photo %}
-                        <a title='{{adv.get("title")}}' href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}" target="_self" class="photo-img">
+                        <a title='{{adv.get("title")}}' href="{{url_for('cat_search', adv_id = adv['_id'])}}" target="_self" class="photo-img">
                           <img src="{{url_for('thumbnail', filename=photo)}}">
                           <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                         </a>  
@@ -131,7 +132,7 @@
                            </p>
 
                            <p class="pull-right text-right">
-                              <a class="btn btn-success"  target="_self"href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}">Подробнее</a>
+                              <a class="btn btn-sm btn-default"  target="_self"href="{{url_for_sale_show(pet_id = adv.get('pet_id'), adv_id = adv['_id'])}}">Подробнее</a>
                            </p>
 
                           </div>

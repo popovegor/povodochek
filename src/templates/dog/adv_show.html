@@ -1,0 +1,584 @@
+{% extends "layout.html" %}
+
+
+{%block breadcrumbs %}
+    
+          <ol class="breadcrumb" >
+            <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
+            <li><a href="{{url_for('dog_search')}}">Продажа собак</a> <span class="divider"></span></li>
+            <li><a href="{{url_for('dog_search', breed = adv.get('breed_id')  )}}">{{adv.get('breed_id') | breed_dog_name() }}</a> <span class="divider"></span></li>
+            <li class="active">{{adv.get("title")}}</li>
+          </ol>
+    
+    {%endblock%}
+
+
+{% block content %}  
+
+<div class="dog-adv-show"> 
+
+ 
+
+  {{top_adv(adv)}}
+        
+  <div class="row">
+    <div class="col-sm-7" style="" >
+
+          {{adv_number(adv)}}
+
+          {{photos(adv)}}
+
+          {{doc_info(adv)}}      
+          
+
+    </div>
+
+    <div class="right-side {{'col-sm-5'}}">
+
+      <h2 style="margin-top:10px">{{adv.get("title")}}</h2>
+      
+      <div style="margin-bottom:40px">
+        <p style="white-space:pre-line">{{adv.get('desc') | trim }}</p>
+      </div>
+
+      {{dog_info(adv)}}  
+
+      {{seller_info(adv)}}
+
+      
+
+      
+      
+
+    </div> <!-- right-side -->
+
+  </div>
+
+
+</div> <!-- sale-pet-container -->  
+
+  <script type="text/javascript">
+  $(window).load(function(){
+    $('#carousel').flexslider({
+      animation: "slide",
+      controlNav: false,
+      animationLoop: false,
+      slideshow: false,
+      itemMargin: 5,
+      itemWidth: 100,
+      asNavFor: '#slider'
+    });
+
+    $('#slider').flexslider({
+      animation: 'fade',
+      controlNav: false,
+      animationLoop: false,
+      slideshow: false,
+      sync: "#carousel",
+      smoothHeight: true,
+      animationSpeed : 400,
+      touch: false, 
+      after: function(slider){
+        $("#currentPhotoNumber").html(slider.currentSlide+1);
+      }
+    });
+
+    $("#slider .flex-prev").click(function(){
+      var slider = $('#slider').data('flexslider');
+      slider.flexslider("prev");
+    });
+
+    $("#slider .flex-next").click(function(){
+      var slider = $('#slider').data('flexslider');
+      slider.flexslider("next");
+    });
+
+    $("[data-toggle='tooltip']").tooltip();
+
+
+  });
+  </script>
+
+  {% endblock %} 
+
+
+{%- macro adv_number(adv) -%}
+<p style="margin-top:8px">
+    {#<span style="padding-right:15px"><span class="text-muted small">Объявление № </span>
+    {%set short_id = adv | short_adv_id %}
+    <span class="badge" title="№ объявления {{short_id}}" style="margin-left:5px;">
+    {{short_id}}
+    </span>
+    </span>#}
+
+    {% set add_date = adv.get("add_date") %}
+    {% set update_date = adv.get("update_date") %}
+
+    
+
+     <span style="white-space:nowrap;padding-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).fromNow()}}&nbsp;({{momentjs(add_date).format("DD.MM в H:mm")}})</span>
+
+     {#{[add_date, update_date]}#}
+
+     {%if update_date != add_date %}
+    <br/>
+    <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).fromNow()}}&nbsp;({{momentjs(update_date).format("DD.MM в H:mm")}})</span>
+
+    {%else%}
+
+    {%endif%}     
+
+    
+    
+</p>
+{%- endmacro -%}
+
+
+{%- macro top_adv(adv) -%}
+      <div class="row" style="">
+        <div class="col-sm-7">
+            
+            <h1>{{header}}</h1>
+
+        </div>
+        <div class="col-sm-5" style="">
+         
+          {{price_info(adv)}}    
+         
+        </div>
+      </div>
+       
+{%- endmacro -%}
+
+{%- macro price_info(adv) -%}
+
+   <p>
+      <span class="" style="margin-right:10px;" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><b style="padding-right:10px" class="text-muted small">Цена:</b><span style="white-space:nowrap; font-size:40px;">{{adv.get('price') | format_price() }}&thinsp;руб</span></span></span>  
+      <br/>
+
+      {%if adv.get("price_haggle") %}
+      <abbr data-toggle="tooltip" class="label label-info " style="margin-right:5px" title="Уместен торг">торг</abbr> 
+      {%endif%}
+
+      {%if adv.get("price_hp") %}
+      <abbr style="margin-right:5px" data-toggle="tooltip"  title="Возможна рассрочка платежа" class="label label-info ">рассрочка</abbr>  
+      {%endif%}
+
+      {%if adv.get("contract") %}
+      <abbr style="margin-right:5px" data-toggle="tooltip" title="Заключается договор купли-продажи" class="label label-info ">договор</abbr>
+      {%endif%}
+
+      {%if adv.get("delivery") %}
+      <abbr style="" data-toggle="tooltip" title="Возможна доставка в другой город" class="label label-info ">доставка</abbr>
+      {%endif%}
+    </p>
+
+{%- endmacro-%}
+
+{%- macro photos(adv) -%}
+
+      <!-- photo -->
+        {%if adv.get('photos') | length > 0%}    
+
+        <div class="photos" style="margin-top:25px; margin-bottom:40px">
+
+
+          {%if adv.get("photos") | length > 1%}
+
+          <div id="carousel" class="flexslider hidden-xs">
+            <ul class="slides">
+              {%for photo in adv.get('photos') %}
+              <li>
+                <img width="100" src="{{url_for('thumbnail', filename = photo)}}" />
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+
+          {%else%}
+
+            {% set photo = adv.get('photos')[0]%}
+            <img style="padding-bottom:10px" width="100" src="{{url_for('thumbnail', filename = photo)}}" />
+
+          {%endif%}
+
+           <p class="text-left small">(фото <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}})</p>
+          
+
+          <div id="slider" class="flexslider">
+            <ul class="slides ">
+              {%for photo in adv.get('photos') %}
+              <li class="text-center photo">
+                 <img class="img-responsive {{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
+              </li>
+              {%endfor%}
+            </ul>
+          </div>
+
+           
+
+          
+
+         
+        </div> <!-- photos -->
+    {%else%}
+        <div class="photos" style="margin-top:15px; margin-bottom:40px; background-color:#f5f5f5; padding-top:50px; height:350px">
+         <img src="/static/img/no_photo.png" class="img-responsive" style="margin:0 auto"/>
+      </div>
+    {%endif%}
+    <!-- / photo -->
+{%- endmacro -%}
+
+
+{%-  macro doc_info(adv) -%}
+    <div class="row doc-info" style="margin-bottom:30px">
+   {% set doc = adv.get("doc_id") %}
+        {% if not doc %}
+          <div class="bg-warning col-lg-11" style="padding: 10px 20px; border-radius:5px">
+          <table>
+            <tr>
+              <td style="">
+                <span style="font-size:3em" class=" glyphicon glyphicon-exclamation-sign text-danger"></span>
+            </td>
+            <td style="width:20px"></td>
+            <td>
+                <h3 class="text-danger">
+                   Нет документов о происхождении собаки!
+                </h3>
+                <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки.{# Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.#}</p>
+            </td>
+             
+            
+            
+            </tr>
+          </table>
+
+
+            
+          </div>
+        {%else%}
+          
+   <p class="" style="">Официальный документ, подтверждающих породистое происхождение собаки:</p>
+         <div class="panel panel-default" style="">
+          <div class="panel-heading">
+               <h4 class="page-heade"><span style="padding-right:5px">{{doc | doc_dog_name}}</span>
+               {#<span style="font-size:1em; color:#777" class="glyphicon glyphicon-file pull-right"></span>#}
+               </h4>
+               
+          </div>
+          <div class="panel-body">
+             
+             <!--hr/-->
+
+            <dl class="dl-horizontal" style="margin-top:10px">
+
+              {% if doc in dog_pedigree_docs %}
+              {%set pedigree = adv.get("pedigree") %}
+              <dt>№ родословной</dt>
+              <dd>
+                {% if pedigree %}
+                  {{pedigree}}
+                {%else%}
+                  <span class='text-muted' >не указан</span>
+                {%endif%}
+              </dd>
+              {% endif %}
+
+              {%set tatoo = adv.get("tatoo") %}
+              <dt>№ клейма</dt>
+              <dd>
+                {% if tatoo %}
+                  {{tatoo}}
+                {%else%}
+                  <span class='text-muted' >не указан</span>
+                {%endif%}
+              </dd>
+
+              
+
+              
+
+            </dl>
+
+
+            {{ parent_info(adv, "Мать собаки", "mother") }} 
+            {{ parent_info(adv, "Отец собаки", "father") }} 
+
+            </div>
+            </div>
+        {%endif%}
+    </div>
+{%- endmacro-%}
+
+
+{%- macro parent_info(adv, title, prefix) -%}
+
+
+{% set doc = adv.get("doc_id") %}
+{% if doc %}
+
+  <div class="dog-father dog-mother" style="margin-bottom:30px;">
+
+        <hr/> 
+
+         <h4 class="">{{title}}</h4>
+
+
+         <dl class="dl-horizontal" class="dog-parent">
+
+           {%set pedigree = adv.get(prefix + "_pedigree") %}
+          <dt>№ родословной</dt>
+          <dd>
+            {% if pedigree %}
+                  {{ pedigree }}
+            {% else %}
+              <span class='text-muted' >не указан</span>
+            {%endif%}
+          </dd>
+
+          {%set name = adv.get(prefix + "_name") %}
+          <dt>Кличка</dt>
+          <dd>
+            {% if name %}
+                  {{ name }}
+            {% else %}
+              <span class='text-muted' >не указана</span>
+            {%endif%}
+          </dd>
+
+           {%set country = adv.get(prefix + "_country_id") %}
+          <dt>Страна происхождения</dt>
+          <dd>
+            {% if country %}
+                  {{ country | country_name }}
+            {% else %}
+              <span class='text-muted' >не указана</span>
+            {%endif%}
+          </dd>
+          
+
+           {%set misc = adv.get(prefix + "_misc") %}
+           {% if misc %}
+            <dt class="">Прочее</dt>
+            <dd class="">
+                {{ misc }}
+            </dd>
+           {%endif%}
+         
+
+
+        </dl>
+         
+
+     
+
+        <!--hr/-->
+
+       
+    </div>
+
+
+{% endif %}
+
+{%- endmacro -%}
+
+{%- macro dog_info(adv) -%}
+    
+      <div class="dog-info" style="margin-bottom:40px;">
+
+        <h3 class="page-heade">Подробная информация</h3>
+
+        <!--hr/-->
+
+        <dl class="dl-horizontal" style="margin-top:20px">
+
+          
+
+          <dt>Порода</dt>
+          <dd>{{adv.get("breed_id") | breed_dog_name | lower}}</dd>
+
+          {% set gender = adv.get("gender_id") | gender_name %}
+          <dt>Пол</dt>
+          <dd>{{ gender | lower if gender else '<span class="text-muted">не указан</span>' | safe}}</dd>
+
+          {% set birthday = adv.get("birthday") %}
+          <dt>Дата рождения</dt>
+          <dd> 
+            {% if birthday %}
+              {{momentjs(birthday).format("LL")}}
+              
+              ({{ ('<script>document.write(moment("' + birthday | string + '").fromNow(true));</script>') | safe }})
+              {%else%}
+                <span class='text-muted'>не указана</span>
+            {%endif%}
+          </dd>
+
+           
+          <dt>
+            Вакцинация (прививки)
+          </dt>
+          <dd>
+            {% if adv.get("vaccination") %}
+              сделана (по возрасту)
+            {%else%}
+              <span class='text-muted'>не сделана</span>
+            {%endif%}
+          </dd>
+
+          <dt>Ветеринарный паспорт</dt>
+          <dd>
+            {% if adv.get("vetpassport") %}
+              есть
+            {%else%}
+              <span class='text-muted'>нет</span>
+            {%endif%}
+          </dd>
+
+          <dt>Микрочип</dt>
+          <dd>
+            {% if adv.get("microchip") %}
+              есть
+            {%else%}
+              <span class='text-muted'>нет</span>
+            {%endif%}
+          </dd>
+
+          {% set color = adv.get("color") or "" | lower %}
+              <dt>
+                Окрас
+              </dt>
+              <dd>
+                {{ color  or "<span class='text-muted' >не указан</span>" | safe  }}
+              </dd>
+
+
+
+              <dt>Допуск в разведение</dt>
+              <dd>
+                {% if adv.get("breeding") %}
+                есть
+                {%else%}
+                <span class='text-muted' >отсутствует</span>
+                {%endif%}
+              </dd>
+
+              <dt>Подходит для выставок</dt>
+              <dd>
+                {% if adv.get("show") %}
+                да
+                {%else%}
+                <span class='text-muted' >нет</span>
+                {%endif%}
+              </dd>
+          
+          {%set city = adv.get("city_id") | city_region %}
+          <dt>Местоположение</dt>
+          <dd>
+            {% if city %}
+                  {{ city }}
+                {% else %}
+                  <span class='text-muted' >не указано</span>
+                {%endif%}
+          </dd>
+
+          <dt>Доставка в др. город</dt>
+          <dd>
+            {% if adv.get("delivery") %}
+            возможна
+            {%else%}
+            <span class='text-muted' >нет</span>
+            {%endif%}
+          </dd>
+
+          <dt>Цена</dt>
+          <dd>
+            {% if adv.get("price") %}
+            {{adv.get('price') | format_price() }} <span>руб</span>
+            {%else%}
+            <span class='text-muted' >не указана</span>
+            {%endif%}
+          </dd>
+
+          <dt>Торг</dt>
+          <dd>
+            {% if adv.get("price_haggle") %}
+              уместен
+            {%else%}
+            <span class='text-muted' >не уместен</span>
+            {%endif%}
+          </dd>
+
+          <dt>Рассрочка</dt>
+          <dd>
+            {% if adv.get("price_hp") %}
+              возможна
+            {%else%}
+            <span class='text-muted' >нет</span>
+            {%endif%}
+          </dd>
+
+          <dt>Договор</dt>
+          <dd>
+            {% if adv.get("contract") %}
+            есть
+            {%else%}
+            <span class='text-muted' >нет</span>
+            {%endif%}
+          </dd>
+
+
+          
+        </dl>
+
+       
+        
+
+      </div>
+
+{%- endmacro -%}
+
+
+
+{%- macro seller_info(adv) -%}
+
+<div class="seller-block" style="margin-bottom:40px">  
+    <h3>Контактная информация</h3>      
+      <noindex>  
+      <dl class="dl-horizontal">
+          {%set username = adv.get("username") or (seller.get("username") if seller else "") %}
+          {% if username %}
+         <dt>Контактное лицо</dt>
+          <dd>
+            {{username}}
+          </dd>
+          {%endif%}
+
+            {% set phone = adv.get("phone") or (seller.get("phone") if seller else "") %}
+            {% if phone %}
+           <dt>Телефонный номер</dt>
+          <dd>
+            {{phone}}
+          </dd>
+          {%endif%}
+
+            {%set skype = adv.get("skype") or (seller.get("skype") if seller else "") %}
+            {%if skype %}
+             <dt>Skype</dt>
+            <dd>
+                skype
+            </dd>
+            {%endif%}
+      </dl>
+      </noindex>
+   
+    
+
+    <noindex> 
+      <div class="text-left" style="margin-top:20px">
+          <a class="btn btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+      </div>
+    </noindex>
+
+ </div>  <!-- /seller-block -->
+
+{% endmacro%}

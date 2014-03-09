@@ -2,35 +2,41 @@
 {%- macro top_breeds(pets, pet_id) -%}
 		
 		<div class="row">
-			<div class="col-md-10">
-				<h5 class="text-left" style="text-transform:uppercase; font-family:arial black">
-			{{pet_id | pet_name | morph_word(["plur"]) | title }}
-				</h5>
+			<div class="col-md-1">
+				
+			</div>
+			<div class="col-md-11">
+				<h4 class="text-left" style="">
+			<b>{{pet_id | pet_name | morph_word(["plur"]) | title }}</b>
+				</h4>
 			</div>
 		</div>
 
-		<div class="breeds clearfix" style="margin-bottom:20px">
-			<table style="width:100%">
-				<tbody>
-			
-			{% for pet in pets %}
-				{%set pet_id = pet.get('pet_id') %}
-				{% set breed_id = pet.get('breed_id') %}
-				{%set breed_name = breed_id | breed_name(pet_id) %}
-				<tr>
-					<!-- <td>{{loop.index}}.&nbsp;</td> -->
-					<td class="breed-name" style="width:60%;">
-						<h4 class="breed-name"><a href="{{url_for_sale(pet_id, breed = breed_id) }}">{{breed_name}}</a></h4>	
-					</td>
+		<div class="row breeds clearfix" style="margin-bottom:20px">
+			<div class="col-md-1">
+				
+			</div>
+			<div class="col-md-11">
+				<table style="width:100%"><tbody>
+				{% for pet in pets %}
+					{%set pet_id = pet.get('pet_id') %}
+					{% set breed_id = pet.get('breed_id') %}
+					{%set breed_name = breed_id | breed_name(pet_id) %}
+					<tr>
+						<!-- <td>{{loop.index}}.&nbsp;</td> -->
+						<td class="breed-name" style="width:60%;">
+							<p><a href="{{url_for('dog_search' if pet_id == 1 else 'cat_search' , breed = breed_id) }}">{{breed_name}}</a></p>	
+						</td>
 
-					{#<td style="width:50px">&nbsp;</td>
-					<td class="breed-counter" style="text-align:left;">
-						<span class="badge">{{pet.get("count")}}</span>
-					</td>#}
-				</tr>
-			{% endfor %}
-				</tbody>
-			</table>
+						{#<td style="width:50px">&nbsp;</td>
+						<td class="breed-counter" style="text-align:left;">
+							<span class="">{{pet.get("count")}}</span>
+						</td>#}
+					</tr>
+				{% endfor %}
+				</tbody></table>	
+			</div>
+			
 			</div> <!-- cities -->
 
 		{%- endmacro -%}
@@ -41,18 +47,20 @@
 <div class="top-breeds">
 
 		
-		<h5 class="text-left" style=""><b>Популярные породы на продажу</b></h5>
+		<h3 class="text-left" style="">Популярные породы на&nbsp;продажу</h3>
+
+		<hr/>
 
 
 		<div class="row" style="margin-top:20px">
 	
-				<div class="top-dogs clearfix col-sm-6">
+				<div class="col-sm-6">
 					
 					{{ top_breeds(top_dogs, pet_id = 1)}}
 
 				</div>
 
-				<div class="top-cats  clearfix col-sm-6">
+				<div class="col-sm-6">
 
 					{{ top_breeds(top_cats, pet_id = 2)}}
 

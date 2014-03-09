@@ -1,0 +1,38 @@
+ {% extends "layout_popup.html" %}
+
+{% block content %}
+
+    	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+      <form id="contact" method="post" role="form"  action="{{request.url}}">
+          
+            {{form_field(form.message,  size="col-md-7", rows=5) }}
+
+            {#{%if seller.get("phone_adv_sms") %}
+              {{form_field(form.sms_alert) }}
+            {%endif%}#}
+
+            {{form_field(form.username,  size="col-xs-5") }}
+            {{form_field(form.email,  size="col-xs-5") }}
+       
+                           
+          <button class="btn btn-primary" type="submit" data-loading-text="Отправляется...">Отправить</button>
+          
+        </form>
+      </div> <!-- send-mail -->
+
+      <script type="text/javascript">
+
+      $(document).ready(function(){
+          povodochek.validate($("form"), {
+            {{form.username.id}}: { required: true },
+            {{form.email.id}}: { required: true},
+            {{form.message.id}} : { required: true}
+         });
+      });
+
+      </script>
+
+
+{% endblock %}
+

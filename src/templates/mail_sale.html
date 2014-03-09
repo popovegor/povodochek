@@ -1,11 +1,7 @@
- {% extends "layout_base.html" %}
+ {% extends "layout_popup.html" %}
 
-{% block layout %}
-  <div class="container">
-
-
-  <h1 class="page-header">{{header}}</h1>
-
+{% block content %}
+  
     <div id="send_mail" class="send-mail">
 
     	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
@@ -24,14 +20,9 @@
        
                            
           <button class="btn btn-primary" type="submit">Отправить</button>
-          <a href="#" class="btn" aria-hidden="true" data-dismiss="modal" onclick="window.close();">Закрыть</a>
-
+          
         </form>
       </div> <!-- send-mail -->
-
-
-
-    </div> <!-- container -->
 
 
 {% endblock %}

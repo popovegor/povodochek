@@ -7,11 +7,11 @@ from flask_login import (LoginManager, current_user,
                             confirm_login, fresh_login_required)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Sale, Contact, Activate,ResetPassword, ChangePassword, SaleSearch, get_city_by_city_field, SendMail, ChangeEmail, SignUpBasic, get_breed_by_form_field)
-from pymongo import (MongoClient, ASCENDING, DESCENDING)
-from bson.objectid import ObjectId
-from bson.son import SON
-from gridfs import GridFS
+from forms import (SignUp, SignIn, Cat, Contact, \
+    Activate,ResetPassword, ChangePassword, \
+    SaleSearch, get_city_by_city_field, \
+    SendMail, ChangeEmail, SignUpBasic, \
+    get_breed_by_form_field, Dog, DogSearch)
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from werkzeug.utils import secure_filename
@@ -23,6 +23,7 @@ import re
 import base64
 from sys import maxint
 from itertools import groupby
+from bson.objectid import ObjectId
 
 from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
                               UploadNotAllowed)
@@ -32,35 +33,32 @@ from security import hash_password, check_password
 from flask_mail import (Mail, Message)
 from threading import Thread
 from momentjs import MomentJS
-from helpers import (num, create_thumbnail, get_thumbnail_filename, resize_image, save_photo, get_photo, get_photo_size, qoute_rus, morph_word)
+from photo_helper import (create_thumbnail, get_thumbnail_filename, resize_image, get_photo_size)
+from helpers import (num, qoute_rus, morph_word, date2str)
 
 from smsgate import send_sms
 
 from dic.ages import ages
 from dic.genders import genders
 from dic.pets import (pets, get_pet_name, DOG_ID, CAT_ID)
-from dic.breeds import (dogs, get_breed_name, cats, get_breed_by_name)
-from dic.cities import (get_city_region, get_city, get_city_name, format_city_region)
+from dic.breeds import (dogs, get_breed_name, cats, \
+    get_breed_by_name, breeds, get_breed_dog_name, \
+    get_breed_cat_name)
+from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities)
+from dic.pet_docs import (dog_pedigree_docs, puppy_cards, \
+    dog_docs, get_doc_dog_name)
+
+from dic.countries import (get_country_name)
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
 from advs_parser import parse_avito_adv
+import db
+import random
+from bson import json_util
+import json
 
 photos = UploadSet('photos', IMAGES)
-
-db = MongoClient().povodochek
-
-def users():
-    return db.users
-
-def sales():
-    return db.sales
-
-def pets_by_cities():
-    return db.pets_by_cities
-
-def top_breeds():
-    return db.top_breeds
 
 class User(UserMixin):
     def __init__(self, login, id, active = True, username = None, email = None, new_email = None, city_id = None, phone = None, skype = None):
@@ -80,12 +78,11 @@ class User(UserMixin):
     def is_active(self):
         return True
 
-
-
 class Anonymous(AnonymousUser):
-    name = u"Anonymous"
-    username = u""
-    email = u""
+    def __init__(self):
+        self.name = u"Anonymous"
+        self.username = u""
+        self.email = u""
 
     def is_signed(self):
         return False
@@ -102,6 +99,7 @@ assets = Environment(app)
 
 js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery-ui-1.10.3.custom.min.js', \
+    'js/chosen.jquery.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
     'js/jquery.inputmask.min.js', \
@@ -114,7 +112,7 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/bootstrap3-typeahead.min.js', \
-    'js/holder.min.js', \
+    'js/holder.js', \
     'js/bootstrap.min.js', \
     'js/jquery.carouFredSel.min.js', \
     'js/povodochek.js', \
@@ -122,7 +120,8 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     output='gen/js.js')
 assets.register('js_all', js)
 
-css = Bundle('css/bootstrap.min.css', \
+css = Bundle(
+    'css/bootstrap.min.css', \
     'css/typeahead.js-bootstrap.css', \
     'css/nouislider.fox.css', \
     'css/rur-arial.css', \
@@ -171,6 +170,9 @@ app.jinja_env.filters['pet_name'] = get_pet_name
 
 app.jinja_env.filters['breed_name'] = get_breed_name
 
+app.jinja_env.filters['breed_dog_name'] = get_breed_dog_name
+app.jinja_env.filters['breed_cat_name'] = get_breed_cat_name
+
 def jinja_sorted(iterable, key = None, reverse = False):
     return sorted(iterable, key = eval(key), reverse = reverse) 
 
@@ -212,35 +214,65 @@ def jinja_min(*args):
 
 app.jinja_env.filters['min'] = jinja_min
 
-def jinja_shorten_mongoid(id):
-    return int(time.mktime(id.generation_time.timetuple()))
 
-app.jinja_env.filters['shorten_mongoid'] = jinja_shorten_mongoid
 
 def jinja_utcnow():
     return datetime.utcnow()
 
 app.jinja_env.globals['utcnow'] = jinja_utcnow
 
+app.jinja_env.globals['dog_docs'] = dog_docs
+app.jinja_env.filters['doc_dog_name'] = get_doc_dog_name
+app.jinja_env.globals['puppy_cards'] = puppy_cards
+app.jinja_env.globals['dog_pedigree_docs'] = dog_pedigree_docs
+
+
 def debug_write(msg):
     print("DEBUG INFO: %s" % msg)
+
+
+def jinja_breeds():
+	return [ breed for breed in breeds.values() ]
+
+app.jinja_env.globals['breeds'] = jinja_breeds()
+
+def jinja_dogs():
+    return [ dog for dog in dogs.values() ]
+
+app.jinja_env.globals['dogs'] = jinja_dogs()
+
+def jinja_large_cities():
+    dt1 = datetime.now()
+    large_cities = [city for city in cities.values() if city.get('city_size') >= 5]
+    dt2 = datetime.now()
+    print(dt2 - dt1)
+    return large_cities
+
+app.jinja_env.globals['large_cities'] = jinja_large_cities()
+
+app.jinja_env.filters['country_name'] = get_country_name
+
 
 @login_manager.user_loader
 def load_user(id):
     # print("user id = %s" % str(id))
-    user = users().find_one({'_id':ObjectId(id)})
-    return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email"), city_id = user.get("city_id"), phone= user.get("phone"), skype = user.get("skype") ) if user else Anonymous
+    user = db.get_user(id)
+    if user:
+        return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email"), city_id = user.get("city_id"), phone= user.get("phone"), skype = user.get("skype") )
+    else:
+        return Anonymous()
 
 @app.route("/")
 def index():
-    mosaic_advs = get_sales_for_mosaic(0, 6)
-    top_dogs = [adv for adv in top_breeds().find({'pet_id':1}, sort = [('count', DESCENDING)], limit = 15)]
-    top_cats = [adv for adv in top_breeds().find({'pet_id':2}, sort = [('count', DESCENDING)], limit = 15)]
+    mosaic_advs = get_pet_advs_for_mosaic(0, 20, pet_id = DOG_ID)
+    dog_advs = db.get_top_dog_advs()
+    cat_advs = db.get_top_cat_advs()
     tmpl = render_template('index1.html', \
         pet_search_form = SaleSearch(), \
-        top_cats = top_cats, \
-        top_dogs = top_dogs, 
-        title = u"Продажа породистых собак и кошек", mosaic_advs = [adv for adv in mosaic_advs])
+        top_cats = cat_advs, \
+        top_dogs = dog_advs, \
+        mosaic_advs = mosaic_advs, \
+        title = u"Продажа и покупка породистых собак и кошек по всей России")
     return tmpl
 
 @app.route("/signin/", methods = ["POST", "GET"])
@@ -248,12 +280,12 @@ def signin():
     form = SignIn(request.form)
     if request.method == "POST" and form.validate():
         (login, password, remember) = (form.login.data, form.password.data, form.remember.data)
-        matcher = re.compile("^" + re.escape(login) + "$", re.IGNORECASE)
-        user = users().find_one({'login': {'$regex':matcher}})
+        user = db.get_user_by_login(login)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
                 if login_user(User(login, user["_id"]), remember=remember):
-                    return redirect(request.args.get("next") or url_for("account_sale"))
+                    return redirect(request.args.get("next") \
+                        or url_for("account_contact"))
                 else:
                     flash(u"Извините, но вы не можете войти.", "error")
             else:
@@ -269,22 +301,11 @@ def ajax_activate_remember_later():
     later = session["activate_remember_later"] = True
     return "success"
 
-
-@app.route("/ajax/typeahead/location/prefetch.json", methods = ["GET"])
-def ajax_location_prefetch():
-    locations = [ city.get("city_region") for city in db.cities.find(fields=["city_region"])]
-    return jsonify(items = locations ) 
-
 @app.route("/ajax/typeahead/location/", methods = ["GET"])
 def ajax_typeahead_location():
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
-    matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
-    locations = [ city.get("city_region") \
-        for city in db.cities.find({'city_region': {"$regex": matcher}}, \
-        	limit = limit, \
-        	fields = ["city_region"], \
-        	sort = [('city_size', DESCENDING)] )]
+    locations = db.get_locations_for_typeahead(query, limit)
     return jsonify(items = locations )    
 
 @app.route("/ajax/typeahead/breed/", defaults={'pet_id':None}, methods = ["GET"])
@@ -295,44 +316,47 @@ def ajax_typeahead_breed(pet_id = None):
     limit = max(int(request.args.get("limit") or 8), 8)
     matcher = query.lower()
     breeds = []
+    _dogs = _cats = []    
     if not pet_id or pet_id == DOG_ID:
-        breeds = breeds + [u"{0}{1}".format(dog, u", Собаки") for dog in dogs.values() if matcher in dog.lower() ] 
+        _dogs = [u"{0}{1}".format(dog, u", Собаки") \
+        for dog in dogs.values() if matcher in dog.lower() ] 
     if not pet_id or pet_id == CAT_ID:
-        breeds = breeds + [u"{0}{1}".format(cat, u", Кошки") for cat in cats.values() if matcher in cat.lower() ]
+        _cats = [u"{0}{1}".format(cat, u", Кошки") \
+        for cat in cats.values() if matcher in cat.lower() ]
+        _cats = sorted(_cats)
+
+    if not matcher:
+        breeds = _dogs[:limit/2] + _cats[:limit/2]
+    else:
+        breeds = _dogs[:limit/2] + _cats[:limit/2]
     return jsonify(items = breeds )  
 
-def url_for_sale_show(pet_id, adv_id, **kwargs):
-    return url_for('sale_show_dog', id = adv_id, **kwargs) if pet_id == 1 else url_for('sale_show_cat', id = adv_id, **kwargs)
+@app.route("/ajax/typeahead/dog/", methods = ["GET"])
+def ajax_typeahead_dog():
+    query = (request.args.get("query") or u"").strip()
+    limit = max(int(request.args.get("limit") or 8), 8)
+    matcher = query.lower()
 
-app.jinja_env.globals['url_for_sale_show'] = url_for_sale_show
-
-def get_sales_for_mosaic(skip, limit = 36, pet_id = None):
-    query = {"photos": {"$nin": [None, []]} }
-    if pet_id:
-        query["pet_id"] = pet_id
-    advs = [{"src":url_for('thumbnail', \
-            filename = adv.get('photos')[0], width= 300), \
-        'url' : url_for_sale_show( pet_id = adv.get('pet_id'), adv_id = adv.get('_id')), \
-        'id': str(adv.get('_id')), \
-        'p' : adv.get('price'), \
-        'b' : get_breed_name(adv.get('breed_id'), adv.get('pet_id')), \
-        's' : {'h':100, 'w':150}}
-        for adv in sales().find(
-            query, \
-            skip = skip, \
-            fields = ["_id", "photos", "title", "pet_id", "price", "breed_id", "pet_id"], \
-            limit = limit, \
-            sort = [('update_date', -1)]) ]
-    return advs
+    if matcher:
+        breeds = [dog for dog in dogs.values() if matcher in dog.lower() ]
+    else:
+        breeds = dogs.values()[:limit]
+    return jsonify(items = breeds ) 
 
 
-@app.route("/ajax/sales/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":36, 'skip': 0})
-@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":36})
-@app.route("/ajax/sales/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
-def ajax_sales_showmore(pet, skip, limit):
-    print(pet)
-    advs = get_sales_for_mosaic(skip, limit = limit, pet_id = pet)
-    return jsonify(advs = advs)
+@app.route("/ajax/typeahead/cat/", methods = ["GET"])
+def ajax_typeahead_cat():
+    query = (request.args.get("query") or u"").strip()
+    limit = max(int(request.args.get("limit") or 8), 8)
+    matcher = query.lower()
+
+    if matcher:
+        breeds = [cat for cat in cats.values() \
+        if matcher in cat.lower() ]
+    else:
+        breeds = cats.values()[:limit]
+    return jsonify(items = breeds ) 
+
 
 @app.route("/test/location/", methods = ["GET"])
 def test_location():
@@ -375,35 +399,37 @@ def send_reset_password(email, login, asign, password):
     msg.html = render_template("email/reset_password.html", login = login, password = password, asign = asign)
     mail.send(msg)
 
-def send_from_sale(email, username, sale_id, seller_email, seller_username, subject, message):
-    adv = sales().find_one(ObjectId(sale_id))
-    if adv and seller_email:
+def send_from_sale(adv_id, adv_url, email, username, \
+    seller_email, seller_username, subject, message):
+    # adv = sales().find_one(ObjectId(sale_id))
+    if adv_id and seller_email:
         msg = Message(subject, recipients=[seller_email])
-        msg.html = render_template("email/from_sale.html", \
+        msg.html = render_template("email/from_adv.html", \
             subject = subject, \
             message = message, \
-            adv = adv, \
+            adv_url = adv_url, \
+            adv_id = adv_id, \
             seller_email = seller_email, \
             seller_username = seller_username, \
             email = email, \
             username = username, \
-            date = datetime.now().date())
+            date = datetime.now())
         mail.send(msg)
 
     
-@app.route("/test/email/from_sale")
-def test_email_from_sale():
+@app.route("/test/email/from_dog_adv/")
+def test_email_from_dog_adv():
     msg = Message(u"Сообщение от %s сайта Поводочек" % (u'пользователя' if current_user.is_signed() else u'гостя'), \
         recipients=["popovegor@gmail.com"])
-    adv = sales().find(limit=1)[0]
-    msg.html = render_template("email/from_sale.html", \
+    adv = db.dog_advs.find(limit=1)[0]
+    msg.html = render_template("email/from_adv.html", \
         subject = u"Сообщение от пользователя сайта Поводочек", \
         message = u"Некоторое тестовое сообщение.", \
         adv = adv, \
         username = u'Егор Попов АТИ', \
         email = u'popovegor@gmail.com', \
-        seller = users().find_one(ObjectId(adv.get('user_id'))), \
-        date = datetime.now().date())
+        seller = db.get_user(adv.get('user_id')), \
+        date = datetime.now())
     # mail.send(msg)
     return msg.html
 
@@ -414,27 +440,33 @@ def activate(confirm):
     if request.method == "POST":
         if form.validate():
             email = form.email.data
-            user = users().find_one({"email": email})
+            user = db.get_user_by_email(email)
             if user:
-                new_confirm = str(uuid4()) 
-                users().update({'_id': user['_id']}, {"$set": {"confirm": new_confirm}})
+                new_confirm = db.set_user_confirm(user['_id'])
                 send_activate(email, new_confirm)
-                flash(u"Ссылка на активацию регистрации успешно отправлена. Проверьте электронную почту '%s', чтобы подтвердить регистрацию." %email, "info")
-        return render_template("activate.html", form = form, title = u"Активация регистрации")
+            return render_template("activate_sent.html", form = form, title = u"Активация регистрации", email = email)
+        else:
+            return render_template("activate.html", form = form, title = u"Активация регистрации",)
     else:
-        user = users().find_one({'confirm': confirm})
-        if user:
-            users().update({'_id': user['_id']}, {"$set": {"activated": True, "activate_date" : datetime.utcnow(), "confirm" : ''}})
-        return render_template("activate.html", user = user, form = form, title = u"Активация регистрации")
+        
+        if confirm:
+            user = db.get_user_by_confirm(confirm)
+            if user:
+                db.activate_user(user['_id'])
+                return render_template("activate_success.html", user = user, form = form, title = u"Активация регистрации")
+            else:
+                return render_template("activate.html", confirm = confirm, form = form, title = u"Активация регистрации")
+        else:
+            return render_template("activate.html", form = form, title = u"Активация регистрации")
+        
 
 
 @app.route("/asignin/<asign>/", methods = ["GET"])
 def asignin(asign):
-    user = users().find_one({'asign': asign})
+    user = db.get_user_by_asign(asign)
     title=u"Активация нового пароля"
     if user:
-        users().update({'_id': user["_id"]}, \
-            {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], 'asign_pwd_hash': ''} })
+        db.asign_user(user)
         if login_user(User(user.get("login"), user.get("_id"))):
             return render_template("asignin_success.html", title = title)
     return render_template("asignin_failed.html", title=title)
@@ -445,9 +477,9 @@ def account_change_password():
     form = ChangePassword(request.form)
     form.current_user = current_user
     if request.method == "POST" and form.validate():
-        users().find_and_modify({"_id": ObjectId(current_user.id)}, \
-            {"$set": {"pwd_hash": hash_password(form.new_password.data)}})
-        flash(u"Пароль успешно изменен.", "success")
+        db.change_user_password(current_user.id, \
+            hash_password(form.new_password.data))
+        flash(u"Пароль успешно изменен", "success")
     return render_template("account/change_password.html", title=u"Смена пароля", form = form)
 
 
@@ -456,7 +488,7 @@ def account_change_password():
 def account_confirm_email(base64_email):
     new_email = base64.b64decode(base64_email)
     if new_email and current_user.new_email == new_email:
-        users().update({"_id": ObjectId(current_user.id)}, {"$set": {'new_email': None, "email": new_email}})
+        db.confirm_user_email(current_user.id, new_email)
         flash(u"Новый почтовый адрес подтвержден.", "success")
     else:
         flash(u"Новый почтовый адрес не удалось подтвердить!", "error")
@@ -469,8 +501,7 @@ def account_change_email():
     form = ChangeEmail(request.form)
     form.current_user = current_user
     if request.method == "POST" and form.validate():
-        users().find_and_modify({"_id": ObjectId(current_user.id)}, \
-            {"$set": {"new_email": form.new_email.data}})
+        db.change_user_email(current_user.id, form.new_email.data)
         send_confirm_email(form.new_email.data)
         flash(u"Для завершения изменения почтового адреса, необходимо перейти по ссылке, высланной письмом на новый почтовый адрес.", "warning")
     return render_template("account/change_email.html", title=u"Смена электронной почты", form = form)
@@ -496,39 +527,25 @@ def signup_basic():
     form = SignUpBasic(request.form)
     if request.method == "POST" and form.validate():
         (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), "Пользователь")
-        user_id = users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
+        user_id = db.signup_user(login, email, \
+            hash_password(password), username, confirm)
         send_signup(username, login, email, password, confirm)
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
         if login_user(User(login, user_id), remember = True):
-            return redirect(request.args.get('next') or url_for('account_sale'))
+            return redirect(request.args.get('next') or url_for('account_contact'))
         else:
             return redirect(url_for('signin'))
     return render_template('signup_basic.html', form=form, title=u"Регистрация")
-
-@app.route("/registracija/", methods = ["POST", "GET"])
-def signup():
-    form = SignUp(request.form)
-    if request.method == "POST" and form.validate():
-        (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), form.username.data)
-        user_id = users().insert({'login': login, 'email': email, 'pwd_hash': hash_password(password), 'username': username, 'confirm': confirm, 'activated': False, 'signup_date': datetime.utcnow()})
-        send_signup(username, login, email, password, confirm)
-        flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
-        if login_user(User(login, user_id), remember = True):
-            return redirect(request.args.get('next') or url_for('account_sale'))
-        else:
-            return redirect(url_for('signin'))
-    return render_template('signup.html', form=form, title=u"Регистрация")
 
 @app.route("/reset-password/", methods = ["GET", "POST"])
 def reset_password():
     form = ResetPassword(request.form)
     title = u"Сброс пароля"
     if request.method == "POST" and form.validate():
-        email_or_login = form.email_or_login.data
         password = str(hash(str(uuid1())) % 10000000)
         asign = str(uuid4())
-        user = users().find_and_modify(form.email_or_login.user, \
-            {"$set": {'asign_pwd_hash': hash_password(password), 'asign': asign}})
+        user = db.reset_user_password(form.email_or_login.user, \
+            hash_password(password), asign)
         if user:
             send_reset_password(user.get('email'), user.get("login"), asign, password)
             return render_template("reset_password_sent.html", title=title, email = user.get('email'))
@@ -542,70 +559,9 @@ def signout():
     return redirect( url if url else url_for('index'))
 
 
-def cities_near(city = None, distance = None):
-    cities = []
-    if city:
-        search_city = db.cities.find_one({'city_id': city.get('city_id')})
-        if search_city and distance and search_city.get("location"):
-            location = search_city.get("location")
-            geoNear = db.command(SON([("geoNear",  "cities"), ("near", location) ,( "spherical", True ), ("maxDistance", distance * 1000), ("limit", 5000)]))
-            cities = [(geo["obj"], geo["dis"]) for geo in geoNear.get("results")]
-    return cities
-
-
-def sale_find(pet_id = None, gender_id = None, breed_id = None, city = None, distance = None, photo = False, price_from = None, price_to = None, sort = None, skip = None, limit = None):
-
-    _filter = {}
-    extend_filter = lambda k,v: _filter.update({k:v}) if v else None
-    extend_filter("pet_id", num(pet_id))
-    if num(gender_id):
-        extend_filter('$or', [{'gender_id' : num(gender_id)}, {'gender_id' : {'$exists': False}}])
-
-    extend_filter("breed_id", num(breed_id))
-
-    price_form = num(price_from)
-    price_to = num(price_to)
-    if price_from or price_to:
-        extend_filter("price", \
-            {"$gte" : price_from if price_from > 0 else 0,\
-             "$lt" : price_to if price_to else maxint })
-    near_cities = []
-    if city and distance:
-        near_cities = cities_near(city, distance)
-        extend_filter("city_id", {"$in": [city.get("city_id") for city, dis in near_cities]})
-
-    if photo:
-        extend_filter("photos", {"$nin": [None, []]})
-    sortby = [("update_date", -1)]
-    if sort == 1:
-        sortby = [("price", -1)]
-    elif sort == 2:
-        sortby = [("price", 1)]
-    else:
-        sortby = [("update_date", -1)]
-    print("filter %s" % _filter)
-    print("sort %s" % sortby)
-    print(limit)
-    total = sales().count()
-    query = sales().find(SON(_filter),\
-        limit = limit or total,\
-        skip = skip or 0,\
-        sort = sortby)
-    count = query.count()
-    advs = [adv for adv in query]
-
-    if near_cities:
-        for adv in advs:
-            adv_city_id = adv.get("city_id")
-            (near_city, dist) = next( ((city, dist) for city, dist in near_cities if city["city_id"] == adv_city_id), (None, None))
-            adv["distance"] = int(round(dist / 1000, 0))
-
-    return (advs, count, total)
-
-
 def sale_find_header(form, pet_id, breed_id):
     # generate title
-    header = u"Купить <span>(продают)</span> {0}{1}{2}"
+    header = u"Купить <span>(продают)</span> <span class='bg-warning'>{0}</span>{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
 
@@ -619,38 +575,64 @@ def sale_find_header(form, pet_id, breed_id):
     breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed_header = Markup(u" породы %s" % breed.lower() )
+        breed_header = Markup(u" породы <span class='bg-warning'>%s</span>" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
     city = get_city_name(form.city.city_id, "i") if form.city.city_id else u''
+    city_header = city
+    city_title = city
     if city:
-        city = u" в г. {0}".format(city)
+        city_header = u" в г. <span class='bg-warning'>{0}</span>".format(city)
+        city_title = u" в г. {0}".format(city)
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
+    # else:
+    #     city_header = u" в России"
+    #     city_title = u" в России"
 
-    return (header.format(pet, breed_header, city), title.format(pet, breed_title, morph_word(pet, {"gent", "plur"}), city), pet, breed) 
-
-@app.route("/kupit-sobaku-koshku/")
-def kupit_sobaku_koshku():
-    form = SaleSearch()
-    form = SaleSearch(request.args)
-    return sale(form)
-
+    return (header.format(pet, breed_header, city_header), \
+        title.format(pet, breed_title, morph_word(pet, {"gent", "plur"}), city_title), pet, breed) 
 
 @app.route("/prodazha-sobak/")
-def sale_dogs():
-    form = SaleSearch()
-    form = SaleSearch(request.args)
-    return sale(form, DOG_ID)
+def dog_search():
+    form = DogSearch(request.args)
+    city = get_city_by_city_field(form.city)
+    (form.city.data, form.city.city_id) = \
+        (format_city_region(city), city.get("city_id")) if city else (None, None)
+    (breed_id, pet_id) = get_breed_by_form_field(form.breed)
+    if breed_id and pet_id:
+        form.breed.data = get_breed_name(breed_id, pet_id)
+    pet_id = DOG_ID
+    # sort
+    session["dog_sort"] = form.sort.data or \
+        session.get("dog_sort") or 3
+
+    (advs, count, total) = db.find_dog_advs(
+        breed_id = breed_id, \
+        gender_id = form.gender.data, \
+        city = city, \
+        distance = (form.distance.data + 0.01) if form.distance.data else None, \
+        photo = form.photo.data, \
+        price_from = form.price_from.data if form.price_from.data else None, \
+        price_to = form.price_to.data if form.price_to.data else None, \
+        sort = session.get("dog_sort"),
+        skip = (form.page.data - 1) * form.perpage.data, \
+        limit = form.perpage.data
+        )
+
+    (header, title, pet_name, breed_name) = sale_find_header(form, pet_id, breed_id)
+
+    tmpl = render_template("dog/search.html", header=Markup(header), \
+      title=title, form = form, advs = advs, \
+      pet = pet_name, pet_id = pet_id, \
+      breed = breed_name, breed_id = breed_id, \
+      sort = session.get("dog_sort"), \
+      count = count, total = total )
+    return tmpl
+
 
 @app.route("/prodazha-koshek/")
-def sale_cats():
-    form = SaleSearch()
-    form = SaleSearch(request.args)
-    return sale(form, CAT_ID)
-
-@app.route("/prodazha-koshek-sobak/")
-def sale(sale_search_form = None, pet = None):
+def cat_search(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
     city = get_city_by_city_field(form.city)
     (form.city.data, form.city.city_id) = \
@@ -658,11 +640,11 @@ def sale(sale_search_form = None, pet = None):
     (breed_id, pet_id) = get_breed_by_form_field(form.breed)
     if breed_id and pet_id:
     	form.breed.data = get_breed_name(breed_id, pet_id)
-    pet_id = pet_id or pet
+    pet_id = CAT_ID
     # sort
-    session["sale_sort"] = form.sort.data or session.get("sale_sort") or 3
+    session["cat_sort"] = form.sort.data or session.get("cat_sort") or 3
     
-    (advs, count, total) = sale_find(pet_id = pet_id, \
+    (advs, count, total) = db.find_cat_advs(pet_id = pet_id, \
         breed_id = breed_id, \
         gender_id = form.gender.data, \
         city = city, \
@@ -670,34 +652,76 @@ def sale(sale_search_form = None, pet = None):
         photo = form.photo.data, \
         price_from = form.price_from.data  * 1000, \
         price_to = (form.price_to.data if num(form.price_to.data) < 100 else 0) * 1000, \
-        sort = session.get("sale_sort"),
+        sort = session.get("cat_sort"),
         skip = (form.page.data - 1) * form.perpage.data, \
         limit = form.perpage.data
         )
 
     (header, title, pet_name, breed_name) = sale_find_header(form, pet_id, breed_id)
 
-    tmpl = render_template("sale.html", header=Markup(header), \
+    tmpl = render_template("cat/search.html", header=Markup(header), \
       title=title, form = form, advs = advs, \
       pet = pet_name, pet_id = pet_id, \
       breed = breed_name, breed_id = breed_id, \
-      sort = session.get("sale_sort"), \
+      sort = session.get("cat_sort"), \
       count = count, total = total )
     return tmpl
 
 
-def url_for_sale(pet_id, **kwargs):
-    return url_for('sale_dogs', **kwargs) if pet_id == 1 else url_for('sale_cats', **kwargs)
+@app.route('/prodazha-sobak/<adv_id>/')
+def dog_adv_show(adv_id):
+    adv = db.get_dog_adv(adv_id)
+    if not adv:
+        abort(404)
 
-app.jinja_env.globals['url_for_sale'] = url_for_sale
+    name = u"Продам собаку породы {0} в г. {1}".format( \
+        get_breed_dog_name(adv.get("breed_id")).lower(),\
+        get_city_name(adv.get("city_id"), "i"))
 
-@app.route('/prodazha-sobak/<id>/')
-def sale_show_dog(id):
-    return sale_show(id)
+    header = \
+    Markup(u"Продам собаку породы {0} в г.&nbsp;{1}".format( \
+        get_breed_dog_name(adv.get("breed_id")).lower(),\
+        get_city_name(adv.get("city_id"), "i")
+    ))
+    title = u"{0} за {1}".format(name, \
+        u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
+    seller = db.get_user(adv.get("user_id"))
+    return render_template("dog/adv_show.html", \
+        header = header,
+        title = title,
+        adv = adv,
+        seller = seller)
 
-@app.route('/prodazha-koshek/<id>/')
-def sale_show_cat(id):
-    return sale_show(id)
+
+@app.route('/prodazha-koshek/<adv_id>/')
+def cat_adv_show(adv_id):
+    adv = None
+    try:
+        adv = db.get_cat_adv(adv_id)
+    except Exception, e:
+        print(e)
+    
+    if not adv:
+        abort(404)
+
+    name = u"Продам {0} породы {1} в г. {2}".format( \
+        morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
+        get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
+        get_city_name(adv.get("city_id"), "i")
+    )
+    header = Markup(u"Продам {0} породы {1} в г.&nbsp;{2}".format( \
+        morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
+        get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
+        get_city_name(adv.get("city_id"), "i")
+    ))
+    title = u"{0} за {1}".format(name, \
+        u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
+    seller = db.get_user(adv.get("user_id"))
+    return render_template("cat/adv_show.html", \
+        header = header,
+        title = title,
+        adv = adv,
+        seller = seller)
 
 def sale_show(id):
     adv = None
@@ -721,7 +745,7 @@ def sale_show(id):
     ))
     title = u"{0} за {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
-    seller = users().find_one(ObjectId(adv.get("user_id")))
+    seller = db.get_user(adv.get("user_id"))
     return render_template("sale_show.html", \
         header = header,
         title = title,
@@ -759,30 +783,20 @@ def account_user():
 @app.route("/account/contact/", methods = ["GET", "POST"])
 @login_required
 def account_contact():
-    user = users().find_one(current_user.id)
+    user = db.get_user(current_user.id)
     form = Contact(request.form)
     if request.method == "POST":
         if form.validate():
-            users().update({"_id": current_user.id}, {"$set":
-                {"username": form.username.data, \
-                "city_id": form.city.city_id if form.city.data else None, \
-                "phone": form.phone.data, \
-                "phone_adv_sms" : form.phone_adv_sms.data if form.phone.data else None, \
-                "phone_adv_hide": form.phone_adv_hide.data if form.phone.data else None, \
-                'skype' : form.skype.data, \
-                'skype_adv_hide': form.skype_adv_hide.data if form.skype.data else None, \
-                'city_adv_hide': form.city_adv_hide.data if form.city.data else None}})
+            db.save_user_contact(current_user.id, \
+                form.username.data, form.city.city_id, \
+                form.phone.data, form.skype.data)
             flash(u"Контактная информация обновлена.", "success")
             return redirect(url_for("account_contact"))
     else:
         form.city.data = get_city_region(user.get("city_id"))
-        form.city_adv_hide.data = user.get("city_adv_hide")
         form.username.data = user.get("username")
         form.phone.data = user.get("phone") 
-        form.phone_adv_hide.data = user.get("phone_adv_hide")
-        form.phone_adv_sms.data = user.get("phone_adv_sms")
         form.skype.data = user.get("skype")
-        form.skype_adv_hide.data = user.get("skype_adv_hide")
 
     tmpl = render_template("account/contact.html", title=u"Контактная информация", form = form)
     return tmpl
@@ -793,21 +807,133 @@ def account_adoption():
     tmpl = render_template("account/adoption.html", title=u"Отдам даром")
     return tmpl
 
-@app.route("/account/sale/")
+@app.route("/account/cat/")
 @login_required
-def account_sale():
-    sort = lambda adv: adv.get("update_date") or adv.get("add_date")
-    advs = sales().find(
-        {'user_id': {'$in' : [str(current_user.id), current_user.id]} },\
-        sort = [("update_date", DESCENDING)])
-
-    tmpl = render_template("account/sale.html", \
-        title=u"Мои объявления о продаже", \
+def account_cat_advs():
+    advs = db.get_cat_advs_by_user(current_user.id)
+    tmpl = render_template("account/cat/advs.html", \
+        title=u"Мои объявления о продаже кошек", \
         advs = [dict(adv, **{'active_date': adv.get('update_date') + timedelta(days=14)}) for adv in advs])
     return tmpl
 
 
-def sale_save(form, id = None, moderator = None):
+@app.route("/account/dog/")
+@login_required
+def account_dog_advs():
+    advs = db.get_dog_advs_by_user(current_user.id)
+    tmpl = render_template("account/dog/advs.html", \
+        title=u"Мои объявления о продаже собак", \
+        advs = [dict(adv, **{'active_date': adv.get('update_date') + timedelta(days=14)}) for adv in advs])
+    return tmpl
+
+
+@app.route("/account/dog/<adv_id>/", methods = ['GET', 'POST'])
+@login_required
+def account_dog_adv_edit(adv_id):
+    dog = db.get_dog_adv_for_user(adv_id, current_user.id)
+    if not dog:
+        abort(404)
+
+    form = Dog(request.form)
+    if request.method == "POST":
+        if form.validate():
+            save_dog_adv(adv_id = adv_id, form = form)
+            flash(u"Объявление '%s' обновлено." % form.title.data, "success")
+            return render_template("/account/dog/adv_edit_success.html")
+    else:
+        form.breed.data = get_breed_dog_name(dog.get("breed_id"))
+        form.title.data = dog.get("title")
+        form.desc.data = dog.get('desc')
+        form.price.data = num(dog.get('price'))
+        form.gender.data = num(dog.get('gender_id'))
+        form.photos.data = ",".join(dog.get("photos"))
+        form.city.data = get_city_region(dog.get("city_id"))
+
+        
+        form.price_haggle.data = dog.get('price_haggle')
+        form.price_hp.data = dog.get('price_hp')
+        form.contract.data = dog.get('contract')
+        form.delivery.data = dog.get('delivery')
+        form.birthday.data = date2str(dog.get('birthday'), "%d%m%Y")
+        form.vaccination.data = dog.get('vaccination')
+        form.vetpassport.data = dog.get('vetpassport')
+        form.microchip.data = dog.get('microchip')
+
+        form.doc.data = dog.get('doc_id')
+        form.father_name.data = dog.get('father_name')
+        form.father_country.data = dog.get('father_country_id')
+        form.father_misc.data = dog.get('father_misc')
+        form.father_pedigree.data = dog.get('father_pedigree')
+        form.mother_name.data = dog.get('mother_name')
+        form.mother_country.data = dog.get('mother_country_id')
+        form.mother_misc.data = dog.get('mother_misc')
+        form.mother_pedigree.data = dog.get('mother_pedigree')
+        form.breeding.data = dog.get('breeding')
+        form.show.data = dog.get('show')
+        form.tatoo.data = dog.get('tatoo')
+        form.pedigree.data = dog.get('pedigree')
+        form.color.data = dog.get('color')
+      
+        form.username.data = dog.get("username") or current_user.username
+        form.phone.data = dog.get("phone") or current_user.phone
+        form.skype.data = dog.get("skype") or current_user.skype
+    return render_template("/account/dog/adv_edit.html", form=form, title=u"Редактировать объявление о продаже собаки", dog = dog)
+
+@app.route("/account/dog/new/", methods = ["GET", "POST"])
+@login_required
+def account_dog_adv_new():
+    form = Dog(request.form)
+    if request.method == "POST":
+        if  form.validate():
+            id = save_dog_adv(form)
+            flash(u"Объявление '%s' добавлено." % form.title.data, "success")
+            return render_template("/account/dog/adv_edit_success.html")
+    else:
+        form.username.data = current_user.username
+        form.city.data = get_city_region(current_user.city_id)
+        form.phone.data = current_user.phone
+        form.skype.data = current_user.skype
+    return render_template("/account/dog/adv_edit.html", form=form, title=u"Новое объявление о продаже собаки")
+
+
+def save_dog_adv(form, adv_id = None):
+    photonames = []
+    if form.photos.data:
+        photonames = form.photos.data.split(',')
+        photonames = filter(lambda x: x and len(x) > 0, photonames)
+        for photoname in photonames:
+            if os.path.exists(photos.path(photoname)):
+                with open(photos.path(photoname)) as file:
+                    db.save_photo(file)
+
+    db.save_dog_adv(user_id = current_user.id, \
+        adv_id = adv_id, \
+        photonames = photonames, \
+        form  = form)
+    return adv_id
+
+@app.route("/account/dog/<adv_id>/remove/", methods = ['GET'])
+@login_required
+def account_dog_adv_remove(adv_id):
+    adv = db.remove_dog_adv(adv_id, current_user.id)
+    if adv:
+        flash(u"Объявление '%s' удалено." % adv["title"], \
+            "success")
+    return redirect(url_for("account_dog_advs"))
+
+@app.route("/account/sale/<adv_id>/remove", methods = ['GET'])
+@login_required
+def account_cat_adv_remove(adv_id):
+    adv = sales().find_one(
+        {'_id': {'$in':[id, ObjectId(id)]}, 
+        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
+    if adv:
+        sales().remove(adv)
+        flash(u"Объявление '%s' удалено." % adv["title"], "success")
+    return redirect(url_for("account_cat_advs"))
+ 
+
+def save_cat_adv(form, adv_id = None, moderator = None):
     filenames = []
     if form.photos.data:
         filenames = form.photos.data.split(',')
@@ -815,10 +941,10 @@ def sale_save(form, id = None, moderator = None):
         for filename in filenames:
             if os.path.exists(photos.path(filename)):
                 with open(photos.path(filename)) as file:
-                    save_photo(db, file)
+                    db.save_photo(file)
 
     now = datetime.utcnow()
-    sale = {
+    cat = {
         'pet_id': form.breed.pet_id, \
         'breed_id': form.breed.breed_id, \
         'title': form.title.data, \
@@ -831,92 +957,68 @@ def sale_save(form, id = None, moderator = None):
         "skype" : form.skype.data, \
         "gender_id": num(form.gender.data)}
     if moderator:
-        sale['username'] = form.username.data
-        sale['email'] = form.email.data
-        sale['moderator_id'] = str(moderator.id)
-        sale['moderate_date'] = now
+        cat['username'] = form.username.data
+        cat['email'] = form.email.data
+        cat['moderator_id'] = str(moderator.id)
+        cat['moderate_date'] = now
     else:
-        sale['user_id'] = str(current_user.id)
+        cat['user_id'] = str(current_user.id)
     if id:
-        sales().update(
-            {'_id': ObjectId(id)} 
-            , {'$set': sale}, upsert=True)
+        db.cat_advs.update(
+            {'_id': ObjectId(adv_id)} 
+            , {'$set': cat}, upsert=True)
     else:
-        sale["add_date"] = now
-        id = sales().insert(sale)
-    return id
+        cat["add_date"] = now
+        adv_id = db.cat_advs.insert(cat)
+    return adv_id
 
-@app.route("/account/sale/<id>/extend", methods = ['GET'])
+
+@app.route("/account/cat/<adv_id>/", methods = ['GET', 'POST'])
 @login_required
-def account_sale_extend(id):
-    adv = sales().find_one(
-        {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
-    if adv:
-        sales().update({"_id": adv["_id"]}, {"$set": {"update_date": datetime.utcnow()}})
-        flash(u"Объявление '%s' продлено на две недели." % adv["title"], "info")
-    return redirect(url_for("account_sale"))
-
-
-
-@app.route("/account/sale/<id>/remove", methods = ['GET'])
-@login_required
-def account_sale_remove(id):
-    adv = sales().find_one(
-        {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
-    if adv:
-        sales().remove(adv)
-        flash(u"Объявление '%s' удалено." % adv["title"], "success")
-    return redirect(url_for("account_sale"))
-    
-
-@app.route("/account/sale/<id>/", methods = ['GET', 'POST'])
-@login_required
-def account_sale_edit(id):
-    adv = sales().find_one(
-        {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
-    if not adv:
+def account_cat_adv_edit(adv_id):
+    cat = db.get_cat_adv_for_user(adv_id, current_user.id)
+    if not cat:
         abort(404)
 
-    form = Sale(request.form)
+    form = Cat(request.form)
     if request.method == "POST":
         if form.validate():
-            sale_save(form, id)
+            save_cat_adv(form, adv_id)
             flash(u"Объявление '%s' обновлено." % form.title.data, "success")
-            return redirect(url_for("account_sale"))
+            return redirect(url_for("account_cat_advs"))
     else:
-        form.breed.data = get_breed_name(adv.get("breed_id"), adv.get("pet_id"))
-        form.title.data = adv.get("title")
-        form.desc.data = adv.get('desc')
-        form.price.data = num(adv.get('price'))
-        form.gender.data = str(num(adv.get('gender_id')) or '')
-        form.photos.data = ",".join(adv.get("photos"))
-        form.city.data = get_city_region(adv.get("city_id"))
-        form.phone.data = adv.get("phone") or current_user.phone
-        form.skype.data = adv.get("skype") or current_user.skype
-    return render_template("/account/sale_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
+        form.breed.data = get_breed_name(cat.get("breed_id"), cat.get("pet_id"))
+        form.title.data = cat.get("title")
+        form.desc.data = cat.get('desc')
+        form.price.data = num(cat.get('price'))
+        form.gender.data = str(num(cat.get('gender_id')) or '')
+        form.photos.data = ",".join(cat.get("photos"))
+        form.city.data = get_city_region(cat.get("city_id"))
+        form.phone.data = cat.get("phone") or current_user.phone
+        form.skype.data = cat.get("skype") or current_user.skype
+    return render_template("/account/cat/adv_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Опубликовать", cat = cat)
 
 
-@app.route("/account/sale/new/", methods = ['GET', 'POST'])
+@app.route("/account/cat/new/", methods = ['GET', 'POST'])
 @login_required
-def account_sale_add():
-    form = Sale(request.form)
+def account_cat_adv_new():
+    form = Cat(request.form)
     if request.method == "POST":
         if  form.validate():
-            id = sale_save(form)
-            flash(u"Объявление '%s' добавлено." % form.title.data, "info")
-            return redirect(url_for('account_sale'))
+            id = save_cat_adv(form)
+            flash(u"Объявление '%s' добавлено." % form.title.data, "success")
+            return redirect(url_for('account_cat_advs'))
     else:
         form.city.data = get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
         form.skype.data = current_user.skype
-    return render_template("/account/sale_edit.html", form=form, title=u"Новое объявление о продаже", btn_name = u"Добавить")
+    return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки", btn_name = u"Добавить")
+
 
 @app.route("/poleznoe/")
 def advice():
-    return render_template("/advice.html", title=u"Полезные статьи о животных")
+    return render_template("/advice.html", \
+        title=u"Полезные статьи о животных")
 
 @app.route("/poleznoe/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka")
 def advice_article_1():
@@ -957,7 +1059,7 @@ def upload():
 def thumbnail(filename):
     path = photos.path(get_thumbnail_filename(filename))
     if not os.path.exists(path):  
-        (name, file) = get_photo(db, filename)
+        (name, file) = db.get_photo(filename)
         if name and file:
             _name = create_thumbnail(file, photos.path(name), app.config['UPLOADED_PHOTOS_DEST'])
         else:
@@ -967,9 +1069,10 @@ def thumbnail(filename):
 
     return send_file(path)
     
-@app.route('/photo/<filename>/', defaults = {'width': None})
-# @app.route('/photo/<filename>/<int:width>/')
+@app.route('/photo/<filename>/', defaults = {'width': 600})
+@app.route('/photo/<filename>/<int:width>/')
 def photo(filename, width):
+    width = min(width, 1200)
     if width:
         (name, ext) = os.path.splitext(filename)
         path = photos.path(name + str(width) + ext)
@@ -977,7 +1080,7 @@ def photo(filename, width):
         path = photos.path(filename) 
     if not os.path.exists(path):
         try:
-            (name, file) = get_photo(db, filename)
+            (name, file) = db.get_photo(filename)
             if name and file:
                 with open(path, 'w') as f:
                     f.write(file)
@@ -986,19 +1089,19 @@ def photo(filename, width):
         except Exception, e:
             print(e)
             os.remove(path)
-        
 
     return send_file(path)
 
-@app.route("/pochta/prodazha/<id>/", methods = ["POST", "GET"])
-def mail_sale(id):
+@app.route("/prodazha-sobak/<adv_id>/email/", \
+    methods = ["POST", "GET"])
+def dog_adv_email(adv_id):
     form = SendMail(request.form)
-    adv = sales().find_one(ObjectId(id))
+    adv = db.get_dog_adv(adv_id)
     
     if not adv:
         abort(404)
 
-    seller = users().find_one(ObjectId(adv.get("user_id")))
+    seller = db.get_user(adv.get("user_id"))
     if not seller and not adv.get('email'):
         abort(404)
     seller_email = adv.get('email') or seller.get('email')
@@ -1007,11 +1110,48 @@ def mail_sale(id):
 
     if request.method == "POST":
         if form.validate():
-            send_from_sale(form.email.data, form.username.data, adv.get('_id'), seller_email, seller_username, u"Сообщение от пользователя сайта Поводочек", form.message.data)
+            send_from_sale(adv.get("_id"), \
+                url_for('dog_adv_show', adv_id = adv.get('_id'), _external =True), \
+                form.email.data, form.username.data, \
+                seller_email, seller_username, \
+                u"Сообщение от пользователя сайта Поводочек", form.message.data)
             # if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
             #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
             #         [seller.get('phone')] )
-            return render_template("/mail_sale_sent.html", title = u"Сообщение успешно отправлено")
+            return render_template("/mail_sent.html", title = u"Сообщение успешно отправлено")
+    else:
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+    return render_template("/dog/adv_email.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
+
+@app.route("/prodazha-koshek/<adv_id>/email/", methods = ["POST", "GET"])
+def cat_adv_email(adv_id):
+    form = SendMail(request.form)
+    adv = db.get_cat_adv(adv_id)
+    # adv = sales().find_one(ObjectId(id))
+    
+    if not adv:
+        abort(404)
+
+    seller = db.get_user(adv.get("user_id"))
+    if not seller and not adv.get('email'):
+        abort(404)
+    seller_email = adv.get('email') or seller.get('email')
+    seller_username = adv.get('username') or seller.get('username') 
+    print("seller_username", seller_username)
+
+    if request.method == "POST":
+        if form.validate():
+            send_from_sale(adv.get('_id'), \
+                url_for('cat_adv_show', adv_id = adv.get('_id'), _external =True), \
+                form.email.data, \
+                form.username.data, seller_email, seller_username, \
+                u"Сообщение от пользователя сайта Поводочек", \
+                form.message.data)
+            # if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
+            #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
+            #         [seller.get('phone')] )
+            return render_template("/mail_sent.html", title = u"Сообщение успешно отправлено")
     else:
         form.username.data = current_user.username
         form.email.data = current_user.email
@@ -1024,22 +1164,25 @@ def favicon():
 
 @app.route('/prodazha-koshek/goroda/')
 def sale_cats_cities():
-    return sale_pets_cities(pet_id = 2) 
+    return sale_pets_cities(pet_id = CAT_ID) 
 
 @app.route('/prodazha-sobak/goroda/')
 def sale_dogs_cities():
-    return sale_pets_cities(pet_id = 1) 
+    return sale_pets_cities(pet_id = DOG_ID) 
 
 def sale_pets_cities(pet_id):
     pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
-    advs = sorted([adv for adv in pets_by_cities().find({'pet_id':pet_id})], \
-        key = lambda x : x['city_name'])
+
+    advs = db.get_dog_by_cities() if pet_id == DOG_ID \
+        else db.get_cat_by_cities()
 
     breeds_by_cities = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['city_name'][0])]
 
     return render_template("/sale_cities.html", \
-        title=u"Объявления о продаже {0} по городам".format(pet_name), \
-        breeds_by_cities = breeds_by_cities)
+        title=u"Объявления о продаже {0} в городах России".format(pet_name), \
+        breeds_by_cities = breeds_by_cities, \
+        pet_id = pet_id, \
+        pet_name = pet_name)
 
 
 @app.route('/tos/')
@@ -1068,13 +1211,13 @@ def admin_requried(func):
     return decorated_view
 
 
-@app.route('/admin/users/')
+@app.route('/admin/user/')
 @admin_requried
 def admin_users():
     page = int(request.args.get("page") or 1)
-    total = users().count()
+    total = db.users.count()
     perpage = 100
-    u = [user for user in users().find(sort = [('signup_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
+    u = [user for user in users.find(sort = [('signup_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
 
     return render_template('/admin/users.html', title = Markup(u"Админка: пользователи"), users = u, total = total, perpage = perpage, page = page)
 
@@ -1086,7 +1229,7 @@ def admin_sale():
     total = sales().count()
     perpage = 100
     advs = [adv for adv in sales().find(sort = [('update_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
-    for seller in users().find({'_id':{'$in' : [ObjectId(adv.get('user_id')) for adv in advs if adv.get('user_id') ]}}):
+    for seller in users.find({'_id':{'$in' : [ObjectId(adv.get('user_id')) for adv in advs if adv.get('user_id') ]}}):
         for adv in [adv for adv in advs if not adv.get('email')]:
             # print(seller['email'])
             if ObjectId(adv.get('user_id')) == seller['_id']:
@@ -1158,6 +1301,37 @@ def ajax_avito_parse():
 @app.route('/robots.txt')
 def robots():
     return send_from_directory(app.static_folder, request.path[1:])
+
+
+def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
+    if pet_id == DOG_ID:
+        return [{"src":url_for('thumbnail', \
+            filename = adv.get('photos')[0], width= 300), \
+        'url' : url_for('dog_adv_show', adv_id = adv.get('_id')), \
+        'id': str(adv.get('_id')), \
+        'p' : adv.get('price'), \
+        'b' : get_breed_dog_name(adv.get('breed_id')), \
+        's' : {'h':100, 'w':150}}
+        for adv in db.get_dog_advs_for_mosaic(skip, limit)]
+    elif pet_id == CAT_ID:
+        return  [{"src":url_for('thumbnail', \
+            filename = adv.get('photos')[0], width= 300), \
+        'url' : url_for('cat_adv_show', adv_id = adv.get('_id')), \
+        'id': str(adv.get('_id')), \
+        'p' : adv.get('price'), \
+        'b' : get_breed_cat_name(adv.get('breed_id')), \
+        's' : {'h':100, 'w':150}}
+        for adv in db.get_cat_advs_for_mosaic(skip, limit)]
+    else:
+       return None
+
+@app.route("/ajax/mosaic/showmore/<int:pet>/", methods = ["GET"], defaults= {"limit":10, 'skip': 0})
+@app.route("/ajax/mosaic/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":10})
+@app.route("/ajax/mosaic/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
+def ajax_mosaic_showmore(pet, skip, limit):
+    print(pet)
+    advs = get_pet_advs_for_mosaic(skip, limit = limit, pet_id = pet)
+    return jsonify(advs = advs)
 
 
 if __name__ == "__main__":

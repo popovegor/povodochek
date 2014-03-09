@@ -1,0 +1,141 @@
+{#<div style="margin:0px 0 20px" class="hidden-xs">
+    <small class="text-muted">фильтр</small>
+</div>#}
+
+
+<p class="text-left"><span>Поиск объявлений о продаже породистых собак</span></p>
+
+<div class="bg-info" style="border-radius:5px 5px 5px 5px; padding:10px 20px 20px 20px; position:relative; ">
+
+  {#<div class="bg-warning" style="padding:5px 25px;position:absolute; left:-0px; top:-30px; border-radius:5px 5px 0px 0px; border:none">Поиск объявлений о продаже породистых собак</div>#}
+  <div class="" style="">
+
+      {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+      <form action="" method="get" class="" style="padding-top:0px" role="form">
+
+      <div class="row">
+        <div class="col-sm-5">
+                  <table style="width:100%"><tr>
+                  <td style="width:60px" class="hidden-sm hidden-md hidden-lg">
+                      <label for="{{form.breed.name}}" class=" control-label" style="font-weight:normal">порода</label>
+                  </td>
+                  <td>
+                      <label for="{{form.breed.name}}" class=" control-label" style="font-weight:normal">Порода</label>
+
+                      <input name="{{form.breed.name}}" class="form-control" placeholder="Введите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
+                  </td>
+                  </tr></table>
+        </div>
+        <div class="col-sm-7">
+        <table style="width:100%"><tbody><tr>
+            <td style="width:50px" class="hidden-sm hidden-md hidden-lg">
+              <label for="{{form.city.name}}" class=" control-label" style="font-weight:normal">город</label>
+             
+            </td>
+            <td>
+                <label for="{{form.city.name}}" class=" control-label" style="font-weight:normal">Местоположение</label>
+              <input name="{{form.city.name}}" class="form-control" placeholder="Введите населенный пункт", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
+            </td>
+            <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
+            <td style="width:20px;padding-top:30px" class="text-center">+</td>
+            <td style="width:110px">
+              <label for="{{form.distance.name}}" class=" control-label" style="font-weight:normal">удаленность</label>
+              <div class="input-group">
+                
+                <input class="form-control" name="{{form.distance.name}}" placeholder="" value="{{form.distance.data or form.distance.default or ''}}" class="form-control" id="{{form.distance.id}}">  
+                <span class="input-group-addon">км</span>
+              </div>
+            </td>
+            {#<td style="width:30px" class="text-center">
+              км
+            </td>#}
+          </tr></tbody></table>
+        </div>
+      </div>
+
+      <!-- price -->
+      <div class="row" style="margin-top:20px">
+        <div class="col-sm-6">
+          <table style="width:100%">
+            <tr>
+              <td style="width:45px;">
+                Цена
+              </td>
+              <td style="width:110px">
+                <div class="input-group">
+                <input class="form-control" name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
+                <span class="input-group-addon rur">руб</span>
+              </div>
+              </td>
+              <td style="width:25px;" class="text-center small">&ndash;</td>
+              <td style="width:110px; ">
+               <div class="input-group">
+                <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
+                <span class="input-group-addon rur">руб</span>
+              </div>  
+              </td>
+              {#<td style="width:35px" class="text-center">руб</td>#}
+              {#<td style="width:110px; padding-left:5px" class="text-center">
+                   <select class="form-control" id="{{form.price_unit.id}}" name="{{form.price_unit.id}}">
+                      {%for k,v in form.price_unit.choices%}
+                        <option value="{{k}}">{{v}}</option>
+                      {%endfor%}
+                   </select>  
+              </td>#}
+              <td style="" class="text-right">
+                 
+              </td>
+            </tr>
+          </table>
+          </div>
+          <div class="col-sm-6 text-right">
+                <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
+                <button type="submit" class="btn btn-primary" style="">Показать</button>
+          </div>
+          
+      </div>
+
+        {#{ form_field(form.photo) }#}
+
+
+    </form>
+
+     <script type="text/javascript">
+
+
+      //location with autocomplete built on typeahead.js
+      $(function(){
+
+        $("#{{form.city.id}}").typeahead({
+          minLength: 0,
+          limit: 8,
+          autoSelect : false,
+          source: function (query, process) {
+            return $.getJSON("{{url_for('ajax_typeahead_location')}}",
+              {limit: 8, query: query },
+                function (data) { return process(data.items);}); //getJSON
+              }, //source
+            }); //typeahead  
+
+        $("#{{form.breed.id}}").typeahead({
+		    minLength: 0,
+		    limit: 8,
+        autoSelect : false,
+		    source: function (query, process) {
+		      return $.getJSON("{{url_for('ajax_typeahead_dog')}}",
+		        {limit: 8, query: query },
+		        function (data) { return process(data.items);}); //getJSON
+		      } //source
+		    }); //typeahead 
+
+      });
+
+
+
+
+          </script>
+
+
+  </div>
+</div>

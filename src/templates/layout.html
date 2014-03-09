@@ -7,47 +7,41 @@
 {% endblock %}
 
 {%block layout %}
-  <div id="wrap">
-
 
     <!-- menu -->
-    {% include "menu.html" %}
+  {% include "menu.html" %}
 
-    {% if 'account' not in request.path %}
+  <div id="wrap" class="container">
 
-   <div class="container hidden-xs" style="margin-top:20px">
-      {%if url_for('index') != request.path %}
+    
+    
+
+   <div class="hidden-xs" style="margin-top:30px">
+    
         <table style="width:100%">
           <tbody>
             <tr>
               <td>
                 {% block breadcrumbs %}
                   <ol class="breadcrumb" >
-                    <li><a href="{{url_for('index')}}">Главная</a> </li>
+                    <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
                     <li class="active">{{title}}</li>
                 </ol>
                 {% endblock %}    
               </td>
-              <td style="width:20px"></td>
-              <td style="width:198px; vertical-align:top">
+              <td style="width:10px" class="hidden-xs"></td>
+              <td style="width:190px;" class="hidden-xs">
                   {% include "pet_post_button.html"%}    
               </td>
             </tr>
           </tbody>
-        </table>
-    
-    {%else%}
-        <div class="text-right">
-        {% include "pet_post_button.html"%}
-        </div>
-    {%endif%}
-
+        </table>	
 
   </div>
 
-  {%endif%}
-
-    {% include "flashed_messages.html" %}
+  
+  {% include "flashed_messages.html" %}
+    
 
     {% block content %}
 
@@ -63,10 +57,6 @@
 {% include "footer.html"%}
 
 {%include "reformal.html"%}
-
-<div class="text-left" style="margin-top:-30px;">
-    {% include "liveinternet.html"%}
-</div>
 
 {%endblock%}
 

@@ -12,12 +12,12 @@
         <form class="form-sale-adv" id="adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
 
           
-              {{ form_field(form.breed, size="col-md-5", placeholder="Введите породу собаки или кошки") }}        
+              {{ form_field(form.breed, size="col-md-5", placeholder="Введите породу кошки", autocomplete="off") }}        
             
               {{ form_field(form.gender, size="col-lg-3 col-md-3 col-sm-4") }}
               
           
-              {{ form_field(form.city, size="col-md-6", placeholder="Введите название населенного пункта") }}
+              {{ form_field(form.city, size="col-md-6", placeholder="Введите название населенного пункта", autocomplete="off") }}
             
 
         {{ form_field(form.title, size="col-md-8", placeholder="Коротко опишите название объявления")}}
@@ -60,9 +60,9 @@
 
 
         <div class="actions">
-          <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">{{btn_name}}</button>
+          <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">Сохранить</button>
           &nbsp;
-          <a class="btn" href="{{url_for('account_sale')}}" id="cancel">Отменить</a>
+          <a class="btn" href="{{url_for('account_cat_advs')}}" id="cancel">Отменить</a>
         </div>
 
             <script type="text/javascript">
@@ -71,8 +71,9 @@
             $(document).ready(function(){
 
               $("#{{form.city.id}}").typeahead({
-                minLength: 1,
+                minLength: 0,
                 limit: 8,
+                autoSelect : false,
                 source: function (query, process) {
                   return $.getJSON("{{url_for('ajax_typeahead_location')}}",
                     {limit: 8, query: query },
@@ -82,10 +83,11 @@
           
 
               $("#{{form.breed.id}}").typeahead({
-              minLength: 1,
+              minLength: 0,
               limit: 8,
+              autoSelect : false,
               source: function (query, process) {
-                return $.getJSON("{{url_for('ajax_typeahead_breed')}}",
+                return $.getJSON("{{url_for('ajax_typeahead_cat')}}",
                   {limit: 8, query: query },
                   function (data) { return process(data.items);}); //getJSON
                 } //source

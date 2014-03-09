@@ -47,24 +47,23 @@ povodochek.select2_breed_format = function(object, container, query) {
 };
 
 povodochek.validate = function (form, rules, submit){
-    form.validate({
-       rules : rules,
-       errorElement : "li", 
-        errorPlacement: function(error, element) {
-         error.addClass("form-field-error");
-         $("#" + element.attr("id") + "_field .form-field-errors").append(error);
-       },
-       highlight: function(element, errorClass) {
-          $("#" + element.id + "_field").addClass("has-error").removeClass('has-success');
-       },
-       unhighlight: function(element, errorClass) {
-          $("#" + element.id + "_field").removeClass("has-error").addClass("has-success");
-       },
-       submitHandler: function(form) {
-          var btn = $(":submit").button("loading");
-          if(submit) submit();
-          form.submit();
-         }
-      });
-  };
-
+  form.validate({
+     rules : rules,
+     errorElement : "li", 
+      errorPlacement: function(error, element) {
+       error.addClass("form-field-error");
+       $("#" + element.attr("id") + "_field .form-field-errors").append(error);
+     },
+     highlight: function(element, errorClass) {
+        $("#" + element.id + "_field").addClass("has-error").removeClass('has-success');
+     },
+     unhighlight: function(element, errorClass) {
+        $("#" + element.id + "_field").removeClass("has-error").addClass("has-success");
+     },
+     submitHandler: function(form) {
+        var btn = $(":submit").button("loading");
+        if(submit) submit();
+        form.submit();
+       }
+    });
+};

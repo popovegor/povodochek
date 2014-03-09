@@ -1,22 +1,40 @@
 {% extends "layout.html" %}
 
+{% block breadcrumbs %}
+  <ol class="breadcrumb" >
+    <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> 
+    <li class="active">Личный кабинет</li>
+</ol>
+{% endblock %}  
+
 
 {% macro render_nav_item(title, path) -%}
-    <li {% if request.path  == path %} class="active" {% endif %}><a href="{{path}}">{{title}}</a></li>
+    <li {% if request.path  == path %} class="active" {% endif %}><a href="{{path}}" >{{title}}</a></li>
 {%- endmacro %}
+
 
 
 {% block content %}      
 
-<div class="container">
+<div class="">
 
   <div class="row account" style="">
-    <div class="col-sm-4 col-md-3" style="">
+    <div class="col-sm-3" style="">
       <div class="left-side">
         
       <ul class="nav nav-pills nav-stacked" >
         
-        {% for (title, path) in [("Объявления о продаже", url_for('account_sale')), ("Новое объявление", url_for('account_sale_add'))
+        {% for (title, path) in [("Мои собаки", url_for('account_dog_advs'))] 
+        %}
+
+          {{render_nav_item(title, path)}}
+
+        {% endfor %}
+
+        {#<li class="nav-divider"></li>#}
+
+
+         {% for (title, path) in [("Мои кошки", url_for('account_cat_advs'))
           ] 
         %}
 
@@ -24,12 +42,12 @@
 
         {% endfor %}
 
-      
+      {#<li class="nav-divider"></li>#}
 
         {% for (title, path) in [
           ("Контактная информация", url_for('account_contact'))
-          , ("Сменить пароль", url_for('account_change_password'))
-          , ("Сменить эл. почту", url_for('account_change_email'))] 
+          , ("Смена пароля", url_for('account_change_password'))
+          , ("Смена эл. почты", url_for('account_change_email'))] 
         %}
         
           {{render_nav_item(title, path)}}
@@ -39,8 +57,16 @@
       </ul>
       </div> <!-- left-side -->
     </div> 
-    <div class="col-sm-8 col-md-9" style="">
+    <div class="col-sm-9" style="">
       <h1 class="">{{ title }}</h1>
+
+      <div style="margin-bottom:30px">
+      {%block page_desc %}
+
+      {%endblock%}
+      </div>
+    
+
 
       {% block account_content %}
         
