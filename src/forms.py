@@ -72,7 +72,8 @@ def get_city_by_city_and_region(city_and_region):
     city = None
     if city_and_region: 
         matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
-        city = db().cities.find_one({"city_region": matcher}, fileds=["city_id"])
+        city = db().cities.find_one({"city_region": matcher},\
+            sort = [('city_size',-1)], fileds=["city_id"])
         if city:
             return get_city_by_city_id(city.get('city_id'))
     return city
