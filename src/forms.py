@@ -177,7 +177,9 @@ class DogSearch(Form):
     # photo = BooleanField(u"С документами")
 
     # price
-    price_from = IntegerField(u"Цена")
+    price_from = IntegerField(u"Цена", \
+        # filters = [lambda x : x.replace(' ','') ]
+        )
     price_to = IntegerField(u"до")
 
     price_unit = SelectField(u"", choices = [(0, u"руб"), (1, u"тыс руб")])
@@ -279,7 +281,11 @@ class Dog(Form):
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
-    price = IntegerField(u"Цена", [Required(message=MSG_REQUIRED), NumberRange(min=5000, max=300000, message=MSG_RANGE.format(5000, 300000))], \
+    price = IntegerField(u"Цена", \
+        [Required(message=MSG_REQUIRED),\
+         NumberRange(min=5000, max=300000, \
+            message=MSG_RANGE.format(5000, 300000))], \
+        # filters = [lambda x: x.replace(' ','')], \
         description = {"msg": Markup(u'От 5&nbsp;000 до 300&nbsp;000 руб. Объявление с нереальной ценой будет <span style="color:red">удалено!</span>'), \
             "help" : u"" })
 

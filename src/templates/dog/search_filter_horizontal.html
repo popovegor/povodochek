@@ -43,7 +43,7 @@
               <label for="{{form.distance.name}}" class=" control-label" style="font-weight:normal">удаленность</label>
               <div class="input-group">
                 
-                <input class="form-control" name="{{form.distance.name}}" placeholder="" value="{{form.distance.data or form.distance.default or ''}}" class="form-control" id="{{form.distance.id}}">  
+                <input class="form-control" name="{{form.distance.name}}" placeholder="" value="{{form.distance.default if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
                 <span class="input-group-addon">км</span>
               </div>
             </td>
@@ -106,6 +106,12 @@
 
       //location with autocomplete built on typeahead.js
       $(function(){
+
+        $("#{{form.distance.id}}").inputmask("integer", { allowMinus: false, allowPlus: false , rightAlignNumerics: false});
+
+        $("#{{form.price_from.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false});
+
+        $("#{{form.price_to.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false});
 
         $("#{{form.city.id}}").typeahead({
           minLength: 0,

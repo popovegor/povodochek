@@ -304,6 +304,8 @@ $(document).ready(function(){
     });
 
     $("#{{form.birthday.id}}").inputmask("d/m/y"); 
+
+    $("#{{form.price.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false});
   
 
   povodochek.validate($("form"), {

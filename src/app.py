@@ -102,7 +102,7 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/chosen.jquery.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
-    'js/jquery.inputmask.min.js', \
+    'js/jquery.inputmask.bundle.min.js', \
     'js/jquery.textareaCounter.plugin.js', \
     'js/moment.min.js', \
     'js/moment.min.ru.js', \
