@@ -108,27 +108,16 @@
       //location with autocomplete built on typeahead.js
       $(function(){
 
-        $("#{{form.city.id}}").typeahead({
-          minLength: 0,
-          limit: 8,
-          autoSelect : false,
-          source: function (query, process) {
-            return $.getJSON("{{url_for('ajax_typeahead_location')}}",
-              {limit: 8, query: query },
-                function (data) { return process(data.items);}); //getJSON
-              }, //source
-            }); //typeahead  
+        $("#{{form.breed.id}}").typeahead(
+          povodochek.typeahead(
+          "{{url_for('ajax_typeahead_dog')}}",
+          "{{form.breed.id}}")); //typeahead  
 
-        $("#{{form.breed.id}}").typeahead({
-		    minLength: 0,
-		    limit: 8,
-        autoSelect : false,
-		    source: function (query, process) {
-		      return $.getJSON("{{url_for('ajax_typeahead_cat')}}",
-		        {limit: 8, query: query },
-		        function (data) { return process(data.items);}); //getJSON
-		      } //source
-		    }); //typeahead 
+
+        $("#{{form.city.id}}").typeahead(
+          povodochek.typeahead(
+          "{{url_for('ajax_typeahead_location')}}",
+          "{{form.city.id}}")); //typeahead 
 
         $("#{{form.city.id}}").change(function() {
           if (this.value === "") {$(".filter-distance").hide("fast");} else {$(".filter-distance").show("fast");}

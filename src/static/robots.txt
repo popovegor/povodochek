@@ -1,6 +1,5 @@
 User-Agent: *
 Disallow: /pochta/
-Disallow: /pochta/
 
 User-agent: Yandex
 Disallow:

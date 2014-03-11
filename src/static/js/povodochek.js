@@ -67,3 +67,30 @@ povodochek.validate = function (form, rules, submit){
        }
     });
 };
+
+
+povodochek.typeahead = function(ajax_url, input_id, updater){
+  var m = {
+    minLength: 0,
+    items: 8,
+    autoSelect : false,
+    source: function (query, process) {
+      return $.getJSON(ajax_url,
+        {limit: 8, query: query },
+        function (data) { 
+          var input = $("#" + input_id);
+          if(data.items.length === 0) {
+              input.tooltip({title:"Совпадений не найдено", trigger: "click"});
+              input.tooltip("show");
+          } else {
+            input.tooltip("destroy");
+          }
+          return process(data.items);
+      }); //getJSON
+    } //source
+  }
+  if (updater) {
+    m["updater"] = updater;
+  }
+  return m;
+}

@@ -61,38 +61,26 @@
 
   $(document).ready(function(){
 
-   $("#{{pet_search_form.city.id}}").typeahead({
-    minLength: 0,
-    items: 8,
-    autoSelect : false,
-    source: function (query, process) {
-      return $.getJSON("{{url_for('ajax_typeahead_location')}}",
-        {limit: 8, query: query },
-        function (data) { return process(data.items);}); //getJSON
-      } //source
-    }); //typeahead  
+   $("#{{pet_search_form.city.id}}").typeahead(
+      povodochek.typeahead(
+      "{{url_for('ajax_typeahead_location')}}",
+      "{{pet_search_form.city.id}}")); //typeahead  
 
-    $("#{{pet_search_form.breed.id}}").typeahead({
-    minLength: 0,
-    items: 8,
-    autoSelect : false,
-    source: function (query, process) {
-      return $.getJSON("{{url_for('ajax_typeahead_breed')}}",
-        {limit: 8, query: query },
-        function (data) { return process(data.items);}); //getJSON
-      }, //source
-      updater : function(item ) {
+   $("#{{pet_search_form.breed.id}}").typeahead(
+    povodochek.typeahead(
+      "{{url_for('ajax_typeahead_breed')}}",
+      "{{pet_search_form.breed.id}}",
+      function(item ) {
         breed_name = on_select_breed(item);
         return breed_name;
-      }
-    }); //typeahead  
+      })); //typeahead  
 
     var on_select_breed = function(breed_name) {
       $("#{{pet_search_form.breed.id}}").tooltip("destroy");
       if (breed_name.indexOf(', Собаки') > 0) {
         $("#search").attr("action", "{{url_for('dog_search')}}");
       } else if (breed_name.indexOf(', Кошки') > 0){
-        $("#search").attr("action", "{{url_for('cat_search')}}");      
+        $("#search").attr("action", "{{url_for('cat_search')}}");  
       } 
       return breed_name.substring(0, breed_name.indexOf(","));
     }
