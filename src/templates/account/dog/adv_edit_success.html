@@ -1,14 +1,16 @@
- {% extends "layout_base.html" %}
+ {% extends "layout_popup.html" %}
 
-{% block layout %}
+{% block content %}
+
+<p>Объявление о продаже собаки успешно сохранено. Теперь вы можете перейти в раздел <a href="{{url_for('account_dog_advs')}}">Мои собаки</a> или закрыть текущую вкладку.</p>
 
 <script type="text/javascript">
 	if (opener) {
 		opener.location.reload(); 
-		// or opener.location.href = opener.location.href;
+		opener.location.href = opener.location.href;
 		window.close();
 	} else {
-		window.location.href = "{{url_for('account_dog_advs')}}";
+		window.location.href = "{{url_for('account_dog_advs', _external=True)}}";
 	}
 </script>
 

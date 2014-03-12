@@ -6357,6 +6357,13 @@ form .textarea-counter {
 #footer .copyright {
   margin-top: 20px;
 }
+.ajax-link {
+  border-bottom: dotted 1px;
+}
+.ajax-link:focus,
+.ajax-link:hover {
+  text-decoration: none !important;
+}
 .index {
   /*pet-post*/
   /*pet-mosaic*/
@@ -6976,6 +6983,7 @@ form .textarea-counter {
 .upload-files .shapeshift .preview,
 .upload-files .shapeshift .loading {
   position: absolute;
+  z-index: 1;
   display: block;
   float: left;
   margin-right: 10px;

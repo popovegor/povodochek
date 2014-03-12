@@ -1,7 +1,7 @@
 <div class="input upload-files" id="upload">
     <div class="shapeshift" id="upload_files">
         <div class="upload-add" > 
-            <a id="uploadAdd" style="color:#555" href="#" class="thumbnail"><div style="
+            <a id="uploadAdd" style="color:#555" href="javascript:;" class="thumbnail"><div style="
                 width: 140px;height: 90px;display: block;text-align: center;">
               <p class="glyphicon glyphicon-plus-sign" style="font-size: 3em;padding-top: 15px;
             "></p>
@@ -11,31 +11,30 @@
         </div>
     </div>
 </div>
-    
-
-<!-- Third party script for BrowserPlus runtime (Google Gears included in Gears runtime now) -->    
-<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
 
 <!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
 
-<script type="text/javascript" src="/static/plupload/plupload.full.js"></script>
-<script type="text/javascript" src="/static/plupload/i18n/ru.js"></script>
+<script type="text/javascript" src="/static/plupload-2.1.1/js/plupload.full.min.js"></script>
+<script type="text/javascript" src="/static/plupload-2.1.1/js/i18n/ru.js"></script>
 
 
 <script type="text/javascript">
 // Custom example logic
 $(document).ready(function() {
     uploader = new plupload.Uploader({
-        runtimes : 'gears,html5,flash,silverlight,browserplus',
+        runtimes : 'html5,flash,silverlight,html4',
         browse_button : 'uploadAdd',
-        container : 'upload',
-        max_file_size : '10mb',
+        container : document.getElementById('upload'),
         url : '{{url_for("upload")}}',
-        flash_swf_url : '/static/plupload/plupload.flash.swf',
-        silverlight_xap_url : '/static/plupload/plupload.silverlight.xap',
-        filters : [
-        {title : "Image files", extensions : "jpg,jpeg,gif,png"}
-        ],
+        flash_swf_url : '/static/plupload-2.1.1/js/Moxie.swf',
+        silverlight_xap_url : '/static/plupload-2.1.1/js/Moxie.xap',
+        filters: {
+          mime_types : [
+            { title : "Image files", extensions : "jpg,jpeg,gif,png" },
+          ],
+          max_file_size : '10mb',
+          prevent_duplicates: true
+        }
         // resize : {width : 640, height : 480, quality : 90}
     });
 
