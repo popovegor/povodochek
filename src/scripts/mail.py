@@ -53,7 +53,7 @@ def send_notifications_1():
 		advs_count = db.get_dog_advs_by_user(user.get('_id')).count()	
 		email = user.get('email')
 		name = user.get('username')
-		if advs_count > 0:
+		if advs_count <= 0:
 			counter += 1
 			print(counter, name, email)
 			to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
