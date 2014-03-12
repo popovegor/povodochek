@@ -1,3 +1,18 @@
+<div class="input upload-files" id="upload">
+    <div class="shapeshift" id="upload_files">
+        <div class="upload-add" > 
+            <a id="uploadAdd" style="color:#555" href="#" class="thumbnail"><div style="
+                width: 140px;height: 90px;display: block;text-align: center;">
+              <p class="glyphicon glyphicon-plus-sign" style="font-size: 3em;padding-top: 15px;
+            "></p>
+              <p>добавить фото</p>
+            </div>
+            </a>
+        </div>
+    </div>
+</div>
+    
+
 <!-- Third party script for BrowserPlus runtime (Google Gears included in Gears runtime now) -->    
 <script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
 
@@ -9,7 +24,7 @@
 
 <script type="text/javascript">
 // Custom example logic
-$(function() {
+$(document).ready(function() {
     uploader = new plupload.Uploader({
         runtimes : 'gears,html5,flash,silverlight,browserplus',
         browse_button : 'uploadAdd',
@@ -108,19 +123,4 @@ $(function() {
 
 </script>
 
-
-<div class="input upload-files" id="upload">
-    <div class="shapeshift" id="upload_files">
-        <div class="upload-add" > 
-            <a id="uploadAdd" style="color:#555" href="{{request.url}}#" class="thumbnail"><div style="
-			    width: 140px;height: 90px;display: block;text-align: center;">
-			  <p class="glyphicon glyphicon-plus-sign" style="font-size: 3em;padding-top: 15px;
-			"></p>
-			  <p>добавить фото</p>
-			</div>
-            </a>
-        </div>
-    </div>
-</div>
-    
 

@@ -277,8 +277,8 @@ class Dog(Form):
          description = u"От 10 до 80 символов")
 
     desc = TextAreaField(u"Текст рекламного объявления", \
-        [Required(message=MSG_REQUIRED), Length(max=500, message=MSG_MAX_LENGTH.format(500))], \
-        description = u"Не более 500 символов")
+        [Required(message=MSG_REQUIRED), Length(max=1000, message=MSG_MAX_LENGTH.format(1000))], \
+        description = u"Не более 1000 символов")
 
     photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
 
