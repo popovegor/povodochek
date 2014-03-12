@@ -1030,19 +1030,6 @@ def advice_article_1():
 def advice_article_2():
     return render_template("/advice/kalendar-sobachej-beremennosti.html", title = u"Календарь собачьей беременности")
 
-# @app.route("/acount/stud/add", methods = ["POST", "GET"])
-# @login_required
-# def account_stud_add():
-#     form = Stud(request.form)
-#     if request.method == "POST" and form.validate():
-#         print(request.form)
-#         id = sales().insert({'user_id': current_user.id, 'pet': form.pet.data, 'breed': form.breed.data, 'title':form.title.data, 'desc': form.desc.data, 'ps': form.photos.data.split(",")})
-#         flash(u"Объявление %s добавлено." % str(id), "info")
-#         return redirect(url_for('account_sale'))
-#     return render_template("/account/sale_adv.html", form=form, title=u"Новое объявление")
-
-
-
 # upload files
 # 
 
@@ -1217,10 +1204,10 @@ def admin_users():
     page = int(request.args.get("page") or 1)
     total = db.users.count()
     perpage = 100
-    u = [user for user in users.find(sort = [('signup_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
+    u = [user for user in db.admin_get_users(perpage, \
+        (page - 1) * perpage)]
 
     return render_template('/admin/users.html', title = Markup(u"Админка: пользователи"), users = u, total = total, perpage = perpage, page = page)
-
 
 @app.route('/admin/sale/')
 @admin_requried

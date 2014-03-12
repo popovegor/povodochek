@@ -413,3 +413,7 @@ def get_dog_by_cities():
 def get_cat_by_cities():
     return sorted([adv for adv in cat_by_cities.find()], \
         key = lambda x : x['city_name'])
+
+def admin_get_users(limit, skip):
+    return users.find(sort = [('signup_date', DESCENDING)], \
+        limit = limit, skip = skip)
