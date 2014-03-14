@@ -1,4 +1,4 @@
-from wtforms import fields, widgets, 
+from wtforms import (fields, widgets, TextField)
 
 class Select2Widget(widgets.Select):
     """
@@ -16,4 +16,15 @@ class Select2Widget(widgets.Select):
             kwargs['data-role'] = u'select2'
 
         return super(Select2Widget, self).__call__(field, **kwargs)
+
+
+
+
+class PTextField(TextField):
+     def __init__(self, label='', validators=None, \
+        credibility = False, **kwargs):
+        super(PTextField, self).__init__(label = label, \
+            validators = validators, **kwargs)
+        self.credibility = credibility
+
 

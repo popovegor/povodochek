@@ -6521,9 +6521,11 @@ form .textarea-counter {
 #indexLastPets .tabbable ul.nav-tabs li a {
   font-size: 14px;
 }
-.required {
-  font-size: 26px;
-  color: red;
+.required-field {
+  color: #f00;
+}
+.credibility-field {
+  color: #ffa500;
 }
 .photo-count {
   position: absolute;

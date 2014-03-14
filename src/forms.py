@@ -14,6 +14,7 @@ from bson.objectid import ObjectId
 from itertools import groupby
 
 from wtforms_extended_selectfield import SelectField
+from form_helper import (PTextField)
 import re
 from security import hash_password, check_password
 
@@ -266,8 +267,9 @@ class Dog(Form):
     #     validators = [Required(message=MSG_REQUIRED)])
 
 
-    breed = TextField(u'Порода', \
-        validators = [Required(message=MSG_REQUIRED), validate_breed]) 
+    breed = PTextField(u'Порода', \
+        validators = [Required(message=MSG_REQUIRED), validate_breed], \
+        credibility = True) 
 
     gender = SelectField(u"Пол", \
         choices = [(0, u'')] + [ (gender_id, gender_name) \

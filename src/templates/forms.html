@@ -2,10 +2,12 @@
 	{%if field.label.text %}
     <label for="{{ field.id }}" style="{{kwargs.get('lbl_style')}}" class="form-field-name {{kwargs.get('lbl_class')}}">{{ field.label.text }}
     {%- if field.flags.required -%}
-        <!-- <abbr title="Обязательное поле">*</abbr> -->
-          <!-- <sub class="required">*</sub> -->
-          <span class="glyphicon glyphicon-asterisk small" style="color:red"></span>
-    {%- endif %}</label>
+          &nbsp;<span title="Обязательное поле" class="glyphicon glyphicon-asterisk small required-field" style=""></span>
+    {%- endif %}
+    {%- if field.credibility -%}
+          &nbsp;<span title="Влияет на достоверность" class="glyphicon glyphicon-star small credibility-field"></span>
+    {%- endif %}
+    </label>
     {%endif%}
 {%- endmacro -%}
  
