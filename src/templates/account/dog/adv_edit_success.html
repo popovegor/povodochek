@@ -2,16 +2,17 @@
 
 {% block content %}
 
-<p>Объявление о продаже собаки успешно сохранено. Теперь вы можете перейти в раздел <a href="{{url_for('account_dog_advs')}}">Мои собаки</a> или закрыть текущую вкладку.</p>
+<p>Объявление о продаже собаки успешно сохранено. Теперь вы можете перейти в раздел <a href="{{url_for('account_dog_advs')}}">Мои собаки</a> или закрыть текущую страницу.</p>
 
 <script type="text/javascript">
+$(document).ready(function(){
 	if (opener) {
-		opener.location.reload(); 
-		opener.location.href = opener.location.href;
+		opener.location.href = "{{url_for('account_dog_advs', _external=True)}}";
 		window.close();
 	} else {
 		window.location.href = "{{url_for('account_dog_advs', _external=True)}}";
 	}
+});	
 </script>
 
 {%endblock%}
