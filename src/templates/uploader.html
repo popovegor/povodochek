@@ -34,8 +34,8 @@ $(document).ready(function() {
           ],
           max_file_size : '10mb',
           prevent_duplicates: true
-        }
-        // resize : {width : 640, height : 480, quality : 90}
+        },
+        resize : {width : 900, height : 600, quality : 90}
     });
 
     uploader.getFileNames = function(){
@@ -104,7 +104,7 @@ $(document).ready(function() {
         });
 
     uploader.bind('Error', function(up, err) {
-        alert("Произошла ошибка. Попробуйте загрузить файл еще раз.");
+        alert("Произошла ошибка. " + err.message);
         $("div[file-id='" + err.file.id + "']").remove();
         up.refresh(); // Reposition Flash/Silverlight
     });
