@@ -848,7 +848,7 @@ def account_dog_adv_edit(adv_id):
         for f in form:
             f.set_db_val(dog.get(f.get_db_name()))
       
-        form.username.data = dog.get("username") or current_user.username
+        form.username.data = dog.get("username") or (current_user.username if current_user.username != u'Пользователь' else u'')
         form.phone.data = dog.get("phone") or current_user.phone
         form.skype.data = dog.get("skype") or current_user.skype
     return render_template("/account/dog/adv_edit.html", \
@@ -868,7 +868,7 @@ def account_dog_adv_new():
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", title=msg)
     else:
-        form.username.data = current_user.username
+        form.username.data = current_user.username if current_user.username != u'Пользователь' else u''
         form.city.data = get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
         form.skype.data = current_user.skype
