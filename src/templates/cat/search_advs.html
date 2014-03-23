@@ -80,7 +80,7 @@
 
             <div class="col-sm-3 col-lg-3 text-right">
               {%set price = (adv.get("price") or "") | int  %}
-              <p class="adv-price" style="" title='Цена: {{"{0:,}" | format(price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
+              <p class="adv-price" style="" title='Цена: {{format("{0:,}", price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
                <span class="price">{{ price | format_price() }}&nbsp;<span class="rur">руб</span></span>
              </p>  
 

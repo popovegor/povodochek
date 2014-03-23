@@ -1,20 +1,32 @@
 {% extends "layout_popup.html" %}
-
-
-
-	{#<p>Ваше объявление увидит более <b>1&nbsp;000</b> человек в неделю.</p>#}
-	
 		
 {% block page_desc %}
 
 <hr/>
 
+{% from "forms.html" import form_field_attraction, form_field_required %}
+
 <p>
-	<span class="glyphicon glyphicon-asterisk small required-field" style=""></span> &mdash; поля обязательны для заполнения.
+{{form_field_required()}} &mdash; поля, обязательные для заполнения.
 </p>
 <p>
-	<span class="glyphicon glyphicon-star small credibility-field " style=""></span> &mdash; поля, влияющие на достоверность объявления.
+	{{form_field_attraction()}} &mdash; поля, влияющие на привлекательность объявления. 
 </p>
+<div class="" id="dae_attraction_affix" data-spy="affix" data-offset-top="150">	
+	
+	Привлекательность объявления:
+	<span class="lead" style="padding-left:5px; padding-right:5px"><span id="attraction_percent">0</span>%</span>  
+	<span id="attraction_star_1" class="glyphicon glyphicon-star attraction-no-star"></span>
+	<span id="attraction_star_2" class="glyphicon glyphicon-star attraction-no-star"></span>
+	<span id="attraction_star_3" class="glyphicon glyphicon-star attraction-no-star"></span>
+	<span id="attraction_star_4" class="glyphicon glyphicon-star attraction-no-star"></span>
+	<span id="attraction_star_5" class="glyphicon glyphicon-star attraction-no-star"></span>
+	
+	<a  style="margin-left:50px" target="_blank" href="{{url_for('help_attraction')}}">Как мы считаем привлекательность?</a>
+</div>
+
+
+<hr/>
 
 {%endblock%}	
 
@@ -22,12 +34,7 @@
 {% block content %}
 
 
-{% for field in form %}
-	{{field.name}}
-{%endfor%}
-
-
-<div class="sale-edit">
+<div class="dog-adv-edit">
     <div class="">
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
@@ -52,7 +59,7 @@
 			          {#<a class="btn" href="{{url_for('account_sale')}}" id="cancel">Отменить</a>#}
 			        </div>
 
-	        </div>
+		        </div>
 
 	        </div>
 
@@ -69,83 +76,80 @@
 	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
 	
-		{#<h2 class="text-right">Основная информация</h2>
-		#}
-			
-
-		{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder=(dogs | random), help = "Выберите породу из выпадающего списка, вводя любую часть названия,  например, шпиц.", autocomplete="off") }}   
+	{#<h2 class="text-right">Основная информация</h2>
+	#}
 		
-    
-        {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder=(large_cities | random).get("city_id") | city_region, help="Выберите из выпадающего списка населенный пункт, вводя первые буквы.", autocomplete="off") }}
-    
-	    {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="", help = "Напишите наиболее привлекательный заголовок.")}}
 
-		{{ form_field(form.price, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="35000", addon_right = "руб", size="col-lg-3 col-md-3 col-sm-4") }}   		
-	    	
-	    	<div class="row" style="margin-top:-15px">
-	    		
-				<div class="col-sm-9 col-sm-push-3">
-					{{ form_field(form.price_haggle) }}
-					{{ form_field(form.price_hp) }}	
-					{{form_field(form.contract)}}
-  					{{form_field(form.delivery)}}	
-				</div>
-	    	</div>	
+	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder=(dogs | random), help = "Выберите породу из выпадающего списка, вводя любую часть названия,  например, шпиц.", autocomplete="off") }}   
+	
+
+    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder=(large_cities | random).get("city_id") | city_region, help="Выберите из выпадающего списка населенный пункт, вводя первые буквы.", autocomplete="off") }}
+
+    {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="", help = "Напишите наиболее привлекательный заголовок.")}}
+
+	{{ form_field(form.price, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="35000", addon_right = "руб", size="col-lg-3 col-md-3 col-sm-4") }}   		
+    	
+	<div class="row" style="margin-top:-15px">
 		
-	    
-      	
+		<div class="col-sm-9 col-sm-push-3">
+			{{ form_field(form.price_haggle) }}
+			{{ form_field(form.price_hp) }}	
+			{{form_field(form.contract)}}
+				{{form_field(form.delivery)}}	
+		</div>
+	</div>	
 
 {%- endmacro -%}
 
 
 {%- macro advanced_info(form) -%}
-	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+	{% from "forms.html" import form_field_boolean, form_field, action_buttons, form_field_attraction, form_field_required %}
 					
 
-      			<div style="display:none">
-	                {{ form_field(form.photos) }}
-	             </div>
+	<div style="display:none">
+    	{{ form_field(form.photos) }}
+	</div>
 
-	             	<div class="row" style="margin-bottom:10px;">
-	             		<div class="col-sm-3">
-	             			<label for="uploader" class="form-field-name" style="margin-bottom:-10px">Фотографии</label>
-	             		</div>
-	             		<div class="col-sm-9">
-	             			<!--span style="color:red" class="small glyphicon glyphicon-asterisk"></span-->
-			               
-			                  {#<p class="text-left main-photo text-alert" title=""><small>Главная фотография</small> </p>#}
+ 	<div class="row" style="margin-bottom:10px;">
+ 		<div class="col-sm-3">
+ 			<label for="uploader" class="form-field-name" style="margin-bottom:-10px">Фотографии&nbsp;{{form_field_attraction()}}
+ 			</label>
+ 		</div>
+ 		<div class="col-sm-9">
+ 			<!--span style="color:red" class="small glyphicon glyphicon-asterisk"></span-->
+           
+              {#<p class="text-left main-photo text-alert" title=""><small>Главная фотография</small> </p>#}
 
-			                  {% include "uploader.html" %}
-	             		</div>
+              {% include "uploader.html" %}
+ 		</div>
 
-	             	</div>
+ 	</div>
 
-	             	{{ form_field(form.birthday, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, help="", help_placement="top", style="width:120px") }}
-	  			
-  					{{ form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:120px") }}
+ 	{{ form_field(form.birthday, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, help="", help_placement="top", style="width:120px") }}
+	
+		{{ form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:120px") }}
 
-  					
-					{{ form_field(form.color, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, size="col-sm-6", help="Официальное название окраса можно посмотреть в метрике или родословной, например, рыжий.") }}
-				
-	  				
-  					
-	  				
+		
+	{{ form_field(form.color, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, size="col-sm-6", help="Официальное название окраса можно посмотреть в метрике или родословной, например, рыжий.") }}
 
-	  			<div class="row" style="margin-bottom:10px; margin-top:-10px">
-	  				<div class="col-sm-3">
-	  					<label for="r" class="form-field-name" style="margin-bottom:-10px">Разное</label>
-	  				</div>
-	  				<div class="col-sm-9">
-  						{{form_field(form.microchip)}}	
-	  					{{form_field(form.vaccination)}}	
-	  					{{form_field(form.vetpassport)}}
-	  				</div>
-	  			</div>
-	  				
-			  	{{doc(form)}}
+		
+		
+		
 
-	              {{ form_field(form.desc, rows="8", help = "Опишите вашу собаку с выгодной стороны. Характер, психика, поведение, привычки, генетическая предрасположенность и тп", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}    
-	          
+	<div class="row" style="margin-bottom:10px; margin-top:-10px">
+		<div class="col-sm-3">
+			<label for="r" class="form-field-name" style="margin-bottom:-10px">Разное</label>
+		</div>
+		<div class="col-sm-9">
+			{{form_field(form.microchip)}}	
+			{{form_field(form.vaccination)}}	
+			{{form_field(form.vetpassport)}}
+		</div>
+	</div>
+		
+	{{doc(form)}}
+
+  {{ form_field(form.desc, rows="8", help = "Опишите вашу собаку с выгодной стороны. Характер, психика, поведение, привычки, генетическая предрасположенность и тп", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}          
 
 {%- endmacro -%}
 
@@ -156,70 +160,54 @@
 	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
 	
-		{{form_field(form.doc, horizontal ={"l":"col-sm-3", "r":"col-sm-9"}, size="col-md-6 col-lg-5")}}
+	{{form_field(form.doc, horizontal ={"l":"col-sm-3", "r":"col-sm-9"}, size="col-sm-8 col-md-6")}}
 
 <div id="doc_fields" class="bg-info" style="padding:10px 20px 20px 20px; margin-bottom:20px; {{'display:none' if not form.doc.data else ''}}">
 
-		<h3 id="doc_name">{{form.doc.data | doc_dog_name }}</h3>
-
-		
-			
-			<div class="row" style="margin-top:20px; ">
-				<div class="col-sm-3" id="{{form.pedigree.id}}_block" style="{{'display:none' if form.doc.data not in dog_pedigree_docs else ''}}">
-					{{ form_field(form.pedigree, style="width:150px")}}
-				</div>
-				<div class="col-sm-3">
-					
-					{{ form_field(form.tatoo, help_placement="top", style="width:150px") }}
-				</div>	
-				<div style="margin-top:10px" class="col-sm-6">
-					{{ form_field(form.breeding) }} 
-					{{ form_field(form.show) }}
-					</div>			
-			</div> 
-			
-			
-		
-
-		
-			<h4>Отец</h4>
-			<div class="row">
-					<div class="col-sm-5">
-						{{form_field(form.father_name, class="form-control")}}		
-					</div>
-					<div class="col-sm-4">
-						{{form_field(form.father_country, class="form-control")}}
-					</div>
-					<div class="col-sm-3">
-						{{form_field(form.father_pedigree, class="form-control")}}	
-					</div>
-				</div>
-
-				{{form_field(form.father_misc, class="form-control", rows = 2)}}
-		
-
-	
-
-
+	<h3 id="doc_name">{{form.doc.data | doc_dog_name }}</h3>
+		<div class="row" style="margin-top:20px; ">
+			<div class="col-sm-3" id="{{form.pedigree.id}}_block" style="{{'display:none' if form.doc.data not in doc_dog_pedigrees else ''}}">
+				{{ form_field(form.pedigree, style="width:150px")}}
+			</div>
+			<div class="col-sm-3">
 				
-	
-				<h4>Мать</h4>
-			
-		   			<div class="row">
-						<div class="col-sm-5">
-							{{form_field(form.mother_name, class="form-control")}}			
-						</div>
-						<div class="col-sm-4">
-							{{form_field(form.mother_country, class="form-control")}}
-						</div>
-						<div class="col-sm-3">
-							{{form_field(form.mother_pedigree, class="form-control")}}	
-						</div>
-					</div>
-				
-				{{form_field(form.mother_misc, class="form-control", rows = 2)}}
+				{{ form_field(form.tatoo, help_placement="top", style="width:150px") }}
+			</div>	
+			<div style="margin-top:10px" class="col-sm-6">
+				{{ form_field(form.breeding) }} 
+				{{ form_field(form.show) }}
+				</div>			
+		</div> 
 		
-	
+		<h4>Отец</h4>
+		<div class="row">
+			<div class="col-sm-5">
+				{{form_field(form.father_name, class="form-control")}}		
+			</div>
+			<div class="col-sm-4">
+					{{form_field(form.father_country, class="form-control")}}
+			</div>
+			<div class="col-sm-3">
+				{{form_field(form.father_pedigree, class="form-control")}}	
+			</div>
+		</div>
+
+		{{form_field(form.father_misc, class="form-control", rows = 2)}}
+
+		<h4>Мать</h4>
+		<div class="row">
+			<div class="col-sm-5">
+				{{form_field(form.mother_name, class="form-control")}}			
+			</div>
+			<div class="col-sm-4">
+				{{form_field(form.mother_country, class="form-control")}}
+			</div>
+			<div class="col-sm-3">
+				{{form_field(form.mother_pedigree, class="form-control")}}	
+			</div>
+		</div>
+		
+		{{form_field(form.mother_misc, class="form-control", rows = 2)}}
 
 </div> <!-- doc-fields -->
 				
@@ -239,19 +227,20 @@
 	{{ form_field(form.skype, size="col-lg-3 col-md-4 col-sm-5", placeholder="Введите skype-имя", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}
 
 
-{%- endmacro -%}
+{%- endmacro -%} CV
 
 
 {%- macro js(form) -%}
 {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 <script type="text/javascript">
-            
 //location with autocomplete built on typeahead.js
 $(document).ready(function(){
 
+	var doc_pedigrees = $.map({{doc_dog_pedigrees.keys() | json | safe}}, function(x) {return x.toString();});
+
 	$("#{{form.doc.id}}").change(function(){
 
-		if($.inArray(this.value, ["1", "3", "5"]) >= 0) {
+		if(doc_pedigrees.indexOf(this.value) > -1) {
 			$("#{{form.pedigree.id}}_block").show();
 		
 		} else {
@@ -261,13 +250,111 @@ $(document).ready(function(){
 		if(this.value > 0) {
 			$("#doc_fields").show("fast");
 			$("#doc_name").text($("#{{form.doc.id}} option:selected").html());
-
 		} else {
 			$("#doc_fields").hide("fast");
 			$("#doc_name").text();
 		}
 		
 	});
+
+	var fields = {{fields | json | safe }};
+	var attraction_fields_count = 0;
+	var attraction_fields = {};
+	
+	for(var f_id in fields) {
+		var f = fields[f_id];
+		if(f.attrs.attraction) {
+			attraction_fields[f_id] = f;
+			$("#" + f_id).bind('change', function(e){
+				recalc_attraction();
+			});
+		}
+	}
+
+	var is_active_attraction_field = function(elem_id) {
+		var f = attraction_fields[elem_id];
+		if(f && f.attrs && f.attrs.attraction_depends) {
+			var depends = f.attrs.attraction_depends;
+			var active = is_active_attraction_field(depends["id"]);
+			if(!active) {
+				return false;
+			} else if (depends["values"]) {			
+				var depends_val = get_field_val(depends["id"]);
+				var depends_values = $.map(depends["values"], function(x) {return x.toString();});
+				return depends_values.indexOf(depends_val) !== -1;
+			}
+		}
+		return true;
+	};
+
+	var get_attraction_field_val = function(elem_id) {
+		var cf = attraction_fields[elem_id];
+		if(cf.attrs && cf.attrs.attraction_depends) {
+			var depends = cf.attrs.attraction_depends;
+			if(!get_attraction_field_val(depends["id"])){
+				return null;
+			}
+		}
+
+		return get_field_val(elem_id);
+	};
+
+	var get_field_val = function(elem_id) {
+		var cf = attraction_fields[elem_id];
+		if(cf.attrs && cf.attrs.depends) {
+			var depends = cf.attrs.depends;
+			if(!get_field_val(depends["id"])){
+				return null;
+			}
+		}
+
+		var cf_elem = $("#" + elem_id);
+		if(cf_elem.is(":text") 
+			|| cf_elem.is("input:hidden")) {
+			if($.trim(cf_elem.val()) !== '') {
+				return cf_elem.val();
+			}
+		} else if (cf_elem.is(":checkbox")) {
+			return cf_elem.is(":checked");
+		} else if (cf_elem.is("select")) {
+			if(cf_elem.val() > "0") {
+				return cf_elem.val();
+			}
+		}
+
+		return null;
+	};
+
+	var recalc_attraction = function() {
+		var count = 0;
+		var complete = 0;
+		for(cf_id in attraction_fields) {
+			if(is_active_attraction_field(cf_id)) {
+				count += 1;	
+				// console.log(cf_id, "count", count)
+					if(get_attraction_field_val(cf_id) ) {
+					complete += 1;	
+					// console.log(cf_id, "complete", complete);
+				}
+			}
+		}
+
+		var percent = Math.round(complete / count * 10000) / 100;
+		$("#attraction_percent").text(percent);
+
+		for(var k = 1; k <= 5; k++) {
+			if ((percent > 0 && percent < 10 && k == 1)
+				|| (percent >= 10 && percent < 40 && k <= 2 )
+				|| (percent >= 40 && percent < 70 && k <= 3 )
+				|| (percent >= 70 && percent < 90 && k <= 4 )
+				|| (percent >= 90 && percent <= 100 && k <= 5 )){
+				$("#attraction_star_" + k).removeClass("attraction-no-star").addClass("attraction-field");
+			} else {
+				$("#attraction_star_" + k).removeClass("attraction-no-star").addClass("attraction-no-star");
+			}
+		}
+	};
+	
 
   $("#{{form.city.id}}").typeahead(
 	  povodochek.typeahead(
@@ -280,11 +367,15 @@ $(document).ready(function(){
 	  "{{url_for('ajax_typeahead_dog')}}",
 	  "{{form.breed.id}}")); //typeahead 
 
+	//validation
 
-  
-//validation
+	uploader.bind('Refresh', function() {
+		recheck_photos();
+	});
 
-  var submit = function(){photos = $("#photos").val("");
+	var recheck_photos = function(){
+	  var photos = $("#photos");
+	  photos.val("");
       $.each(uploader.getFileNames(), function(i, filename) {
         if(filename && photos.val()) {
           photos.val(photos.val() + "," + filename);
@@ -292,15 +383,21 @@ $(document).ready(function(){
           photos.val(filename);
         }
       });
-    };
+      photos.trigger("change");
+	};
 
-   
-    $("#{{form.phone.id}}").inputmask({"mask": "+7(999)999-9999", 
-    });
+    $("#{{form.phone.id}}").inputmask(
+    	{"mask": "+7(999)999-9999"});
 
-    $("#{{form.birthday.id}}").inputmask("d/m/y"); 
+    $("#{{form.birthday.id}}").inputmask("d/m/y", {
+	    "onincomplete" : function(){
+	    	$(this).val("").trigger("change");
+	    }
+	}); 
 
-    $("#{{form.price.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false});
+
+	$("#{{form.price.id}}").inputmask("integer", {allowMinus: false, allowPlus: false, rightAlignNumerics: false
+	    });
   
 
   povodochek.validate($("form"), {
@@ -313,15 +410,7 @@ $(document).ready(function(){
       city : {required: true}, 
       phone : {_phone: true}, 
       username : {required : true}
-   }, submit);
-
-
-  $('#desc').textareaCount({
-    'originalStyle': 'textarea-counter', 
-    'displayFormat' : "#input"});
-
-
-  $("[data-toggle='tooltip']").tooltip();
+   });
   
 });
 

@@ -6,7 +6,7 @@
   <div class="row">
     
     <div class="col-lg-10 col-lg-push-1">
-      <h1 class=" text-center alert-warning" style="top:0px;left:0px;margin:0px;width:100%; padding:10px 20px; border-radius: 0px; {#color:#555;#}">Найдите своего идеального&nbsp;питомца</h1>
+      <h1 class=" text-center alert-warning" style="top:0px;left:0px;margin:0px;width:100%; padding:15px 20px; border-radius: 5px; {#color:#555;#}">Найдите своего идеального&nbsp;питомца</h1>
 
     <form method="get" id="search" action="" style="margin-top:20px; padding:0px 20px">
 
@@ -77,18 +77,20 @@
 
     var on_select_breed = function(breed_name) {
       $("#{{pet_search_form.breed.id}}").tooltip("destroy");
+
       if (breed_name.indexOf(', Собаки') > 0) {
         $("#search").attr("action", "{{url_for('dog_search')}}");
       } else if (breed_name.indexOf(', Кошки') > 0){
         $("#search").attr("action", "{{url_for('cat_search')}}");  
-      } 
+      } else {
+        $("#search").attr("action", "");
+      }
       return breed_name.substring(0, breed_name.indexOf(","));
     }
 
-    $("#pet_find").click(function(){
+    $("#pet_find").click(function(e){
       var breed = $("#{{pet_search_form.breed.id}}");
-      if(breed.val() == "")
-      {
+      if($("#search").attr("action") === "") {
         breed.focus();
         $("#{{pet_search_form.breed.id}}").tooltip({
           title: "Пожалуйста, укажите породу собаки или кошки",

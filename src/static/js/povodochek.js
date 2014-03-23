@@ -80,10 +80,12 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
         function (data) { 
           var input = $("#" + input_id);
           if(data.items.length === 0) {
-              input.tooltip({title:"Совпадений не найдено", trigger: "click"});
-              input.tooltip("show");
-          } else {
-            input.tooltip("destroy");
+              input.tooltip("destroy").tooltip(
+                {title:"Совпадений не найдено", 
+                trigger: "click"}).tooltip("show").
+              attr("show-tooltip", "true");
+          } else if (input.attr("show-tooltip") === "true"){
+            input.tooltip("destroy").attr("show-tooltip", "false");
           }
           return process(data.items);
       }); //getJSON
@@ -93,4 +95,23 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
     m["updater"] = updater;
   }
   return m;
-}
+};
+
+
+(function($) {
+
+    var oldHide = $.fn.popover.Constructor.prototype.hide;
+
+    $.fn.popover.Constructor.prototype.hide = function() {
+        if (this.options.trigger === "hover" && this.tip().is(":hover")) {
+            var that = this;
+            // try again after what would have been the delay
+            setTimeout(function() {
+                return that.hide.call(that, arguments);
+            }, that.options.delay.hide);
+            return;
+        }
+        oldHide.call(this, arguments);
+    };
+
+})(jQuery);

@@ -433,17 +433,17 @@ h6 .small,
 }
 h1,
 .h1 {
-  font-size: 30px;
+  font-size: 32px;
   /*font-family: @font-family-serif;*/
   /*font-style: italic;*/
 }
 h2,
 .h2 {
-  font-size: 28px;
+  font-size: 26px;
 }
 h3,
 .h3 {
-  font-size: 24px;
+  font-size: 22px;
 }
 h4,
 .h4 {
@@ -5224,6 +5224,7 @@ button.close {
   position: absolute;
   z-index: 1030;
   display: block;
+  font-size: 12px;
   line-height: 1.4;
   visibility: visible;
   /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
@@ -5343,7 +5344,7 @@ button.close {
   left: 0;
   z-index: 1010;
   display: none;
-  max-width: 276px;
+  max-width: 300px;
   padding: 1px;
   text-align: left;
   white-space: normal;
@@ -6290,8 +6291,9 @@ body .table-hover tr:hover > td {
   /*line-height: 16px;*/
 }
 #menu span.navbar-brand {
-  color: #5e5e5e;
+  /*color: #5e5e5e; */
   cursor: default;
+  background-color: transparent;
 }
 form {
   /*.form-field-name {
@@ -6468,7 +6470,7 @@ form .textarea-counter {
 }
 /*index*/
 .account .left-side {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 .account-contact .phone input[type="text"],
 .account-contact .skype input[type="text"],
@@ -6524,8 +6526,30 @@ form .textarea-counter {
 .required-field {
   color: #f00;
 }
-.credibility-field {
+.attraction-field,
+.attraction-star {
   color: #ffa500;
+}
+.attraction-stars .attraction-help {
+  padding-left: 5px;
+  color: #aaa;
+  visibility: hidden;
+}
+.attraction-stars:hover .attraction-help,
+.attraction-stars:focus .attraction-help {
+  visibility: visible;
+}
+#dae_attraction_affix.affix {
+  top: 0;
+  z-index: 3;
+  width: 100%;
+  padding: 15px 15px 15px 15px;
+  /*font-size: 120%*/
+  margin-left: -15px;
+  background-color: #ffd;
+}
+.attraction-no-star {
+  color: #aaa;
 }
 .photo-count {
   position: absolute;
@@ -6565,9 +6589,16 @@ form .textarea-counter {
 .pet-sale .adv,
 .account-pet-sale .adv,
 .dog-search .adv {
-  padding: 25px 25px 15px 25px;
+  padding: 25px 30px 15px 30px;
   margin-bottom: 20px;
   border-radius: 5px;
+}
+.pet-sale .adv .more,
+.account-pet-sale .adv .more,
+.dog-search .adv .more {
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
 }
 .pet-sale .adv .adv-actions,
 .account-pet-sale .adv .adv-actions,
@@ -6602,6 +6633,13 @@ form .textarea-counter {
 .dog-search .adv .photo a img {
   width: 100%;
 }
+.pet-sale .adv .no-photo,
+.account-pet-sale .adv .no-photo,
+.dog-search .adv .no-photo {
+  background-color: #eaeaea;
+  border: none;
+  border-radius: 0;
+}
 .pet-sale .adv .adv-dict,
 .account-pet-sale .adv .adv-dict,
 .dog-search .adv .adv-dict {
@@ -6633,14 +6671,14 @@ form .textarea-counter {
 .dog-search .adv .adv-head {
   margin-top: 0;
 }
-.pet-sale .adv div.photo,
-.account-pet-sale .adv div.photo,
-.dog-search .adv div.photo {
-  margin-bottom: 20px;
+.pet-sale .adv .photo,
+.account-pet-sale .adv .photo,
+.dog-search .adv .photo {
+  margin-bottom: 10px;
 }
-.pet-sale .adv div.photo .photo-count,
-.account-pet-sale .adv div.photo .photo-count,
-.dog-search .adv div.photo .photo-count {
+.pet-sale .adv .photo .photo-count,
+.account-pet-sale .adv .photo .photo-count,
+.dog-search .adv .photo .photo-count {
   /*visibility: hidden;        */
 }
 .pet-sale .adv .adv-city,

@@ -30,6 +30,7 @@
                <li class="{{'active' if url_for('dog_search') in request.path else ''}}"><a href="{{url_for('dog_search')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
                <li class="{{'active' if url_for('cat_search') in request.path else ''}}"><a href="{{url_for('cat_search')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
                <li class=" {{'active' if url_for('advice') in request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
+               <li class=" {{'active' if url_for('help') in request.path else ''}}"><a href="{{url_for('help')}}"  title="Справочная информация о сайте Поводочек">Справка</a></li>
       
     </ul>
 
@@ -41,7 +42,7 @@
     <!-- current.user -->
               {%if current_user.is_signed() %}
                 <li class="dropdown {{'active' if url_for('account') in request.path}}">
-                  <a title="{{current_user.username}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><span class="">&nbsp;&nbsp;Личный кабинет&nbsp;&nbsp;</span><b class="caret"></b></a>
+                  <a title="{{current_user.username}}" user_id="{{current_user.id}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><span class="">&nbsp;&nbsp;Личный кабинет&nbsp;&nbsp;</span><b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="{{url_for('account_dog_advs')}}">Мои собаки</a></li>
                      <li><a href="{{url_for('account_cat_advs')}}">Мои кошки</a></li>

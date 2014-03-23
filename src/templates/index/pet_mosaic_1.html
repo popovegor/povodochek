@@ -6,7 +6,7 @@
 		<table style="width:100%">
 			<tr>
 				<td class="">
-					<span class="" style="padding-left:0px">Свежие объявления о продаже</span>	
+					<b class="" style="padding-left:0px">Свежие объявления о продаже</b>	
 				</td>
 				<td style="width:150px" class="text-right">
 					<div class="btn-group btn-group-sm text-right"> {#<button id="filter_all" class="filter btn btn-default active ajax-link" href="#">Все</button>#}<button id="filter_dogs" class="filter btn btn-default ajax-link active" href="#">Собаки</button>
@@ -20,19 +20,6 @@
 			
 		
 	</div>
-
-    {#<div class="clearfix" id="advs">
-
-        % for adv in mosaic_advs %}
-       <div class="mosaicflow__item">
-       		<a href="{{adv.get('url')}}" data-status="loading" class="thumbnail_ adv" data-toggle="tooltip" data-placement="top" title='{{ "{0}<br/>Цена&nbsp;{1} руб" | format (adv.get("b"), adv.get("p")) }}' style="display:none">
-    		<img class="img-responsive" width="{{adv['s']['w']}}" height="{{adv['s']['h']}}" src="{{adv.get('src')}}" alt=""> 
-	    	</a>
-    	</div> 
-        {% endfor %
-
-        <ins class="fade-white"></ins>
-    </div>#}
 
 	<div id='advs' class='clearfix'><div class='ajax-loader'></div></div>    
 
@@ -66,7 +53,7 @@
 					var adv = $(value);
 					var img = adv.find("img");
 					adv.fadeIn("slow");
-					adv.tooltip({placement:'top', html:true});
+					adv.popover();
 					adv.attr("data-status", "complete");
 				});
 			});
@@ -77,7 +64,7 @@
 		reinit();
 
 		var get_mosaic_elm = function(adv) {
-			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-placement="top" data-toggle="tooltip" title="'+ adv['b'] + '<br/>Цена&nbsp; ' + adv['p'] +' руб" style="display:none" data-status="loading"> <img class"img-responsive" src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
+			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-placement="top" data-html="true" data-trigger="hover" data-toggle="popover" data-title="' + adv['b'] + '" data-content="<small>' + adv['t'] +'<br/>Цена&nbsp;&mdash;&nbsp;' + adv['p'] +' руб</small>" style="display:none" data-status="loading"> <img class"img-responsive" src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
 		}
 
 		var more = $("#more"); 

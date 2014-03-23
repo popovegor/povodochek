@@ -36,7 +36,11 @@ html, body {
         /*line-height: 16px;*/
 
     }
-    span.navbar-brand { color: #5e5e5e; cursor:default;}
+    span.navbar-brand { 
+        /*color: #5e5e5e; */
+        cursor:default;
+        background-color: transparent;
+    }
 }
 
 
@@ -253,7 +257,7 @@ form {
 
 .account {
     .left-side {
-        margin-top: 30px;
+        margin-top: 20px;
     }
 }
 
@@ -321,9 +325,40 @@ form {
     color:#f00;
 }
 
-.credibility-field {
+.attraction-field, .attraction-star {
     color:#FFA500;
 }
+
+.attraction-stars {
+    .attraction-help {
+        padding-left: 5px;
+        visibility: hidden;
+        color:#aaa;
+    }
+
+    &:hover, &:focus {
+        .attraction-help {
+            visibility: visible;
+        }
+    }
+}
+
+
+#dae_attraction_affix.affix {
+    top:0px;
+    background-color: #ffd;
+    padding: 15px 15px 15px 15px;
+    z-index: 3;
+    width: 100%;
+    /*font-size: 120%*/
+    margin-left: -15px;
+}
+
+
+.attraction-no-star {
+    color:#aaa;
+}
+
 
 .photo-count {
      position: absolute;
@@ -350,8 +385,12 @@ form {
     .adv {
         border-radius:5px;
 
-         padding:25px 25px 15px 25px;
+         padding:25px 30px 15px 30px;
          margin-bottom:20px;
+
+         .more {
+            position:absolute; bottom:20px; right:30px
+         }
 
         .adv-actions,  .adv-desc {
             margin-top:15px;
@@ -367,6 +406,12 @@ form {
                 margin-bottom: 10px;
                 img { width:100%; } 
             }
+        }
+
+        .no-photo {
+            background-color: #eaeaea;
+            border-radius: 0px;
+            border:none;
         }
 
         .adv-dict {
@@ -390,8 +435,8 @@ form {
 
         .adv-head { margin-top: 0px;}
 
-        div.photo {
-            margin-bottom:20px;
+        .photo {
+            margin-bottom:10px;
             .photo-count {
                 /*visibility: hidden;        */
             }   
@@ -653,9 +698,8 @@ form {
     .adv-block {
         margin-bottom: 10px;
     }
-
-    
 }
+
 
 .info-block {
     width:100%;
@@ -828,4 +872,7 @@ form {
 	margin:30px 0px 20px 0; 
 	padding:15px; 
 	background-color:@panel-default-heading-bg;
+}
+
+.help {
 }

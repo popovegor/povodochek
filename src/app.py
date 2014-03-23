@@ -45,7 +45,7 @@ from dic.breeds import (dogs, get_breed_name, cats, \
     get_breed_by_name, breeds, get_breed_dog_name, \
     get_breed_cat_name)
 from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities)
-from dic.pet_docs import (dog_pedigree_docs, puppy_cards, \
+from dic.pet_docs import (doc_dog_pedigrees, doc_puppy_cards, \
     dog_docs, get_doc_dog_name)
 
 from dic.countries import (get_country_name)
@@ -54,9 +54,11 @@ from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
 from advs_parser import parse_avito_adv
 import db
+             
+
 import random
-from bson import json_util
 import json
+from form_helper import (get_fields, calc_attraction)
 
 photos = UploadSet('photos', IMAGES)
 
@@ -103,7 +105,6 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
     'js/jquery.inputmask.bundle.min.js', \
-    'js/jquery.textareaCounter.plugin.js', \
     'js/moment.min.js', \
     'js/moment.min.ru.js', \
     'js/jquery.nouislider.min.js', \
@@ -146,6 +147,8 @@ login_manager.setup_app(app)
 
 app.jinja_env.globals['momentjs'] = MomentJS
 
+app.jinja_env.filters['json'] = json.dumps
+
 def jinja_format_datetime(value, format='%H:%M, %d.%m.%y'):
     return value.strftime(format) if value  else ""
 
@@ -164,7 +167,7 @@ app.jinja_env.filters['format_price'] = jinja_format_price
 def jinja_format(template=u"{0}", *args):
     return template.format(*args)
 
-app.jinja_env.filters['format'] = jinja_format
+app.jinja_env.globals['format'] = jinja_format
 
 app.jinja_env.filters['pet_name'] = get_pet_name
 
@@ -223,8 +226,8 @@ app.jinja_env.globals['utcnow'] = jinja_utcnow
 
 app.jinja_env.globals['dog_docs'] = dog_docs
 app.jinja_env.filters['doc_dog_name'] = get_doc_dog_name
-app.jinja_env.globals['puppy_cards'] = puppy_cards
-app.jinja_env.globals['dog_pedigree_docs'] = dog_pedigree_docs
+app.jinja_env.globals['doc_puppy_cards'] = doc_puppy_cards
+app.jinja_env.globals['doc_dog_pedigrees'] = doc_dog_pedigrees
 
 
 def debug_write(msg):
@@ -293,7 +296,7 @@ def signin():
                 flash(Markup(u"Вы не можете войти на сайт, так как регистрация не подтверждена. Проверьте, пожалуйста, электронную почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
         else:
             flash(u"Неправильный логин или пароль.", "error")
-    return render_template("signin.html", form=form, title=u"Вход на сайт")
+    return render_template("signin.html", form=form, title=u"Вход")
 
 @app.route("/ajax/activate/remember/later/")
 @login_required
@@ -605,7 +608,7 @@ def dog_search():
     pet_id = DOG_ID
     # sort
     session["dog_sort"] = form.sort.data or \
-        session.get("dog_sort") or 3
+        session.get("dog_sort") or form.sort.default
 
     (advs, count, total) = db.find_dog_advs(
         breed_id = breed_id, \
@@ -838,46 +841,21 @@ def account_dog_adv_edit(adv_id):
     if request.method == "POST":
         if form.validate():
             save_dog_adv(adv_id = adv_id, form = form)
-            flash(u"Объявление '%s' обновлено." % form.title.data, "success")
-            return render_template("/account/dog/adv_edit_success.html")
+            msg = u"Объявление '%s' обновлено." % form.title.data
+            flash(msg, "success")
+            return render_template("/account/dog/adv_edit_success.html", title = msg)
     else:
-        form.breed.data = get_breed_dog_name(dog.get("breed_id"))
-        form.title.data = dog.get("title")
-        form.desc.data = dog.get('desc')
-        form.price.data = num(dog.get('price'))
-        form.gender.data = num(dog.get('gender_id'))
-        form.photos.data = ",".join(dog.get("photos"))
-        form.city.data = get_city_region(dog.get("city_id"))
-
-        
-        form.price_haggle.data = dog.get('price_haggle')
-        form.price_hp.data = dog.get('price_hp')
-        form.contract.data = dog.get('contract')
-        form.delivery.data = dog.get('delivery')
-        form.birthday.data = date2str(dog.get('birthday'), "%d%m%Y")
-        form.vaccination.data = dog.get('vaccination')
-        form.vetpassport.data = dog.get('vetpassport')
-        form.microchip.data = dog.get('microchip')
-
-        form.doc.data = dog.get('doc_id')
-        form.father_name.data = dog.get('father_name')
-        form.father_country.data = dog.get('father_country_id')
-        form.father_misc.data = dog.get('father_misc')
-        form.father_pedigree.data = dog.get('father_pedigree')
-        form.mother_name.data = dog.get('mother_name')
-        form.mother_country.data = dog.get('mother_country_id')
-        form.mother_misc.data = dog.get('mother_misc')
-        form.mother_pedigree.data = dog.get('mother_pedigree')
-        form.breeding.data = dog.get('breeding')
-        form.show.data = dog.get('show')
-        form.tatoo.data = dog.get('tatoo')
-        form.pedigree.data = dog.get('pedigree')
-        form.color.data = dog.get('color')
+        for f in form:
+            f.set_db_val(dog.get(f.get_db_name()))
       
         form.username.data = dog.get("username") or current_user.username
         form.phone.data = dog.get("phone") or current_user.phone
         form.skype.data = dog.get("skype") or current_user.skype
-    return render_template("/account/dog/adv_edit.html", form=form, title=u"Редактировать объявление о продаже собаки", dog = dog)
+    return render_template("/account/dog/adv_edit.html", \
+        form = form, \
+        title = u"Редактировать объявление о продаже собаки", \
+        dog = dog, \
+        fields = get_fields(form))
 
 @app.route("/account/dog/new/", methods = ["GET", "POST"])
 @login_required
@@ -886,30 +864,35 @@ def account_dog_adv_new():
     if request.method == "POST":
         if  form.validate():
             id = save_dog_adv(form)
-            flash(u"Объявление '%s' добавлено." % form.title.data, "success")
-            return render_template("/account/dog/adv_edit_success.html")
+            msg = u"Объявление '%s' добавлено." % form.title.data
+            flash(msg, "success")
+            return render_template("/account/dog/adv_edit_success.html", title=msg)
     else:
         form.username.data = current_user.username
         form.city.data = get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
         form.skype.data = current_user.skype
-    return render_template("/account/dog/adv_edit.html", form=form, title=u"Новое объявление о продаже собаки")
 
+    return render_template("/account/dog/adv_edit.html", \
+        form = form, \
+        fields = get_fields(form), \
+        title=u"Новое объявление о продаже собаки")
 
 def save_dog_adv(form, adv_id = None):
-    photonames = []
+    form.photos.photonames = []
     if form.photos.data:
-        photonames = form.photos.data.split(',')
-        photonames = filter(lambda x: x and len(x) > 0, photonames)
-        for photoname in photonames:
+        form.photos.photonames = form.photos.data.split(',')
+        form.photos.photonames = filter(lambda x: x and len(x) > 0, form.photos.photonames)
+        for photoname in form.photos.photonames:
             if os.path.exists(photos.path(photoname)):
                 with open(photos.path(photoname)) as file:
                     db.save_photo(file)
 
-    db.save_dog_adv(user_id = current_user.id, \
+    db.save_dog_adv_2(user_id = current_user.id, \
         adv_id = adv_id, \
-        photonames = photonames, \
-        form  = form)
+        form  = form, \
+        attraction = calc_attraction(form)
+        )
     return adv_id
 
 @app.route("/account/dog/<adv_id>/remove/", methods = ['GET'])
@@ -1015,10 +998,20 @@ def account_cat_adv_new():
     return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки", btn_name = u"Добавить")
 
 
+@app.route("/spravka/")
+def help():
+    return render_template("/help.html", \
+        title=u"Справка", header=Markup(u"Справочная информация"))
+
+@app.route("/spravka/privlekatelnost-obyavleniya/")
+def help_attraction():
+    return render_template("/help/faq_attraction.html", \
+        title=u"Привлекательность объявления", header=Markup(u"Привлекательность объявления"))
+
 @app.route("/poleznoe/")
 def advice():
     return render_template("/advice.html", \
-        title=u"Полезные статьи о животных")
+        title=u"Полезное", header = u"Статьи о животных")
 
 @app.route("/poleznoe/10-oshibok-kotoryx-sleduet-izbegat-pokupaya-porodistogo-shhenka")
 def advice_article_1():
@@ -1056,13 +1049,13 @@ def thumbnail(filename):
 
     return send_file(path)
     
-@app.route('/photo/<filename>/', defaults = {'width': 600})
-@app.route('/photo/<filename>/<int:width>/')
-def photo(filename, width):
-    width = min(width, 1200)
-    if width:
+@app.route('/photo/<filename>/', defaults = {'height': 600})
+@app.route('/photo/<filename>/<int:height>/')
+def photo(filename, height):
+    height = min(height, 600)
+    if height:
         (name, ext) = os.path.splitext(filename)
-        path = photos.path(name + str(width) + ext)
+        path = photos.path(name + str(height) + ext)
     else:
         path = photos.path(filename) 
     if not os.path.exists(path):
@@ -1071,8 +1064,8 @@ def photo(filename, width):
             if name and file:
                 with open(path, 'w') as f:
                     f.write(file)
-            if width:
-                resize_image(path, width = width)    
+            if height:
+                resize_image(path, height = height)    
         except Exception, e:
             print(e)
             os.remove(path)
@@ -1298,7 +1291,8 @@ def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
         'id': str(adv.get('_id')), \
         'p' : adv.get('price'), \
         'b' : get_breed_dog_name(adv.get('breed_id')), \
-        's' : {'h':100, 'w':150}}
+        's' : {'h':100, 'w':150}, 
+        't' : adv.get('title')}
         for adv in db.get_dog_advs_for_mosaic(skip, limit)]
     elif pet_id == CAT_ID:
         return  [{"src":url_for('thumbnail', \
@@ -1307,7 +1301,8 @@ def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
         'id': str(adv.get('_id')), \
         'p' : adv.get('price'), \
         'b' : get_breed_cat_name(adv.get('breed_id')), \
-        's' : {'h':100, 'w':150}}
+        's' : {'h':100, 'w':150}, 
+        't' : adv.get('title')}
         for adv in db.get_cat_advs_for_mosaic(skip, limit)]
     else:
        return None

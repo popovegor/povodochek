@@ -10,7 +10,7 @@ from datetime import datetime
 from uuid import (uuid4, uuid1)
 import dic.cities
 from helpers import (num, str2date)
-from dic.pet_docs import (dog_docs, dog_pedigree_docs)
+from dic.pet_docs import (dog_docs, doc_dog_pedigrees)
 import sys
 import os
 import time
@@ -112,6 +112,32 @@ def get_cat_adv(adv_id):
     return cat_advs.find_one({'_id': ObjectId(adv_id)})    
 
 
+def save_dog_adv_2(user_id, adv_id, form, attraction):
+    now = datetime.utcnow()
+    
+    dog_set = {
+        'user_id' : str(user_id), \
+        'update_date' : now, \
+        'attraction': attraction
+        }
+    dog_unset = {}
+
+    for field in form:
+        db_val = field.get_db_val(form)
+        db_name = field.get_db_name()
+        if db_val:
+            dog_set[db_name] = db_val
+        else: 
+            dog_unset[db_name] = ""
+
+    dog = dog_advs.update(\
+        {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}, \
+        {'$set': dog_set, \
+        '$unset': dog_unset, \
+        '$setOnInsert' : {"add_date": now}}, upsert = True)
+
+    return dog
+
 def save_dog_adv(user_id, adv_id, form, photonames):
 
     now = datetime.utcnow()
@@ -143,7 +169,7 @@ def save_dog_adv(user_id, adv_id, form, photonames):
         }
     if form.doc.data in dog_docs:
     	dog_set['doc_id'] = form.doc.data
-    	if form.doc.data in dog_pedigree_docs:
+    	if form.doc.data in doc_dog_pedigrees:
     		dog_set['pedigree'] = form.pedigree.data
     	else:
     		dog_unset['pedigree'] = ""
@@ -181,7 +207,6 @@ def save_dog_adv(user_id, adv_id, form, photonames):
     	'$setOnInsert' : {"add_date": now}}, upsert = True)
 
     return dog
-
 
 def get_dog_advs_by_user(user_id):
 	return dog_advs.find(
@@ -261,8 +286,10 @@ def find_dog_advs(
         sortby = [("price", -1)]
     elif sort == 2:
         sortby = [("price", 1)]
-    else:
+    elif sort == 3:
         sortby = [("update_date", -1)]
+    else:
+        sortby = [("attraction",-1), ("update_date", -1)]
     print("filter %s" % _filter)
     print("sort %s" % sortby)
     print(limit)
@@ -348,8 +375,9 @@ def get_photo(filename):
         photo = photos.files.find_one({"filename" : filename}, \
         	fields= ['_id'])
         # print(photo)
-        with photos_gridfs.get(photo.get('_id')) as gridfs_file:
-            return (gridfs_file.name, gridfs_file.read()) 
+        if photo:
+            with photos_gridfs.get(photo.get('_id')) as gridfs_file:
+                return (gridfs_file.name, gridfs_file.read()) 
     except:
         print(sys.exc_info())
     
