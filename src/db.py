@@ -274,10 +274,13 @@ def find_dog_advs(
             {"$gte" : price_from if price_from > 0 else 0,\
              "$lte" : price_to if price_to else sys.maxint })
     near_cities = []
-    if city and distance:
-        near_cities = get_near_cities(city, distance)
-        extend_filter("city_id", {"$in": [city.get("city_id") \
-        	for city, dis in near_cities]})
+    if city:
+        if distance:
+            near_cities = get_near_cities(city, distance)
+            extend_filter("city_id", {"$in": [city.get("city_id") \
+            	for city, dis in near_cities]})
+        else:
+            extend_filter("city_id", {"$in": [city.get('city_id')]})
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})
@@ -331,10 +334,13 @@ def find_cat_advs(pet_id = 2, gender_id = None, \
             {"$gte" : price_from if price_from > 0 else 0,\
              "$lt" : price_to if price_to else sys.maxint })
     near_cities = []
-    if city and distance:
-        near_cities = get_near_cities(city, distance)
-        extend_filter("city_id", {"$in": [city.get("city_id") \
-        	for city, dis in near_cities]})
+    if city:
+        if distance:
+            near_cities = get_near_cities(city, distance)
+            extend_filter("city_id", {"$in": [city.get("city_id") \
+        	   for city, dis in near_cities]})
+        else:
+            extend_filter("city_id", {"$in": [city.get('city_id')]})
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})

@@ -73,7 +73,7 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
   var m = {
     minLength: 0,
     items: 8,
-    autoSelect : false,
+    autoSelect : true,
     source: function (query, process) {
       return $.getJSON(ajax_url,
         {limit: 8, query: query },

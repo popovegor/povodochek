@@ -17,7 +17,8 @@
         <div class="">
           <div class="form-group">
             {% set breed = ( breeds | random) %}
-            <label for="{{pet_search_form.breed.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Какой породы? Например, <a tabindex="-1"  style="text-decoration:none;border-bottom:1px dotted;" href="#" title="{{breed.get('name') + ', '  + breed.get('pet') | pet_name | morph_word(['plur']) | lower }}" id="breed_example">{{breed.get('name') | truncate(40, killwords = True) | lower}}</a>.</label>
+            {% set pet = breed.get('pet') | pet_name | morph_word(['plur']) | lower %}
+            <label for="{{pet_search_form.breed.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Какой породы? Например, <a tabindex="-1"  style="text-decoration:none;border-bottom:1px dotted;" href="#" title="{{breed.get('name') + ', '  + pet}}" id="breed_example">{{breed.get('name') | truncate(40, killwords = True) | lower}}</a>.</label>
             <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.breed.id}}" placeholder="Укажите породу собаки или кошки" name="{{pet_search_form.breed.name}}">
           </div>
         </div>
@@ -66,21 +67,21 @@
       "{{url_for('ajax_typeahead_location')}}",
       "{{pet_search_form.city.id}}")); //typeahead  
 
-   $("#{{pet_search_form.breed.id}}").typeahead(
-    povodochek.typeahead(
+   breed_typeahead = povodochek.typeahead(
       "{{url_for('ajax_typeahead_breed')}}",
       "{{pet_search_form.breed.id}}",
       function(item ) {
         breed_name = on_select_breed(item);
         return breed_name;
-      })); //typeahead  
+      });
+   $("#{{pet_search_form.breed.id}}").typeahead(breed_typeahead); //typeahead  
 
     var on_select_breed = function(breed_name) {
       $("#{{pet_search_form.breed.id}}").tooltip("destroy");
 
-      if (breed_name.indexOf(', Собаки') > 0) {
+      if (breed_name.indexOf(', ' + '{{pet_name}}') > 0) {
         $("#search").attr("action", "{{url_for('dog_search')}}");
-      } else if (breed_name.indexOf(', Кошки') > 0){
+      } else if (breed_name.indexOf(', ' + '{{pet_name}}') > 0){
         $("#search").attr("action", "{{url_for('cat_search')}}");  
       } else {
         $("#search").attr("action", "");

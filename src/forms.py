@@ -172,7 +172,7 @@ class DogSearch(Form):
 
     city = TextField(u"Местоположение", default = u"")
 
-    distance = IntegerField(u"удаленность", default = 150)
+    distance = IntegerField(u"удаленность")
 
     photo = BooleanField(u"Только с фото")
 
