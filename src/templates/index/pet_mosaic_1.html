@@ -6,11 +6,11 @@
 		<table style="width:100%">
 			<tr>
 				<td class="">
-					<b class="" style="padding-left:0px">Свежие объявления о продаже</b>	
+					<b class="" style="padding-left:0px">Свежие объявления о продаже собак или кошек</b>	
 				</td>
-				<td style="width:150px" class="text-right">
-					<div class="btn-group btn-group-sm text-right"> {#<button id="filter_all" class="filter btn btn-default active ajax-link" href="#">Все</button>#}<button id="filter_dogs" class="filter btn btn-default ajax-link active" href="#">Собаки</button>
-					<button id="filter_cats" class=" btn btn-default ajax-link" href="#">Кошки</button>
+				<td style="width:110px" class="text-right">
+					<div class="btn-group btn-group-xs text-right"><button id="filter_dogs" class="btn btn-default ajax-link active" href="#">Собаки</button>
+					<button id="filter_cats" class="btn btn-default ajax-link" href="#">Кошки</button>
 					
 					</div>	
 				</td>
@@ -25,7 +25,7 @@
 
 
     <div class="show-more text-center" >
-    	<button class="btn btn-default btn-sm" style="display:none" id="more" pet_id="0" skip="{{mosaic_advs | length}}" data-loading-text="Загружаю...">Показать еще</button>
+    	<button class="btn btn-default btn-sm" style="display:none" id="more" pet_id="0" skip="0" data-loading-text="Загружаю...">Показать еще</button>
     </div>
 
     
@@ -97,7 +97,7 @@
 		var filter_advs = function(button, url, pet_id){
 			more.hide();
 
-			$(".filter").removeClass("active");
+			$(".pet-mosaic .ajax-link").removeClass("active");
 			$(button).addClass("active");
 
 			$(".fade-white").remove();
@@ -144,21 +144,17 @@
 			return false;
 		}
 
+		{% set mosaic_items_limit = 20 %}
+
 
 		$("#filter_dogs").click(function(event){
-			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_advs | length, pet = 1)}}', 1);
+			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_items_limit, pet = 1)}}', 1);
 			event.stopPropagation();
 			return false;
 		});
 
-		{#$("#filter_all").click(function(event){
-			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_advs | length, pet = 0)}}', 0);
-			event.stopPropagation();
-			return false;
-		});#}
-
 		$("#filter_cats").click(function(event){
-			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_advs | length, pet = 2)}}', 2);
+			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_items_limit, pet = 2)}}', 2);
 			event.stopPropagation();
 			return false;
 		});

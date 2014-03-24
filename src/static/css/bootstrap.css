@@ -3956,8 +3956,8 @@ span.navbar-brand {
   }
 }
 .navbar-default {
-  background-color: #f5f5f5;
-  border-color: #e4e4e4;
+  background-color: #fff;
+  border-color: #eee;
 }
 .navbar-default .navbar-brand {
   color: #777;
@@ -4006,7 +4006,7 @@ span.navbar-brand {
 }
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
-  border-color: #e4e4e4;
+  border-color: #eee;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
@@ -6366,6 +6366,13 @@ form .textarea-counter {
 .ajax-link:hover {
   text-decoration: none !important;
 }
+.tagline {
+  padding: 8px 0 8px 10px;
+  margin: 0 0 10px -10px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-style: italic;
+  background-color: #f5f5f5;
+}
 .index {
   /*pet-post*/
   /*pet-mosaic*/
@@ -6589,7 +6596,7 @@ form .textarea-counter {
 .pet-sale .adv,
 .account-pet-sale .adv,
 .dog-search .adv {
-  padding: 25px 30px 15px 30px;
+  padding: 25px 30px 25px 30px;
   margin-bottom: 20px;
   border-radius: 5px;
 }
@@ -6620,8 +6627,7 @@ form .textarea-counter {
 .account-pet-sale .adv .photo,
 .dog-search .adv .photo {
   position: relative;
-  /*margin-bottom: 15px;*/
-  /*max-height:300px;*/
+  margin-bottom: 10px;
 }
 .pet-sale .adv .photo a,
 .account-pet-sale .adv .photo a,
@@ -6670,16 +6676,6 @@ form .textarea-counter {
 .account-pet-sale .adv .adv-head,
 .dog-search .adv .adv-head {
   margin-top: 0;
-}
-.pet-sale .adv .photo,
-.account-pet-sale .adv .photo,
-.dog-search .adv .photo {
-  margin-bottom: 10px;
-}
-.pet-sale .adv .photo .photo-count,
-.account-pet-sale .adv .photo .photo-count,
-.dog-search .adv .photo .photo-count {
-  /*visibility: hidden;        */
 }
 .pet-sale .adv .adv-city,
 .account-pet-sale .adv .adv-city,

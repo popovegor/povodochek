@@ -267,7 +267,7 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    mosaic_advs = get_pet_advs_for_mosaic(0, 20, pet_id = DOG_ID)
+    mosaic_advs = get_pet_advs_for_mosaic(0, 10, pet_id = DOG_ID)
     dog_advs = db.get_top_dog_advs()
     cat_advs = db.get_top_cat_advs()
     tmpl = render_template('index1.html', \
