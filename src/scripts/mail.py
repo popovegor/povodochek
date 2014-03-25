@@ -75,12 +75,12 @@ def send_notifications_attraction():
 
 
 if __name__ == '__main__':
-	#eval('{0}()'.format(sys.argv[1]))
+	eval('{0}()'.format(sys.argv[1]))
 
-	email = "popovegor@gmail.com"	
-	name = u"Егор"
-	to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
-	template = env.get_template('notifications_attraction.html')
-	send_email(HTML = template.render(),\
-		Subject = u"Привлекательность объявлений на сайте Поводочек.рф", \
-		To =  to )
+	# email = "popovegor@gmail.com"	
+	# name = u"Егор"
+	# to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
+	# template = env.get_template('notifications_attraction.html')
+	# send_email(HTML = template.render(),\
+	# 	Subject = u"Привлекательность объявлений на сайте Поводочек.рф", \
+	# 	To =  to )
