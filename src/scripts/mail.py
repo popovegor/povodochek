@@ -65,6 +65,8 @@ def send_notifications_1():
 def send_notifications_attraction():
 	counter = 0
 	for user in db.users.find():
+		counter += 1
+		print(counter, name, email)
 		email = user.get('email')
 		name = user.get('username')
 		to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
