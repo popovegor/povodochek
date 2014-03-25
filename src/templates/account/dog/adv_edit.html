@@ -401,19 +401,18 @@ $(document).ready(function(){
 
 	{% set desc_length = form.desc.validators[1] %}
 
-		$('#{{form.desc.id}}').simplyCountable({
+	$('#{{form.desc.id}}').simplyCountable({
 		counter : "#{{form.desc.id}}_count",
 		maxCount : {{desc_length.max}}, 
-		strictMax : true
-	});
+		strictMax : true,
+		thousandSeparator : ' '});
 
 	{% set title_length = form.title.validators[1] %}
 
 	$('#{{form.title.id}}').simplyCountable({
 		counter : "#{{form.title.id}}_count",
 		maxCount : {{title_length.max}}, 
-		strictMax : true
-	});
+		strictMax : true});
 
 
   povodochek.validate($("form"), {
