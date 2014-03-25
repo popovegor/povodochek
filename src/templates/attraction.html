@@ -9,7 +9,7 @@
 
 	
 	
-	<a href="{{help_url}}" target="_blank" class="attraction-stars" style="text-decoration:none" data-toggle="popover" data-content="{{content}}" data data-html="true" data-delay='{{delay}}' data-trigger="hover" data-placement="right">
+	<span class="attraction-stars" data-toggle="popover" data-content="{{content}}" data data-html="true" data-delay='{{delay}}' data-trigger="hover" data-placement="right">
 	{%for k in [1, 2, 3, 4, 5] %}
 		{%if (percent > 0 and percent < 10 and k == 1) 
 				or (percent >= 10 and percent < 40 and k <= 2 )
@@ -24,6 +24,6 @@
 
 	{%endfor%}
 		{#<span style="" class="glyphicon glyphicon-question-sign attraction-help"></span>#}
-	</a>
+	</span>
 
 {%- endmacro -%}

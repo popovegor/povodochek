@@ -440,6 +440,10 @@ def test_email_from_dog_adv():
 @app.route("/activate/<confirm>/", methods = ["GET", "POST"])
 def activate(confirm):
     form = Activate(request.form)
+
+    if current_user.is_signed and current_user.is_active:
+        return render_template("activate_success.html", user = current_user, title = u"Активация регистрации")
+
     if request.method == "POST":
         if form.validate():
             email = form.email.data
@@ -456,7 +460,7 @@ def activate(confirm):
             user = db.get_user_by_confirm(confirm)
             if user:
                 db.activate_user(user['_id'])
-                return render_template("activate_success.html", user = user, form = form, title = u"Активация регистрации")
+                return render_template("activate_success.html", user = user, title = u"Активация регистрации")
             else:
                 return render_template("activate.html", confirm = confirm, form = form, title = u"Активация регистрации")
         else:
