@@ -397,13 +397,30 @@ $(document).ready(function(){
 
 
 	$("#{{form.price.id}}").inputmask("integer", {allowMinus: false, allowPlus: false, rightAlignNumerics: false
-	    });
-  
+	});
+
+	{% set desc_length = form.desc.validators[1] %}
+
+		$('#{{form.desc.id}}').simplyCountable({
+		counter : "#{{form.desc.id}}_count",
+		maxCount : {{desc_length.max}}, 
+		strictMax : true
+	});
+
+	{% set title_length = form.title.validators[1] %}
+
+	$('#{{form.title.id}}').simplyCountable({
+		counter : "#{{form.title.id}}_count",
+		maxCount : {{title_length.max}}, 
+		strictMax : true
+	});
+
 
   povodochek.validate($("form"), {
       breed: { required: true },
-      title: { required: true, rangelength: [10, 80] },
-      desc : { required: true, maxlength: 1000 },
+      title: { required: true, rangelength: 
+      	[{{title_length.min}}, {{title_length.max}}] },
+      desc : { required: true, maxlength: {{desc_length.max}} },
       price : { required: true, range: [5000, 300000] },
       // age : {required: true},
       // gender : {required: true},

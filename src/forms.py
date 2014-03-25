@@ -283,12 +283,12 @@ class Dog(Form):
    
     title = PTextField(u"Заголовок объявления", \
         [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
-         description = u"От 10 до 80 символов", \
+         description = Markup(u"От 10 до 80 символов, осталось <span id='title_count' class='text-danger'>80</span>."), \
          db_name = 'title')
 
     desc = PTextAreaField(u"Текст рекламного объявления", \
         [Required(message=MSG_REQUIRED), Length(max=1000, message=MSG_MAX_LENGTH.format(1000))], \
-        description = u"Не более 1000 символов")
+        description = Markup(u"Не более 1000 символов, осталось <span class='text-danger' id='desc_count'>1000</span>."))
 
     photos = PHiddenField(u"Имена фалов, загруженных при помощи plupload", \
         attraction = True, \

@@ -117,6 +117,7 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/bootstrap.min.js', \
     'js/jquery.carouFredSel.min.js', \
     'js/povodochek.js', \
+    'js/jquery.simplyCountable.js', \
     filters='rjsmin', \
     output='gen/js.js')
 assets.register('js_all', js)
