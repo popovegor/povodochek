@@ -120,7 +120,7 @@
            
               {#<p class="text-left main-photo text-alert" title=""><small>Главная фотография</small> </p>#}
 
-              {% include "uploader.html" %}
+              {% include "uploader_old.html" %}
  		</div>
 
  	</div>
@@ -427,6 +427,8 @@ $(document).ready(function(){
       phone : {_phone: true}, 
       username : {required : true}
    });
+  
+  recheck_photos();
   
 });
 
