@@ -12,7 +12,7 @@
 <p>
 	{{form_field_attraction()}} &mdash; поля, влияющие на привлекательность объявления. 
 </p>
-<div class="" id="dae_attraction_affix" data-spy="affix" data-offset-top="150">	
+<div class="" id="dae_attraction_affix" {#data-spy="affix" data-offset-top="150"#}>	
 	
 	Привлекательность объявления:
 	<span class="lead" style="padding-left:5px; padding-right:5px"><span id="attraction_percent">0</span>%</span>  
@@ -39,7 +39,7 @@
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-        <form class="form-sale-adv" class="" id="adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
+        <form class="form-sale-adv" id="adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
 
         	<div class="row">
         		
