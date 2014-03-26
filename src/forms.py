@@ -186,7 +186,7 @@ class DogSearch(Form):
 
     price_unit = SelectField(u"", choices = [(0, u"руб"), (1, u"тыс руб")])
 
-    sort = SelectField(Markup(u"сортировать по"), choices = [(1, Markup(u"дороже")), (2, Markup(u"дешевле")), (3, u"дате"), (4, u"привлекательности и дате")], coerce = int, default = 4)
+    sort = SelectField(Markup(u"сортировать по"), choices = [(1, Markup(u"дороже")), (2, Markup(u"дешевле")), (3, u"дате"), (4, u"привлекательности и дате")], coerce = int)
 
     page = IntegerField(u"Страница", default = 1)
 

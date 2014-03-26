@@ -48,7 +48,7 @@
                       <div class="breed">
                       {% set breed_name = breed_id | breed_name(pet_id) %}
                       {%set url = url_for('dog_search' if pet_id == 1 else 'cat_search', breed = breed_id, city = city_id, distance = 1)%}
-                        <a class="breed-name" target="_blank" href="{{url}}">{{breed_name }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
+                        <a class="breed-name" href="{{url}}">{{breed_name }}</a>&nbsp;&nbsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>
                       
                       </div> <!-- breed -->
                     {%endfor%}

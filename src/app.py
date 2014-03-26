@@ -613,7 +613,7 @@ def dog_search():
     pet_id = DOG_ID
     # sort
     session["dog_sort"] = form.sort.data or \
-        session.get("dog_sort") or form.sort.default
+        session.get("dog_sort") or 4
 
     (advs, count, total) = db.find_dog_advs(
         breed_id = breed_id, \
