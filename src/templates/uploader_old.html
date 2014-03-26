@@ -2,7 +2,7 @@
     <div class="shapeshift" id="upload_files">
         <div class="upload-add" > 
             <a id="uploadAdd" style="color:#555" href="javascript:;" class="thumbnail"><div style="
-                width: 140px;height: 90px;display: block;text-align: center;">
+                width: 140px;height: 90px;display: block;text-align: center;z-index:5">
               <p class="glyphicon glyphicon-plus-sign" style="font-size: 3em;padding-top: 15px;
             "></p>
               <p>добавить фото</p>
@@ -84,12 +84,12 @@ $(document).ready(function() {
             $.each(photos.split(","), function(i, file_name) {
                 up.add(file_name, "", up);
             });
+            uploader.reshape();
         }
     });
 
     uploader.init();
     uploader.refresh();
-    uploader.reshape();
 
     uploader.bind('FilesAdded', function(up, files) {
         $.each(files, function(i, file) {
@@ -123,11 +123,12 @@ $(document).ready(function() {
         up.refresh();
     });
 
-    
-
     uploader.bind('Refresh', function(up){
         up.reshape();
     });
+
+
+    
 
     
 
