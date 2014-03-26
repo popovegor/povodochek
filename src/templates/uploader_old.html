@@ -1,0 +1,138 @@
+<div class="input upload-files" id="upload">
+    <div class="shapeshift" id="upload_files">
+        <div class="upload-add" > 
+            <a id="uploadAdd" style="color:#555" href="javascript:;" class="thumbnail"><div style="
+                width: 140px;height: 90px;display: block;text-align: center;">
+              <p class="glyphicon glyphicon-plus-sign" style="font-size: 3em;padding-top: 15px;
+            "></p>
+              <p>добавить фото</p>
+            </div>
+            </a>
+        </div>
+    </div>
+</div>
+    
+
+<!-- Third party script for BrowserPlus runtime (Google Gears included in Gears runtime now) -->    
+<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
+
+<!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
+
+<script type="text/javascript" src="/static/plupload/plupload.full.js"></script>
+<script type="text/javascript" src="/static/plupload/i18n/ru.js"></script>
+
+
+<script type="text/javascript">
+// Custom example logic
+$(document).ready(function() {
+    uploader = new plupload.Uploader({
+        runtimes : 'gears,html5,flash,silverlight,browserplus',
+        browse_button : 'uploadAdd',
+        container : 'upload',
+        max_file_size : '10mb',
+        url : '{{url_for("upload")}}',
+        flash_swf_url : '/static/plupload/plupload.flash.swf',
+        silverlight_xap_url : '/static/plupload/plupload.silverlight.xap',
+        filters : [
+        {title : "Изображения", extensions : "jpg,jpeg,gif,png"}
+        ],
+        resize : {width : 900, height : 600, quality : 90}
+    });
+
+    uploader.getFileNames = function(){
+        filenames = [];
+        images = $("div[file-name]");
+        $.each(images, function(i, image) {
+            filenames.push($(image).attr("file-name"));
+        });
+        return filenames;
+    };
+
+    uploader.remove = function(file_name, up) {
+        var file_preview = $("div[file-name='" + file_name + "']");
+        var file_id = $(file_preview).attr("file-id");
+        var file = uploader.getFile(file_id);
+        if(file) {
+             uploader.removeFile(file);
+         }
+         file_preview.remove();
+         uploader.reshape();
+         uploader.refresh();
+     };
+
+     uploader.reshape = function() {
+         $('.shapeshift').shapeshift({align:"left", paddingX: 0, dragWhitelist : ".preview", Selector: ".preview", cutoffEnd: 1});
+     };
+
+    uploader.add = function(file_name, file_id, up) {
+        if (file_id) {
+            $("div[file-id='" + file_id + "']").remove();
+        }
+        var file_url = "/photo/" + file_name;
+        var thumbnail_url  = '/thumbnail/' + file_name;
+        var preview = $(".upload-add").before("<div file-id='" + file_id + "' class='preview' file-name='" + file_name + "'><img src='"+ thumbnail_url +"' /><span title='Удалить' class='glyphicon glyphicon-remove-sign' file-name='" + file_name + "'></span></div>");
+
+        //remove uploaded photo
+        $("span[file-name='" + file_name + "']").bind("click", function(){up.remove(file_name, up);});
+
+        return false;
+    };
+
+    uploader.bind('Init', function(up, params) { 
+        var photos = $("#photos").val();
+        if(photos) {
+            $.each(photos.split(","), function(i, file_name) {
+                up.add(file_name, "", up);
+            });
+        }
+    });
+
+    uploader.init();
+    uploader.refresh();
+    uploader.reshape();
+
+    uploader.bind('FilesAdded', function(up, files) {
+        $.each(files, function(i, file) {
+            $(".upload-add").before("<div class='loading' file-id='" +  file.id + "'><img src='/static/img/ajax-loader.gif' alt='Фотография загружается'/></div>")
+        });
+        up.start();
+        up.refresh(); // Reposition Flash/Silverlight
+    });
+
+
+    uploader.bind('UploadProgress', 
+        function(up, file) {
+            // alert(file.percent);
+            //$('#' + file.id + " b").html(file.percent + "%");
+    });
+
+    uploader.bind('Error', function(up, err) {
+        alert("Произошла ошибка. " + err.message);
+        $("div[file-id='" + err.file.id + "']").remove();
+        up.refresh(); // Reposition Flash/Silverlight
+    });
+
+    uploader.bind('FilesRemoved', function(up, files) {
+    });
+
+    uploader.bind('FileUploaded', 
+        function(up, file, response) {
+        //$('#' + file.id + " b").html("100%");
+        file_name = response.response;
+        up.add(file_name, file.id, up);
+        up.refresh();
+    });
+
+    
+
+    uploader.bind('Refresh', function(up){
+        up.reshape();
+    });
+
+    
+
+});
+
+</script>
+
+
