@@ -47,21 +47,23 @@ $(document).ready(function() {
         return filenames;
     };
 
-    uploader.remove = function(file_name) {
-        $("div[file-name='" + file_name + "']").remove();
-        var fileId = $(this).attr("file-id");
-        var file = uploader.getFile(fileId);
+    uploader.remove = function(file_name, up) {
+        var file_preview = $("div[file-name='" + file_name + "']");
+        var file_id = $(file_preview).attr("file-id");
+        var file = uploader.getFile(file_id);
         if(file) {
              uploader.removeFile(file);
          }
+         file_preview.remove();
          uploader.reshape();
+         uploader.refresh();
      };
 
      uploader.reshape = function() {
          $('.shapeshift').shapeshift({align:"left", paddingX: 0, dragWhitelist : ".preview", Selector: ".preview", cutoffEnd: 1});
      };
 
-    uploader.add = function(file_name, file_id) {
+    uploader.add = function(file_name, file_id, up) {
         if (file_id) {
             $("div[file-id='" + file_id + "']").remove();
         }
@@ -70,10 +72,7 @@ $(document).ready(function() {
         var preview = $(".upload-add").before("<div file-id='" + file_id + "' class='preview' file-name='" + file_name + "'><img src='"+ thumbnail_url +"' /><span title='Удалить' class='glyphicon glyphicon-remove-sign' file-name='" + file_name + "'></span></div>");
 
         //remove uploaded photo
-        $("span[file-name='" + file_name + "']").bind("click", function(){
-            uploader.remove(file_name);});
-
-        uploader.reshape();
+        $("span[file-name='" + file_name + "']").bind("click", function(){up.remove(file_name, up);});
 
         return false;
     };
@@ -82,9 +81,10 @@ $(document).ready(function() {
         var photos = $("#photos").val();
         if(photos) {
             $.each(photos.split(","), function(i, file_name) {
-                up.add(file_name, "");
+                up.add(file_name, "", up);
             });
         }
+        up.refresh();
     });
 
     uploader.init();
@@ -93,15 +93,15 @@ $(document).ready(function() {
         $.each(files, function(i, file) {
             $(".upload-add").before("<div class='loading' file-id='" +  file.id + "'><img src='/static/img/ajax-loader.gif' alt='Фотография загружается'/></div>")
         });
-        uploader.reshape();
-        uploader.start();
+        up.start();
         up.refresh(); // Reposition Flash/Silverlight
     });
 
-    uploader.bind('UploadProgress', function(up, file) {
+    uploader.bind('UploadProgress', 
+        function(up, file) {
             // alert(file.percent);
             //$('#' + file.id + " b").html(file.percent + "%");
-        });
+    });
 
     uploader.bind('Error', function(up, err) {
         alert("Произошла ошибка. " + err.message);
@@ -112,11 +112,17 @@ $(document).ready(function() {
     uploader.bind('FilesRemoved', function(up, files) {
     });
 
-    uploader.bind('FileUploaded', function(up, file, response) {
-            //$('#' + file.id + " b").html("100%");
-            file_name = response.response;
-            up.add(file_name, file.id);
-        });
+    uploader.bind('FileUploaded', 
+        function(up, file, response) {
+        //$('#' + file.id + " b").html("100%");
+        file_name = response.response;
+        up.add(file_name, file.id, up);
+        up.refresh();
+    });
+
+    uploader.bind('Refresh', function(up){
+        up.reshape();
+    });
 
 });
 

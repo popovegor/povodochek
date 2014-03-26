@@ -103,6 +103,7 @@
 
 
 {%- macro adv_number(adv) -%}
+
 <p style="margin-top:8px">
     {#<span style="padding-right:15px"><span class="text-muted small">Объявление № </span>
     {%set short_id = adv | short_adv_id %}
@@ -121,14 +122,15 @@
      {#{[add_date, update_date]}#}
 
      {%if update_date != add_date %}
-    <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
-
+      <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
     {%else%}
 
     {%endif%}     
+</p>
+<p>
+    {% from "attraction.html" import render_stars %}
 
-    
-    
+    <span class="text-muted" style="padding-right:5px">Привлекательность</span>{{render_stars(adv.get("attraction"))}}
 </p>
 {%- endmacro -%}
 
@@ -152,23 +154,23 @@
 {%- macro price_info(adv) -%}
 
    <p>
-      <span class="" style="margin-right:10px;" title="{{'{0:,}' | format(adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><b style="padding-right:10px" class="text-muted small">Цена:</b><span style="white-space:nowrap; font-size:40px;">{{adv.get('price') | format_price() }}&thinsp;руб</span></span></span>  
+      <span class="" style="margin-right:10px;" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><b style="padding-right:10px" class="text-muted small">Цена:</b><span style="white-space:nowrap; font-size:40px;">{{adv.get('price') | format_price() }}&nbsp;руб</span></span></span>  
       <br/>
 
       {%if adv.get("price_haggle") %}
-      <abbr data-toggle="tooltip" class="label label-info " style="margin-right:5px" title="Уместен торг">торг</abbr> 
+      <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-info " style="margin-right:5px" >торг</abbr> 
       {%endif%}
 
       {%if adv.get("price_hp") %}
-      <abbr style="margin-right:5px" data-toggle="tooltip"  title="Возможна рассрочка платежа" class="label label-info ">рассрочка</abbr>  
+      <abbr style="margin-right:5px" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-info ">рассрочка</abbr>  
       {%endif%}
 
       {%if adv.get("contract") %}
-      <abbr style="margin-right:5px" data-toggle="tooltip" title="Заключается договор купли-продажи" class="label label-info ">договор</abbr>
+      <abbr style="margin-right:5px" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Заключается договор купли-продажи" class="label label-info ">договор</abbr>
       {%endif%}
 
       {%if adv.get("delivery") %}
-      <abbr style="" data-toggle="tooltip" title="Возможна доставка в другой город" class="label label-info ">доставка</abbr>
+      <abbr style="" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна доставка в другой город" class="label label-info ">доставка</abbr>
       {%endif%}
     </p>
 
@@ -177,7 +179,7 @@
 {%- macro photos(adv) -%}
 
       <!-- photo -->
-        {%if adv.get('photos') | length > 0%}    
+        {%if adv.get('photos') or [] | length > 0%}    
 
         <div class="photos" style="margin-top:25px; margin-bottom:40px">
 
@@ -208,7 +210,7 @@
             <ul class="slides ">
               {%for photo in adv.get('photos') %}
               <li class="text-center photo">
-                 <img class="img-responsive {{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo)}}" />
+                 <img class="img-responsive {{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo, height = 430)}}" />
               </li>
               {%endfor%}
             </ul>
@@ -221,7 +223,7 @@
          
         </div> <!-- photos -->
     {%else%}
-        <div class="photos" style="margin-top:15px; margin-bottom:40px; background-color:#f5f5f5; padding-top:50px; height:350px">
+        <div class="photos" style="margin-top:15px; margin-bottom:40px; background-color:#f5f5f5; padding-top:70px; height:350px">
          <img src="/static/img/no_photo.png" class="img-responsive" style="margin:0 auto"/>
       </div>
     {%endif%}
@@ -230,10 +232,10 @@
 
 
 {%-  macro doc_info(adv) -%}
-    <div class="row doc-info" style="margin-bottom:30px">
+    <div class="doc-info" style="margin-bottom:30px">
    {% set doc = adv.get("doc_id") %}
         {% if not doc %}
-          <div class="bg-warning col-lg-11" style="padding: 10px 20px; border-radius:5px">
+          <div class="bg-warning" style="padding: 10px 20px; border-radius:5px">
           <table>
             <tr>
               <td style="">
@@ -548,7 +550,7 @@
           {% if username %}
          <dt>Контактное лицо</dt>
           <dd>
-            {{username}}
+            {{username | title}}
           </dd>
           {%endif%}
 

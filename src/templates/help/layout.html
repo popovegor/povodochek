@@ -3,7 +3,7 @@
 {%block breadcrumbs%}
 	<ol class="breadcrumb" >
         <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
-        <li><a href="{{url_for('advice')}}">Полезное</a> </li>
+        <li><a href="{{url_for('help')}}">Справка</a> </li>
         <li class="active" title="{{title}}">{{title | truncate(50)}}</li>
     </ol>
 {%endblock%}
@@ -13,13 +13,13 @@
 
 <div class="row">
 
-<div class="advice-article col-md-8">
+<div class="help col-md-8">
 
-	{%block advice_content%}
+	{%block help_content%}
 
 	{%endblock%}
 
-</div> <!-- advice -->
+</div> <!-- help -->
 
 </div> <!-- /row -->
 

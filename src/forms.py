@@ -14,17 +14,18 @@ from bson.objectid import ObjectId
 from itertools import groupby
 
 from wtforms_extended_selectfield import SelectField
+from form_helper import *
 import re
 from security import hash_password, check_password
 
-from helpers import (num, morph_word)
+from helpers import (num, morph_word, str2date, date2str)
 from dic.genders import genders
 from dic.ages import ages
-from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed_by_id)
+from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed_by_id, get_breed_dog_name)
 from dic.pets import pets, get_pet_name
-from dic.cities import (get_city)
+from dic.cities import (get_city, get_city_region)
 from dic.countries import (countries, get_countries_for_dog_adv)
-from dic.pet_docs import (dog_docs)
+from dic.pet_docs import (dog_docs, doc_dog_pedigrees)
 
 import config
 
@@ -171,7 +172,7 @@ class DogSearch(Form):
 
     city = TextField(u"Местоположение", default = u"")
 
-    distance = IntegerField(u"удаленность", default = 150)
+    distance = IntegerField(u"удаленность")
 
     photo = BooleanField(u"Только с фото")
 
@@ -185,7 +186,7 @@ class DogSearch(Form):
 
     price_unit = SelectField(u"", choices = [(0, u"руб"), (1, u"тыс руб")])
 
-    sort = SelectField(u"Сортировка", choices = [(1, u"Дороже"), (2, u"Дешевле"), (3, u"По дате")], coerce = int)
+    sort = SelectField(Markup(u"сортировать по"), choices = [(1, Markup(u"дороже")), (2, Markup(u"дешевле")), (3, u"дате"), (4, u"привлекательности и дате")], coerce = int)
 
     page = IntegerField(u"Страница", default = 1)
 
@@ -266,83 +267,136 @@ class Dog(Form):
     #     validators = [Required(message=MSG_REQUIRED)])
 
 
-    breed = TextField(u'Порода', \
-        validators = [Required(message=MSG_REQUIRED), validate_breed]) 
+    breed = PTextField(u'Порода', \
+        validators = [Required(message=MSG_REQUIRED), validate_breed], \
+        db_name = 'breed_id', \
+        db_in = lambda f: f.breed_id, \
+        db_out = lambda v: get_breed_dog_name(v)) 
 
-    gender = SelectField(u"Пол", \
+    gender = PSelectField(u"Пол", \
         choices = [(0, u'')] + [ (gender_id, gender_name) \
-        for gender_id, gender_name in genders.items()], coerce=int)
+        for gender_id, gender_name in genders.items()], \
+        coerce=int, \
+        attraction = True, \
+        db_name = 'gender_id', \
+        db_out = lambda v: num(v))
    
-    title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
-         description = u"От 10 до 80 символов")
+    title = PTextField(u"Заголовок объявления", \
+        [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
+         description = Markup(u"От 10 до 80 символов, осталось <span id='title_count' class='text-danger'>80</span>."), \
+         db_name = 'title')
 
-    desc = TextAreaField(u"Текст рекламного объявления", \
+    desc = PTextAreaField(u"Текст рекламного объявления", \
         [Required(message=MSG_REQUIRED), Length(max=1000, message=MSG_MAX_LENGTH.format(1000))], \
-        description = u"Не более 1000 символов")
+        description = Markup(u"Не более 1000 символов, осталось <span class='text-danger' id='desc_count'>1000</span>."))
 
-    photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
+    photos = PHiddenField(u"Имена фалов, загруженных при помощи plupload", \
+        attraction = True, \
+        db_in = lambda f: f.photonames, 
+        db_out = lambda v: ",".join(v or []))
 
-    price = IntegerField(u"Цена", \
-        [Required(message=MSG_REQUIRED),\
+    price = PIntegerField(u"Цена", \
+        [Required(message=MSG_REQUIRED), \
          NumberRange(min=5000, max=300000, \
             message=MSG_RANGE.format(5000, 300000))], \
         # filters = [lambda x: x.replace(' ','')], \
-        description = {"msg": Markup(u'От 5&nbsp;000 до 300&nbsp;000 руб. Объявление с нереальной ценой будет <span style="color:red">удалено!</span>'), \
-            "help" : u"" })
+        description = Markup(u'От 5&nbsp;000 до 300&nbsp;000 руб. Объявление с нереальной ценой будет <span style="color:red">удалено!</span>'),\
+        db_out = lambda v: num(v))
 
-    price_haggle = BooleanField(u"Возможен торг") #Торг
-    price_hp =  BooleanField(u"Рассрочка") #рассрочка hire purchase
+    price_haggle = PBooleanField(u"Возможен торг") #Торг
 
-    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
-        description = u"Населенный пункт, в котором можно посмотреть и купить собаку.")
+    price_hp =  PBooleanField(u"Рассрочка") #рассрочка hire purchase
+
+    city = PTextField(u"Местоположение", \
+        [Required(message=MSG_REQUIRED), validate_location], \
+        description = u"Населенный пункт, в котором можно посмотреть и купить собаку.", \
+        db_name = 'city_id', \
+        db_in = lambda f: f.city_id, \
+        db_out = lambda v : get_city_region(v))
 
     
-    color = TextField(u"Окрас", description = {'msg': u""\
-        #, "help" : u"Официальное название окраса можно посмотреть в метрике или родословной вашей собаки."
-        })
+    color = PTextField(u"Окрас", \
+        attraction = True)
 
-    contract = BooleanField(u"Договор купли-продажи")
-    delivery = BooleanField(u"Возможна доставка в другой город")
+    contract = PBooleanField(u"Договор купли-продажи", \
+        attraction = True)
+
+    delivery = PBooleanField(u"Возможна доставка в другой город")
+
+    doc = PSelectField(u"Документы о происхождении", \
+        choices = [(0, u"нет документов")] + [(doc_id , doc_name) for (doc_id, doc_name) in dog_docs.items()], \
+        coerce = int, \
+        attraction = True, \
+        db_name = 'doc_id')
     
-    father_name = TextField(Markup(u"<small>Кличка</small>"))
+    father_name = PTextField(Markup(u"<small>Кличка</small>"), \
+        attraction = True, \
+        depends = {"id":"doc"})
 
-    father_country = SelectField(Markup(u"<small>Страна происхождения</small>"), \
+    father_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
         choices = [(0, u"")] + get_countries_for_dog_adv(), \
-        coerce = int)
-    father_misc = TextAreaField(Markup(u"<small>Прочее</small>"))
+        coerce = int, \
+        attraction = True, \
+        depends = {"id":"doc"}, \
+        db_name = 'father_country_id')
 
-    father_pedigree = TextField(Markup(u"<small>№ родословной</small>"))
+    father_misc = PTextAreaField(Markup(u"<small>Прочее</small>"))
 
-    mother_name = TextField(Markup(u"<small>Кличка</small>"))
-    mother_country = SelectField(Markup(u"<small>Страна происхождения</small>"), \
+    father_pedigree = PTextField(Markup(u"<small>№ родословной</small>"), \
+        attraction = True, \
+        depends = {"id":"doc"})
+
+    mother_name = PTextField(Markup(u"<small>Кличка</small>"), \
+        attraction = True,\
+        depends = {"id":"doc"})
+
+    mother_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
         choices = [(0, u"")] + get_countries_for_dog_adv(), \
-        coerce = int)
-    mother_misc = TextAreaField(Markup(u"<small>Прочее</small>"))
-    mother_pedigree = TextField(Markup(u"<small>№ родословной</small>"))
+        coerce = int, \
+        attraction = True,\
+        depends = {"id":"doc"}, \
+        db_name = 'mother_country_id')
 
-    birthday = TextField(Markup(u"Дата рождения"), description = u"Дата в формате день/месяц/год, например, 24/11/2014")
+    mother_misc = PTextAreaField(Markup(u"<small>Прочее</small>"))
 
-    doc = SelectField(u"Документы о происхождении", \
-        choices = [(0, u"нет документов")] + \
-       [(doc_id , doc_name) for (doc_id, doc_name) in dog_docs.items()], coerce = int)
+    mother_pedigree = PTextField(Markup(u"<small>№ родословной</small>"), \
+        attraction = True, \
+        depends = {"id":"doc"})
 
-    tatoo = TextField(Markup(u"<small>№ клейма</small>"))
-
-    pedigree = TextField(Markup(u"<small>№ родословной</small>"))
+    birthday = PTextField(Markup(u"Дата рождения"), \
+        description = u"Дата в формате день/месяц/год, например, 24/02/2014", \
+        attraction = True, \
+        db_in = lambda f: str2date(f.data), \
+        db_out = lambda v : date2str(v, "%d%m%Y") )
     
-    vaccination = BooleanField(u"Вакцинация (прививки) по возрасту")
 
-    vetpassport = BooleanField(u"Ветеринарный паспорт")
-    microchip = BooleanField(u"Микрочип")
+    tatoo = PTextField(Markup(u"<small>№ клейма</small>"), \
+        attraction = True, \
+        depends = {"id":"doc"})
 
-    breeding = BooleanField(Markup(u"<small>Допуск в разведение</small>"))
+    pedigree = PTextField(Markup(u"<small>№ родословной</small>"), \
+        attraction = True, \
+        attraction_depends = {"id":"doc", "values": doc_dog_pedigrees.keys()}, \
+        depends = {"id":"doc", "values": doc_dog_pedigrees.keys()})
+    
+    vaccination = PBooleanField(u"Вакцинация (прививки) по возрасту", \
+        attraction = True)
 
-    show = BooleanField(Markup(u"<small>Подходит для выставок</small>"))
+    vetpassport = PBooleanField(u"Ветеринарный паспорт", \
+        attraction = True)
 
-    phone = TextField(u"Телефонный номер")
-    skype = TextField(u"Skype")
+    microchip = PBooleanField(u"Микрочип")
 
-    username = TextField(u"Контактное лицо", validators = [Required(message=MSG_REQUIRED)])
+    breeding = PBooleanField(Markup(u"<small>Допуск в разведение</small>"))
+
+    show = PBooleanField(Markup(u"<small>Подходит для выставок</small>"))
+
+    phone = PTextField(u"Телефонный номер")
+
+    skype = PTextField(u"Skype")
+
+    username = PTextField(u"Контактное лицо", \
+        validators = [Required(message=MSG_REQUIRED)])
 
 class Activate(Form): 
 

@@ -12,7 +12,7 @@
 
 
     <p class="text-left" style="margin-bottom:30px">
-        <a target="_self" href="{{url_for('account_cat_adv_new')}}" class="btn btn-success">Подать новое объявление</a> 
+        <a target="_self" href="{{url_for('account_cat_adv_new')}}" class="btn btn-default">Подать новое объявление о продаже кошки &rarr;</a> 
     </p>
 
 
@@ -31,7 +31,7 @@
                           <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
                         </a>  
                         {% else %}
-                        <img src="/static/img/no_photo.png" class="img-thumbnail" style="margin:0 auto" />
+                        <img src="/static/img/no_photo.png" class="img-thumbnail no-photo" style="margin:0 auto" />
                         {%endif%}
 
 
@@ -83,7 +83,7 @@
 
                           <div class="col-md-4 col-lg-3 col-sm-4 text-right">
                             {%set price = (adv.get("price") or "") | int  %}
-                            <p class="adv-price" style="" title='Цена: {{"{0:,}" | format(price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
+                            <p class="adv-price" style="" title='Цена: {{ format("{0:,}", price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
                              <span class="price">{{ price | format_price() }}&thinsp;<span class="rur">руб</span></span>
                            </p>  
 

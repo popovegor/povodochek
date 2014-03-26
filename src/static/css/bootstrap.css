@@ -433,17 +433,17 @@ h6 .small,
 }
 h1,
 .h1 {
-  font-size: 30px;
+  font-size: 32px;
   /*font-family: @font-family-serif;*/
   /*font-style: italic;*/
 }
 h2,
 .h2 {
-  font-size: 28px;
+  font-size: 26px;
 }
 h3,
 .h3 {
-  font-size: 24px;
+  font-size: 22px;
 }
 h4,
 .h4 {
@@ -3956,8 +3956,8 @@ span.navbar-brand {
   }
 }
 .navbar-default {
-  background-color: #f5f5f5;
-  border-color: #e4e4e4;
+  background-color: #fff;
+  border-color: #eee;
 }
 .navbar-default .navbar-brand {
   color: #777;
@@ -4006,7 +4006,7 @@ span.navbar-brand {
 }
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
-  border-color: #e4e4e4;
+  border-color: #eee;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
@@ -5224,6 +5224,7 @@ button.close {
   position: absolute;
   z-index: 1030;
   display: block;
+  font-size: 12px;
   line-height: 1.4;
   visibility: visible;
   /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
@@ -5343,7 +5344,7 @@ button.close {
   left: 0;
   z-index: 1010;
   display: none;
-  max-width: 276px;
+  max-width: 300px;
   padding: 1px;
   text-align: left;
   white-space: normal;
@@ -6290,8 +6291,9 @@ body .table-hover tr:hover > td {
   /*line-height: 16px;*/
 }
 #menu span.navbar-brand {
-  color: #5e5e5e;
+  /*color: #5e5e5e; */
   cursor: default;
+  background-color: transparent;
 }
 form {
   /*.form-field-name {
@@ -6363,6 +6365,15 @@ form .textarea-counter {
 .ajax-link:focus,
 .ajax-link:hover {
   text-decoration: none !important;
+}
+.tagline {
+  padding: 8px 0 7px 10px;
+  margin: 0 0 10px -10px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 1.1em;
+  font-style: italic;
+  background-color: #f5f5f5;
+  border-radius: 5px;
 }
 .index {
   /*pet-post*/
@@ -6468,7 +6479,7 @@ form .textarea-counter {
 }
 /*index*/
 .account .left-side {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 .account-contact .phone input[type="text"],
 .account-contact .skype input[type="text"],
@@ -6521,9 +6532,37 @@ form .textarea-counter {
 #indexLastPets .tabbable ul.nav-tabs li a {
   font-size: 14px;
 }
-.required {
-  font-size: 26px;
-  color: red;
+.required-field {
+  color: #f00;
+}
+.attraction-field,
+.attraction-star {
+  color: #ffa500;
+}
+.attraction-stars {
+  text-decoration: none;
+  cursor: help;
+}
+.attraction-stars .attraction-help {
+  padding-left: 5px;
+  color: #aaa;
+  visibility: hidden;
+}
+.attraction-stars:hover .attraction-help,
+.attraction-stars:focus .attraction-help {
+  visibility: visible;
+}
+#dae_attraction_affix.affix {
+  top: 0;
+  z-index: 3;
+  width: 100%;
+  padding: 15px 15px 15px 15px;
+  /*font-size: 120%*/
+  margin-left: -15px;
+  background-color: #ffd;
+}
+.attraction-no-star {
+  color: #aaa;
 }
 .photo-count {
   position: absolute;
@@ -6563,9 +6602,16 @@ form .textarea-counter {
 .pet-sale .adv,
 .account-pet-sale .adv,
 .dog-search .adv {
-  padding: 25px 25px 15px 25px;
+  padding: 25px 30px 25px 30px;
   margin-bottom: 20px;
   border-radius: 5px;
+}
+.pet-sale .adv .more,
+.account-pet-sale .adv .more,
+.dog-search .adv .more {
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
 }
 .pet-sale .adv .adv-actions,
 .account-pet-sale .adv .adv-actions,
@@ -6587,8 +6633,7 @@ form .textarea-counter {
 .account-pet-sale .adv .photo,
 .dog-search .adv .photo {
   position: relative;
-  /*margin-bottom: 15px;*/
-  /*max-height:300px;*/
+  margin-bottom: 10px;
 }
 .pet-sale .adv .photo a,
 .account-pet-sale .adv .photo a,
@@ -6599,6 +6644,13 @@ form .textarea-counter {
 .account-pet-sale .adv .photo a img,
 .dog-search .adv .photo a img {
   width: 100%;
+}
+.pet-sale .adv .no-photo,
+.account-pet-sale .adv .no-photo,
+.dog-search .adv .no-photo {
+  background-color: #eaeaea;
+  border: none;
+  border-radius: 0;
 }
 .pet-sale .adv .adv-dict,
 .account-pet-sale .adv .adv-dict,
@@ -6630,16 +6682,6 @@ form .textarea-counter {
 .account-pet-sale .adv .adv-head,
 .dog-search .adv .adv-head {
   margin-top: 0;
-}
-.pet-sale .adv div.photo,
-.account-pet-sale .adv div.photo,
-.dog-search .adv div.photo {
-  margin-bottom: 20px;
-}
-.pet-sale .adv div.photo .photo-count,
-.account-pet-sale .adv div.photo .photo-count,
-.dog-search .adv div.photo .photo-count {
-  /*visibility: hidden;        */
 }
 .pet-sale .adv .adv-city,
 .account-pet-sale .adv .adv-city,

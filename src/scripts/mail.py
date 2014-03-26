@@ -16,7 +16,7 @@ env = Environment(loader=PackageLoader('scripts', \
 
 def send_email(From = u"Поводочек <%s>" % config.MAIL_USERNAME, \
 	To = "popovegor.ati@gmail.com", \
-	Subject = u"Сообщение от порта Поводочек", Text = u"", \
+	Subject = u"Сообщение от портала Поводочек", Text = u"", \
 	HTML = u""):
 	try:
 		 
@@ -62,12 +62,27 @@ def send_notifications_1():
 				Subject = u"Изменения в публикации объявлений на сайте Поводочек.рф", \
 				To =  to )
 
+def send_notifications_attraction():
+	counter = 0
+	for user in db.users.find():
+		counter += 1
+		print(counter, name, email)
+		email = user.get('email')
+		name = user.get('username')
+		to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
+		template = env.get_template('notifications_attraction.html')
+		send_email(HTML = template.render(),\
+			Subject = u"Привлекательность объявлений на сайте Поводочек.рф", \
+			To =  to )
 
 
 if __name__ == '__main__':
 	eval('{0}()'.format(sys.argv[1]))
 
-	# template = env.get_template('notifications_1.html')
-	# 		send_email(HTML = template.render(),\
-	# 			Subject = u"Изменения в публикации объявлений на сайте Поводочек.рф", \
-	# 			To = "popovegor")
+	# email = "popovegor@gmail.com"	
+	# name = u"Егор"
+	# to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
+	# template = env.get_template('notifications_attraction.html')
+	# send_email(HTML = template.render(),\
+	# 	Subject = u"Привлекательность объявлений на сайте Поводочек.рф", \
+	# 	To =  to )

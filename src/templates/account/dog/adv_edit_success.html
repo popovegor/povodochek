@@ -8,6 +8,7 @@
 $(document).ready(function(){
 	if (opener) {
 		opener.location.href = "{{url_for('account_dog_advs', _external=True)}}";
+		opener.focus();
 		window.close();
 	} else {
 		window.location.href = "{{url_for('account_dog_advs', _external=True)}}";

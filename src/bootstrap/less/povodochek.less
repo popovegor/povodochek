@@ -36,7 +36,11 @@ html, body {
         /*line-height: 16px;*/
 
     }
-    span.navbar-brand { color: #5e5e5e; cursor:default;}
+    span.navbar-brand { 
+        /*color: #5e5e5e; */
+        cursor:default;
+        background-color: transparent;
+    }
 }
 
 
@@ -121,6 +125,16 @@ form {
     &:focus, &:hover {
         text-decoration: none !important;
     };
+}
+
+.tagline {
+    font-style:italic; 
+    margin:0px 0px 10px -10px; 
+    padding:8px 0px 7px 10px; 
+    font-family: @font-family-serif;
+    background-color: #f5f5f5;
+    font-size: 1.1em;
+    border-radius: 5px;
 }
 
 
@@ -253,7 +267,7 @@ form {
 
 .account {
     .left-side {
-        margin-top: 30px;
+        margin-top: 20px;
     }
 }
 
@@ -317,10 +331,46 @@ form {
     }
 }
 
-.required {
-    color:red;
-    font-size: 26px;
+.required-field {
+    color:#f00;
 }
+
+.attraction-field, .attraction-star {
+    color:#FFA500;
+}
+
+.attraction-stars {
+    cursor: help;
+    text-decoration: none;
+    .attraction-help {
+        padding-left: 5px;
+        visibility: hidden;
+        color:#aaa;
+    }
+
+    &:hover, &:focus {
+        .attraction-help {
+            visibility: visible;
+        }
+    }
+}
+
+
+#dae_attraction_affix.affix {
+    top:0px;
+    background-color: #ffd;
+    padding: 15px 15px 15px 15px;
+    z-index: 3;
+    width: 100%;
+    /*font-size: 120%*/
+    margin-left: -15px;
+}
+
+
+.attraction-no-star {
+    color:#aaa;
+}
+
 
 .photo-count {
      position: absolute;
@@ -347,8 +397,12 @@ form {
     .adv {
         border-radius:5px;
 
-         padding:25px 25px 15px 25px;
+         padding:25px 30px 25px 30px;
          margin-bottom:20px;
+
+         .more {
+            position:absolute; bottom:20px; right:30px
+         }
 
         .adv-actions,  .adv-desc {
             margin-top:15px;
@@ -357,13 +411,17 @@ form {
 
          .photo {
             position: relative;
-            /*margin-bottom: 15px;*/
-            /*max-height:300px;*/
-            
+            margin-bottom:10px;
             a { 
                 margin-bottom: 10px;
                 img { width:100%; } 
             }
+        }
+
+        .no-photo {
+            background-color: #eaeaea;
+            border-radius: 0px;
+            border:none;
         }
 
         .adv-dict {
@@ -386,13 +444,6 @@ form {
         }
 
         .adv-head { margin-top: 0px;}
-
-        div.photo {
-            margin-bottom:20px;
-            .photo-count {
-                /*visibility: hidden;        */
-            }   
-        }
 
         .adv-city, .adv-breed { margin-bottom: 5px; }
     }
@@ -650,9 +701,8 @@ form {
     .adv-block {
         margin-bottom: 10px;
     }
-
-    
 }
+
 
 .info-block {
     width:100%;
@@ -825,4 +875,7 @@ form {
 	margin:30px 0px 20px 0; 
 	padding:15px; 
 	background-color:@panel-default-heading-bg;
+}
+
+.help {
 }
