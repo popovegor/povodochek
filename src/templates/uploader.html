@@ -83,11 +83,12 @@ $(document).ready(function() {
             $.each(photos.split(","), function(i, file_name) {
                 up.add(file_name, "", up);
             });
+            uploader.reshape();
         }
-        up.refresh();
     });
 
     uploader.init();
+    uploader.refresh();
 
     uploader.bind('FilesAdded', function(up, files) {
         $.each(files, function(i, file) {
