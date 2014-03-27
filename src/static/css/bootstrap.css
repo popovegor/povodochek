@@ -6269,6 +6269,11 @@ td.visible-print {
 
   direction: rtl;
 }
+html,
+body {
+  min-width: 750px;
+  height: 100%;
+}
 #menu {
   border-radius: 0;
 }
