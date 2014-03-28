@@ -442,7 +442,7 @@ def test_email_from_dog_adv():
 def activate(confirm):
     form = Activate(request.form)
 
-    if current_user.is_signed and current_user.is_active:
+    if current_user.is_signed and current_user.active:
         return render_template("activate_success.html", user = current_user, title = u"Активация регистрации")
 
     if request.method == "POST":
@@ -846,7 +846,7 @@ def account_dog_adv_edit(adv_id):
     if request.method == "POST":
         if form.validate():
             save_dog_adv(adv_id = adv_id, form = form)
-            msg = u"Объявление '%s' обновлено." % form.title.data
+            msg = u"Объявление '%s' опубликовано." % form.title.data
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", title = msg)
     else:
@@ -972,7 +972,7 @@ def account_cat_adv_edit(adv_id):
     if request.method == "POST":
         if form.validate():
             save_cat_adv(form, adv_id)
-            flash(u"Объявление '%s' обновлено." % form.title.data, "success")
+            flash(u"Объявление '%s' опубликовано." % form.title.data, "success")
             return redirect(url_for("account_cat_advs"))
     else:
         form.breed.data = get_breed_name(cat.get("breed_id"), cat.get("pet_id"))
