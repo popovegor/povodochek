@@ -9,7 +9,7 @@
 
         {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-        <form class="form-sale-adv" id="adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
+        <form class="form-sale-adv" method="post" action="{{request.url}}" enctype="multipart/form-data" >
 
           
               {{ form_field(form.breed, size="col-md-5", placeholder="Введите породу кошки", autocomplete="off") }}        

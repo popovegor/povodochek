@@ -883,28 +883,6 @@ def account_dog_adv_new():
         fields = get_fields(form), \
         title=u"Новое объявление о продаже собаки")
 
-
-@app.route("/account/dog/new2/", methods = ["GET", "POST"])
-@login_required
-def account_dog_adv_new2():
-    form = Dog(request.form)
-    if request.method == "POST":
-        if  form.validate():
-            id = save_dog_adv(form)
-            msg = u"Объявление '%s' добавлено." % form.title.data
-            flash(msg, "success")
-            return render_template("/account/dog/adv_edit_success.html", title=msg)
-    else:
-        form.username.data = current_user.username if current_user.username != u'Пользователь' else u''
-        form.city.data = get_city_region(current_user.city_id)
-        form.phone.data = current_user.phone
-        form.skype.data = current_user.skype
-
-    return render_template("/account/dog/adv_edit_2.html", \
-        form = form, \
-        fields = get_fields(form), \
-        title=u"Новое объявление о продаже собаки")
-
 def save_dog_adv(form, adv_id = None):
     form.photos.photonames = []
     if form.photos.data:
