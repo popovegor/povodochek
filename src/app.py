@@ -886,7 +886,7 @@ def account_dog_adv_new():
 
 @app.route("/account/dog/new2/", methods = ["GET", "POST"])
 @login_required
-def account_dog_adv_new():
+def account_dog_adv_new2():
     form = Dog(request.form)
     if request.method == "POST":
         if  form.validate():
