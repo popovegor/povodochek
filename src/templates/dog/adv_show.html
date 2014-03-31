@@ -119,8 +119,6 @@
 
      <span style="white-space:nowrap;padding-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
 
-     {#{[add_date, update_date]}#}
-
      {%if update_date != add_date %}
       <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
     {%else%}
