@@ -104,7 +104,7 @@ def get_page_views(service, profile_id):
       sort='-ga:uniquePageviews',
       filters='ga:pagePath=~^/prodazha-sobak/[A-Za-z0-9]*/$',
       start_index='1',
-      max_results='10000').execute()	
+      max_results='10000').execute()
 
 def update_page_views_stat():
 	service = get_servive()
