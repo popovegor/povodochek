@@ -900,24 +900,47 @@ def save_dog_adv(form, adv_id = None):
         )
     return adv
 
+@app.route("/account/dog/<adv_id>/remove/undo/", methods = ['GET'])
+@login_required
+def account_dog_adv_remove_undo(adv_id):
+    adv = db.undo_remove_dog_adv(adv_id, current_user.id)
+    if adv:
+        adv_show_url = url_for('dog_adv_show', \
+            adv_id = adv.get('_id'))
+        flash(Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> вновь активно." % (adv_show_url, adv["title"])), \
+            "success")
+    return redirect(url_for("account_dog_advs"))
+
 @app.route("/account/dog/<adv_id>/remove/", methods = ['GET'])
 @login_required
 def account_dog_adv_remove(adv_id):
     adv = db.remove_dog_adv(adv_id, current_user.id)
     if adv:
-        flash(u"Объявление '%s' удалено." % adv["title"], \
+        undo_url = url_for('account_dog_adv_remove_undo', adv_id = adv.get('_id'))
+        flash(Markup(u"Объявление '%s' удалено. <a target='_self' title='Восстановить удаленное объявление' href='%s'>Отменить удаление</a>." % (adv["title"], undo_url)), \
             "success")
     return redirect(url_for("account_dog_advs"))
 
-@app.route("/account/sale/<adv_id>/remove", methods = ['GET'])
+
+@app.route("/account/cat/<adv_id>/remove/undo/", methods = ['GET'])
+@login_required
+def account_cat_adv_remove_undo(adv_id):
+    adv = db.undo_remove_cat_adv(adv_id, current_user.id)
+    if adv:
+        adv_show_url = url_for('cat_adv_show', \
+            adv_id = adv.get('_id'))
+        flash(Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> вновь активно." % (adv_show_url, adv["title"])), \
+            "success")
+    return redirect(url_for("account_cat_advs"))
+
+@app.route("/account/cat/<adv_id>/remove/", methods = ['GET'])
 @login_required
 def account_cat_adv_remove(adv_id):
-    adv = sales().find_one(
-        {'_id': {'$in':[id, ObjectId(id)]}, 
-        'user_id': {'$in': [current_user.id, str(current_user.id)]}})
+    adv = db.remove_cat_adv(adv_id, current_user.id)
     if adv:
-        sales().remove(adv)
-        flash(u"Объявление '%s' удалено." % adv["title"], "success")
+        undo_url = url_for('account_cat_adv_remove_undo', adv_id = adv.get('_id'))
+        flash(Markup(u"Объявление '%s' удалено. <a target='_self' title='Восстановить удаленное объявление' href='%s'>Отменить удаление</a>." % (adv["title"], undo_url)), \
+            "success")
     return redirect(url_for("account_cat_advs"))
  
 
