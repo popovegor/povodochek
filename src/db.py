@@ -19,7 +19,9 @@ mongo = MongoClient().povodochek
 
 users = mongo.users
 cat_advs = mongo.cat_advs
+cat_advs_archive = mongo.cat_advs_archive
 dog_advs = mongo.dog_advs
+dog_advs_archive = mongo.dog_advs_archive
 pets_by_cities = mongo.pets_by_cities
 top_dog_breeds = mongo.top_dog_breeds
 top_cat_breeds = mongo.top_cat_breeds
@@ -411,14 +413,45 @@ def get_short_adv_id(adv):
 
 
 def remove_dog_adv(adv_id, user_id):
-    adv = dog_advs.find_one(
-        {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
+    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
         'user_id': {'$in': [user_id, \
-        str(user_id)]}})
+        str(user_id)]}}
+    adv = dog_advs.find_one(query)
     if adv:
+        dog_advs_archive.update(query, adv, upsert = True, multi = False)
         dog_advs.remove(adv)
     return adv
 
+def undo_remove_dog_adv(adv_id, user_id):
+    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
+        'user_id': {'$in': [user_id, \
+        str(user_id)]}}
+    adv = dog_advs_archive.find_one(query)
+    if adv:
+        dog_advs.update(query, adv, upsert = True, multi  = False)
+        dog_advs_archive.remove(adv)
+    return adv
+
+
+def remove_cat_adv(adv_id, user_id):
+    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
+        'user_id': {'$in': [user_id, \
+        str(user_id)]}}
+    adv = cat_advs.find_one(query)
+    if adv:
+        cat_advs_archive.update(query, adv, upsert = True, multi = False)
+        cat_advs.remove(adv)
+    return adv
+
+def undo_remove_cat_adv(adv_id, user_id):
+    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
+        'user_id': {'$in': [user_id, \
+        str(user_id)]}}
+    adv = cat_advs_archive.find_one(query)
+    if adv:
+        cat_advs.update(query, adv, upsert = True, multi  = False)
+        cat_advs_archive.remove(adv)
+    return adv
 
 def get_dog_advs_for_mosaic(skip, limit):
     return dog_advs.find(
