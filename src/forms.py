@@ -387,7 +387,8 @@ class Dog(Form):
 
     microchip = PBooleanField(u"Микрочип")
 
-    breeding = PBooleanField(Markup(u"<small>Допуск в разведение</small>"))
+    breeding = PBooleanField(Markup(u"<small>Допуск в разведение</small>"), \
+        depends = {"id":"doc", "values": doc_dog_pedigrees.keys()})
 
     show = PBooleanField(Markup(u"<small>Подходит для выставок</small>"))
 

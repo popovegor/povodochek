@@ -155,17 +155,18 @@
 
 	<h3 id="doc_name">{{form.doc.data | doc_dog_name }}</h3>
 		<div class="row" style="margin-top:20px; ">
-			<div class="col-sm-3" id="{{form.pedigree.id}}_block" style="{{'display:none' if form.doc.data not in doc_dog_pedigrees else ''}}">
+			<div class="col-sm-3" id="{{form.pedigree.id}}_block">
 				{{ form_field(form.pedigree, style="width:150px")}}
 			</div>
 			<div class="col-sm-3">
-				
 				{{ form_field(form.tatoo, help_placement="top", style="width:150px") }}
 			</div>	
-			<div style="margin-top:10px" class="col-sm-6">
+			<div style="margin-top:7px" class="col-sm-6">
+				<div id="{{form.breeding.id}}_block">
 				{{ form_field(form.breeding) }} 
+				</div>
 				{{ form_field(form.show) }}
-				</div>			
+			</div>			
 		</div> 
 		
 		<h4>Отец</h4>
@@ -231,9 +232,10 @@ $(document).ready(function(){
 
 		if(doc_pedigrees.indexOf(this.value) > -1) {
 			$("#{{form.pedigree.id}}_block").show();
-		
+			$("#{{form.breeding.id}}_block").css("visibility", "visible");
 		} else {
 			$("#{{form.pedigree.id}}_block").hide();
+			$("#{{form.breeding.id}}_block").css("visibility", "hidden");
 		}
 
 		if(this.value > 0) {
@@ -243,8 +245,9 @@ $(document).ready(function(){
 			$("#doc_fields").hide("fast");
 			$("#doc_name").text();
 		}
-		
 	});
+
+	$("#{{form.doc.id}}").trigger("change");
 
 	var fields = {{fields | json | safe }};
 	var attraction_fields_count = 0;
@@ -356,24 +359,10 @@ $(document).ready(function(){
 	  "{{url_for('ajax_typeahead_dog')}}",
 	  "{{form.breed.id}}")); //typeahead 
 
-	//validation
 
 	uploader.bind('Refresh', function() {
 		recheck_photos();
 	});
-
-	var recheck_photos = function(){
-	  var photos = $("#photos");
-	  photos.val("");
-      $.each(uploader.getFileNames(), function(i, filename) {
-        if(filename && photos.val()) {
-          photos.val(photos.val() + "," + filename);
-        } else {
-          photos.val(filename);
-        }
-      });
-      photos.trigger("change");
-	};
 
     $("#{{form.phone.id}}").inputmask(
     	{"mask": "+7(999)999-9999"});
@@ -416,6 +405,19 @@ $(document).ready(function(){
       phone : {_phone: true}, 
       username : {required : true}
    });
+
+  var recheck_photos = function(){
+	  var photos = $("#photos");
+	  photos.val("");
+      $.each(uploader.getFileNames(), function(i, filename) {
+        if(filename && photos.val()) {
+          photos.val(photos.val() + "," + filename);
+        } else {
+          photos.val(filename);
+        }
+      });
+      photos.trigger("change");
+	};
   
   recheck_photos();
   

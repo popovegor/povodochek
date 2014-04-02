@@ -846,7 +846,7 @@ def account_dog_adv_edit(adv_id):
     if request.method == "POST":
         if form.validate():
             save_dog_adv(adv_id = adv_id, form = form)
-            msg = u"Объявление '%s' опубликовано." % form.title.data
+            msg = Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv_id), form.title.data))
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", title = msg)
     else:
