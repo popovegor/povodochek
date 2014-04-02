@@ -868,8 +868,8 @@ def account_dog_adv_new():
     form = Dog(request.form)
     if request.method == "POST":
         if  form.validate():
-            id = save_dog_adv(form)
-            msg = u"Объявление '%s' добавлено." % form.title.data
+            adv = save_dog_adv(form)
+            msg =  Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('upserted')), form.title.data))
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", title=msg)
     else:
@@ -893,12 +893,12 @@ def save_dog_adv(form, adv_id = None):
                 with open(photos.path(photoname)) as file:
                     db.save_photo(file)
 
-    db.save_dog_adv_2(user_id = current_user.id, \
+    adv = db.save_dog_adv_2(user_id = current_user.id, \
         adv_id = adv_id, \
         form  = form, \
         attraction = calc_attraction(form)
         )
-    return adv_id
+    return adv
 
 @app.route("/account/dog/<adv_id>/remove/", methods = ['GET'])
 @login_required
