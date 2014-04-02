@@ -117,13 +117,14 @@
 
     
 
-     <span style="white-space:nowrap;padding-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
+     <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
 
      {%if update_date != add_date %}
-      <span style="white-space:nowrap;"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
-    {%else%}
-
+      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
     {%endif%}     
+
+  <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Смотрели:</span>{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
+
 </p>
 <p>
     {% from "attraction.html" import render_stars %}
@@ -257,7 +258,7 @@
           </div>
         {%else%}
           
-   <p class="" style="">Официальный документ, подтверждающих породистое происхождение собаки:</p>
+   <p class="" style="">Официальный документ, подтверждающий породистое происхождение собаки:</p>
          <div class="panel panel-default" style="">
           <div class="panel-heading">
                <h4 class="page-heade"><span style="padding-right:5px">{{doc | doc_dog_name}}</span>
