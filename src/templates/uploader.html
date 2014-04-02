@@ -77,7 +77,8 @@ $(document).ready(function() {
         return false;
     };
 
-    uploader.bind('Init', function(up, params) { 
+    uploader.bind('Init', function(up, params) {
+        debugger; 
         var photos = $("#photos").val();
         if(photos) {
             $.each(photos.split(","), function(i, file_name) {
