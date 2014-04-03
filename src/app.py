@@ -46,7 +46,7 @@ from dic.breeds import (dogs, get_breed_name, cats, \
     get_breed_cat_name)
 from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities)
 from dic.pet_docs import (doc_dog_pedigrees, doc_puppy_cards, \
-    dog_docs, get_doc_dog_name)
+    dog_docs, get_doc_dog_name, doc_dog_pedigrees_rkf)
 
 from dic.countries import (get_country_name)
 
@@ -229,6 +229,7 @@ app.jinja_env.globals['dog_docs'] = dog_docs
 app.jinja_env.filters['doc_dog_name'] = get_doc_dog_name
 app.jinja_env.globals['doc_puppy_cards'] = doc_puppy_cards
 app.jinja_env.globals['doc_dog_pedigrees'] = doc_dog_pedigrees
+app.jinja_env.globals['doc_dog_pedigrees_rkf'] = doc_dog_pedigrees_rkf
 
 
 def debug_write(msg):

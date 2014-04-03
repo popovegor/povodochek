@@ -116,7 +116,7 @@
 
  	{{ form_field(form.birthday, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, help="", help_placement="top", style="width:120px") }}
 	
-		{{ form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:120px") }}
+		{{ form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:140px") }}
 
 		
 	{{ form_field(form.color, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, size="col-sm-6", help="Официальное название окраса можно посмотреть в метрике или родословной, например, рыжий.") }}
@@ -163,7 +163,7 @@
 			</div>	
 			<div style="margin-top:7px" class="col-sm-6">
 				<div id="{{form.breeding.id}}_block">
-				{{ form_field(form.breeding) }} 
+				{{ form_field(form.breeding, help = 'К племенному использованию допускаются собаки, имеющие оценку за экстерьер не ниже «очень хорошо», полученную на официальной сертификатной выставке РКФ или интернациональной выставке FCI.') }} 
 				</div>
 				{{ form_field(form.show) }}
 			</div>			
@@ -228,14 +228,20 @@ $(document).ready(function(){
 
 	var doc_pedigrees = $.map({{doc_dog_pedigrees.keys() | json | safe}}, function(x) {return x.toString();});
 
+	var doc_pedigrees_rkf = $.map({{doc_dog_pedigrees_rkf.keys() | json | safe}}, function(x) {return x.toString();});
+
 	$("#{{form.doc.id}}").change(function(){
+
+		if(doc_pedigrees_rkf.indexOf(this.value) > -1) {
+			$("#{{form.breeding.id}}_block").css("visibility", "visible");
+		} else {
+			$("#{{form.breeding.id}}_block").css("visibility", "hidden");
+		}
 
 		if(doc_pedigrees.indexOf(this.value) > -1) {
 			$("#{{form.pedigree.id}}_block").show();
-			$("#{{form.breeding.id}}_block").css("visibility", "visible");
 		} else {
 			$("#{{form.pedigree.id}}_block").hide();
-			$("#{{form.breeding.id}}_block").css("visibility", "hidden");
 		}
 
 		if(this.value > 0) {
