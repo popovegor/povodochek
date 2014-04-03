@@ -46,7 +46,7 @@ from dic.breeds import (dogs, get_breed_name, cats, \
     get_breed_cat_name)
 from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities)
 from dic.pet_docs import (doc_dog_pedigrees, doc_puppy_cards, \
-    dog_docs, get_doc_dog_name)
+    dog_docs, get_doc_dog_name, doc_dog_pedigrees_rkf)
 
 from dic.countries import (get_country_name)
 
@@ -229,6 +229,7 @@ app.jinja_env.globals['dog_docs'] = dog_docs
 app.jinja_env.filters['doc_dog_name'] = get_doc_dog_name
 app.jinja_env.globals['doc_puppy_cards'] = doc_puppy_cards
 app.jinja_env.globals['doc_dog_pedigrees'] = doc_dog_pedigrees
+app.jinja_env.globals['doc_dog_pedigrees_rkf'] = doc_dog_pedigrees_rkf
 
 
 def debug_write(msg):
@@ -848,7 +849,7 @@ def account_dog_adv_edit(adv_id):
             save_dog_adv(adv_id = adv_id, form = form)
             msg = Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv_id), form.title.data))
             flash(msg, "success")
-            return render_template("/account/dog/adv_edit_success.html", title = msg)
+            return render_template("/account/dog/adv_edit_success.html", header = msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
         for f in form:
             f.set_db_val(dog.get(f.get_db_name()))
@@ -871,7 +872,7 @@ def account_dog_adv_new():
             adv = save_dog_adv(form)
             msg =  Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('upserted')), form.title.data))
             flash(msg, "success")
-            return render_template("/account/dog/adv_edit_success.html", title=msg)
+            return render_template("/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
         form.username.data = current_user.username if current_user.username != u'Пользователь' else u''
         form.city.data = get_city_region(current_user.city_id)

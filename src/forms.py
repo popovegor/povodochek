@@ -25,7 +25,7 @@ from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city, get_city_region)
 from dic.countries import (countries, get_countries_for_dog_adv)
-from dic.pet_docs import (dog_docs, doc_dog_pedigrees)
+from dic.pet_docs import (dog_docs, doc_dog_pedigrees, doc_dog_pedigrees_rkf)
 
 import config
 
@@ -274,7 +274,7 @@ class Dog(Form):
         db_out = lambda v: get_breed_dog_name(v)) 
 
     gender = PSelectField(u"Пол", \
-        choices = [(0, u'')] + [ (gender_id, gender_name) \
+        choices = [(0, u'-- не указан --')] + [ (gender_id, gender_name) \
         for gender_id, gender_name in genders.items()], \
         coerce=int, \
         attraction = True, \
@@ -324,7 +324,7 @@ class Dog(Form):
     delivery = PBooleanField(u"Возможна доставка в другой город")
 
     doc = PSelectField(u"Документы о происхождении", \
-        choices = [(0, u"нет документов")] + [(doc_id , doc_name) for (doc_id, doc_name) in dog_docs.items()], \
+        choices = [(0, u"-- нет документов --")] + [(doc_id , doc_name) for (doc_id, doc_name) in dog_docs.items()], \
         coerce = int, \
         attraction = True, \
         db_name = 'doc_id')
@@ -334,7 +334,7 @@ class Dog(Form):
         depends = {"id":"doc"})
 
     father_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
-        choices = [(0, u"")] + get_countries_for_dog_adv(), \
+        choices = [(0, u"-- не указана --")] + get_countries_for_dog_adv(), \
         coerce = int, \
         attraction = True, \
         depends = {"id":"doc"}, \
@@ -351,7 +351,7 @@ class Dog(Form):
         depends = {"id":"doc"})
 
     mother_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
-        choices = [(0, u"")] + get_countries_for_dog_adv(), \
+        choices = [(0, u"-- не указана --")] + get_countries_for_dog_adv(), \
         coerce = int, \
         attraction = True,\
         depends = {"id":"doc"}, \
@@ -388,7 +388,7 @@ class Dog(Form):
     microchip = PBooleanField(u"Микрочип")
 
     breeding = PBooleanField(Markup(u"<small>Допуск в разведение</small>"), \
-        depends = {"id":"doc", "values": doc_dog_pedigrees.keys()})
+        depends = {"id":"doc", "values": doc_dog_pedigrees_rkf.keys()})
 
     show = PBooleanField(Markup(u"<small>Подходит для выставок</small>"))
 

@@ -64,6 +64,8 @@ class PTextField(TextField, PField):
         attraction = False, attraction_depends = None, \
         depends = None, db_name = None, \
         db_in = None, db_out = None, **kwargs):
+        filters = kwargs.get("filters") or []
+        kwargs["filters"] = [lambda x : (x or '').strip()] + filters
         TextField.__init__(self, label = label, \
             validators = validators, **kwargs)
         PField.__init__(self, field = self, attraction = attraction, \
@@ -168,13 +170,18 @@ def is_active_field(form, field):
             return depends_val in depends_values
 
     if type(field) is PSelectField:
-        # print(field.name)
         if field.data <= 0:
             return False
     return True   
         
 def get_field_val(form, field):
-    return field.data if is_active_field(form, field) else None
+    if is_active_field(form, field):
+        data = field.data
+        if type(field) is PTextField:
+            data = (data or '').strip()
+        return data
+    else:
+        return None
 
 
 def calc_attraction(form):
