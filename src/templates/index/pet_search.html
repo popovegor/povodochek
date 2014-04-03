@@ -78,10 +78,10 @@
 
     var on_select_breed = function(breed_name) {
       $("#{{pet_search_form.breed.id}}").tooltip("destroy");
-
-      if (breed_name.indexOf(', ' + '{{pet_name}}') > 0) {
+      breed_name_lower = breed_name.toLowerCase();
+      if (breed_name_lower.indexOf(', собаки') > 0) {
         $("#search").attr("action", "{{url_for('dog_search')}}");
-      } else if (breed_name.indexOf(', ' + '{{pet_name}}') > 0){
+      } else if (breed_name_lower.indexOf(', кошки') > 0){
         $("#search").attr("action", "{{url_for('cat_search')}}");  
       } else {
         $("#search").attr("action", "");
