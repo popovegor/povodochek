@@ -222,13 +222,23 @@ def get_cat_advs_by_user(user_id):
         sort = [("update_date", DESCENDING), \
         ("add_date", DESCENDING)])
 
-def get_top_dog_advs():
+def get_top_dog_breeds(limit = 15):
 	return [adv for adv in top_dog_breeds.find( \
-		sort = [('count', DESCENDING)], limit = 15)]
+		sort = [('count', DESCENDING)], limit = limit)]
 
-def get_top_cat_advs():
+def get_top_cat_breeds(limit = 15):
 	return [adv for adv in top_cat_breeds.find( \
-		sort = [('count', DESCENDING)], limit = 15)]
+		sort = [('count', DESCENDING)], limit = limit)]
+
+def get_dogs_for_typeahead(query, limit):
+    matcher = re.compile(re.escape(query), re.IGNORECASE)
+    breeds = [breed.get('breed_name') \
+        for breed in top_dog_breeds.find(\
+            {'breed_name': {"$regex": matcher}}, \
+            limit = limit, \
+            fields = ["breed_name"], \
+            sort = [('count', DESCENDING), ('breed_name', ASCENDING)] )]
+    return breeds
 
 def get_locations_for_typeahead(query, limit):
 	matcher = re.compile("^" + re.escape(query), re.IGNORECASE)

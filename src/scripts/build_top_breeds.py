@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 from pymongo import MongoClient 
+from dic.breeds import (dogs, cats)
+
 
 def povodochek():
 	return MongoClient().povodochek
 
 def aggregate(pet):
 	db = povodochek()
+	breeds = cats if pet == 'cat' else dogs
 	advs = db['%s_advs' % pet]
 	tmp_top_breeds_name = 'tmp_top_%s_breeds' % pet
 	tmp_top_breeds = db[tmp_top_breeds_name]
@@ -15,13 +18,10 @@ def aggregate(pet):
 	top_breeds = db[top_breeds_name]
 	tmp_top_breeds.drop()
 
-	for adv in advs.find():
-		breed_id = adv.get('breed_id')
-		query = {'breed_id' : breed_id}
-		tmp_top_breeds.update(query, \
-			{'$inc': {'count': 1}, \
-			'$set': {'breed_id': breed_id},  }, \
-			upsert = True)
+	for (breed_id, breed_name) in breeds.items():
+		count = advs.find({'breed_id':breed_id}).count()	
+		tmp_top_breeds.insert({'count': count, 
+			'breed_id': breed_id, 'breed_name': breed_name})
 
 	if tmp_top_breeds_name in db.collection_names():
 		tmp_top_breeds.rename(\
@@ -29,8 +29,6 @@ def aggregate(pet):
 	else:
 		top_breeds.drop()
 
-
-	
 
 		
 import sys

@@ -59,6 +59,7 @@ povodochek.validate = function (form, rules, submit){
      },
      unhighlight: function(element, errorClass) {
         $("#" + element.id + "_field").removeClass("has-error").addClass("has-success");
+        $("#" + element.id + "_field .form-field-errors .form-field-error").remove();
      },
      submitHandler: function(form) {
         var btn = $(":submit").button("loading");
@@ -81,7 +82,7 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
           var input = $("#" + input_id);
           if(data.items.length === 0) {
               input.tooltip("destroy").tooltip(
-                {title:"Совпадений не найдено", 
+                {title:"Совпадений не найдено. Выберите из выпадающего списка, введя часть названия.", 
                 trigger: "click"}).tooltip("show").
               attr("show-tooltip", "true");
           } else if (input.attr("show-tooltip") === "true"){
