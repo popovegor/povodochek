@@ -40,7 +40,7 @@
 
 {%- macro form_field_help(field) -%}
  
-  <span style="" class="glyphicon glyphicon-question-sign form-field-help" data-toggle="popover" data-content="{{kwargs.get('help')}}" data-html="html" data-placement="{{ kwargs.get('help_placement') or 'left' }}" data-trigger="hover"></span>
+  <span style="font-size:1.1em" class="glyphicon glyphicon-info-sign form-field-help" data-toggle="popover" data-content="{{kwargs.get('help')}}" data-html="html" data-placement="{{ kwargs.get('help_placement') or 'left' }}" data-trigger="hover"></span>
  
 {%- endmacro -%}
 

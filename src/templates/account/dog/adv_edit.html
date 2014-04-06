@@ -71,10 +71,10 @@
 {%- macro main_info(form, horizontal) -%}
 	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder=(dogs | random), help = "Выберите породу из выпадающего списка, вводя любую часть названия,  например, шпиц.", autocomplete="off") }}   
+	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Укажите название породы", help = "Выберите породу из выпадающего списка, вводя любую часть названия,  например, шпиц.", autocomplete="off") }}   
 	
 
-    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder=(large_cities | random).get("city_id") | city_region, help="Выберите из выпадающего списка населенный пункт, вводя первые буквы.", autocomplete="off") }}
+    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", help="Выберите из выпадающего списка населенный пункт, вводя первые буквы.", autocomplete="off") }}
 
     {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="", help = "Напишите наиболее привлекательный заголовок.")}}
 
