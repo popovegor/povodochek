@@ -101,7 +101,6 @@ assets = Environment(app)
 
 js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery-ui-1.10.3.custom.min.js', \
-    'js/chosen.jquery.js', \
     'js/jquery.validate.min.js', \
     'js/jquery.validate.ru.js', \
     'js/jquery.inputmask.bundle.min.js', \
@@ -113,9 +112,8 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/bootstrap3-typeahead.min.js', \
-    'js/holder.js', \
     'js/bootstrap.min.js', \
-    'js/jquery.carouFredSel.min.js', \
+    # 'js/typeahead.bundle.min.js', \
     'js/povodochek.js', \
     'js/jquery.simplyCountable.js', \
     filters='rjsmin', \
@@ -270,12 +268,12 @@ def load_user(id):
 @app.route("/")
 def index():
     mosaic_advs = get_pet_advs_for_mosaic(0, 10, pet_id = DOG_ID)
-    dog_advs = db.get_top_dog_advs()
-    cat_advs = db.get_top_cat_advs()
+    top_dog_breeds = db.get_top_dog_breeds()
+    top_cat_breeds = db.get_top_cat_breeds()
     tmpl = render_template('index1.html', \
         pet_search_form = SaleSearch(), \
-        top_cats = cat_advs, \
-        top_dogs = dog_advs, \
+        top_cats = top_cat_breeds, \
+        top_dogs = top_dog_breeds, \
         mosaic_advs = mosaic_advs, \
         title = u"Продажа и покупка породистых собак и кошек по всей России")
     return tmpl
@@ -340,12 +338,8 @@ def ajax_typeahead_breed(pet_id = None):
 def ajax_typeahead_dog():
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
-    matcher = query.lower()
 
-    if matcher:
-        breeds = [dog for dog in dogs.values() if matcher in dog.lower() ]
-    else:
-        breeds = dogs.values()[:limit]
+    breeds = db.get_dogs_for_typeahead(query, limit)
     return jsonify(items = breeds ) 
 
 

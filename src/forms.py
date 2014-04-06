@@ -92,7 +92,7 @@ def validate_location(form, field):
     if field.data:
         city = get_city_by_city_field(field)
         if not city:
-            raise ValidationError(u'Неправильно указан населенный пункт')
+            raise ValidationError(u'Совпадений не найдено. Выберите населенный пункт из выпадающего списка, введя часть названия.')
         else:
             field.city_id = city.get("city_id")
             field.location = city.get("location")
@@ -102,7 +102,7 @@ def validate_breed(form, field):
     if field.data:
         (breed_id, pet_id) = get_breed_by_name(field.data)
         if not breed_id or not pet_id:
-            raise ValidationError(u'Неправильно указана порода')
+            raise ValidationError(u'Совпадений не найдено. Выберите породу из выпадающего списка, введя часть названия.')
         else:
             field.pet_id = pet_id
             field.breed_id = breed_id

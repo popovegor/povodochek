@@ -245,6 +245,7 @@ cats = {
 
 from dic.pets import (pets, DOG_ID, CAT_ID)
 from helpers import (num)
+from pymongo import (MongoClient)
 
 breeds = dict([(dog, {'name':dog_name, 'pet':DOG_ID}) for (dog, dog_name) in dogs.items()] + \
 	[(cat, {'name': cat_name, 'pet': CAT_ID}) for (cat, cat_name) in cats.items()])
@@ -282,7 +283,6 @@ def get_breed_cat_name(breed_id):
     breed_id = num(breed_id or 0)
     return cats.get(breed_id) or u""
 
-from pymongo import MongoClient
 import random
 from bson.objectid import ObjectId
 from pets import pets

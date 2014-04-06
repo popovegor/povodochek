@@ -78,7 +78,6 @@ $(document).ready(function() {
     };
 
     uploader.bind('Init', function(up, params) {
-        debugger; 
         var photos = $("#photos").val();
         if(photos) {
             $.each(photos.split(","), function(i, file_name) {
