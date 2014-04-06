@@ -237,7 +237,9 @@ def get_dogs_for_typeahead(query, limit):
             {'breed_name': {"$regex": matcher}}, \
             limit = limit, \
             fields = ["breed_name"], \
-            sort = [('count', DESCENDING), ('breed_name', ASCENDING)] )]
+            sort = [
+            #('count', DESCENDING), 
+            ('breed_name', ASCENDING)] )]
     return breeds
 
 def get_locations_for_typeahead(query, limit):
