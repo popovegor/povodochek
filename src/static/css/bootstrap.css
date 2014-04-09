@@ -6870,6 +6870,26 @@ form .textarea-counter {
 .sale-pet-show .seller-block dl dd.float {
   margin-left: 0;
 }
+.dog-adv-show .das-price-block,
+.sale-pet-show .das-price-block {
+  masrgin-bottom: 10px;
+}
+.dog-adv-show .das-price-block .das-price-number,
+.sale-pet-show .das-price-block .das-price-number {
+  padding: 20px 0;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 24px;
+}
+.dog-adv-show .das-price-block .das-price-haggle,
+.sale-pet-show .das-price-block .das-price-haggle,
+.dog-adv-show .das-price-block .das-price-delivery,
+.sale-pet-show .das-price-block .das-price-delivery,
+.dog-adv-show .das-price-block .das-price-contract,
+.sale-pet-show .das-price-block .das-price-contract,
+.dog-adv-show .das-price-block .das-price-hp,
+.sale-pet-show .das-price-block .das-price-hp {
+  padding-left: 15px;
+}
 .dog-adv-show .das-price,
 .sale-pet-show .das-price {
   /*font-family:@font-family-serif; */
@@ -6891,12 +6911,29 @@ form .textarea-counter {
   margin-top: 20px;
   white-space: nowrap;
 }
+.dog-adv-show .das-photos,
+.sale-pet-show .das-photos {
+  margin-top: 25px;
+  margin-bottom: 40px;
+}
+.dog-adv-show .das-photos-no,
+.sale-pet-show .das-photos-no {
+  height: 350px;
+  padding-top: 70px;
+  margin-top: 15px;
+  margin-bottom: 40px;
+  background-color: #f5f5f5;
+}
 .dog-adv-show .photos,
-.sale-pet-show .photos {
+.sale-pet-show .photos,
+.dog-adv-show .das-photos,
+.sale-pet-show .das-photos {
   margin-bottom: 20px;
 }
 .dog-adv-show .photos #carousel,
-.sale-pet-show .photos #carousel {
+.sale-pet-show .photos #carousel,
+.dog-adv-show .das-photos #carousel,
+.sale-pet-show .das-photos #carousel {
   /*border: 4px solid #fff;*/
   position: relative;
   margin: 0 0 10px;
@@ -6908,36 +6945,50 @@ form .textarea-counter {
   box-shadow: none;
 }
 .dog-adv-show .photos #slider,
-.sale-pet-show .photos #slider {
+.sale-pet-show .photos #slider,
+.dog-adv-show .das-photos #slider,
+.sale-pet-show .das-photos #slider {
   /*height: auto !important;*/
   border: none;
   box-shadow: none;
 }
 .dog-adv-show .photos #slider .flex-direction-nav a,
-.sale-pet-show .photos #slider .flex-direction-nav a {
+.sale-pet-show .photos #slider .flex-direction-nav a,
+.dog-adv-show .das-photos #slider .flex-direction-nav a,
+.sale-pet-show .das-photos #slider .flex-direction-nav a {
   width: 20% !important;
 }
 .dog-adv-show .photos #slider .flex-next,
-.sale-pet-show .photos #slider .flex-next {
+.sale-pet-show .photos #slider .flex-next,
+.dog-adv-show .das-photos #slider .flex-next,
+.sale-pet-show .das-photos #slider .flex-next {
   margin-right: 30%;
   background-position: 25% 95%;
 }
 .dog-adv-show .photos #slider .flex-prev,
-.sale-pet-show .photos #slider .flex-prev {
+.sale-pet-show .photos #slider .flex-prev,
+.dog-adv-show .das-photos #slider .flex-prev,
+.sale-pet-show .das-photos #slider .flex-prev {
   margin-left: 30%;
   background-position: 75% 95%;
 }
 .dog-adv-show .photos .flex-active-slide,
-.sale-pet-show .photos .flex-active-slide {
+.sale-pet-show .photos .flex-active-slide,
+.dog-adv-show .das-photos .flex-active-slide,
+.sale-pet-show .das-photos .flex-active-slide {
   background-color: #fff;
 }
 .dog-adv-show .photos .photo,
-.sale-pet-show .photos .photo {
+.sale-pet-show .photos .photo,
+.dog-adv-show .das-photos .photo,
+.sale-pet-show .das-photos .photo {
   overflow: hidden;
   /*cursor:  pointer;*/
 }
 .dog-adv-show .photos .photo img,
-.sale-pet-show .photos .photo img {
+.sale-pet-show .photos .photo img,
+.dog-adv-show .das-photos .photo img,
+.sale-pet-show .das-photos .photo img {
   display: block;
   width: auto;
   min-height: 300px;
@@ -6946,7 +6997,9 @@ form .textarea-counter {
   /*max-width: 100% !important;*/
 }
 .dog-adv-show .photos .photo-thumbnail,
-.sale-pet-show .photos .photo-thumbnail {
+.sale-pet-show .photos .photo-thumbnail,
+.dog-adv-show .das-photos .photo-thumbnail,
+.sale-pet-show .das-photos .photo-thumbnail {
   position: relative;
   display: block;
   height: 240px;
@@ -6955,7 +7008,9 @@ form .textarea-counter {
   background-size: cover;
 }
 .dog-adv-show .photos .photo-thumbnail .photo-fullscreen,
-.sale-pet-show .photos .photo-thumbnail .photo-fullscreen {
+.sale-pet-show .photos .photo-thumbnail .photo-fullscreen,
+.dog-adv-show .das-photos .photo-thumbnail .photo-fullscreen,
+.sale-pet-show .das-photos .photo-thumbnail .photo-fullscreen {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -6981,11 +7036,15 @@ form .textarea-counter {
   -khtml-opacity: .8;
 }
 .dog-adv-show .photos .photo-thumbnail:hover .photo-fullscreen,
-.sale-pet-show .photos .photo-thumbnail:hover .photo-fullscreen {
+.sale-pet-show .photos .photo-thumbnail:hover .photo-fullscreen,
+.dog-adv-show .das-photos .photo-thumbnail:hover .photo-fullscreen,
+.sale-pet-show .das-photos .photo-thumbnail:hover .photo-fullscreen {
   visibility: visible;
 }
 .dog-adv-show .photos #carousel li,
-.sale-pet-show .photos #carousel li {
+.sale-pet-show .photos #carousel li,
+.dog-adv-show .das-photos #carousel li,
+.sale-pet-show .das-photos #carousel li {
   /*margin-right: 5px;*/
 }
 .dog-adv-show .adv-title,

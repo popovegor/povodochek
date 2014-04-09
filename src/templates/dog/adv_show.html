@@ -24,18 +24,24 @@
   <div class="row">
     <div class="col-sm-7" style="" >
 
-          {{adv_number(adv)}}
+          
+
+          {{attraction_adv(adv)}}
 
           {{photos(adv)}}
 
+
+
           {{doc_info(adv)}}      
+
+          {{video(adv)}}
           
 
     </div>
 
-    <div class="right-side {{'col-sm-5'}}">
+    <div class="right-side col-sm-5">
 
-      <h2 style="margin-top:10px">{{adv.get("title")}}</h2>
+      <h2 style="margin-top:0px">{{adv.get("title")}}</h2>
       
       <div style="margin-bottom:40px">
         <p style="white-space:pre-line">{{adv.get('desc') | trim }}</p>
@@ -45,20 +51,17 @@
 
       {{seller_info(adv)}}
 
-      
-
-      
-      
-
     </div> <!-- right-side -->
 
   </div>
+
+   {{adv_number(adv)}}
 
 
 </div> <!-- sale-pet-container -->  
 
   <script type="text/javascript">
-  $(window).load(function(){
+  $(document).ready(function(){
     $('#carousel').flexslider({
       animation: "slide",
       controlNav: false,
@@ -102,9 +105,36 @@
   {% endblock %} 
 
 
+{%- macro video(adv) -%}
+  {% if adv.get('video_link') %}
+  <div style="margin-bottom:30px">
+  <div id="player"></div>
+  </div>
+
+  <script type="text/javascript">
+
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var player;
+      function onYouTubeIframeAPIReady() {
+       player = new YT.Player('player', {
+          height: '350',
+          width: '400',
+          videoId: povodochek.extract_youtube_videoid('{{adv.get("video_link")}}')
+        });
+      }
+   
+  </script>
+  {% endif %}
+{%- endmacro -%}
+
 {%- macro adv_number(adv) -%}
 
-<p style="margin-top:8px">
+<div class="bg-warning" style="margin-top:40px; padding:20px">
     {#<span style="padding-right:15px"><span class="text-muted small">Объявление № </span>
     {%set short_id = adv | short_adv_id %}
     <span class="badge" title="№ объявления {{short_id}}" style="margin-left:5px;">
@@ -112,66 +142,93 @@
     </span>
     </span>#}
 
+    <span style="margin-right:15px">Объявление</span>
+
+
     {% set add_date = adv.get("add_date") %}
     {% set update_date = adv.get("update_date") %}
 
-    
-
-     <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
+     <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
 
      {%if update_date != add_date %}
-      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
+      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
     {%endif%}     
 
-  <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Смотрели:</span>{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
+  <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">смотрели:</span>{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
 
-</p>
-<p>
-    {% from "attraction.html" import render_stars %}
+</div>
 
-    <span class="text-muted" style="padding-right:5px">Привлекательность</span>{{render_stars(adv.get("attraction"))}}
-</p>
 {%- endmacro -%}
 
 
 {%- macro top_adv(adv) -%}
-      <div class="row" style="">
-        <div class="col-sm-7">
+      
             
-            <h1>{{header}}</h1>
+          <h1>{{header}}     </h1>
 
-        </div>
-        <div class="col-sm-5" style="">
-         
-          {{price_info(adv)}}    
-         
-        </div>
-      </div>
+         {{price_info(adv)}}
+   
        
 {%- endmacro -%}
 
+
+
+{%- macro attraction_adv(adv) -%}
+
+  <p>
+    {% from "attraction.html" import render_stars %}
+
+    <span class="" style="padding-right:5px">Привлекательность обявления</span>{{render_stars(adv.get("attraction"))}}
+</p>
+
+{%- endmacro %}
+
 {%- macro price_info(adv) -%}
 
-   <p>
-      <span class="" style="margin-right:10px;" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><b style="padding-right:10px" class="text-muted small">Цена:</b><span style="white-space:nowrap; font-size:40px;">{{adv.get('price') | format_price() }}&nbsp;руб</span></span></span>  
-      <br/>
+   <div class="das-price-block">
 
-      {%if adv.get("price_haggle") %}
-      <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-info " style="margin-right:5px" >торг</abbr> 
-      {%endif%}
+      <table>
+        <tbody><tr>
 
-      {%if adv.get("price_hp") %}
-      <abbr style="margin-right:5px" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-info ">рассрочка</abbr>  
-      {%endif%}
+          <td class="das-price-number" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
+            
+             {#<span style="padding-right:10px" class="small text-muted">Цена:</span>#}{{adv.get('price') | format_price() }}&nbsp;руб
+            
+          </td>
 
-      {%if adv.get("contract") %}
-      <abbr style="margin-right:5px" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Заключается договор купли-продажи" class="label label-info ">договор</abbr>
-      {%endif%}
 
-      {%if adv.get("delivery") %}
-      <abbr style="" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна доставка в другой город" class="label label-info ">доставка</abbr>
-      {%endif%}
-    </p>
+          {%if adv.get("price_haggle") %}
+            <td class="das-price-haggle">
+              <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-info" >торг</abbr>   
+            </td>
+            
+            {%endif%}
+
+
+             {%if adv.get("price_hp") %}
+              <td class="das-price-hp">
+                  <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-info ">рассрочка</abbr>
+              </td>
+                
+              {%endif%}
+
+
+              {%if adv.get("contract") %}
+              <td class="das-price-contract">
+                <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Заключается договор купли-продажи" class="label label-info ">договор</abbr>
+                </td>
+              {%endif%}
+
+               {%if adv.get("delivery") %}
+                <td class="das-price-delivery">
+                <abbr style="" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна доставка в другой город" class="label label-info ">доставка</abbr>
+                </td>
+                {%endif%}
+
+        </tr></tbody>
+      </table>
+
+    </div>
 
 {%- endmacro-%}
 
@@ -180,7 +237,7 @@
       <!-- photo -->
         {%if adv.get('photos') or [] | length > 0%}    
 
-        <div class="photos" style="margin-top:25px; margin-bottom:40px">
+        <div class="das-photos">
 
 
           {%if adv.get("photos") | length > 1%}
@@ -222,7 +279,7 @@
          
         </div> <!-- photos -->
     {%else%}
-        <div class="photos" style="margin-top:15px; margin-bottom:40px; background-color:#f5f5f5; padding-top:70px; height:350px">
+        <div class="das-photos-no">
          <img src="/static/img/no_photo.png" class="img-responsive" style="margin:0 auto"/>
       </div>
     {%endif%}
@@ -258,7 +315,8 @@
           </div>
         {%else%}
           
-   <p class="" style="">Официальный документ, подтверждающий породистое происхождение собаки:</p>
+         
+   
          <div class="panel panel-default" style="">
           <div class="panel-heading">
                <h4 class="page-heade"><span style="padding-right:5px">{{doc | doc_dog_name}}</span>
@@ -301,11 +359,12 @@
             </dl>
 
 
-            {{ parent_info(adv, "Мать собаки", "mother") }} 
-            {{ parent_info(adv, "Отец собаки", "father") }} 
+            {{ parent_info(adv, "Мать", "mother") }} 
+            {{ parent_info(adv, "Отец", "father") }} 
 
-            </div>
-            </div>
+            </div> <!-- panel-body -->
+            </div> <!-- panel -->
+
         {%endif%}
     </div>
 {%- endmacro-%}
@@ -541,7 +600,7 @@
 
 {%- macro seller_info(adv) -%}
 
-<div class="seller-block" style="margin-bottom:40px">  
+<div class="seller-block" style="">  
     <h3>Контактная информация</h3>      
       <noindex>  
       <dl class="dl-horizontal">
@@ -575,7 +634,7 @@
 
     <noindex> 
       <div class="text-left" style="margin-top:20px">
-          <a class="btn btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+          <a class="" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;"><b>Написать письмо</b> <span class="glyphicon glyphicon-new-window"></span></a>
       </div>
     </noindex>
 

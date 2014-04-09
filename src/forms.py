@@ -113,7 +113,6 @@ def validate_login_used(form, field):
     if user:
         raise ValidationError(u"Логин '%s' занят" % field.data)
 
-
 class ChangePassword(Form):
     current_password = PasswordField(u"Текущий пароль", \
         [Required(message=MSG_REQUIRED)])
@@ -295,6 +294,11 @@ class Dog(Form):
         db_in = lambda f: f.photonames, 
         db_out = lambda v: ",".join(v or []))
 
+    video_link = PTextField(u"Ссылка на видео", \
+        attraction = True, \
+        description = Markup(u"Принимаются ссылки на видео только с <a target='_blank' href='http://youtube.com'>youtube.com</a>.")
+        )
+
     price = PIntegerField(u"Цена", \
         [Required(message=MSG_REQUIRED), \
          NumberRange(min=5000, max=300000, \
@@ -309,7 +313,7 @@ class Dog(Form):
 
     city = PTextField(u"Местоположение", \
         [Required(message=MSG_REQUIRED), validate_location], \
-        description = u"Населенный пункт, в котором можно посмотреть и купить собаку.", \
+        description = u"", \
         db_name = 'city_id', \
         db_in = lambda f: f.city_id, \
         db_out = lambda v : get_city_region(v))

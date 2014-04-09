@@ -1,3 +1,15 @@
+var povodochek = {};
+
+povodochek.extract_youtube_videoid = function(url) {
+  if(url) {
+    var re = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
+    var match = re.exec(url);
+    return match ? match[1] : undefined;
+  } 
+  return undefined;
+
+}
+
 jQuery.validator.addMethod("_login", function(value, element) {
   return this.optional(element) || /^[.a-zA-Z0-9_-]+$/.test(value);
 }, "Неправильный формат: только латинские буквы, цифры, дефисы, подчеркивания и точки.");
@@ -7,7 +19,14 @@ jQuery.validator.addMethod("_phone", function(value, element) {
 }, "Неправильный номер телефона.");
 
 
-var povodochek = {};
+jQuery.validator.addMethod("youtube", function(value, element) {
+  if (value) {
+    return povodochek.extract_youtube_videoid(value);
+  }
+  return true;
+}, "Введите корректную ссылку. Например, http://www.youtube.com/watch?v=keflmwIRq6w");
+
+
 
 povodochek.sort_alphabetical = function(x,y) {
   if(x,y) {
@@ -46,9 +65,12 @@ povodochek.select2_breed_format = function(object, container, query) {
     return $("<div>" + text + "<small class='muted pull-right'>" + breed_name + "</small></div>");
 };
 
-povodochek.validate = function (form, rules, submit){
+povodochek.validate = function (form, options, submit){
+  var rules = options.rules ? options.rules : options;
+  var messages= options.messages ? options.messages : undefined;
   form.validate({
      rules : rules,
+     messages : messages, 
      errorElement : "li", 
       errorPlacement: function(error, element) {
        error.addClass("form-field-error");

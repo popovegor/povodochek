@@ -113,7 +113,6 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/bootstrap3-typeahead.min.js', \
     'js/bootstrap.min.js', \
-    # 'js/typeahead.bundle.min.js', \
     'js/povodochek.js', \
     'js/jquery.simplyCountable.js', \
     filters='rjsmin', \
@@ -260,7 +259,7 @@ app.jinja_env.filters['country_name'] = get_country_name
 def load_user(id):
     # print("user id = %s" % str(id))
     user = db.get_user(id)
-    if user:
+    if user and not user.get('banned'):
         return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email"), city_id = user.get("city_id"), phone= user.get("phone"), skype = user.get("skype") )
     else:
         return Anonymous()
