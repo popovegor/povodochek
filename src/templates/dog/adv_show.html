@@ -19,7 +19,7 @@
 
  
 
-  {{top_adv(adv)}}
+ <h1 class="page-header">{{header}}</h1>
         
   <div class="row">
     <div class="col-sm-7" style="" >
@@ -30,8 +30,6 @@
 
           {{photos(adv)}}
 
-
-
           {{doc_info(adv)}}      
 
           {{video(adv)}}
@@ -41,11 +39,14 @@
 
     <div class="right-side col-sm-5">
 
+        {{price_info(adv)}}
+
       <h2 style="margin-top:0px">{{adv.get("title")}}</h2>
       
       <div style="margin-bottom:40px">
         <p style="white-space:pre-line">{{adv.get('desc') | trim }}</p>
       </div>
+
 
       {{dog_info(adv)}}  
 
@@ -62,42 +63,8 @@
 
   <script type="text/javascript">
   $(document).ready(function(){
-    $('#carousel').flexslider({
-      animation: "slide",
-      controlNav: false,
-      animationLoop: false,
-      slideshow: false,
-      itemMargin: 5,
-      itemWidth: 100,
-      asNavFor: '#slider'
-    });
-
-    $('#slider').flexslider({
-      animation: 'fade',
-      controlNav: false,
-      animationLoop: false,
-      slideshow: false,
-      sync: "#carousel",
-      smoothHeight: true,
-      animationSpeed : 400,
-      touch: false, 
-      after: function(slider){
-        $("#currentPhotoNumber").html(slider.currentSlide+1);
-      }
-    });
-
-    $("#slider .flex-prev").click(function(){
-      var slider = $('#slider').data('flexslider');
-      slider.flexslider("prev");
-    });
-
-    $("#slider .flex-next").click(function(){
-      var slider = $('#slider').data('flexslider');
-      slider.flexslider("next");
-    });
 
     $("[data-toggle='tooltip']").tooltip();
-
 
   });
   </script>
@@ -161,25 +128,13 @@
 {%- endmacro -%}
 
 
-{%- macro top_adv(adv) -%}
-      
-            
-          <h1>{{header}}     </h1>
-
-         {{price_info(adv)}}
-   
-       
-{%- endmacro -%}
-
-
-
 {%- macro attraction_adv(adv) -%}
 
-  <p>
+  <div class="das-attraction" style="margin-top:30px">
     {% from "attraction.html" import render_stars %}
 
-    <span class="" style="padding-right:5px">Привлекательность обявления</span>{{render_stars(adv.get("attraction"))}}
-</p>
+    <span class="" style="padding-right:5px">Привлекательность объявления</span>{{render_stars(adv.get("attraction"))}}
+</div>
 
 {%- endmacro %}
 
@@ -187,15 +142,15 @@
 
    <div class="das-price-block">
 
-      <table>
-        <tbody><tr>
 
-          <td class="das-price-number" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
+      <div class="das-price-number" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
             
              {#<span style="padding-right:10px" class="small text-muted">Цена:</span>#}{{adv.get('price') | format_price() }}&nbsp;руб
             
-          </td>
+          </div>
 
+      <table>
+        <tbody><tr>
 
           {%if adv.get("price_haggle") %}
             <td class="das-price-haggle">
@@ -261,22 +216,57 @@
 
            <p class="text-left small">(фото <span id="currentPhotoNumber">1</span>&nbsp;из&nbsp;{{adv.get('photos') | length}})</p>
           
+          <script type="text/javascript">
+
+          function img_onload() {
+
+            $('#carousel').flexslider({
+                animation: "slide",
+                controlNav: false,
+                animationLoop: false,
+                slideshow: false,
+                itemMargin: 5,
+                itemWidth: 100,
+                asNavFor: '#slider'
+              });
+
+              $('#slider').flexslider({
+                animation: 'fade',
+                controlNav: false,
+                animationLoop: false,
+                slideshow: false,
+                sync: "#carousel",
+                smoothHeight: true,
+                animationSpeed : 400,
+                touch: false, 
+                after: function(slider){
+                  $("#currentPhotoNumber").html(slider.currentSlide+1);
+                }
+              }).addClass("loading");
+
+              $("#slider .flex-prev").click(function(){
+                var slider = $('#slider').data('flexslider');
+                slider.flexslider("prev");
+              });
+
+              $("#slider .flex-next").click(function(){
+                var slider = $('#slider').data('flexslider');
+                slider.flexslider("next");
+              });
+            }
+
+          </script>
 
           <div id="slider" class="flexslider">
             <ul class="slides ">
               {%for photo in adv.get('photos') %}
               <li class="text-center photo">
-                 <img class="img-responsive {{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo, height = 430)}}" />
+                 <img class="img-responsive {{'main-photo' if loop.index == 1}}" src="{{url_for('photo', filename = photo, height = 430)}}" onload="{{'javascript:img_onload()' if loop.index == 1}}" />
               </li>
               {%endfor%}
             </ul>
           </div>
 
-           
-
-          
-
-         
         </div> <!-- photos -->
     {%else%}
         <div class="das-photos-no">
@@ -291,13 +281,13 @@
     <div class="doc-info" style="margin-bottom:30px">
    {% set doc = adv.get("doc_id") %}
         {% if not doc %}
-          <div class="bg-warning" style="padding: 10px 20px; border-radius:5px">
+          <div class="well" style="border-radius:5px">
           <table>
             <tr>
               <td style="">
-                <span style="font-size:3em" class=" glyphicon glyphicon-exclamation-sign text-danger"></span>
+                <span style="font-size:5em" class=" glyphicon glyphicon-exclamation-sign text-danger"></span>
             </td>
-            <td style="width:20px"></td>
+            <td style="width:30px"></td>
             <td>
                 <h3 class="text-danger">
                    Нет документов о происхождении собаки!

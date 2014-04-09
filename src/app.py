@@ -107,7 +107,7 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/moment.min.js', \
     'js/moment.min.ru.js', \
     'js/jquery.nouislider.min.js', \
-    'js/jquery.flexslider.min.js', \
+    'js/jquery.flexslider.js', \
     'js/jquery.touch-punch.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
