@@ -1,0 +1,146 @@
+<div class="pet-mosaic">
+
+	<div id="filters" class="" style="padding-bottom:0px">
+		
+
+		<table style="width:100%">
+			<tr>
+				<td class="">
+					<b class="" style="padding-left:0px">Свежие объявления о продаже собак или кошек</b>	
+				</td>
+				<td style="width:110px" class="text-right">
+					<div class="btn-group btn-group-xs text-right"><button id="filter_dogs" class="btn btn-default ajax-link active" href="#">Собаки</button>
+					<button id="filter_cats" class="btn btn-default ajax-link" href="#">Кошки</button>
+					
+					</div>	
+				</td>
+			</tr>
+		</table>
+				
+			
+		
+	</div>
+
+	<div id='advs' class='clearfix'><div class='ajax-loader'></div></div>    
+
+
+    <div class="show-more text-center" >
+    	<a class="btn btn-default btn-sm" style="display:none"  id="more" pet_id="0" skip="0">Показать все объявления &rarr;</a>
+    </div>
+
+    
+
+</div>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		var mosaic;
+
+		var reinit = function() {
+
+			mosaic = null;
+
+			mosaic = $("#advs").mosaicflow({
+			    itemSelector: '.mosaicflow__item',
+			    minItemWidth: 150,
+			    itemHeightCalculation : 'attribute'
+			});
+
+			mosaic.on('mosaicflow-layout', function(){
+				$(".adv[data-status='loading']").each(function(key, value) {
+					var adv = $(value);
+					var img = adv.find("img");
+					adv.fadeIn("slow");
+					adv.popover();
+					adv.attr("data-status", "complete");
+				});
+			});
+
+			mosaic.trigger("mosaicflow-layout");
+		}
+
+		reinit();
+
+		var get_mosaic_elm = function(adv) {
+			return $('<div class="mosaicflow__item"> <a href="' + adv['url'] + '" class="thumbnail_ adv" data-placement="top" data-html="true" data-trigger="hover" data-toggle="popover" data-title="' + adv['b'] + '" data-content="<small>' + adv['t'] +'<br/>Цена&nbsp;&mdash;&nbsp;' + adv['p'] +' руб</small>" style="display:none" data-status="loading"> <img class"img-responsive" src="' + adv['src'] + '" alt="" width="' + adv['s']['w'] + '" height="' + adv['s']['h'] + '"/> </a> </div>');
+		}
+
+		var more = $("#more"); 
+
+		
+
+
+		var filter_advs = function(button, url, pet_id){
+			more.hide();
+
+			$(".pet-mosaic .ajax-link").removeClass("active");
+			$(button).addClass("active");
+
+			$(".fade-white").remove();
+
+			$(".adv").each(function(key, value){
+				var elm = $(value);
+				mosaic.mosaicflow("remove", elm);
+				elm.remove();
+			});
+
+			$("#advs").remove();
+	  		$("#filters").after("<div id='advs' class='clearfix'><div class='ajax-loader'></div></div>")
+
+
+			$.getJSON(url
+				, function(data) {
+			  		var advs = data["advs"];
+			  		// var advs = data;
+
+			  		if (advs.length <= 0 ){
+			  			$("#advs").append("<p class='text-center no-advs'>Нет подходящих объявлений</p>")
+			  		} else {
+
+				  		$.each(advs, function(key, adv) {
+				  			var elm = get_mosaic_elm(adv);
+				  			$("#advs").append(elm);
+				  		});
+
+				  		reinit();
+
+				  		$("#advs").append('<ins class="fade-white"></ins>');
+				  		more.attr('skip', advs.length);
+				  		var more_url = pet_id == 1 ? '{{url_for("dog_search", sort = 3)}}' : '{{url_for("cat_search", sort = 3)}}'
+				  		more.attr("href", more_url);
+				  		more.show();
+			  		}
+
+			  		$(".ajax-loader").remove();
+	
+			}); /*getJSON*/
+
+			more.attr('pet_id', pet_id);
+
+			more.show();
+
+			return false;
+		}
+
+		{% set mosaic_items_limit = 20 %}
+
+
+		$("#filter_dogs").click(function(event){
+			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_items_limit, pet = 1)}}', 1);
+			event.stopPropagation();
+			return false;
+		});
+
+		$("#filter_cats").click(function(event){
+			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_items_limit, pet = 2)}}', 2);
+			event.stopPropagation();
+			return false;
+		});
+
+		$("#filter_dogs").trigger('click');
+
+	});
+
+</script>

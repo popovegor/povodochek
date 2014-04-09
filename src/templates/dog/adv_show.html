@@ -19,7 +19,7 @@
 
  
 
- <h1 class="page-header">{{header}}</h1>
+ <h1 class="">{{header}}</h1>
         
   <div class="row">
     <div class="col-sm-7" style="" >
@@ -133,7 +133,7 @@
   <div class="das-attraction" style="margin-top:30px">
     {% from "attraction.html" import render_stars %}
 
-    <span class="" style="padding-right:5px">Привлекательность объявления</span>{{render_stars(adv.get("attraction"))}}
+    {#<span class="" style="padding-right:5px">Привлекательность объявления</span>#}{{render_stars(adv.get("attraction"))}}
 </div>
 
 {%- endmacro %}
@@ -145,7 +145,7 @@
 
       <div class="das-price-number" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
             
-             {#<span style="padding-right:10px" class="small text-muted">Цена:</span>#}{{adv.get('price') | format_price() }}&nbsp;руб
+             {#<span style="padding-right:10px" class="small text-muted">Цена:</span>#}{{adv.get('price') | format_price() }}&nbsp;<b class="rur">руб</b>
             
           </div>
 
@@ -209,7 +209,7 @@
 
           {%else%}
 
-            {% set photo = adv.get('photos')[0]%}
+            {% set photo = adv.get('photos')[0] %}
             <img style="padding-bottom:10px" width="100" src="{{url_for('thumbnail', filename = photo)}}" />
 
           {%endif%}

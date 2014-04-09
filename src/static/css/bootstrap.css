@@ -6878,7 +6878,7 @@ form .textarea-counter {
 .sale-pet-show .das-price-block .das-price-number {
   padding: 20px 0 10px 0;
   font-family: "Arial Black", Gadget, sans-serif;
-  font-size: 30px;
+  font-size: 36px;
 }
 .dog-adv-show .das-price-block .das-price-haggle,
 .sale-pet-show .das-price-block .das-price-haggle,
@@ -6936,7 +6936,7 @@ form .textarea-counter {
 .sale-pet-show .photos #slider,
 .dog-adv-show .das-photos #slider,
 .sale-pet-show .das-photos #slider {
-  height: 400px;
+  min-height: 400px;
   /*height: 100% !important;*/
   background-image: url(../img/ajax-loader.gif);
   background-repeat: no-repeat;
@@ -6968,6 +6968,7 @@ form .textarea-counter {
 .sale-pet-show .photos #slider.loading,
 .dog-adv-show .das-photos #slider.loading,
 .sale-pet-show .das-photos #slider.loading {
+  min-height: 0;
   background: none;
 }
 .dog-adv-show .photos .flex-active-slide,
