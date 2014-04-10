@@ -6805,6 +6805,12 @@ form .textarea-counter {
   height: 230px;
   overflow: hidden;
 }
+.dog-adv-edit #video_link {
+  padding-left: 90px;
+  background-image: url('/static/img/yt_icon.png');
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
 .dog-adv-show,
 .sale-pet-show {
   /*margin-top:30px;*/
