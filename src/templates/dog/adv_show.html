@@ -136,7 +136,7 @@
   <div class="das-attraction" style="margin-top:30px">
     {% from "attraction.html" import render_stars %}
 
-    {#<span class="" style="padding-right:5px">Привлекательность объявления</span>#}{{render_stars(adv.get("attraction"))}}
+    <span class="" style="padding-right:5px">Привлекательность объявления</span>{{render_stars(adv.get("attraction"))}}
 </div>
 
 {%- endmacro %}
