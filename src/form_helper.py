@@ -115,6 +115,8 @@ class PTextAreaField(TextAreaField, PField):
         attraction = False, attraction_depends = None, \
         depends = None, db_name = None, \
         db_in = None, db_out = None, **kwargs):
+        filters = kwargs.get("filters") or []
+        kwargs["filters"] = [lambda x : (x or '').strip()] + filters
         TextAreaField.__init__(self, label = label, \
             validators = validators, **kwargs)
         PField.__init__(self, field = self, attraction = attraction, \

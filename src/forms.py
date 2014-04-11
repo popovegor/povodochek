@@ -25,7 +25,7 @@ from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed
 from dic.pets import pets, get_pet_name
 from dic.cities import (get_city, get_city_region)
 from dic.countries import (countries, get_countries_for_dog_adv)
-from dic.pet_docs import (dog_docs, doc_dog_pedigrees, doc_dog_pedigrees_rkf)
+from dic.pet_docs import (dog_docs, doc_dog_pedigrees, doc_dog_pedigrees_rkf, doc_puppy_cards)
 
 import config
 
@@ -219,13 +219,19 @@ class SaleSearch(Form):
     perpage = SelectField(u"Объявлений на стр.", default = 15, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
 
 class Contact(Form):
-    username = TextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
+    username = PTextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
 
-    city = TextField(u"Город", validators = [validate_location])    
+    city = PTextField(u"Город", validators = [validate_location], 
+        db_name = 'city_id', \
+        db_in = lambda f: f.city_id, \
+        db_out = lambda v : get_city_region(v))
     
-    phone = TextField(u"Телефонный номер")
+    phone = PTextField(u"Телефонный номер")
     
-    skype = TextField(u"Skype")
+    skype = PTextField(u"Skype")
+
+    site_link = PTextField(u"Веб-сайт")
+    kennel_name = PTextField(u"Название питомника")
     
 
 class Cat(Form):
@@ -332,6 +338,13 @@ class Dog(Form):
         coerce = int, \
         attraction = True, \
         db_name = 'doc_id')
+
+    puppy_card_kennel = PTextAreaField(Markup(u"<small>Наименование, адрес и телефон питомника, выдавший метрику</small>"), \
+        attraction = True, \
+        depends = {"id":"doc", "values": doc_puppy_cards.keys()})
+
+    champion_bloodlines = PBooleanField(Markup(u"<small>Чемпионские крови</small>"), 
+        depends = {"id":"doc"})
     
     father_name = PTextField(Markup(u"<small>Кличка</small>"), \
         attraction = True, \
@@ -344,11 +357,19 @@ class Dog(Form):
         depends = {"id":"doc"}, \
         db_name = 'father_country_id')
 
-    father_misc = PTextAreaField(Markup(u"<small>Прочее</small>"))
-
-    father_pedigree = PTextField(Markup(u"<small>№ родословной</small>"), \
+    father_pedigree_link = PTextField(Markup(u"<small>Ссылка на страницу с родословной</small>"), \
+        description = Markup(u"Например, <a target='_blank' href='http://www.shiba-pedigree.ru/details.php?id=65529'>http://www.shiba-pedigree.ru/details.php?id=65529</a>"), 
         attraction = True, \
-        depends = {"id":"doc"})
+        depends = {"id": "doc"})
+
+    father_misc = PTextAreaField(Markup(u"<small>Награды, титулы, оценки, тесты и прочее</small>"), 
+        attraction = True,
+        depends = {"id":"doc"}
+        )
+
+    father_color = PTextField(Markup(u"<small>Окрас</small>"), \
+        attraction = True, \
+        depends = {"id": "doc"})
 
     mother_name = PTextField(Markup(u"<small>Кличка</small>"), \
         attraction = True,\
@@ -361,11 +382,18 @@ class Dog(Form):
         depends = {"id":"doc"}, \
         db_name = 'mother_country_id')
 
-    mother_misc = PTextAreaField(Markup(u"<small>Прочее</small>"))
-
-    mother_pedigree = PTextField(Markup(u"<small>№ родословной</small>"), \
-        attraction = True, \
+    mother_misc = PTextAreaField(Markup(u"<small>Награды, титулы, оценки, тесты и прочее</small>"), 
+        attraction = True,
         depends = {"id":"doc"})
+
+    mother_pedigree_link = PTextField(Markup(u"<small>Ссылка на страницу с родословной</small>"), \
+        description = Markup(u"Например, <a target='_blank' href='http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2159170'>http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2159170</a>"), 
+        attraction = True, \
+        depends = {"id": "doc"})
+
+    mother_color = PTextField(Markup(u"<small>Окрас</small>"), \
+        attraction = True, \
+        depends = {"id": "doc"})
 
     birthday = PTextField(Markup(u"Дата рождения"), \
         description = u"Дата в формате день/месяц/год, например, 24/02/2014", \
@@ -374,31 +402,30 @@ class Dog(Form):
         db_out = lambda v : date2str(v, "%d%m%Y") )
     
 
-    tatoo = PTextField(Markup(u"<small>№ клейма</small>"), \
-        attraction = True, \
-        depends = {"id":"doc"})
-
-    pedigree = PTextField(Markup(u"<small>№ родословной</small>"), \
-        attraction = True, \
-        attraction_depends = {"id":"doc", "values": doc_dog_pedigrees.keys()}, \
-        depends = {"id":"doc", "values": doc_dog_pedigrees.keys()})
-    
     vaccination = PBooleanField(u"Вакцинация (прививки) по возрасту", \
         attraction = True)
 
     vetpassport = PBooleanField(u"Ветеринарный паспорт", \
         attraction = True)
 
-    microchip = PBooleanField(u"Микрочип")
+    microchip = PBooleanField(u"Микрочип", 
+        attraction = True)
 
     breeding = PBooleanField(Markup(u"<small>Допуск в разведение</small>"), \
         depends = {"id":"doc", "values": doc_dog_pedigrees_rkf.keys()})
+
 
     show = PBooleanField(Markup(u"<small>Подходит для выставок</small>"))
 
     phone = PTextField(u"Телефонный номер")
 
     skype = PTextField(u"Skype")
+
+    kennel_name = PTextField(u"Название питомника", 
+        attraction = True)
+
+    site_link = PTextField(u"Веб-сайт", \
+        attraction = True)
 
     username = PTextField(u"Контактное лицо", \
         validators = [Required(message=MSG_REQUIRED)])

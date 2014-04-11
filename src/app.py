@@ -45,8 +45,8 @@ from dic.breeds import (dogs, get_breed_name, cats, \
     get_breed_by_name, breeds, get_breed_dog_name, \
     get_breed_cat_name)
 from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities)
-from dic.pet_docs import (doc_dog_pedigrees, doc_puppy_cards, \
-    dog_docs, get_doc_dog_name, doc_dog_pedigrees_rkf)
+import dic.pet_docs
+
 
 from dic.countries import (get_country_name)
 
@@ -63,16 +63,18 @@ from form_helper import (get_fields, calc_attraction)
 photos = UploadSet('photos', IMAGES)
 
 class User(UserMixin):
-    def __init__(self, login, id, active = True, username = None, email = None, new_email = None, city_id = None, phone = None, skype = None):
-        self.name = login
-        self.username = username
-        self.id = id
-        self.active = active
-        self.email = email
-        self.new_email = new_email
-        self.city_id = city_id
-        self.phone = phone
-        self.skype = skype
+    def __init__(self, user):
+        self.name = user.get('login')
+        self.username = user.get('username')
+        self.id = user.get('_id')
+        self.active = user.get('activated') or True
+        self.email = user.get('email')
+        self.new_email = user.get('new_email')
+        self.city_id = user.get('city_id')
+        self.phone = user.get('phone')
+        self.skype = user.get('skype')
+        self.kennel_name = user.get('kennel_name')
+        self.site_link = user.get('site_link')
 
     def is_signed(self):
         return True
@@ -222,11 +224,7 @@ def jinja_utcnow():
 
 app.jinja_env.globals['utcnow'] = jinja_utcnow
 
-app.jinja_env.globals['dog_docs'] = dog_docs
-app.jinja_env.filters['doc_dog_name'] = get_doc_dog_name
-app.jinja_env.globals['doc_puppy_cards'] = doc_puppy_cards
-app.jinja_env.globals['doc_dog_pedigrees'] = doc_dog_pedigrees
-app.jinja_env.globals['doc_dog_pedigrees_rkf'] = doc_dog_pedigrees_rkf
+app.jinja_env.globals['pet_docs'] = dic.pet_docs
 
 
 def debug_write(msg):
@@ -260,7 +258,7 @@ def load_user(id):
     # print("user id = %s" % str(id))
     user = db.get_user(id)
     if user and not user.get('banned'):
-        return User(user.get('login'), user.get("_id"), active = user.get("activated"), username = user.get("username"), email = user.get("email"), new_email = user.get("new_email"), city_id = user.get("city_id"), phone= user.get("phone"), skype = user.get("skype") )
+        return User(user)
     else:
         return Anonymous()
 
@@ -789,16 +787,12 @@ def account_contact():
     form = Contact(request.form)
     if request.method == "POST":
         if form.validate():
-            db.save_user_contact(current_user.id, \
-                form.username.data, form.city.city_id, \
-                form.phone.data, form.skype.data)
+            db.save_user_contact(current_user.id, form)
             flash(u"Контактная информация обновлена.", "success")
             return redirect(url_for("account_contact"))
     else:
-        form.city.data = get_city_region(user.get("city_id"))
-        form.username.data = user.get("username")
-        form.phone.data = user.get("phone") 
-        form.skype.data = user.get("skype")
+        for f in form:
+            f.set_db_val(user.get(f.get_db_name()))
 
     tmpl = render_template("account/contact.html", title=u"Контактная информация", form = form)
     return tmpl
@@ -829,6 +823,14 @@ def account_dog_advs():
     return tmpl
 
 
+def autofill_user_to_adv(form):
+    form.username.data = form.username.data or (current_user.username if current_user.username != u'Пользователь' else u'')
+    form.phone.data = form.phone.data or current_user.phone
+    form.skype.data = form.skype.data or current_user.skype
+    form.site_link.data = form.site_link.data or current_user.site_link
+    form.kennel_name.data = form.kennel_name.data or current_user.kennel_name
+
+
 @app.route("/account/dog/<adv_id>/", methods = ['GET', 'POST'])
 @login_required
 def account_dog_adv_edit(adv_id):
@@ -847,9 +849,8 @@ def account_dog_adv_edit(adv_id):
         for f in form:
             f.set_db_val(dog.get(f.get_db_name()))
       
-        form.username.data = dog.get("username") or (current_user.username if current_user.username != u'Пользователь' else u'')
-        form.phone.data = dog.get("phone") or current_user.phone
-        form.skype.data = dog.get("skype") or current_user.skype
+        autofill_user_to_adv(form)
+        
     return render_template("/account/dog/adv_edit.html", \
         form = form, \
         title = u"Редактировать объявление о продаже собаки", \
@@ -867,10 +868,7 @@ def account_dog_adv_new():
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
-        form.username.data = current_user.username if current_user.username != u'Пользователь' else u''
-        form.city.data = get_city_region(current_user.city_id)
-        form.phone.data = current_user.phone
-        form.skype.data = current_user.skype
+        autofill_user_to_adv(form)
 
     return render_template("/account/dog/adv_edit.html", \
         form = form, \

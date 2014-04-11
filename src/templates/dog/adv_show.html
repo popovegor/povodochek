@@ -312,7 +312,7 @@
    
          <div class="panel panel-default" style="">
           <div class="panel-heading">
-               <h4 class="page-heade"><span style="padding-right:5px">{{doc | doc_dog_name}}</span>
+               <h4 class="page-heade"><span style="padding-right:5px">{{pet_docs.get_doc_dog_name(doc)}}</span>
                {#<span style="font-size:1em; color:#777" class="glyphicon glyphicon-file pull-right"></span>#}
                </h4>
                
@@ -323,37 +323,25 @@
 
             <dl class="dl-horizontal" style="margin-top:10px">
 
-              {% if doc in doc_dog_pedigrees %}
-              {%set pedigree = adv.get("pedigree") %}
-              <dt>№ родословной</dt>
-              <dd>
-                {% if pedigree %}
-                  {{pedigree}}
-                {%else%}
-                  <span class='text-muted' >не указан</span>
-                {%endif%}
-              </dd>
-              {% endif %}
+              {% if adv.get("doc_id") in pet_docs.doc_puppy_cards%}
 
-              {%set tatoo = adv.get("tatoo") %}
-              <dt>№ клейма</dt>
+              {%set puppy_card_kennel = adv.get("puppy_card_kennel") %}
+              <dt>Питомник,<br/>выдавший метрику</dt>
               <dd>
-                {% if tatoo %}
-                  {{tatoo}}
+                {% if puppy_card_kennel %}
+                  <span class="white-space:pre-line">{{puppy_card_kennel}}</span>
                 {%else%}
                   <span class='text-muted' >не указан</span>
                 {%endif%}
               </dd>
 
-              
-
-              
+              {%endif%}
 
             </dl>
 
-
+            {{ parent_info(adv, "Отец", "father") }}
             {{ parent_info(adv, "Мать", "mother") }} 
-            {{ parent_info(adv, "Отец", "father") }} 
+             
 
             </div> <!-- panel-body -->
             </div> <!-- panel -->
@@ -371,20 +359,23 @@
 
   <div class="dog-father dog-mother" style="margin-bottom:30px;">
 
-        <hr/> 
-
-         <h4 class="">{{title}}</h4>
+         <h4 class="" style="display: inline-block;
+padding: 10px 15px 10px 15px;
+margin-left: -15px;
+width: 160px;
+background-color:#f5f5f5;
+}">{{title}}</h4>
 
 
          <dl class="dl-horizontal" class="dog-parent">
 
-           {%set pedigree = adv.get(prefix + "_pedigree") %}
-          <dt>№ родословной</dt>
+           {%set pedigree_link = adv.get(prefix + "_pedigree_link") %}
+          <dt>Ссылка на родословную</dt>
           <dd>
-            {% if pedigree %}
-                  {{ pedigree }}
+            {% if pedigree_link %}
+                  <a rel="nofollow" target="_blank" href="{{pedigree_link}}">{{ pedigree_link | truncate(25, killwords = True) }} <span style="padding-left:5px" class="glyphicon glyphicon-new-window small"></span></a> 
             {% else %}
-              <span class='text-muted' >не указан</span>
+              <span class='text-muted' >не указана</span>
             {%endif%}
           </dd>
 
@@ -405,6 +396,16 @@
                   {{ country | country_name }}
             {% else %}
               <span class='text-muted' >не указана</span>
+            {%endif%}
+          </dd>
+
+          {%set color = adv.get(prefix + "_color") %}
+          <dt>Окрас</dt>
+          <dd>
+            {% if color %}
+                  {{ color }}
+            {% else %}
+              <span class='text-muted' >не указан</span>
             {%endif%}
           </dd>
           
@@ -503,8 +504,6 @@
                 {{ color  or "<span class='text-muted' >не указан</span>" | safe  }}
               </dd>
 
-
-
               <dt>Допуск в разведение</dt>
               <dd>
                 {% if adv.get("breeding") %}
@@ -517,6 +516,15 @@
               <dt>Подходит для выставок</dt>
               <dd>
                 {% if adv.get("show") %}
+                да
+                {%else%}
+                <span class='text-muted' >нет</span>
+                {%endif%}
+              </dd>
+
+              <dt>Чемпионские крови</dt>
+              <dd>
+                {% if adv.get("champion_bloodlines") %}
                 да
                 {%else%}
                 <span class='text-muted' >нет</span>
@@ -593,10 +601,12 @@
 
 {%- macro seller_info(adv) -%}
 
-<div class="seller-block" style="">  
+<div class="seller-block bg-info" style="padding:10px 20px 20px">  
     <h3>Контактная информация</h3>      
-      <noindex>  
+      
       <dl class="dl-horizontal">
+
+
           {%set username = adv.get("username") or (seller.get("username") if seller else "") %}
           {% if username %}
          <dt>Контактное лицо</dt>
@@ -604,6 +614,16 @@
             {{username | title}}
           </dd>
           {%endif%}
+
+          {% set kennel_name = adv.get("kennel_name") %}
+            {% if kennel_name %}
+           <dt>Название питомника</dt>
+          <dd>
+            {{kennel_name}}
+          </dd>
+          {%endif%}
+
+        
 
             {% set phone = adv.get("phone") or (seller.get("phone") if seller else "") %}
             {% if phone %}
@@ -621,15 +641,16 @@
             </dd>
             {%endif%}
       </dl>
-      </noindex>
-   
     
-
-    <noindex> 
       <div class="text-left" style="margin-top:20px">
-          <a class="" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;"><b>Написать письмо</b> <span class="glyphicon glyphicon-new-window"></span></a>
+          <a rel="nofollow" style="" class="btn btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+
+          {% set site_link = adv.get("site_link") %}
+            {% if site_link %}
+            <a rel="nofollow" class="btn-link btn btn-lg" target="_blank" href="{{site_link}}">Веб-сайт <span style="padding-left:5px" class="glyphicon glyphicon-new-window small"></span></a>
+          {%endif%}
       </div>
-    </noindex>
+    
 
  </div>  <!-- /seller-block -->
 

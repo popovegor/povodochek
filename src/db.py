@@ -89,13 +89,29 @@ def reset_user_password(user, pwd_hash, asign):
         'asign': asign}})
 
 
-def save_user_contact(user_id, username, city_id, phone, skype):
-	return users.update({"_id": ObjectId(user_id)}, {"$set":
-	    {"username": username, \
-	    "city_id": city_id, \
-	    "phone": phone, \
-	    'skype' : skype, \
-	    }})
+def save_user_contact(user_id, form):
+
+    now = datetime.utcnow()
+    
+    user_set = {
+        'update_date' : now 
+        }
+    user_unset = {}
+
+    for field in form:
+        db_val = field.get_db_val(form)
+        db_name = field.get_db_name()
+        if db_val:
+            user_set[db_name] = db_val
+        else: 
+            user_unset[db_name] = ""
+
+    user = users.update(\
+        {'_id': ObjectId(user_id)}, \
+        {'$set': user_set, \
+        '$unset': user_unset}, upsert = True)
+
+    return user
 
 def get_dog_adv_for_user(adv_id, user_id):
 	return dog_advs.find_one(

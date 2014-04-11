@@ -16,28 +16,25 @@
 
         <form action="{{request.url}}" method="POST" id="contact" role="form">
 
-            {{ form_field(form.username, placeholder="Введите ваше имя", size = "col-sm-9") }}         
+            {{ form_field(form.username, placeholder="Введите ваше имя", style="width:250px") }}         
 
-             <div class="phone">
-
-              {{ form_field(form.phone, placeholder = "Введите тел. номер", size = "col-sm-6") }}
+           
+              {{ form_field(form.phone, placeholder = "Введите тел.", style="width:150px") }}
               
              
 
-               <div class="skype">
+      
           
-                   {{ form_field(form.skype, placeholder="Введите skype-имя", size = "col-sm-6") }}
+                   {{ form_field(form.skype, placeholder="Введите skype-имя", style="width:180px") }}
 
              
 
-               </div>
-
-                <div class="city">
-
-                   {{ form_field(form.city, placeholder="Введите название населенного пункта", size = "col-sm-12", autocomplete = "off") }}
+                   {{ form_field(form.city, placeholder="Введите название населенного пункта", style="width:350px", autocomplete = "off") }}
 
 
-               </div>
+                   {{ form_field(form.kennel_name, placeholder="Введите название питомника", style="width:350px", autocomplete = "off") }}
+
+                    {{ form_field(form.site_link, placeholder="http://", style="width:350px", autocomplete = "off") }}
 
               <br/>
 
@@ -66,7 +63,8 @@
       
       povodochek.validate($("form"),  {
          username : {required: true},
-         phone : {_phone: true}
+         phone : {_phone: true}, 
+         {{form.site_link.id}} : {url:true}
        });
     });
 

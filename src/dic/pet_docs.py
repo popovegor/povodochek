@@ -10,20 +10,29 @@ doc_dog_pedigrees_skor = {
 	3 : u"Cвидетельство о происхождении СКОР (IKU)"
 }
 
+doc_dog_pedigrees_mak = {
+	6 : u"Свидетельство о происхождении МАК «Добрый МИР» (UCI)"
+}
+
 doc_dog_pedigrees = dict(
 	[ (id, name) for (id, name) in doc_dog_pedigrees_rkf.items()]
 	+
 	[ (id, name) for (id, name) in doc_dog_pedigrees_skor.items()]
+	+ 
+	[ (id, name) for (id, name) in doc_dog_pedigrees_mak.items()]
 )
 
 doc_puppy_cards = {
-	2 : u"Метрика щенка РКФ (FCI)", 
-    4 : u"Метрика щенка СКОР (IKU)" 
+	2 : u"Метрика щенка РКФ (FCI)",
+    4 : u"Метрика щенка СКОР (IKU)",
+    7 : u"Метрика щенка МАК «Добрый МИР» (UCI)"
 }
 
 dog_docs = dict(
 	 [ (id, name) for (id, name) in doc_puppy_cards.items()]
 	 + 
+	 [ (id, name) for (id, name) in doc_dog_pedigrees.items()]
+	 +
 	 [ (id, name) for (id, name) in doc_dog_pedigrees.items()]
 	)
 
