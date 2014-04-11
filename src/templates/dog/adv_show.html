@@ -74,7 +74,7 @@
 
 {%- macro video(adv) -%}
   {% if adv.get('video_link') %}
-  <div style="margin-bottom:30px">
+  <div style="margin-bottom:30px" id="video">
   <div id="player"></div>
   </div>
 
@@ -531,7 +531,7 @@ background-color:#f5f5f5;
                 {%endif%}
               </dd>
           
-          {%set city = adv.get("city_id") | city_region %}
+          {#%set city = adv.get("city_id") | city_region %}
           <dt>Местоположение</dt>
           <dd>
             {% if city %}
@@ -585,6 +585,7 @@ background-color:#f5f5f5;
             <span class='text-muted' >нет</span>
             {%endif%}
           </dd>
+          #}
 
 
           
@@ -617,7 +618,7 @@ background-color:#f5f5f5;
 
           {% set kennel_name = adv.get("kennel_name") %}
             {% if kennel_name %}
-           <dt>Название питомника</dt>
+           <dt>Питомник</dt>
           <dd>
             {{kennel_name}}
           </dd>
@@ -627,7 +628,7 @@ background-color:#f5f5f5;
 
             {% set phone = adv.get("phone") or (seller.get("phone") if seller else "") %}
             {% if phone %}
-           <dt>Телефонный номер</dt>
+           <dt>Телефон</dt>
           <dd>
             {{phone}}
           </dd>
@@ -647,7 +648,7 @@ background-color:#f5f5f5;
 
           {% set site_link = adv.get("site_link") %}
             {% if site_link %}
-            <a rel="nofollow" class="btn-link btn btn-lg" target="_blank" href="{{site_link}}">Веб-сайт <span style="padding-left:5px" class="glyphicon glyphicon-new-window small"></span></a>
+            <a rel="nofollow" class="btn-link btn btn-md" target="_blank" href="{{site_link}}">Веб-сайт <span style="padding-left:5px" class="glyphicon glyphicon-new-window small"></span></a>
           {%endif%}
       </div>
     

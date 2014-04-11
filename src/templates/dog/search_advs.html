@@ -13,6 +13,13 @@
 
     <div style="margin-bottom:5px; margin-top:-5px">
       {{render_stars(adv.get("attraction"))}}
+
+      {%if adv.get("video_link")%}
+
+      {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
+      <span class="glyphicon glyphicon-film text-muted" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео. <br/> <a class='small' target='_blank' href='{{adv_video_url}}'>Смотреть видеоролик</a>"></span>
+
+      {%endif%}
     </div>
 
   <div class="row clearfix" >
@@ -119,7 +126,7 @@
             {% set price_hp = adv.get("price_hp") %}
           {% if price_hp %}
            <li>
-              рассрочка
+              <span class="label label-info">рассрочка</span>
            </li>
            {%endif%}    
 
@@ -127,21 +134,21 @@
           {% if price_haggle %}
             
            <li>
-            торг
+            <span class="label label-info">торг</span>
            </li>
            {%endif%}
 
            {% set delivery = adv.get("delivery") %}
           {% if delivery %}
            <li>
-              доставка
+              <span class="label label-info">доставка</span>
            </li>
            {%endif%}
            
            {% set contract = adv.get("contract") %}
           {% if contract %}
            <li>
-              договор
+              <span class="label label-info">договор</span>
            </li>
            {%endif%}
 

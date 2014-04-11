@@ -339,7 +339,7 @@ class Dog(Form):
         attraction = True, \
         db_name = 'doc_id')
 
-    puppy_card_kennel = PTextAreaField(Markup(u"<small>Наименование, адрес и телефон питомника, выдавший метрику</small>"), \
+    puppy_card_kennel = PTextAreaField(Markup(u"<small>Наименование, адрес и телефон питомника, выдавшего метрику</small>"), \
         attraction = True, \
         depends = {"id":"doc", "values": doc_puppy_cards.keys()})
 
