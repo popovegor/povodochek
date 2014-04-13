@@ -21,7 +21,19 @@
                   <td>
                       <label for="{{form.breed.name}}" class=" control-label" style="font-weight:normal">Порода</label>
 
-                      <input name="{{form.breed.name}}" class="form-control" placeholder="Укажите название породы", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
+                      
+
+                      <div class="input-group">
+                          <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
+
+                          <div class="input-group-btn">
+
+                             <button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>
+                          </div>
+                      </div>
+                      {%from "breed_picker.html" import dog_breed_picker %}
+
+                       {{dog_breed_picker(form.breed.id, "breed_picker")}}
                   </td>
                   </tr></table>
         </div>
@@ -60,17 +72,17 @@
               <td style="width:45px;">
                 Цена
               </td>
-              <td style="width:110px">
+              <td style="width:130px">
                 <div class="input-group">
                 <input class="form-control" name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
-                <span class="input-group-addon rur">руб</span>
+                <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble"></i></span>
               </div>
               </td>
               <td style="width:25px;" class="text-center small">&ndash;</td>
-              <td style="width:110px; ">
+              <td style="width:130px; ">
                <div class="input-group">
                 <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
-                <span class="input-group-addon rur">руб</span>
+                <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble"></i></span>
               </div>  
               </td>
               {#<td style="width:35px" class="text-center">руб</td>#}

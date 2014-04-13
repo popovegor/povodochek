@@ -115,6 +115,8 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/bootstrap3-typeahead.min.js', \
     'js/bootstrap.min.js', \
+    'js/list.min.js', \
+    'js/list.fuzzysearch.js', \
     'js/povodochek.js', \
     'js/jquery.simplyCountable.js', \
     filters='rjsmin', \
@@ -125,7 +127,7 @@ css = Bundle(
     'css/bootstrap.min.css', \
     'css/typeahead.js-bootstrap.css', \
     'css/nouislider.fox.css', \
-    'css/rur-arial.css', \
+    'css/font-awesome.min.css', \
     'css/flexslider.css', \
     'http://fonts.googleapis.com/css?family=Russo+One&subset=cyrillic', \
     filters = 'cssmin', \
@@ -138,7 +140,7 @@ login_manager = LoginManager()
 
 login_manager.anonymous_user = Anonymous
 login_manager.login_view = "/signin/"
-login_manager.login_message = u"Пожалуйста, войдите, чтобы уидеть содержимое страницы."
+login_manager.login_message = u"Пожалуйста, войдите, чтобы увидеть содержимое страницы."
 login_manager.refresh_view = "reauth"
 
 login_manager.setup_app(app)
@@ -237,7 +239,7 @@ def jinja_breeds():
 app.jinja_env.globals['breeds'] = jinja_breeds()
 
 def jinja_dogs():
-    return [ dog for dog in dogs.values() ]
+    return [ dog for dog in sorted(dogs.values()) ]
 
 app.jinja_env.globals['dogs'] = jinja_dogs()
 
@@ -283,7 +285,7 @@ def signin():
         user = db.get_user_by_login(login)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
-                if login_user(User(login, user["_id"]), remember=remember):
+                if login_user(User({'login':login, '_id' : user["_id"]}), remember=remember):
                     return redirect(request.args.get("next") \
                         or url_for("account_contact"))
                 else:
@@ -353,6 +355,10 @@ def ajax_typeahead_cat():
         breeds = cats.values()[:limit]
     return jsonify(items = breeds ) 
 
+
+@app.route("/ajax/breed/picker/", methods = ["GET"])
+def ajax_breed_picker():
+    return render_template('breed_picker.html', input_id = request.args.get("input_id"), trigger_id = request.args.get("trigger_id"))
 
 @app.route("/test/location/", methods = ["GET"])
 def test_location():
@@ -467,7 +473,7 @@ def asignin(asign):
     title=u"Активация нового пароля"
     if user:
         db.asign_user(user)
-        if login_user(User(user.get("login"), user.get("_id"))):
+        if login_user(User(user)):
             return render_template("asignin_success.html", title = title)
     return render_template("asignin_failed.html", title=title)
 
@@ -531,7 +537,7 @@ def signup_basic():
             hash_password(password), username, confirm)
         send_signup(username, login, email, password, confirm)
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
-        if login_user(User(login, user_id), remember = True):
+        if login_user(User({'login':login, '_id' : user_id}), remember = True):
             return redirect(request.args.get('next') or url_for('account_contact'))
         else:
             return redirect(url_for('signin'))

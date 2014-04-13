@@ -71,12 +71,16 @@
 {%- macro main_info(form, horizontal) -%}
 	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
-	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Укажите название породы", help = "Выберите породу из выпадающего списка, вводя любую часть названия,  например, шпиц.", autocomplete="off") }}   
+	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Введите или выберите название породы", autocomplete="off", btn_right = '<button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>' | safe) }}   
+
+	 {%from "breed_picker.html" import dog_breed_picker %}
+
+     {{dog_breed_picker(form.breed.id, "breed_picker")}}
 	
 
-    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", help="Выберите из выпадающего списка населенный пункт, в котором продается собака, введя первые буквы названия", autocomplete="off") }}
+    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", help="Выберите из выпадающего списка населенный пункт, в котором продается собака, введя первые буквы названия.", autocomplete="off") }}
 
-    {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="", size="col-sm-10", help = "Напишите наиболее привлекательный заголовок.", help_placement="top")}}
+    {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="Напишите наиболее привлекательный заголовок", size="col-sm-10")}}
 
 	{{ form_field(form.price, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="35000", addon_right = "руб", size="col-lg-3 col-md-3 col-sm-4") }}   		
     	
@@ -114,7 +118,7 @@
 
  	</div>
 
- 	{{ form_field(form.video_link, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, size="col-md-8", help="", help_placement="top", placeholder="http://youtube.com/") }}
+ 	{{ form_field(form.video_link, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, size="col-md-8", addon_left='<i class="fa fa-youtube fa-lg"></i>' | safe, help_placement="top", placeholder="http://youtube.com/") }}
 
 
 
@@ -142,7 +146,7 @@
 		
 	{{doc(form)}}
 
-  {{ form_field(form.desc, rows="8", help = "Опишите вашу собаку с выгодной стороны. Характер, психика, поведение, привычки, генетическая предрасположенность, титулы, регалии, оценки, тесты и прочее", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}          
+  {{ form_field(form.desc, rows="8", placeholder="Опишите вашу собаку с выгодной стороны. Характер, психика, поведение, привычки, генетическая предрасположенность, титулы, регалии, оценки, тесты и прочее", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}          
 
 {%- endmacro -%}
 

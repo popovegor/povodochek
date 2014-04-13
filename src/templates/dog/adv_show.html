@@ -148,7 +148,7 @@
 
       <div class="das-price-number" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}">
             
-             {#<span style="padding-right:10px" class="small text-muted">Цена:</span>#}{{adv.get('price') | format_price() }}&nbsp;<span class="rur">руб</span>
+             {#<span style="padding-right:10px" class="small text-muted">Цена:</span>#}{{adv.get('price') | format_price() }}&nbsp;<i class="fa fa-ruble"></i>
             
       </div>
 

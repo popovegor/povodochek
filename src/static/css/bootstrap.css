@@ -5217,7 +5217,7 @@ button.close {
     width: 300px;
   }
   .modal-lg {
-    width: 900px;
+    width: 800px;
   }
 }
 .tooltip {
@@ -6664,7 +6664,7 @@ form .textarea-counter {
 .pet-sale .adv .adv-price .price,
 .account-pet-sale .adv .adv-price .price,
 .dog-search .adv .adv-price .price {
-  font-size: 24px;
+  font-size: 26px;
   white-space: nowrap;
 }
 .pet-sale .adv .adv-dates,
@@ -6805,11 +6805,13 @@ form .textarea-counter {
   height: 230px;
   overflow: hidden;
 }
-.dog-adv-edit #video_link {
-  padding-left: 90px;
-  background-image: url('/static/img/yt_icon.png');
-  background-repeat: no-repeat;
-  background-position: 0 0;
+.dog-adv-edit {
+  /*#video_link {
+        background-image: url('/static/img/yt_icon.png');
+        background-repeat: no-repeat;
+        background-position: 0 0;
+        padding-left: 90px;
+    }*/
 }
 .dog-adv-show,
 .sale-pet-show {

@@ -1,0 +1,91 @@
+{%- macro dog_breed_picker(input_id, trigger_id) -%}
+
+<div class="modal fade text-left dog-breed-picker"   id="myModal_{{trigger_id}}" role="dialog" aria-labelledby="myModalLabel_{{trigger_id}}">
+  <div class="modal-dialog">
+    
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		$("#{{trigger_id}}").click(function(){
+			$("#myModal_{{trigger_id}}")
+			.on('show.bs.modal', function (e) {
+				// $(".dbp-search").attr("autofocus","autofocus");
+			  setTimeout(function() {$(".dbp-search").focus();}, 500);
+			})
+			.modal({
+				remote: '{{url_for("ajax_breed_picker", input_id = input_id, trigger_id = trigger_id) | safe}}',
+				show :true
+			});
+
+
+
+		});
+	});
+
+</script>
+
+
+
+{%- endmacro -%}
+
+
+<div class="modal-dialog modal-lg">
+
+	<div class="modal-content">
+
+    
+	<div class="modal-header">
+        
+		<h3 class="modal-title" style="display:inline-block" id="myModalLabel_{{trigger_id}}">Выберите породу из списка</h3>				
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        
+      </div>
+      <div  class="modal-body" style="">
+
+      	<div style="margin-bottom:20px; margin-top:10px" class="input-group">
+      		<span class="input-group-addon"><i class="fa fa-filter fa-lg"></i></span>
+			<input type="text" class="dbp-search form-control input-lg"  placeholder="Отфильтруйте список, введя часть названия породы, например, шпиц" />
+
+		</div>
+
+		<ul class="list-unstyled dbp-dog-names" style="max-height:400px; overflow-y:auto">
+		{% for dog in dogs %}
+			<li class="" style="display:inline-block;width:360px; text-overflow: ellipsis"><a class="btn btn-link dbp-dog-name">{{dog}}</a></li>
+		{%endfor%}
+		</ul>
+      		
+      </div>
+</div><!-- /.modal-content -->
+</div>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		var fuzzyOptions = {
+			searchClass: "dbp-search",
+		  	location: 0,
+		  	distance: 100,
+		  	threshold: 0.4,
+		    multiSearch: true
+	};
+
+	var dog_breed_picker = new List('myModal_{{trigger_id}}', {
+	// searchClass: "dbp-search",
+		valueNames: ['dbp-dog-name'],
+		listClass : "dbp-dog-names",
+		plugins: [ListFuzzySearch(fuzzyOptions)]
+	});
+
+	$(".dbp-dog-name").click(function(){
+		$("#{{input_id}}").val($(this).text());
+		$("#myModal_{{trigger_id}}").modal("hide");
+	});
+
+	// window.setTimeout(}, 500);
+
+	});
+
+</script>

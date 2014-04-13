@@ -40,7 +40,7 @@
 
 {%- macro form_field_help(field) -%}
  
-  <span style="font-size:1.1em" class="glyphicon glyphicon-info-sign form-field-help" data-toggle="popover" data-content="{{kwargs.get('help')}}" data-html="html" data-placement="{{ kwargs.get('help_placement') or 'top' }}" data-trigger="hover"></span>
+  <span style="" class="form-field-help" data-toggle="popover" data-content="{{kwargs.get('help')}}" data-html="html" data-placement="{{ kwargs.get('help_placement') or 'top' }}" data-trigger="hover"><i class="fa fa-info fa-lg"></i></span>
  
 {%- endmacro -%}
 
@@ -120,12 +120,21 @@
                     {% set addon_r = kwargs.get('addon_right')%}
                     {% set addon_l = kwargs.get('addon_left')%}
 
+                    {% set btn_r = kwargs.get('btn_right')%}
+                    {% set btn_l = kwargs.get('btn_left')%}
 
 
-                    <div class="{{'input-group' if addon_r or addon_l}}">
+                    {% if addon_r or addon_l or btn_r or btn_l %}
+                    <div class="input-group">
+                    {% endif %}
 
                     {% if addon_l %}
                         <span class="input-group-addon">{{addon_l}}</span>
+                    {% endif %}
+
+
+                    {% if btn_l %}
+                        <span class="input-group-btn">{{btn_l}}</span>
                     {% endif %}
 
                     {{ field(class='form-control', **kwargs) }}   
@@ -133,8 +142,16 @@
                     {% if addon_r %}
                       <span class="input-group-addon">{{addon_r}}</span>
                     {%endif%}
+
+                    {% if btn_r %}
+                      <span class="input-group-btn">{{btn_r}}</span>
+                    {%endif%}
+
+                    {% if btn_r or btn_l or addon_r or addon_l %}
+
                     </div>
                     
+                    {%endif%}
 
                   </td> 
             {% if kwargs.get('help') %}
