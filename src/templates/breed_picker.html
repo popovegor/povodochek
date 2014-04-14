@@ -54,7 +54,7 @@
 
 		<ul class="list-unstyled dbp-dog-names" style="max-height:400px; overflow-y:auto">
 		{% for dog in dogs %}
-			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:void()" class="dbp-dog-name" title='{{"Выбрать породу " + dog | lower }}'>{{dog}}</a></li>
+			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:;" class="dbp-dog-name" title='{{"Выбрать породу " + dog | lower }}'>{{dog}}</a></li>
 		{%endfor%}
 		</ul>
       		
@@ -81,7 +81,6 @@
 		});
 
 		$(".dbp-dog-name").click(function(){
-			debugger;
 			$("#{{input_id}}").val($(this).text());
 			$("#myModal_{{trigger_id}}").modal("hide");
 		});
