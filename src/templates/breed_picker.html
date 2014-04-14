@@ -13,7 +13,8 @@
 			$("#myModal_{{trigger_id}}")
 			.on('show.bs.modal', function (e) {
 				// $(".dbp-search").attr("autofocus","autofocus");
-			  setTimeout(function() {$(".dbp-search").focus();}, 500);
+			  window.setTimeout(function() {
+			  	$(".dbp-search").focus();}, 500);
 			})
 			.modal({
 				remote: '{{url_for("ajax_breed_picker", input_id = input_id, trigger_id = trigger_id) | safe}}',
@@ -70,21 +71,22 @@
 		  	distance: 100,
 		  	threshold: 0.4,
 		    multiSearch: true
-	};
+		};
 
-	var dog_breed_picker = new List('myModal_{{trigger_id}}', {
-	// searchClass: "dbp-search",
-		valueNames: ['dbp-dog-name'],
-		listClass : "dbp-dog-names",
-		plugins: [ListFuzzySearch(fuzzyOptions)]
-	});
+		var dog_breed_picker = new List('myModal_{{trigger_id}}', {
+		// searchClass: "dbp-search",
+			valueNames: ['dbp-dog-name'],
+			listClass : "dbp-dog-names",
+			plugins: [ListFuzzySearch(fuzzyOptions)]
+		});
 
-	$(".dbp-dog-name").click(function(){
-		$("#{{input_id}}").val($(this).text());
-		$("#myModal_{{trigger_id}}").modal("hide");
-	});
+		$(".dbp-dog-name").click(function(){
+			debugger;
+			$("#{{input_id}}").val($(this).text());
+			$("#myModal_{{trigger_id}}").modal("hide");
+		});
 
-	// window.setTimeout(}, 500);
+		// window.setTimeout(}, 500);
 
 	});
 
