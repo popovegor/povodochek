@@ -6885,8 +6885,8 @@ form .textarea-counter {
 .dog-adv-show .das-price-block .das-price-number,
 .sale-pet-show .das-price-block .das-price-number {
   padding: 20px 0 10px 0;
-  font-family: "Arial Black", Gadget, sans-serif;
-  font-size: 36px;
+  font-size: 38px;
+  /*font-family: "Arial Black", Gadget, sans-serif;*/
   font-weight: bold;
 }
 .dog-adv-show .das-price-block .das-price-haggle,
@@ -7212,5 +7212,12 @@ form .textarea-counter {
   padding: 15px;
   margin: 30px 0 20px 0;
   background-color: #f5f5f5;
+}
+.dog-breed-picker .dbp-dog-name .dbp-arr {
+  visibility: hidden;
+}
+.dog-breed-picker .dbp-dog-name:hover .dbp-arr,
+.dog-breed-picker .dbp-dog-name:focus .dbp-arr {
+  visibility: visible;
 }
 /*# sourceMappingURL=bootstrap.css.map */

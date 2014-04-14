@@ -587,8 +587,8 @@ form {
         margin-bottom:30px;
         .das-price-number {
             padding:20px 0px 10px 0px; 
-            font-size: 36px; 
-            font-family: "Arial Black", Gadget, sans-serif;
+            font-size: 38px; 
+            /*font-family: "Arial Black", Gadget, sans-serif;*/
             font-weight: bold;
         }
         .das-price-haggle, .das-price-delivery, .das-price-contract, .das-price-hp  
@@ -911,4 +911,17 @@ form {
 }
 
 .help {
+}
+
+.dog-breed-picker {
+    .dbp-dog-name {
+        .dbp-arr {
+            visibility:hidden;
+        }
+        &:hover, &:focus {
+            .dbp-arr {
+                visibility:visible;
+            }
+        }
+    }
 }
