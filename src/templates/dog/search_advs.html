@@ -17,7 +17,7 @@
       {%if adv.get("video_link")%}
 
       {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
-      <span class="glyphicon glyphicon-facetime-video text-muted" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео. <br/> <a class='small' target='_blank' href='{{adv_video_url}}'>Смотреть видеоролик</a>"></span>
+      <i class="fa fa-video-camera text-muted" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео. <br/> <a class='small' target='_blank' href='{{adv_video_url}}'>Смотреть видеоролик</a>"></i>
 
       {%endif%}
     </div>
