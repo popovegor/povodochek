@@ -1318,7 +1318,7 @@ def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
         'p' : adv.get('price'), \
         'b' : get_breed_dog_name(adv.get('breed_id')), \
         's' : {'h':100, 'w':150}, 
-        't' : adv.get('title')}
+        't' : Markup.escape(adv.get('title'))}
         for adv in db.get_dog_advs_for_mosaic(skip, limit)]
     elif pet_id == CAT_ID:
         return  [{"src":url_for('thumbnail', \
