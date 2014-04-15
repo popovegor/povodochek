@@ -6354,6 +6354,7 @@ form .textarea-counter {
   margin-top: 20px;
 }
 .ajax-link {
+  cursor: pointer;
   border-bottom: dotted 1px;
 }
 .ajax-link:focus,

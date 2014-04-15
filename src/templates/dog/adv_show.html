@@ -7,7 +7,7 @@
             <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
             <li><a href="{{url_for('dog_search')}}">Продажа собак</a> <span class="divider"></span></li>
             <li><a href="{{url_for('dog_search', breed = adv.get('breed_id')  )}}">{{adv.get('breed_id') | breed_dog_name() }}</a> <span class="divider"></span></li>
-            <li class="active">{{adv.get("title")}}</li>
+            <li class="active">{{adv.get("title") | capitalize}}</li>
           </ol>
     
     {%endblock%}
@@ -41,7 +41,7 @@
 
         {{price_info(adv)}}
 
-      <h2 style="margin-top:0px">{{adv.get("title")}}</h2>
+      <h2 style="margin-top:0px">{{adv.get("title") | capitalize}}</h2>
       
       <div style="margin-bottom:40px">
         <p style="white-space:pre-line">{{adv.get('desc') | trim }}</p>

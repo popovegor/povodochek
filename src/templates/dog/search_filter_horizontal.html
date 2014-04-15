@@ -101,7 +101,7 @@
           </div>
           <div class="col-sm-6 text-right">
                 <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
-                <button type="submit" class="btn btn-primary" style="">Показать</button>
+                <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
           </div>
           
       </div>
@@ -140,6 +140,15 @@
           povodochek.typeahead(
           "{{url_for('ajax_typeahead_location')}}",
           "{{form.city.id}}")); //typeahead  
+
+          
+           $(".ds-header-breed").click(function(){
+              $("#{{form.breed.id}}").val("").focus();
+          });
+
+           $(".ds-header-location").click(function(){
+              $("#{{form.city.id}}").val("").focus();
+          });
         
       });
 

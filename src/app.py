@@ -567,7 +567,7 @@ def signout():
 
 def sale_find_header(form, pet_id, breed_id):
     # generate title
-    header = u"Купить <span>(продают)</span> <span class='bg-warning'>{0}</span>{1}{2}"
+    header = u"Купить <span>(продают)</span> <span class=''>{0}</span>{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
 
@@ -581,14 +581,14 @@ def sale_find_header(form, pet_id, breed_id):
     breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed_header = Markup(u" породы <span class='bg-warning'>%s</span>" % breed.lower() )
+        breed_header = Markup(u" породы <span class='ajax-link ds-header-breed'>%s</span>" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
     city = get_city_name(form.city.city_id, "i") if form.city.city_id else u''
     city_header = city
     city_title = city
     if city:
-        city_header = u" в г. <span class='bg-warning'>{0}</span>".format(city)
+        city_header = u" в г. <span class='ajax-link ds-header-location'>{0}</span>".format(city)
         city_title = u" в г. {0}".format(city)
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 

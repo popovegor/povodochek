@@ -17,7 +17,8 @@
       {%if adv.get("video_link")%}
 
       {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
-      <i class="fa fa-video-camera text-muted" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео. <br/> <a class='small' target='_blank' href='{{adv_video_url}}'>Смотреть видеоролик</a>"></i>
+      
+      <i class="fa fa-youtube-play text-danger" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео. <br/> <a class='small' target='_blank' href='{{adv_video_url}}'>Смотреть видеоролик</a>"></i>
 
       {%endif%}
     </div>
@@ -71,7 +72,7 @@
       <div class="row">
           <div class="col-sm-9 col-lg-10" style="">
 
-            <h4 style="overflow:hidden" class="adv-head"><a href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title")}}</a></h4>
+            <h4 style="overflow:hidden" class="adv-head"><a href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title") | capitalize}}</a></h4>
             
             {% set pet_id = adv.get("pet_id")%}        
             {% set breed_name = adv.get("breed_id") | breed_name(pet_id) %}
@@ -278,13 +279,5 @@
 
 
 </div>
-
-<script type="text/javascript">
-  
-  $(document).ready(function(){
-    $(".attraction-stars").tooltip();
-  });
-
-</script>
 
 
