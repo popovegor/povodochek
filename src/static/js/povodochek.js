@@ -95,11 +95,11 @@ povodochek.validate = function (form, options, submit){
 povodochek.typeahead = function(ajax_url, input_id, updater){
   var m = {
     minLength: 0,
-    items: 8,
+    items: 12,
     autoSelect : true,
     source: function (query, process) {
       return $.getJSON(ajax_url,
-        {limit: 8, query: query },
+        {limit: 12, query: query },
         function (data) { 
           var input = $("#" + input_id);
           if(data.items.length === 0) {

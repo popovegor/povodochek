@@ -420,7 +420,7 @@ $(document).ready(function(){
 
 	$('#{{form.desc.id}}').simplyCountable({
 		counter : "#{{form.desc.id}}_count",
-		maxCount : {{desc_length.max}}, 
+		maxCount : 1000, 
 		strictMax : true,
 		thousandSeparator : ' '});
 
@@ -436,7 +436,7 @@ $(document).ready(function(){
       breed: { required: true },
       title: { required: true, rangelength: 
       	[{{title_length.min}}, {{title_length.max}}] },
-      desc : { required: true, maxlength: {{desc_length.max}} },
+      desc : { required: true, maxlength: 1000 },
       price : { required: true, range: [5000, 300000] },
       video_link : {youtube:true} , 
       // age : {required: true},
