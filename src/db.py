@@ -254,8 +254,8 @@ def get_dogs_for_typeahead(query, limit):
             limit = limit, \
             fields = ["breed_name"], \
             sort = [
-            #('count', DESCENDING), 
-            ('breed_name', ASCENDING)] )]
+            ('breed_name', ASCENDING), 
+            ('count', DESCENDING)] )]
     return breeds
 
 def get_locations_for_typeahead(query, limit):
