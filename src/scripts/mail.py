@@ -66,9 +66,9 @@ def send_notifications_attraction():
 	counter = 0
 	for user in db.users.find():
 		counter += 1
-		print(counter, name, email)
 		email = user.get('email')
 		name = user.get('username')
+		print(counter, name, email)
 		to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
 		template = env.get_template('notifications_attraction.html')
 		send_email(HTML = template.render(),\
@@ -76,13 +76,19 @@ def send_notifications_attraction():
 			To =  to )
 
 
+def send_news_video():
+	counter = 0
+	for user in db.users.find({'email':'popovegor@gmail.com'}).limit(1):
+		counter += 1
+		email = user.get('email')
+		name = user.get('username')
+		print(counter, name, email)
+		to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
+		template = env.get_template('news_video.html')
+		send_email(HTML = template.render(),\
+			Subject = u"Новости проекта Поводочек.рф: фильм, фильм, фильм!", \
+			To =  to )
+
+
 if __name__ == '__main__':
 	eval('{0}()'.format(sys.argv[1]))
-
-	# email = "popovegor@gmail.com"	
-	# name = u"Егор"
-	# to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
-	# template = env.get_template('notifications_attraction.html')
-	# send_email(HTML = template.render(),\
-	# 	Subject = u"Привлекательность объявлений на сайте Поводочек.рф", \
-	# 	To =  to )
