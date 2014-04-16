@@ -1,5 +1,5 @@
 
-<div class="navbar navbar-default" role="navigation" id="menu" style="margin-bottom:0px">
+<div class="navbar navbar-default" role="navigation" id="menu">
 <div class="container" style="position:relative">
 
 
@@ -17,7 +17,7 @@
 
 
       {% set brand_tag = 'span' if request.path == url_for('index') else 'a' %}
-        <{{brand_tag}} title="Портал о продаже породистых собак и кошек" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;">Поводочек</{{brand_tag}}>
+        <{{brand_tag}} title="Продажа и покупка породистых собак и кошек, щенков и котят" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;">Поводочек</{{brand_tag}}>
 
   </div>
 
@@ -42,7 +42,7 @@
     <!-- current.user -->
               {%if current_user.is_signed() %}
                 <li class="dropdown {{'active' if url_for('account') in request.path}}">
-                  <a title="{{current_user.username}}" user_id="{{current_user.id}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><span class="">&nbsp;&nbsp;Личный кабинет&nbsp;&nbsp;</span><b class="caret"></b></a>
+                  <a title="{{current_user.username}}" style="cursor:pointer" user_id="{{current_user.id}}" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><span class="">&nbsp;&nbsp;Личный кабинет&nbsp;&nbsp;</span><b class="caret"></b></a>
                   <ul class="dropdown-menu">
                     <li><a href="{{url_for('account_dog_advs')}}">Мои собаки</a></li>
                      <li><a href="{{url_for('account_cat_advs')}}">Мои кошки</a></li>

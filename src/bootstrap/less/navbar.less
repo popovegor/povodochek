@@ -12,13 +12,15 @@
   position: relative;
   min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
   margin-bottom: @navbar-margin-bottom;
-  border: 1px dotted transparent;
+  /*border: 1px dotted transparent;*/
+  margin-bottom: 30px;
+  margin-top: 20px;
 
   // Prevent floats from breaking the navbar
   &:extend(.clearfix all);
 
   @media (min-width: @grid-float-breakpoint) {
-    border-radius: @navbar-border-radius;
+    /*border-radius: @navbar-border-radius;*/
   }
 }
 
@@ -152,8 +154,8 @@
 
 .navbar-brand {
   float: left;
-  padding: @navbar-padding-vertical @navbar-padding-horizontal (@navbar-padding-vertical - 3px) @navbar-padding-horizontal;
-  font-size: @font-size-large;
+  padding: @navbar-padding-vertical @navbar-padding-horizontal @navbar-padding-vertical @navbar-padding-horizontal;
+  font-size: @navbar-default-brand-font-size;
   line-height: @line-height-computed;
   font-family: @font-brand-family;
 
@@ -178,7 +180,9 @@
 }
 
 span.navbar-brand {
-  border-bottom: solid 3px #ccc;
+    cursor:default;
+    background-color: @navbar-default-brand-active-bg !important;
+    color:@navbar-default-brand-active-color !important;
 }
 
 
@@ -402,6 +406,8 @@ span.navbar-brand {
 
   .navbar-nav {
     > li > a {
+      font-size: 1.1em;
+      /*font-weight: bold;*/
       color: @navbar-default-link-color;
 
       &:hover,
@@ -411,8 +417,9 @@ span.navbar-brand {
       }
     }
     > .active > a {
-      border-bottom:solid 3px #ccc;
-      padding-bottom: 9px;
+      /*border-bottom:solid 3px @navbar-default-link-active-color;*/
+      /*padding-bottom: 9px;*/
+      cursor: default;
 
       &,
       &:hover,
