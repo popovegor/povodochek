@@ -32,6 +32,8 @@ def resize_image(filename, height = None, width = None):
     (infile, img) = (None, None)
     try:
         img = Image.open(filename)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
         (w,h) = calc_image_size(img, height, width)
         img = img.resize((w, h), Image.ANTIALIAS)
         img.save(filename, "JPEG")
@@ -53,6 +55,9 @@ def create_thumbnail(file, filename, photo_path):
         im.seek(0)
         infile = Image.open(im)
         im = ImageOps.fit(infile, thumbnail_size, Image.ANTIALIAS)
+        print(im.mode)
+        if im.mode != "RGB":
+            im = im.convert("RGB")
         im.save(os.path.join(photo_path, out_filename), "JPEG", quality=thumbnail_quality, optimize=True, progressive=True)
     except IOError as e:
         print(e)

@@ -452,7 +452,9 @@ $(document).ready(function(){
   var messages = {};
 
   povodochek.validate($("form"), 
-  	{rules:rules, messages:messages});
+  	{rules:rules, messages:messages}, function() {
+  		recheck_photos();
+  	} );
 
   var recheck_photos = function(){
 	  var photos = $("#photos");

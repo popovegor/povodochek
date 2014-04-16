@@ -1165,8 +1165,8 @@ def cat_adv_email(adv_id):
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static/img'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(os.path.join(app.root_path, 'static/img'), 
+        'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/prodazha-koshek/goroda/')
 def sale_cats_cities():
