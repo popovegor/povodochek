@@ -21,7 +21,10 @@
         {% for user in users %}
 
           <tr>
-          <td>{{user.get('_id')}}</td>
+          <td>{{user.get('_id')}}
+            <br/>
+            {{loop.index}}
+          </td>
             <td>{{user.get('username')}}</td>
             <td>{{user.get("email")}}</td>
             <td>{{user.get("login")}}</td>

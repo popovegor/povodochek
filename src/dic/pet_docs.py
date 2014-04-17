@@ -22,11 +22,37 @@ doc_dog_pedigrees = dict(
 	[ (id, name) for (id, name) in doc_dog_pedigrees_mak.items()]
 )
 
-doc_puppy_cards = {
-	2 : u"Метрика щенка РКФ (FCI)",
-    4 : u"Метрика щенка СКОР (IKU)",
-    7 : u"Метрика щенка МАК «Добрый МИР» (UCI)"
+doc_puppy_cards_rkf = {
+	2 : u"Метрика щенка РКФ (FCI)"
 }
+
+doc_puppy_cards_skor = {
+	 4 : u"Метрика щенка СКОР (IKU)"
+}
+
+doc_puppy_cards_mak = {
+	7 : u"Метрика щенка МАК «Добрый МИР» (UCI)"
+}
+
+doc_puppy_cards = dict(
+   [ (id, name) for (id, name) in doc_puppy_cards_rkf.items()]
+   +
+   [ (id, name) for (id, name) in doc_puppy_cards_skor.items()]
+   +
+   [ (id, name) for (id, name) in doc_puppy_cards_mak.items()]
+)
+
+doc_rkf = dict(
+	[ (id, name) for (id, name) in doc_puppy_cards_rkf.items()]
+	+
+	[ (id, name) for (id, name) in doc_dog_pedigrees_rkf.items()]
+)
+
+doc_skor = dict(
+	[ (id, name) for (id, name) in doc_dog_pedigrees_skor.items()]
+	+
+	[ (id, name) for (id, name) in doc_puppy_cards_skor.items()]
+)
 
 dog_docs = dict(
 	 [ (id, name) for (id, name) in doc_puppy_cards.items()]

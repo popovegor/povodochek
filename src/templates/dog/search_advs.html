@@ -30,9 +30,17 @@
 
    <div class="col-sm-4 col-md-3">
 
-      
-
       <div class="text-center photo">
+
+      {% set doc_id = adv.get("doc_id")%}
+
+      {% if doc_id in pet_docs.doc_rkf%}
+        <img class="kennel-club-logo-mini" src="/static/img/fci_sm_2.png" data-toggle="popover" data-trigger="hover" data-content="Породистая собака с документами <a rel='nofollow' href='http://rkf.org.ru/'>РКФ</a> (FCI)" data-html='true' target='_blank' />
+
+      {% elif doc_id in pet_docs.doc_skor%}
+
+        <img class="kennel-club-logo-mini" src="/static/img/iku_sm.png" data-toggle="popover" data-trigger="hover" data-content="Породистая собака с документами <a rel='nofollow' target='_blank' href='http://www.iku.ru/'>СКОР</a> (IKU)" data-html='true'/>
+      {%endif%}
 
         {% set photo = (adv.get('photos') or [])[0]%}
         {% if photo %}
@@ -47,7 +55,7 @@
 
       </div>
 
-      <div class="small">
+      <div class="small text-right">
 
         {#<span style="white-space: nowrap;padding-right:10px">№ {{adv | short_adv_id}}</span>#}
 
@@ -59,7 +67,7 @@
           {% endif%#}
 
           {#% if update_date %#}
-          <span class="text-muted" style="padding-right:5px">Обновлено:</span>
+          <span class="text-muted" style="margin-right:-3px">Обновлено:</span>
           <br/><span title="Дата обновления объявления" style="white-space: nowrap;">{{ momentjs(update_date).fromNow() }}</span>
           {#% endif%#}
 

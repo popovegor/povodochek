@@ -1222,11 +1222,11 @@ def admin_requried(func):
 def admin_users():
     page = int(request.args.get("page") or 1)
     total = db.users.count()
-    perpage = 100
+    perpage = 1000
     u = [user for user in db.admin_get_users(perpage, \
         (page - 1) * perpage)]
 
-    return render_template('/admin/users.html', title = Markup(u"Админка: пользователи"), users = u, total = total, perpage = perpage, page = page)
+    return render_template('/admin/user.html', title = Markup(u"Админка: пользователи"), users = u, total = total, perpage = perpage, page = page)
 
 @app.route('/admin/sale/')
 @admin_requried

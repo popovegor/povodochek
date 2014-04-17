@@ -6634,6 +6634,13 @@ form .textarea-counter {
   border: none;
   border-radius: 0;
 }
+.pet-sale .adv .kennel-club-logo-mini,
+.account-pet-sale .adv .kennel-club-logo-mini,
+.dog-search .adv .kennel-club-logo-mini {
+  position: absolute;
+  bottom: -25px;
+  left: -20px;
+}
 .pet-sale .adv .adv-dict,
 .account-pet-sale .adv .adv-dict,
 .dog-search .adv .adv-dict {
