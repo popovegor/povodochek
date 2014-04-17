@@ -67,7 +67,7 @@ class User(UserMixin):
         self.name = user.get('login')
         self.username = user.get('username')
         self.id = user.get('_id')
-        self.active = user.get('activated') or True
+        self.active = user.get('activated')
         self.email = user.get('email')
         self.new_email = user.get('new_email')
         self.city_id = user.get('city_id')
@@ -87,9 +87,10 @@ class Anonymous(AnonymousUser):
         self.name = u"Anonymous"
         self.username = u""
         self.email = u""
+        self.active = False
 
     def is_signed(self):
-        return False
+        return self.active
 
 app = Flask(__name__)
 
@@ -281,11 +282,11 @@ def index():
 def signin():
     form = SignIn(request.form)
     if request.method == "POST" and form.validate():
-        (login, password, remember) = (form.login.data, form.password.data, form.remember.data)
-        user = db.get_user_by_login(login)
+        (login_or_email, password, remember) = (form.login.data, form.password.data, form.remember.data)
+        user = db.get_user_by_login(login_or_email) or db.get_user_by_email(login_or_email)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
-                if login_user(User({'login':login, '_id' : user["_id"]}), remember=remember):
+                if login_user(User({'login':user.get('login'), '_id' : user["_id"]}), remember=remember):
                     return redirect(request.args.get("next") \
                         or url_for("account_contact"))
                 else:

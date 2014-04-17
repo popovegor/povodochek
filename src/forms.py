@@ -459,7 +459,7 @@ class Stud(Form):
 
 class SignIn(Form):
 
-    login = TextField(u"Логин", \
+    login = TextField(u"Электронная почта или логин", \
         [Required(message=MSG_REQUIRED)])
 
     remember = BooleanField(u"Запомнить меня", default = True)
