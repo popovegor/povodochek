@@ -3984,7 +3984,6 @@ span.navbar-brand {
 .navbar-default .navbar-nav > .active > a {
   /*border-bottom:solid 3px @navbar-default-link-active-color;*/
   /*padding-bottom: 9px;*/
-  cursor: default;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
