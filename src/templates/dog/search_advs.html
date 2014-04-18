@@ -21,9 +21,18 @@
 
       {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
       
-      <i class="fa fa-video-camera text-danger" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео. <br/> <a class='small' target='_blank' href='{{adv_video_url}}'>Смотреть видеоролик</a>"></i>
+      <i class="fa fa-video-camera text-danger" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
 
       {%endif%}
+
+
+      {% if adv.get("champion_bloodlines") %}
+
+      <i class="fa fa-trophy" style="padding-left:10px;color:#FFCC33" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
+
+      {%endif%}
+      
+
     </div>
 
   <div class="row clearfix" >
@@ -137,7 +146,7 @@
             {% set price_hp = adv.get("price_hp") %}
           {% if price_hp %}
            <li>
-              <span class="label label-info">рассрочка</span>
+              <span class="{#label label-info#}">рассрочка</span>
            </li>
            {%endif%}    
 
@@ -145,21 +154,21 @@
           {% if price_haggle %}
             
            <li>
-            <span class="label label-info">торг</span>
+            <span class="{#label label-info#}">торг</span>
            </li>
            {%endif%}
 
            {% set delivery = adv.get("delivery") %}
           {% if delivery %}
            <li>
-              <span class="label label-info">доставка</span>
+              <span class="{#label label-info#}">доставка</span>
            </li>
            {%endif%}
            
            {% set contract = adv.get("contract") %}
           {% if contract %}
            <li>
-              <span class="label label-info">договор</span>
+              <span class="{#label label-info#}">договор</span>
            </li>
            {%endif%}
 
@@ -179,7 +188,7 @@
 
 <div class="more">
 
-    <a class="btn btn-sm btn-primary"  target="_blank"href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}">Подробнее</a>
+    <a class="btn btn-md btn-info"  target="_blank"href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}">Подробнее</a>
 
 </div>
 
@@ -228,7 +237,7 @@
 
     {%if count > 0 %}
 
-            <div class="clearfix" style="margin:0px 0 20px 0">
+            <div class="clearfix" style="margin:0px 0px 20px 0px">
 
               <div class="advs-found pull-left"><span>Найдено <b>{{count}}</b> {{"объявление" | morph_word(count = count) }}</span>
               </div> <!-- advs-found -->
@@ -279,11 +288,8 @@
           <div style="margin-top:20px">Страницы:</div>
 
             <!-- desktop -->
-          {{ pagination(pages, form.page.data, 15, paging_class="advs-paging pagination-left hidden-sm hidden-xs") }}
-          <!-- tablet -->
-          {{ pagination(pages, form.page.data, 10, paging_class="advs-paging pagination-left visible-sm") }}
-          <!-- phone --> 
-          {{ pagination(pages, form.page.data, 3, paging_class="advs-paging pagination-left visible-xs") }}
+          {{ pagination(pages, form.page.data, 30, paging_class="advs-paging pagination-left") }}
+          
 
          {%endif%}
 
