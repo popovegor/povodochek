@@ -4,7 +4,7 @@
 from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, send_file, abort, jsonify, Markup, make_response)
 from flask_login import (LoginManager, current_user,
                             login_user, logout_user, login_required, UserMixin, AnonymousUser,
-                            confirm_login, fresh_login_required)
+                            confirm_login, fresh_login_required, user_logged_in)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
 from forms import (SignUp, SignIn, Cat, Contact, \
@@ -145,6 +145,12 @@ login_manager.login_message = u"Пожалуйста, войдите, чтобы
 login_manager.refresh_view = "reauth"
 
 login_manager.setup_app(app)
+
+def is_signed_in(sender, user, **extra):
+    session["dog_sort"] = 3
+    session["cat_sort"] = 3
+
+user_logged_in.connect(is_signed_in, app)
 
 # jinja custom filters and globals
 
@@ -612,7 +618,7 @@ def dog_search():
     pet_id = DOG_ID
     # sort
     session["dog_sort"] = form.sort.data or \
-        session.get("dog_sort") or 4
+        session.get("dog_sort") or (3 if current_user.is_signed() else 4)
 
     (advs, count, total) = db.find_dog_advs(
         breed_id = breed_id, \
@@ -649,7 +655,7 @@ def cat_search(sale_search_form = None):
     	form.breed.data = get_breed_name(breed_id, pet_id)
     pet_id = CAT_ID
     # sort
-    session["cat_sort"] = form.sort.data or session.get("cat_sort") or 3
+    session["cat_sort"] = form.sort.data or session.get("cat_sort") or (3 if current_user.is_signed() else 4)
     
     (advs, count, total) = db.find_cat_advs(pet_id = pet_id, \
         breed_id = breed_id, \
