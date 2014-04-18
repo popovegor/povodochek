@@ -238,11 +238,11 @@ def get_cat_advs_by_user(user_id):
         sort = [("update_date", DESCENDING), \
         ("add_date", DESCENDING)])
 
-def get_top_dog_breeds(limit = 15):
+def get_top_dog_breeds(limit = 25):
 	return [adv for adv in top_dog_breeds.find( \
 		sort = [('count', DESCENDING)], limit = limit)]
 
-def get_top_cat_breeds(limit = 15):
+def get_top_cat_breeds(limit = 25):
 	return [adv for adv in top_cat_breeds.find( \
 		sort = [('count', DESCENDING)], limit = limit)]
 

@@ -1,11 +1,13 @@
 
 {%- macro top_breeds(pets, pet_id) -%}
 		
-		<div style="margin-top:30px">
+		<div style="margin-top:30px;">
 			
 			<div class="" style="">
 				<h5 class="text-left" style="">
 					<b>{{pet_id | pet_name | morph_word(["plur"]) | title }}</b>
+					<br>
+					<small>популярные породы</small>
 				</h5>
 			</div>
 		

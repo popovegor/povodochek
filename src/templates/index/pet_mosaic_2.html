@@ -6,11 +6,11 @@
 		<table style="width:100%">
 			<tr>
 				<td class="">
-					<b class="" style="padding-left:0px">Свежие объявления о продаже собак или кошек</b>	
+					<b class="pet-mosaic-title" style="padding-left:0px">Свежие объявления о продаже щенков и собак</b>	
 				</td>
 				<td style="width:110px" class="text-right">
-					<div class="btn-group btn-group-xs text-right"><button id="filter_dogs" class="btn btn-default ajax-link active" href="#">Собаки</button>
-					<button id="filter_cats" class="btn btn-default ajax-link" href="#">Кошки</button>
+					<div class="btn-group btn-group-xs text-right"><button title="Свежие объявления о продаже щенков и собак" id="filter_dogs" class="btn btn-default ajax-link active">Собаки</button>
+					<button id="filter_cats" class="btn btn-default ajax-link" title='Свежие объявления о продаже котят и кошек'>Кошки</button>
 					
 					</div>	
 				</td>
@@ -44,7 +44,7 @@
 
 			mosaic = $("#advs").mosaicflow({
 			    itemSelector: '.mosaicflow__item',
-			    minItemWidth: 150,
+			    minItemWidth: 170,
 			    itemHeightCalculation : 'attribute'
 			});
 
@@ -124,17 +124,19 @@
 			return false;
 		}
 
-		{% set mosaic_items_limit = 20 %}
+		{% set mosaic_items_limit = 12 %}
 
 
 		$("#filter_dogs").click(function(event){
 			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_items_limit, pet = 1)}}', 1);
+			$(".pet-mosaic-title").text($(this).attr('title'));
 			event.stopPropagation();
 			return false;
 		});
 
 		$("#filter_cats").click(function(event){
 			filter_advs(this, '{{url_for("ajax_mosaic_showmore", skip = 0, limit = mosaic_items_limit, pet = 2)}}', 2);
+			$(".pet-mosaic-title").text($(this).attr('title'));
 			event.stopPropagation();
 			return false;
 		});
