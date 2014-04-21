@@ -6,9 +6,9 @@
           <ol class="breadcrumb" >
             <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
             {%if not breed %}
-            <li class="active">Продажа породистых собак</li>
+            <li class="active">Продажа собак</li>
             {%else%}
-              <li><a href="{{url_for('dog_search')}}">Продажа породистых собак</a> <span class="divider"></span></li>
+              <li><a href="{{url_for('dog_search')}}">Продажа собак</a> <span class="divider"></span></li>
               <li class="active">{{breed}}</li>
             {%endif%}
 
