@@ -410,7 +410,7 @@ def send_reset_password(email, login, asign, password):
     msg.html = render_template("email/reset_password.html", login = login, password = password, asign = asign)
     mail.send(msg)
 
-def send_from_sale(adv_id, adv_url, email, username, \
+def send_from_sale(adv_id, adv_title, adv_url, email, username, \
     seller_email, seller_username, subject, message):
     # adv = sales().find_one(ObjectId(sale_id))
     if adv_id and seller_email:
@@ -420,11 +420,13 @@ def send_from_sale(adv_id, adv_url, email, username, \
             message = message, \
             adv_url = adv_url, \
             adv_id = adv_id, \
+            adv_title = adv_title, \
             seller_email = seller_email, \
             seller_username = seller_username, \
             email = email, \
             username = username, \
             date = datetime.now())
+        msg.reply_to  = u"%s <%s>" % (username or u"", email)
         mail.send(msg)
 
     
@@ -1126,10 +1128,12 @@ def dog_adv_email(adv_id):
     if request.method == "POST":
         if form.validate():
             send_from_sale(adv.get("_id"), \
+                adv.get('title'), \
                 url_for('dog_adv_show', adv_id = adv.get('_id'), _external =True), \
                 form.email.data, form.username.data, \
                 seller_email, seller_username, \
-                u"Сообщение от пользователя сайта Поводочек", form.message.data)
+                (u"Сообщение по объявлению «%s» на Поводочке" % adv.get("title")), \
+                form.message.data)
             # if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
             #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
             #         [seller.get('phone')] )
@@ -1158,10 +1162,11 @@ def cat_adv_email(adv_id):
     if request.method == "POST":
         if form.validate():
             send_from_sale(adv.get('_id'), \
+                adv.get('title'), \
                 url_for('cat_adv_show', adv_id = adv.get('_id'), _external =True), \
                 form.email.data, \
                 form.username.data, seller_email, seller_username, \
-                u"Сообщение от пользователя сайта Поводочек", \
+                (u"Сообщение по объявлению «%s» на Поводочке" % adv.get("title")), \
                 form.message.data)
             # if form.sms_alert.data and seller.get('phone') and seller.get('phone_adv_sms'):
             #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
