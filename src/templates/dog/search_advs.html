@@ -13,25 +13,29 @@
 <div class="small" style="position:absolute; top:5px; left:10px">
   <small class="text-muted">{{(form.page.data - 1) * form.perpage.data + loop.index}}</small>
 </div>
-
-    <div style="margin-bottom:5px; margin-top:-5px">
+    <div style="margin-bottom:5px; margin-top:-5px" class="row">
+    <div class="col-sm-4 col-md-3">
+      <span style="padding-right:10px" class="pull-left">
       {{render_stars(adv.get("attraction"))}}
+      </span>
 
-      {%if adv.get("video_link")%}
+        {%if adv.get("video_link")%}
+        
+        {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
+        
+        <i class="fa fa-video-camera text-danger pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
 
-      {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
+        {%endif%}
+
+        {% if adv.get("champion_bloodlines") %}
+
+        <i class="fa fa-trophy text-warning pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
+
+        {%endif%}
+        
       
-      <i class="fa fa-video-camera text-danger" style="padding-left:10px;" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
 
-      {%endif%}
-
-
-      {% if adv.get("champion_bloodlines") %}
-
-      <i class="fa fa-trophy" style="padding-left:10px;color:#FFCC33" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
-
-      {%endif%}
-      
+      </div>
 
     </div>
 

@@ -5719,6 +5719,12 @@ def get_city_region(city_id):
 def format_city_region(city):
 	return u"{0}, {1}".format(city['city_name'], city['region_name'])
 
+def get_region_name_by_city_id(city_id):
+	city = get_city(city_id)
+	if city: 
+		return city.get("region_name")
+	return u""
+
 def update_db():
 	db = povodochek()
 	db.cities_tmp.drop()

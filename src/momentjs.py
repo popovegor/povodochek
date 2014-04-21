@@ -17,5 +17,5 @@ class MomentJS:
     def calendar(self):
         return self.render("calendar()")
 
-    def fromNow(self):
-        return self.render("fromNow()")
+    def fromNow(self, non_suffix = False):
+        return self.render("fromNow("+ str(non_suffix).lower() +")")

@@ -44,8 +44,9 @@ from dic.pets import (pets, get_pet_name, DOG_ID, CAT_ID)
 from dic.breeds import (dogs, get_breed_name, cats, \
     get_breed_by_name, breeds, get_breed_dog_name, \
     get_breed_cat_name)
-from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities)
+from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities, get_region_name_by_city_id)
 import dic.pet_docs
+
 
 
 from dic.countries import (get_country_name)
@@ -205,6 +206,7 @@ def get_age_name(age_id):
 app.jinja_env.filters['age_name'] = get_age_name
 app.jinja_env.filters['city_region'] = get_city_region
 app.jinja_env.filters['city_name'] = get_city_name
+app.jinja_env.filters['region_name_by_city_id'] = get_region_name_by_city_id
 app.jinja_env.filters['morph_word'] = morph_word
 
 def change_query(url, param, old, new):
