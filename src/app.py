@@ -643,6 +643,8 @@ def dog_search():
       title=title, form = form, advs = advs, \
       pet = pet_name, pet_id = pet_id, \
       breed = breed_name, breed_id = breed_id, \
+      city = get_city_region(city.get("city_id")) if city else None, \
+      city_id = city.get("city_id") if city else None, \
       sort = session.get("dog_sort"), \
       count = count, total = total )
     return tmpl
@@ -680,6 +682,8 @@ def cat_search(sale_search_form = None):
       title=title, form = form, advs = advs, \
       pet = pet_name, pet_id = pet_id, \
       breed = breed_name, breed_id = breed_id, \
+      city = get_city_region(city.get("city_id")) if city else None, \
+      city_id = city.get("city_id") if city else None, \
       sort = session.get("cat_sort"), \
       count = count, total = total )
     return tmpl

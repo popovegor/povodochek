@@ -3,12 +3,18 @@
 
 {%block breadcrumbs %}
     
-          <ol class="breadcrumb" >
-            <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
-            <li><a href="{{url_for('dog_search')}}">Продажа собак</a> <span class="divider"></span></li>
-            <li><a href="{{url_for('dog_search', breed = adv.get('breed_id')  )}}">{{adv.get('breed_id') | breed_dog_name() }}</a> <span class="divider"></span></li>
-            <li class="active">{{adv.get("title") | capitalize}}</li>
-          </ol>
+
+
+
+    {% from "breadcrumbs.html" import breadcrumbs %}
+
+    {{breadcrumbs( [
+    {'name':"Продажа собак", 'url':url_for("dog_search")}, 
+    {'name':adv.get('breed_id') | breed_dog_name, 'url':url_for("dog_search", breed=adv.get("breed_id"))}, 
+    {'name': adv.get('city_id') | city_region, 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
+    {'name':adv.get("title") | capitalize}
+    ] ) }}
+              
     
     {%endblock%}
 

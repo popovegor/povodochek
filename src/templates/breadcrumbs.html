@@ -1,14 +1,20 @@
-<div class="hidden-xs" style="margin-top:30px">
+{%- macro breadcrumbs(items) -%}
 
-      <div class="row">
-        <div class="col-md-9 col-sm-8">
-            {% block breadcrumbs%}
-                
-            {% endblock%}
-        </div>
-        <div class="col-md-3 col-sm-4 text-right">
-            {% include "pet_post_button.html"%}
-        </div> 
-    </div>
+      <ol class="breadcrumb" >
+      <li><a href="{{url_for('index')}}" title="Главная"><small class="fa fa-home fa-lg"></small></a> </li>
+      
+      {%for item in items | selectattr("name") %}
+        
+        {% if loop.last %}
+            <li class="active"><span>{{item.name}}</span> </li>
+        {%else%}
+            <li><a href="{{item.url}}">{{item.name}}</a> <span class="divider"></span></li>
+            
+        {%endif%}
+        
+      {%endfor%}
 
-  </div>
+      </ol>
+
+
+{%- endmacro -%}

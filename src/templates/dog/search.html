@@ -2,20 +2,17 @@
 
 {% block breadcrumbs%}
 
+    {% from "breadcrumbs.html" import breadcrumbs %}
 
-          <ol class="breadcrumb" >
-            <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
-            {%if not breed %}
-            <li class="active">Продажа собак</li>
-            {%else%}
-              <li><a href="{{url_for('dog_search')}}">Продажа собак</a> <span class="divider"></span></li>
-              <li class="active">{{breed}}</li>
-            {%endif%}
-
-          </ol>
-
+    {{breadcrumbs( [
+    {'name':"Продажа собак", 'url':url_for("dog_search")}, 
+    {'name':breed, 'url':url_for("dog_search", breed=breed_id)}, 
+    {'name':city, 'url':url_for("dog_search", breed=breed_id, city=city_id)}, 
+    ] ) }}
               
 {% endblock%}
+
+
 
 {% block content %}  
 

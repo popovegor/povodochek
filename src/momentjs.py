@@ -8,6 +8,9 @@ class MomentJS:
     def __init__(self, timestamp):
         self.timestamp = timestamp
 
+    def __call__(self, *args):
+        return self.format(*args)
+
     def render(self, format):
         return Markup("<script>\ndocument.write(moment(\"%s\").%s);\n</script>" % (self.timestamp.strftime("%Y-%m-%dT%H:%M:%S Z"), format))
 
