@@ -14,6 +14,7 @@ from dic.cities import (get_city_region, get_city_name)
 import app
 from photo_helper import (create_thumbnail, get_thumbnail_filename)
 import config
+import sys
 
 
 VK_GROUP_ID = 70482253
