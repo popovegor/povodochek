@@ -42,7 +42,7 @@ def post_dog_adv(adv_id):
     files = {}
     photo_id = ''
     if adv.get('photos'):
-        (photo_name, photo) = db.get_photo(adv.get('photos')[1])
+        (photo_name, photo) = db.get_photo(adv.get('photos')[0])
         if photo_name and photo:
             photo_path = os.path.join(TMP_FOLDER, photo_name) 
             with open(photo_path, 'w') as f:
