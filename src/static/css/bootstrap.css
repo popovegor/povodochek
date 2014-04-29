@@ -3654,7 +3654,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .navbar {
   position: relative;
-  min-height: 45px;
+  min-height: 55px;
   margin-top: 20px;
   margin-bottom: 20px;
   /*border: 1px dotted transparent;*/
@@ -3752,15 +3752,22 @@ textarea.input-group-sm > .input-group-btn > .btn {
   border-width: 1px 0 0;
 }
 .navbar-brand {
+  display: inline-block;
   float: left;
-  padding: 12.5px 15px 12.5px 15px;
+  width: 170px;
+  height: 55px;
+  padding: 17.5px 15px 17.5px 15px;
   font-family: "Russo One", "Arial Black", sans-serif;
   font-size: 22px;
   line-height: 20px;
+  background-image: url(../img/povodochek_brand.png);
+  background-repeat: no-repeat;
+  background-position: 12px 8px;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
   text-decoration: none;
+  background-position-y: -56px;
 }
 .navbar-brand > .glyphicon {
   float: left;
@@ -3777,14 +3784,15 @@ span.navbar-brand {
   color: #fff !important;
   cursor: default;
   background-color: #fa0 !important;
+  background-position-y: 8px !important;
 }
 .navbar-toggle {
   position: relative;
   float: right;
   padding: 9px 10px;
-  margin-top: 5.5px;
+  margin-top: 10.5px;
   margin-right: 15px;
-  margin-bottom: 5.5px;
+  margin-bottom: 10.5px;
   background-color: transparent;
   background-image: none;
   border: 1px solid transparent;
@@ -3805,7 +3813,7 @@ span.navbar-brand {
   }
 }
 .navbar-nav {
-  margin: 6.25px -15px;
+  margin: 8.75px -15px;
 }
 .navbar-nav > li > a {
   padding-top: 10px;
@@ -3843,8 +3851,8 @@ span.navbar-brand {
     float: left;
   }
   .navbar-nav > li > a {
-    padding-top: 12.5px;
-    padding-bottom: 12.5px;
+    padding-top: 17.5px;
+    padding-bottom: 17.5px;
   }
   .navbar-nav.navbar-right:last-child {
     margin-right: -15px;
@@ -3860,9 +3868,9 @@ span.navbar-brand {
 }
 .navbar-form {
   padding: 10px 15px;
-  margin-top: 5.5px;
+  margin-top: 10.5px;
   margin-right: -15px;
-  margin-bottom: 5.5px;
+  margin-bottom: 10.5px;
   margin-left: -15px;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
@@ -3931,20 +3939,20 @@ span.navbar-brand {
   border-bottom-left-radius: 0;
 }
 .navbar-btn {
-  margin-top: 5.5px;
-  margin-bottom: 5.5px;
+  margin-top: 10.5px;
+  margin-bottom: 10.5px;
 }
 .navbar-btn.btn-sm {
-  margin-top: 7.5px;
-  margin-bottom: 7.5px;
-}
-.navbar-btn.btn-xs {
-  margin-top: 11.5px;
-  margin-bottom: 11.5px;
-}
-.navbar-text {
   margin-top: 12.5px;
   margin-bottom: 12.5px;
+}
+.navbar-btn.btn-xs {
+  margin-top: 16.5px;
+  margin-bottom: 16.5px;
+}
+.navbar-text {
+  margin-top: 17.5px;
+  margin-bottom: 17.5px;
 }
 @media (min-width: 1px) {
   .navbar-text {
@@ -3980,10 +3988,6 @@ span.navbar-brand {
 .navbar-default .navbar-nav > li > a:focus {
   color: #ffa;
   background-color: transparent;
-}
-.navbar-default .navbar-nav > .active > a {
-  /*border-bottom:solid 3px @navbar-default-link-active-color;*/
-  /*padding-bottom: 9px;*/
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
@@ -6352,9 +6356,9 @@ form .textarea-counter {
 }
 .tagline {
   font-family: Georgia, "Times New Roman", Times, serif;
-  /*color: @navbar-default-bg;*/
-  font-size: 1.1em;
   font-style: italic;
+  /*color: @navbar-default-bg;*/
+  /*font-size: 1.1em;*/
 }
 .index {
   /*pet-post*/

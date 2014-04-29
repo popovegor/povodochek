@@ -14,7 +14,7 @@
   margin-bottom: @navbar-margin-bottom;
   /*border: 1px dotted transparent;*/
   margin-bottom: 30px;
-  margin-top: 20px;
+  margin-top:20px;
 
   // Prevent floats from breaking the navbar
   &:extend(.clearfix all);
@@ -159,9 +159,17 @@
   line-height: @line-height-computed;
   font-family: @font-brand-family;
 
+  display: inline-block;
+  width: 170px;
+  height: @navbar-height;
+  background-image: url(../img/povodochek_brand.png);
+  background-repeat: no-repeat;
+  background-position: 12px 8px;
+
   &:hover,
   &:focus {
     text-decoration: none;
+    background-position-y:-56px;
   }
 
   // Prevent Glyphicons from increasing height of navbar
@@ -183,6 +191,7 @@ span.navbar-brand {
     cursor:default;
     background-color: @navbar-default-brand-active-bg !important;
     color:@navbar-default-brand-active-color !important;
+    background-position-y:8px !important;
 }
 
 
@@ -417,9 +426,6 @@ span.navbar-brand {
       }
     }
     > .active > a {
-      /*border-bottom:solid 3px @navbar-default-link-active-color;*/
-      /*padding-bottom: 9px;*/
-
       &,
       &:hover,
       &:focus {

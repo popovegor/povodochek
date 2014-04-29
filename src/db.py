@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 from bson.son import SON
 from gridfs import GridFS
 import re
-from datetime import datetime
+from datetime import (datetime, timedelta)
 from uuid import (uuid4, uuid1)
 import dic.cities
 from helpers import (num, str2date)
@@ -409,7 +409,7 @@ def get_photo(filename):
         name = os.path.basename(filename)
         # print("get_photo", name)
         photo = photos.files.find_one({"filename" : filename}, \
-        	fields= ['_id'])
+        	fields = ['_id'])
         # print(photo)
         if photo:
             with photos_gridfs.get(photo.get('_id')) as gridfs_file:
@@ -512,3 +512,21 @@ def get_cat_by_cities():
 def admin_get_users(limit, skip):
     return users.find(sort = [('signup_date', DESCENDING)], \
         limit = limit, skip = skip)
+
+
+def mark_dog_adv_as_vk_posted(adv_id, post_id):
+    now = datetime.utcnow()
+    dog_advs.update({'_id': ObjectId(adv_id)}, 
+        {'$set': 
+        {'vk.post': True, 'vk.post_date' : now, 'vk.post_id':post_id}}, 
+        multi = False, upsert = False)
+
+def get_dog_advs_for_last_mins(mins = 60):
+    dt = datetime.utcnow() - timedelta(minutes = mins)
+    return dog_advs.find({'update_date' : {'$gte':dt}})
+
+
+def get_dog_advs_for_vk(mins = 60):
+    dt = datetime.utcnow() - timedelta(minutes = mins)
+    return dog_advs.find({'update_date' : {'$gte':dt}, 
+        'vk.post':{'$ne':True} })
