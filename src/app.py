@@ -1039,10 +1039,10 @@ def account_cat_adv_new():
     return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки", btn_name = u"Добавить")
 
 
-@app.route("/spravka/")
+@app.route("/help/")
 def help():
     return render_template("/help.html", \
-        title=u"Справка", header=Markup(u"Справочная информация"))
+        title=u"Помощь", header=Markup(u"Помощь"))
 
 @app.route("/spravka/privlekatelnost-obyavleniya/")
 def help_attraction():

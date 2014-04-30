@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
 
 {%block breadcrumbs%}
-	<ol class="breadcrumb" >
-        <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> </li>
-        <li><a href="{{url_for('help')}}">Справка</a> </li>
-        <li class="active" title="{{title}}">{{title | truncate(50)}}</li>
-    </ol>
+
+    {% from "breadcrumbs.html" import breadcrumbs %}
+
+    {{breadcrumbs( [
+    {'name':"Помощь", 'url':url_for('help')}, 
+    {'name':title | truncate(50)}
+    ] ) }}
+
 {%endblock%}
 
 {% block content %}

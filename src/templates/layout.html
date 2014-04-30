@@ -4,28 +4,11 @@
 
 {%block layout %}
 
-    <!-- menu -->
-
+  {% include "header.html" %}
 
   <div id="wrap" class="container">
 
-   <div style="margin-top:20px">
-  
-        <table style="width:100%">
-          <tbody>
-            <tr>
-              <td class="tagline" style=""><em class="small text-muted">Продажа и покупка породистых собак и кошек, щенков и котят!<em>
-              </td>
-              <td style="width:10px"></td>
-              <td style="width:165px;">
-                  {% include "pet_post_button.html"%}    
-              </td>
-            </tr>
-          </tbody>
-        </table>  
-  </div>
-
-    {% include "menu.html" %}
+    
 
      {% block breadcrumbs %}
         

@@ -3655,14 +3655,14 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .navbar {
   position: relative;
   min-height: 55px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  /*margin-bottom: @navbar-margin-bottom;*/
   /*border: 1px dotted transparent;*/
-  margin-bottom: 30px;
+  /*margin-bottom: 30px;*/
+  /*margin-top:20px;*/
 }
 @media (min-width: 1px) {
   .navbar {
-    /*border-radius: @navbar-border-radius;*/
+    border-radius: 4px;
   }
 }
 @media (min-width: 1px) {
@@ -6322,7 +6322,7 @@ form .textarea-counter {
   height: auto !important;
   height: 100%;
   min-height: 100%;
-  margin: 0 auto -160px;
+  margin: 55px auto -160px;
 }
 @media (max-width: 979px) {
   #wrap > .container {
@@ -6340,14 +6340,14 @@ form .textarea-counter {
   font-size: .9em;
   line-height: 16px;
   text-align: left;
+  /*border-top: 1px solid #e5e5e5;*/
   background-color: #f5f5f5;
-  border-top: 1px solid #e5e5e5;
 }
 #footer .copyright {
   margin-top: 20px;
 }
-#footer f-vk-logo:focus,
-#footer f-vk-logo:hover {
+#footer .f-vk-logo:focus,
+#footer .f-vk-logo:hover {
   color: #4d6998;
 }
 .ajax-link {

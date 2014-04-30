@@ -11,16 +11,16 @@
 .navbar {
   position: relative;
   min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
-  margin-bottom: @navbar-margin-bottom;
+  /*margin-bottom: @navbar-margin-bottom;*/
   /*border: 1px dotted transparent;*/
-  margin-bottom: 30px;
-  margin-top:20px;
+  /*margin-bottom: 30px;*/
+  /*margin-top:20px;*/
 
   // Prevent floats from breaking the navbar
   &:extend(.clearfix all);
 
   @media (min-width: @grid-float-breakpoint) {
-    /*border-radius: @navbar-border-radius;*/
+    border-radius: @navbar-border-radius;
   }
 }
 
