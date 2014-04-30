@@ -1076,7 +1076,7 @@ def upload():
         # filename = resize_image(photos.path(filename), height = 400)
         return filename
         
-@app.route('/thumbnail/<filename>/')
+@app.route('/thumbnail/<filename>')
 def thumbnail(filename):
     path = photos.path(get_thumbnail_filename(filename))
     if not os.path.exists(path):  
@@ -1090,10 +1090,9 @@ def thumbnail(filename):
 
     return send_file(path)
     
-@app.route('/photo/<filename>/', defaults = {'height': 600})
-@app.route('/photo/<filename>/<int:height>/')
-def photo(filename, height):
-    height = min(height, 600)
+@app.route('/photo/<filename>')
+def photo(filename):
+    height = min(request.args.get('height') or 600, 600)
     if height:
         (name, ext) = os.path.splitext(filename)
         path = photos.path(name + str(height) + ext)

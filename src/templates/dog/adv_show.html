@@ -1,5 +1,18 @@
 {%block head %}
 
+<meta content="{{adv.get('desc') | truncate(155)}}" name="description"/>
+<meta content="{{title}}" property="og:title"/>
+<meta property="og:type" content="article" />
+<meta content="{{adv.get('desc') | truncate(155)}}" name="og:description"/>
+
+
+{%if adv.get('photos') %}
+<meta content="{{url_for('photo', filename = adv.get('photos')[0], _external = True)}}" property="og:image"/>
+{%endif%}
+
+<meta content="{{request.url}}" property="og:url"/>
+
+
 {% endblock %}
 
 
@@ -35,10 +48,9 @@
 
           {{photos(adv)}}
 
-          {{doc_info(adv)}}      
+          {{doc_info(adv)}}     
 
-          {{video(adv)}}
-          
+          {{video(adv)}} 
 
     </div>
 
@@ -300,15 +312,15 @@
     <div class="doc-info" style="margin-bottom:30px">
    {% set doc = adv.get("doc_id") %}
         {% if not doc %}
-          <div class="well" style="border-radius:5px">
+          <div class="" style="border-radius:5px">
           <table>
             <tr>
               <td style="">
-                <span style="font-size:5em" class=" glyphicon glyphicon-exclamation-sign text-danger"></span>
+                <span class="fa fa-5x fa-exclamation-circle text-warning"></span>
             </td>
             <td style="width:30px"></td>
             <td>
-                <h3 class="text-danger">
+                <h3 class="text-warning">
                    Нет документов о происхождении
                 </h3>
                 <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки.{# Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.#}</p>
@@ -322,7 +334,7 @@
           
          
    
-         <div class="panel panel-default" style="">
+         <div class="panel panel-info" style="">
           <div class="panel-heading">
                <h4 class="page-heade"><span style="padding-right:5px">{{pet_docs.get_doc_dog_name(doc)}}</span>
                </h4>
@@ -371,7 +383,7 @@
 
   <div class="dog-father dog-mother" style="margin-bottom:30px;">
 
-         <h4 class="" style="display: inline-block; padding: 10px 15px; margin-left: -15px; width: 160px; background-color:#f5f5f5;">{{title}}</h4>
+         <h4 class="" style="">{{title}}</h4>
 
          <div class="row" class="dog-parent">
 
@@ -582,7 +594,7 @@
 {%set col_left_class = "col-sm-4 text-semi-muted small" %}
 {%set col_right_class = "col-sm-8" %}
 
-<div class="seller-block bg-info" style="padding:10px 20px 20px" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
+<div class="seller-block well" style="padding:10px 20px 20px" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
     <h3 style="margin-bottom:20px">Контактная информация</h3>      
       
       {%set username = adv.get("username") or (seller.get("username") if seller else "") %}
@@ -638,7 +650,7 @@
         {%endif%}
     
       <div class="text-left" style="margin-top:20px">
-          <a rel="nofollow" style="" class="btn btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+          <a rel="nofollow" style="" class="btn bnt-lg btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=900,height=700,scrollbars=yes');w.focus();return false;"><i class="fa fa-envelope-o"></i>&emsp;Написать письмо</a>
       </div>
     
 
