@@ -6346,6 +6346,10 @@ form .textarea-counter {
 #footer .copyright {
   margin-top: 20px;
 }
+#footer f-vk-logo:focus,
+#footer f-vk-logo:hover {
+  color: #4d6998;
+}
 .ajax-link {
   cursor: pointer;
   border-bottom: dotted 1px;
