@@ -9,7 +9,9 @@
 
 
 {% macro render_nav_item(title, path) -%}
-    <li {% if request.path  == path %} class="active" {% endif %}><a href="{{path}}" >{{title}}</a></li>
+      <li class="{{'active' if request.path  == path}}">
+     <a  href="{{path}}" >{{title}}</a>
+     </li>
 {%- endmacro %}
 
 
@@ -23,26 +25,15 @@
       <div class="left-side">
         
       <ul class="nav nav-pills nav-stacked" >
-        
-        {% for (title, path) in [("Мои собаки", url_for('account_dog_advs'))] 
-        %}
 
-          {{render_nav_item(title, path)}}
+      <li class="{{'active' if request.path  == url_for('account_dog_advs')}}">
+        <a href="{{url_for('account_dog_advs')}}">Мои собаки <span class="badge pull-right">{{current_user.dog_advs_cnt}}</span></a>
+      </li>
 
-        {% endfor %}
+      <li class="{{'active' if request.path  == url_for('account_cat_advs')}}">
+        <a  href="{{url_for('account_cat_advs')}}">Мои кошки <span class="badge pull-right">{{current_user.cat_advs_cnt}}</span></a>
+      </li>
 
-        {#<li class="nav-divider"></li>#}
-
-
-         {% for (title, path) in [("Мои кошки", url_for('account_cat_advs'))
-          ] 
-        %}
-
-          {{render_nav_item(title, path)}}
-
-        {% endfor %}
-
-      {#<li class="nav-divider"></li>#}
 
         {% for (title, path) in [
           ("Контактная информация", url_for('account_contact'))
@@ -57,6 +48,8 @@
       </ul>
       </div> <!-- left-side -->
     </div> 
+
+
     <div class="col-sm-9 col-lg-10" style="">
       <h1 class="">{{ title }}</h1>
 

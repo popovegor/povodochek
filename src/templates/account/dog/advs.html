@@ -168,10 +168,10 @@
   <div style="border-top:1px solid #e5e5e5; margin:10px -30px 15px -30px; padding:15px 5px 0px 5px">
       
       <div class="col-sm-12 text-left">
-           <a type="button" title="Посмотреть" class="btn btn-xs btn-default" target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-eye-open" style="padding-right:7px"></span>Посмотреть</a>
-            <a type="" target="_blank" title="Редактировать" class="btn btn-xs btn-primary"  target="_self" style="{#margin:10px 10px#}" href="{{url_for('account_dog_adv_edit', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-pencil" style="padding-right:7px"></span>Редактировать</a>
+           <a type="button" title="Посмотреть" class="btn btn-xs btn-default" target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}"><i class="fa fa-eye"></i>&ensp;Посмотреть</a>
+            <a type="" target="_blank" title="Редактировать" class="btn btn-xs btn-primary"  target="_self" href="{{url_for('account_dog_adv_edit', adv_id = adv['_id'])}}"><i class="fa fa-pencil"></i>&ensp;Редактировать</a>
 
-            <a action="remove" type="button" title="Удалить" class="btn btn-xs btn-danger" style="{#margin:10px 10px#}"  target="_self" href="{{url_for('account_dog_adv_remove', adv_id = adv['_id'])}}"><span class="glyphicon glyphicon-trash" style="{#padding-right:7px;#}"></span>{#Удалить#}</a>
+            <a action="remove" type="button" title="Удалить" class="btn btn-xs btn-danger"  target="_self" href="{{url_for('account_dog_adv_remove', adv_id = adv['_id'])}}"><i class="fa fa-trash-o fa-lg"></i>{#&ensp;Удалить#}</a>
       </div>
 
      </div>

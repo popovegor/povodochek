@@ -61,6 +61,8 @@ import random
 import json
 from form_helper import (get_fields, calc_attraction)
 
+import cProfile
+
 photos = UploadSet('photos', IMAGES)
 
 class User(UserMixin):
@@ -76,12 +78,14 @@ class User(UserMixin):
         self.skype = user.get('skype')
         self.kennel_name = user.get('kennel_name')
         self.site_link = user.get('site_link')
+        self.dog_advs_cnt = user.get('dog_advs_cnt')
+        self.cat_advs_cnt = user.get('cat_advs_cnt')
 
     def is_signed(self):
         return True
 
     def is_active(self):
-        return True
+        return True or self.active
 
 class Anonymous(AnonymousUser):
     def __init__(self):
@@ -91,7 +95,7 @@ class Anonymous(AnonymousUser):
         self.active = False
 
     def is_signed(self):
-        return self.active
+        return False
 
 app = Flask(__name__)
 
@@ -264,11 +268,14 @@ app.jinja_env.globals['large_cities'] = jinja_large_cities()
 app.jinja_env.filters['country_name'] = get_country_name
 
 
+
 @login_manager.user_loader
 def load_user(id):
-    # print("user id = %s" % str(id))
     user = db.get_user(id)
+
     if user and not user.get('banned'):
+        user['dog_advs_cnt'] = db.get_dog_advs_by_user(id).count()
+        user['cat_advs_cnt'] = db.get_cat_advs_by_user(id).count()
         return User(user)
     else:
         return Anonymous()
@@ -1039,12 +1046,14 @@ def account_cat_adv_new():
     return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки", btn_name = u"Добавить")
 
 
+@app.route("/spravka/")
 @app.route("/help/")
 def help():
     return render_template("/help.html", \
         title=u"Помощь", header=Markup(u"Помощь"))
 
 @app.route("/spravka/privlekatelnost-obyavleniya/")
+@app.route("/help/privlekatelnost-obyavleniya/")
 def help_attraction():
     return render_template("/help/faq_attraction.html", \
         title=u"Привлекательность объявления", header=Markup(u"Привлекательность объявления"))

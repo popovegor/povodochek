@@ -3586,7 +3586,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a:focus {
   color: #fff;
   background-color: #fa0;
-  border-radius: 0;
+  border-radius: 4px;
 }
 .nav-stacked > li {
   float: none;
@@ -3763,6 +3763,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   background-image: url(../img/povodochek_brand.png);
   background-repeat: no-repeat;
   background-position: 12px 8px;
+  border-radius: 4px 0 0 4px;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
@@ -4683,8 +4684,8 @@ a.list-group-item.active:hover,
 a.list-group-item.active:focus {
   z-index: 2;
   color: #fff;
-  background-color: #428bca;
-  border-color: #428bca;
+  background-color: #fa0;
+  border-color: #fa0;
 }
 a.list-group-item.active .list-group-item-heading,
 a.list-group-item.active:hover .list-group-item-heading,
@@ -4694,7 +4695,7 @@ a.list-group-item.active:focus .list-group-item-heading {
 a.list-group-item.active .list-group-item-text,
 a.list-group-item.active:hover .list-group-item-text,
 a.list-group-item.active:focus .list-group-item-text {
-  color: #e1edf7;
+  color: #fec;
 }
 .list-group-item-success {
   color: #3c763d;
@@ -7218,5 +7219,11 @@ form .textarea-counter {
 .dog-breed-picker .dbp-dog-name {
   text-decoration: none;
   border-bottom: dotted 1px;
+}
+#menu .menu-signin {
+  border-radius: 0 4px 4px 0;
+}
+#menu .menu-account {
+  border-radius: 0 4px 4px 0;
 }
 /*# sourceMappingURL=bootstrap.css.map */
