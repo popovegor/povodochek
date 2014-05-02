@@ -32,10 +32,7 @@ def call_api(method, params, token):
     return json["response"]
 
 
-def post_dog_adv(adv_id):
-    adv = db.get_dog_adv(adv_id)
-    if not adv:
-        raise
+def post_dog_adv(adv):
 
     token, user_id = vk_auth.auth(USER_EMAIL, USER_PWD, USER_ID, ['wall','photos'])
     photo_srv = call_api('photos.getWallUploadServer', {'group_id': VK_GROUP_ID}, token)
@@ -57,7 +54,7 @@ def post_dog_adv(adv_id):
             photo = call_api('photos.saveWallPhoto', {'group_id': VK_GROUP_ID, 'photo':photo_srv['photo'], 'server':photo_srv['server'], 'hash': photo_srv['hash']}, token)
             photo_id = photo[0]['id']
 
-    url = u'http://поводочек.рф/prodazha-sobak/%s/' % adv_id
+    url = u'http://поводочек.рф/prodazha-sobak/%s/' % adv.get('_id')
 
     msg = u"«{0}»\n{1}, {2}, {3} руб\n{4} {5}\n{6}".format(
         adv.get('title'),
@@ -69,17 +66,16 @@ def post_dog_adv(adv_id):
         url
         )
 
-    url = u'http://povodochek.com/prodazha-sobak/%s/' % adv_id
+    url = u'http://povodochek.com/prodazha-sobak/%s/' % adv.get('_id')
 
-    post = call_api('wall.post', {'message': msg, \
+    return call_api('wall.post', {'message': msg, \
         'attachments': ",".join([ photo_id, url]), 'owner_id': -VK_GROUP_ID, 'from_group': '0', 'signed': 0}, token)
-    pprint(post)
-    db.mark_dog_adv_as_vk_posted(adv_id, post['post_id'])
-
 
 def post_dog_advs_to_vk():
     for adv in db.get_dog_advs_for_vk(mins = 1440):
-        post_dog_adv(adv.get('_id'))
+        post = post_dog_adv(adv)
+        pprint(post)
+        db.mark_dog_adv_as_vk_posted(adv.get('_id'), post['post_id'])
 
 if __name__ == "__main__":
     # post_dog_adv('533d60a09cd9af391e3e0768')

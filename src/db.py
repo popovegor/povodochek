@@ -521,6 +521,13 @@ def mark_dog_adv_as_vk_posted(adv_id, post_id):
         {'vk.post': True, 'vk.post_date' : now, 'vk.post_id':post_id}}, 
         multi = False, upsert = False)
 
+def mark_dog_adv_as_fb_posted(adv_id, post_id):
+    now = datetime.utcnow()
+    dog_advs.update({'_id': ObjectId(adv_id)}, 
+        {'$set': 
+        {'fb.post': True, 'fb.post_date' : now, 'fb.post_id':post_id}}, 
+        multi = False, upsert = False)
+
 def get_dog_advs_for_last_mins(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
     return dog_advs.find({'update_date' : {'$gte':dt}})
@@ -530,3 +537,9 @@ def get_dog_advs_for_vk(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
     return dog_advs.find({'update_date' : {'$gte':dt}, 
         'vk.post':{'$ne':True} })
+
+
+def get_dog_advs_for_fb(mins = 60):
+    dt = datetime.utcnow() - timedelta(minutes = mins)
+    return dog_advs.find({'update_date' : {'$gte':dt}, 
+        'fb.post':{'$ne':True} })

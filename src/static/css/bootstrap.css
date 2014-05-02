@@ -6280,7 +6280,7 @@ td.visible-print {
 }
 html,
 body {
-  min-width: 800px;
+  min-width: 830px;
   height: 100%;
 }
 form {
@@ -6350,6 +6350,10 @@ form .textarea-counter {
 #footer .f-vk-logo:focus,
 #footer .f-vk-logo:hover {
   color: #4d6998;
+}
+#footer .f-fb-logo:focus,
+#footer .f-fb-logo:hover {
+  color: #4862a3;
 }
 .ajax-link {
   cursor: pointer;
