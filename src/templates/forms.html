@@ -1,9 +1,9 @@
-{%- macro form_field_attraction() -%}
-  <span title="Влияет на привлекательность объявления" class="glyphicon small glyphicon-star attraction-field"></span>
+{%- macro form_field_attraction(id = '', title = 'Влияет на привлекательность объявления', class="") -%}
+  <i {{('id=' ~ id) if id else ''}} title="{{title}}" class=" fa fa-star attraction-field {{class}}" ></i>
 {%- endmacro -%}
 
 {%- macro form_field_required() -%}
-<span title="Обязательное поле" class="glyphicon glyphicon-asterisk small required-field" style=""></span>
+<span title="Обязательное поле" class="fa fa-asterisk small required-field" style=""></span>
 {%- endmacro -%}
 
 {%- macro form_field_label(field) -%}

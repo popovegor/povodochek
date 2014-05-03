@@ -23,13 +23,13 @@
         
         {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
         
-        <i class="fa fa-video-camera text-danger pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
+        <i class="fa fa-video-camera fa-lg text-danger pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
 
         {%endif%}
 
         {% if adv.get("champion_bloodlines") %}
 
-        <i class="fa fa-trophy text-warning pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
+        <i class="fa fa-trophy fa-lg text-warning pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
 
         {%endif%}
         
@@ -143,38 +143,24 @@
           <div class="col-sm-3 col-lg-2 text-right">
             {%set price = (adv.get("price") or "") | int  %}
             <span class="adv-price" style="" title='Цена: {{ format("{0:,}", price) | replace(","," ")}} {{ "рубль" | morph_word(count=price )}}'>
-             <b class="price">{{ price | format_price() }}&nbsp;<i class="fa fa-ruble"></i></b>
+             <b class="adv-price-number">{{ price | format_price() }}&nbsp;<i class="fa fa-ruble"></i></b>
            </span>  
 
            <ul class="list-unstyled">
             {% set price_hp = adv.get("price_hp") %}
-          {% if price_hp %}
-           <li>
-              <span class="{#label label-info#}">рассрочка</span>
-           </li>
-           {%endif%}    
+            {% if price_hp %}
+             <li>
+                <span class="label label-danger">рассрочка</span>
+             </li>
+             {%endif%}    
 
-           {% set price_haggle = adv.get("price_haggle") %}
-          {% if price_haggle %}
-            
-           <li>
-            <span class="{#label label-info#}">торг</span>
-           </li>
-           {%endif%}
-
-           {% set delivery = adv.get("delivery") %}
-          {% if delivery %}
-           <li>
-              <span class="{#label label-info#}">доставка</span>
-           </li>
-           {%endif%}
-           
-           {% set contract = adv.get("contract") %}
-          {% if contract %}
-           <li>
-              <span class="{#label label-info#}">договор</span>
-           </li>
-           {%endif%}
+             {% set price_haggle = adv.get("price_haggle") %}
+            {% if price_haggle %}
+              
+             <li>
+              <span class="label label-danger">торг</span>
+             </li>
+             {%endif%}
 
            </ul>
 

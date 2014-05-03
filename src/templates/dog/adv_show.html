@@ -168,39 +168,23 @@
              <meta itemprop="priceCurrency" content="RUB" />   
       </div>
 
-      <table>
-        <tbody><tr>
+        <ul class="list-inline">
 
           {%if adv.get("price_haggle") %}
-            <td class="das-price-haggle">
-              <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-info" >торг</abbr>   
-            </td>
+            <li class="">
+              <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-danger" >торг</abbr>   
+            </li>
             
             {%endif%}
 
-
              {%if adv.get("price_hp") %}
-              <td class="das-price-hp">
-                  <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-info ">рассрочка</abbr>
-              </td>
+              <li class="">
+                  <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-danger ">рассрочка</abbr>
+              </li>
                 
               {%endif%}
 
-
-              {%if adv.get("contract") %}
-              <td class="das-price-contract">
-                <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Заключается договор купли-продажи" class="label label-info ">договор</abbr>
-                </td>
-              {%endif%}
-
-               {%if adv.get("delivery") %}
-                <td class="das-price-delivery">
-                <abbr style="" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна доставка в другой город" class="label label-info ">доставка</abbr>
-                </td>
-                {%endif%}
-
-        </tr></tbody>
-      </table>
+        </ul>
 
     </div>
 
@@ -480,30 +464,54 @@
         </div>
 
         <div class="row">
+          <p class="{{col_left_class}}">Доставка в др. города</p>
+          <p class="{{col_right_class}}">
+            {% if adv.get("delivery") %}
+            возможна
+            {%else%}
+            <span class='text-muted'>нет</span>
+            {%endif%}
+            </p>
+        </div>
+
+      
+
+        <div class="row">
           <p class="{{col_left_class}}">Порода</p>
           <p class="{{col_right_class}}">{{adv.get("breed_id") | breed_dog_name | lower }}</p>
         </div>
 
+        {% set gender = adv.get("gender_id") | gender_name %}
+        {% if gender %}
         <div class="row">
-          {% set gender = adv.get("gender_id") | gender_name %}
           <p class="{{col_left_class}}">Пол</p>
-          <p class="{{col_right_class}}">{{ gender | lower if gender else '<span class="text-muted">не указан</span>' | safe}}</p>
+          <p class="{{col_right_class}}">{{ gender | lower }}</p>
         </div>
+        {%endif%}
 
 
           {% set birthday = adv.get("birthday") %}
+          {% if birthday %}
           <div class="row">
           <p class="{{col_left_class}}">Дата рождения</p>
           <p class="{{col_right_class}}"> 
-            {% if birthday %}
-              {{momentjs(birthday).format("D MMM YYYY")}}
-              
+              {{momentjs(birthday).format("D MMM YYYY")}}  
               (<small>{{momentjs(birthday).fromNow(True)}}</small>)
-              {%else%}
-                <span class='text-muted'>не указана</span>
-            {%endif%}
           </p>
           </div>
+          {%endif%}
+
+          {% set color = adv.get("color") or "" | lower %}
+          {% if color %}
+          <div class="row">
+          <p class="{{col_left_class}}">
+            Окрас
+          </p>
+          <p class="{{col_right_class}}">
+            {{color}}
+          </p>
+          </div>
+          {%endif%}
 
           <div class="row">
           <p class="{{col_left_class}}">
@@ -540,15 +548,6 @@
           </p>
           </div>
 
-          {% set color = adv.get("color") or "" | lower %}
-          <div class="row">
-          <p class="{{col_left_class}}">
-            Окрас
-          </p>
-          <p class="{{col_right_class}}">
-            {{ color  or "<span class='text-muted' >не указан</span>" | safe  }}
-          </p>
-          </div>
 
           <div class="row">
           <p class="{{col_left_class}}">Допуск в разведение</p>
@@ -556,7 +555,7 @@
             {% if adv.get("breeding") %}
             есть
             {%else%}
-            <span class='text-muted'>отсутствует</span>
+            <span class='text-muted'>нет</span>
             {%endif%}
           </p>
           </div>
@@ -582,6 +581,18 @@
             {%endif%}
           </p>
         </div>
+
+          <div class="row">
+         <p class="{{col_left_class}}">Договор купли-продажи</p>
+          <p class="{{col_right_class}}">
+            {% if adv.get("contract") %}
+            есть
+            {%else%}
+            <span class='text-muted'>нет</span>
+            {%endif%}
+          </p>
+        </div>
+
       </div>
 
 {%- endmacro -%}
@@ -594,7 +605,7 @@
 {%set col_left_class = "col-sm-4 text-semi-muted small" %}
 {%set col_right_class = "col-sm-8" %}
 
-<div class="seller-block well" style="padding:10px 20px 20px" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
+<div class="seller-block well" style="padding:10px 20px 20px; box-shadow:2px 2px 5px 0px #ccc" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
     <h3 style="margin-bottom:20px">Контактная информация</h3>      
       
       {%set username = adv.get("username") or (seller.get("username") if seller else "") %}
@@ -607,15 +618,7 @@
       </div>
       {%endif%}
 
-      {% set kennel_name = adv.get("kennel_name") %}
-        {% if kennel_name %}
-        <div class="row">
-       <p class="{{col_left_class}}">Питомник</p>
-      <p class="{{col_right_class}}">
-        <span>{{kennel_name}}</span>
-      </p>
-      </div>
-      {%endif%}
+      
 
     
 
@@ -638,6 +641,16 @@
         </p>
         </div>
         {%endif%}
+
+      {% set kennel_name = adv.get("kennel_name") %}
+        {% if kennel_name %}
+        <div class="row">
+       <p class="{{col_left_class}}">Питомник</p>
+      <p class="{{col_right_class}}">
+        <span>{{kennel_name}}</span>
+      </p>
+      </div>
+      {%endif%}
   
       {%set site = adv.get("site_link") or (seller.get("site_link") if seller else "") %}
         {%if site %}

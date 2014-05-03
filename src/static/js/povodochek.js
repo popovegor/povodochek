@@ -96,7 +96,7 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
   var m = {
     minLength: 0,
     items: 12,
-    autoSelect : true,
+    autoSelect : false,
     source: function (query, process) {
       return $.getJSON(ajax_url,
         {limit: 12, query: query },
@@ -104,8 +104,8 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
           var input = $("#" + input_id);
           if(data.items.length === 0) {
               input.tooltip("destroy").tooltip(
-                {title:"Совпадений не найдено. Выберите из выпадающего списка, введя часть названия.", 
-                trigger: "click"}).tooltip("show").
+                {title:"<i class='fa fa-exclamation-triangle'></i>&emsp;Совпадений не найдено", 
+                trigger: "click", html: true}).tooltip('show').
               attr("show-tooltip", "true");
           } else if (input.attr("show-tooltip") === "true"){
             input.tooltip("destroy").attr("show-tooltip", "false");

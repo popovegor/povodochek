@@ -1,27 +1,9 @@
-{#<p class="text-left"><span>Поиск объявлений о продаже породистых собак</span></p>#}
-
-<div class="bg-info" style="box-shadow:3px 3px 8px 1px #ccc; border-radius:10px; margin-top:20px">
-
-  <div class="bg-primary" style="padding:5px 25px; border-radius:10px 10px 0px 0px;"><b>Поиск объявлений о продаже породистых щенков и собак</b></div>
-
-
-  <div class="" style="padding:10px 20px 20px">
-
-      {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
-
-      <form action="" method="get" class="" style="padding-top:0px" role="form">
-
-      <div class="row">
+{%- macro first_line() -%}
+<div class="row">
         <div class="col-sm-5">
                   <table style="width:100%"><tr>
-                  <td style="width:60px" class="hidden-sm hidden-md hidden-lg">
-                      <label for="{{form.breed.name}}" class=" control-label" style="font-weight:normal">порода</label>
-                  </td>
                   <td>
-                      <label for="{{form.breed.name}}" class=" control-label" style="font-weight:normal">Порода</label>
-
-                      
-
+                      <label for="{{form.breed.name}}" class="control-label" style="font-weight:normal">Порода</label>
                       <div class="input-group">
                           <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
 
@@ -38,12 +20,9 @@
         </div>
         <div class="col-sm-7">
         <table style="width:100%"><tbody><tr>
-            <td style="width:50px" class="hidden-sm hidden-md hidden-lg">
-              <label for="{{form.city.name}}" class=" control-label" style="font-weight:normal">город</label>
-             
-            </td>
+           
             <td>
-                <label for="{{form.city.name}}" class=" control-label" style="font-weight:normal">Местоположение</label>
+                <label for="{{form.city.name}}" class="control-label" style="font-weight:normal">Местоположение</label>
               <input name="{{form.city.name}}" class="form-control" placeholder="Укажите населенный пункт", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
@@ -52,36 +31,35 @@
               <label for="{{form.distance.name}}" class=" control-label" style="font-weight:normal">удаленность</label>
               <div class="input-group">
                 
-                <input class="form-control" name="{{form.distance.name}}" placeholder="" value="{{form.distance.default if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
+                <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
                 <span class="input-group-addon">км</span>
               </div>
             </td>
-            {#<td style="width:30px" class="text-center">
-              км
-            </td>#}
           </tr></tbody></table>
         </div>
       </div>
+{%-endmacro-%}
 
-      <!-- price -->
-      <div class="row" style="margin-top:20px">
-        <div class="col-sm-6">
+{%- macro second_line() -%}
+   <!-- price -->
+      <div class="row" style="margin-top:25px">
+        <div class="col-sm-5">
           <table style="width:100%">
             <tr>
               <td style="width:45px;">
-                Цена
+                <label for="{{form.price_from.name}}" class="control-label" style="font-weight:normal">Цена</label>
               </td>
               <td style="width:130px">
-                <div class="input-group">
+                <div class="input-group input-group-md">
                 <input class="form-control" name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
-                <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble"></i></span>
+                <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
               </div>
               </td>
               <td style="width:25px;" class="text-center small">&ndash;</td>
               <td style="width:130px;">
-               <div class="input-group">
+               <div class="input-group input-group-md">
                 <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
-                <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble"></i></span>
+                <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
               </div>  
               </td>
               {#<td style="width:35px" class="text-center">руб</td>#}
@@ -98,23 +76,70 @@
             </tr>
           </table>
           </div>
-          <div class="col-sm-6 text-right">
-                <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
+          <div class="col-sm-3">
+            <ul class="list-inline" style="">
+              <li>
+                 {{form_field(form.photo)}}
+              </li>
+              <li>
+                {{form_field(form.video)}}
+              </li>
+          </ul>
+          </div>
+          <div class="col-sm-4 text-right">
+            <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
                 <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
           </div>
           
+          
       </div>
+{%- endmacro -%}
 
-        {#{ form_field(form.photo) }#}
+
+{%- macro footer() -%}
+  <div style="
+margin: 20px -20px 0 -20px;
+border-radius: 0px 0px 10px 10px;
+padding:0px 20px;
+background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
+    <ul class="list-inline" style="">
+        <li>
+           {{form_field(form.photo)}}
+        </li>
+        <li>
+          {{form_field(form.video)}}
+        </li>
+    </ul>
+  </div>
+{%- endmacro-%}
+
+{#<h4 class="text-semi-muted">Поиск объявлений о продаже породистых щенков и собак</h4>#}
+
+
+<div class="bg-info" style="box-shadow:2px 2px 5px 0px #ccc; border-radius:10px; margin-top:50px; position:relative">
+
+  <div class="bg-info" style="position:absolute;padding:5px 20px; border-radius:10px 10px 0px 0px;top:-40px"><h4>Поиск объявлений</h4></div>
+
+
+
+
+      {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+      <form action="" method="get" class="" style="padding:15px 20px 0px 20px" role="form">
+
+      {{first_line()}}
+
+      {{second_line()}}
+      
+      {#{footer()}#}
 
 
     </form>
 
-     
-
-
-  </div>
 </div>
+
+
+
 
 
 <script type="text/javascript">
@@ -151,4 +176,4 @@
         
       });
 
-          </script>
+  </script>

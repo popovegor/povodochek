@@ -173,7 +173,8 @@ class DogSearch(Form):
 
     distance = IntegerField(u"удаленность")
 
-    photo = BooleanField(u"Только с фото")
+    photo = BooleanField(u"с фото")
+    video = BooleanField(u"с видео")
 
     # photo = BooleanField(u"С документами")
 

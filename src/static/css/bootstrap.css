@@ -6668,9 +6668,10 @@ form .textarea-counter {
 .dog-search .adv .adv-price {
   margin-bottom: 5px;
 }
-.pet-sale .adv .adv-price .price,
-.account-pet-sale .adv .adv-price .price,
-.dog-search .adv .adv-price .price {
+.pet-sale .adv .adv-price .adv-price-number,
+.account-pet-sale .adv .adv-price .adv-price-number,
+.dog-search .adv .adv-price .adv-price-number {
+  font-family: "Trebuchet MS", Arial, sans-serif;
   font-size: 26px;
   white-space: nowrap;
 }
@@ -6892,8 +6893,8 @@ form .textarea-counter {
 .dog-adv-show .das-price-block .das-price-number,
 .sale-pet-show .das-price-block .das-price-number {
   padding: 20px 0 10px 0;
+  font-family: "Trebuchet MS", Arial, sans-serif;
   font-size: 38px;
-  /*font-family: "Arial Black", Gadget, sans-serif;*/
   font-weight: bold;
 }
 .dog-adv-show .das-price-block .das-price-haggle,
