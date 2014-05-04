@@ -638,6 +638,7 @@ def dog_search():
         distance = (form.distance.data + 0.01) if form.distance.data else None, \
         photo = form.photo.data, \
         video = form.video.data, \
+        champion_bloodlines = form.champion_bloodlines.data, \
         price_from = form.price_from.data if form.price_from.data else None, \
         price_to = form.price_to.data if form.price_to.data else None, \
         sort = session.get("dog_sort"),

@@ -285,8 +285,9 @@ def get_near_cities(city = None, distance = None):
 
 def find_dog_advs(
 	breed_id = None, gender_id = None, city = None, \
-    distance = None, photo = False, video = False, price_from = None, \
-    price_to = None, \
+    distance = None, photo = False, \
+    video = False, champion_bloodlines = False, \
+    price_from = None, price_to = None, \
 	sort = None, skip = None, limit = None):
 
     _filter = {}
@@ -297,7 +298,7 @@ def find_dog_advs(
 
     extend_filter("breed_id", num(breed_id))
 
-    price_form = num(price_from)
+    price_from = num(price_from)
     price_to = num(price_to)
     if price_from or price_to:
         extend_filter("price", \
@@ -317,6 +318,10 @@ def find_dog_advs(
 
     if video:
         extend_filter("video_link" , {"$nin":[None, ""]})
+
+    if champion_bloodlines: 
+        extend_filter("champion_bloodlines", True)
+
     sortby = [("update_date", -1)]
     if sort == 1:
         sortby = [("price", -1)]

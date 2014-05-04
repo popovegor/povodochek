@@ -175,14 +175,14 @@ class DogSearch(Form):
 
     photo = BooleanField(u"с фото")
     video = BooleanField(u"с видео")
-
-    # photo = BooleanField(u"С документами")
+    champion_bloodlines = BooleanField(u"чемпионские крови")
 
     # price
-    price_from = IntegerField(u"Цена", \
-        # filters = [lambda x : x.replace(' ','') ]
+    price_from = TextField(u"Цена от", \
+        filters = [lambda x: (x or '').replace(' ', '')]
         )
-    price_to = IntegerField(u"до")
+    price_to = TextField(u"Цена до", \
+        filters = [lambda x: (x or '').replace(' ', '')])
 
     price_unit = SelectField(u"", choices = [(0, u"руб"), (1, u"тыс руб")])
 

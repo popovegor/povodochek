@@ -62,39 +62,22 @@
                 <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble"></i></span>
               </div>  
               </td>
-              {#<td style="width:35px" class="text-center">руб</td>#}
-              {#<td style="width:110px; padding-left:5px" class="text-center">
-                   <select class="form-control" id="{{form.price_unit.id}}" name="{{form.price_unit.id}}">
-                      {%for k,v in form.price_unit.choices%}
-                        <option value="{{k}}">{{v}}</option>
-                      {%endfor%}
-                   </select>  
-              </td>#}
-              <td style="" class="text-right">
-                 
-              </td>
             </tr>
           </table>
           </div>
-          <div class="col-sm-3">
-            <ul class="list-inline" style="">
-              <li>
-                 {{form_field(form.photo)}}
-              </li>
-              <li>
-                {{form_field(form.video)}}
-              </li>
-          </ul>
+
+          <div class="col-sm-7 text-right">
           </div>
-          <div class="col-sm-4 text-right">
-            <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
-                <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
-          </div>
-          
           
       </div>
 {%- endmacro -%}
 
+
+{%- macro header() -%}
+
+ <p class="bg-info lead" style="position:absolute;padding:10px 20px 0px 20px; border-radius:10px 10px 0px 0px;top:-39px; left:0px; background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);"><small>Поиск объявлений</small></p>
+
+{%- endmacro -%}
 
 {%- macro footer() -%}
   <div style="
@@ -103,36 +86,47 @@ border-radius: 0px 0px 10px 10px;
 padding:0px 20px;
 background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
     <ul class="list-inline" style="">
-        <li>
-           {{form_field(form.photo)}}
-        </li>
-        <li>
-          {{form_field(form.video)}}
-        </li>
-    </ul>
+      <li>
+         {{form_field(form.photo)}}
+      </li>
+      <li>
+        {{form_field(form.video)}}
+      </li>
+      <li>
+        {{form_field(form.champion_bloodlines)}}
+      </li>
+  </ul>
   </div>
 {%- endmacro-%}
+
+{%- macro actions() -%}
+  <div style="position:absolute; right:20px; bottom:60px">
+      <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
+          <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
+  </div>
+{%- endmacro -%}
 
 {#<h4 class="text-semi-muted">Поиск объявлений о продаже породистых щенков и собак</h4>#}
 
 
-<div class="bg-info" style="box-shadow:2px 2px 5px 0px #ccc; border-radius:10px; margin-top:50px; position:relative">
+<div class="bg-info" style="box-shadow:2px 2px 5px 0px #ccc; border-radius:0px 10px 10px 10px; margin-top:50px;">
 
-  <div class="bg-info" style="position:absolute;padding:5px 20px; border-radius:10px 10px 0px 0px;top:-40px"><h4>Поиск объявлений</h4></div>
+  
 
+      {% from "forms.html" import form_field_boolean, form_field, action_buttons  %}
 
+      <form action="" method="get" class="" style="padding:15px 20px 0px 20px;position:relative" role="form">
 
-
-      {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
-
-      <form action="" method="get" class="" style="padding:15px 20px 0px 20px" role="form">
+      {{header()}}
 
       {{first_line()}}
 
       {{second_line()}}
-      
-      {#{footer()}#}
 
+      {{footer()}}
+
+      {{actions()}}
+      
 
     </form>
 
@@ -150,9 +144,9 @@ background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
 
         $("#{{form.distance.id}}").inputmask("integer", { allowMinus: false, allowPlus: false , rightAlignNumerics: false});
 
-        $("#{{form.price_from.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false});
+        $("#{{form.price_from.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false, autoGroup: true, groupSeparator: " ", groupSize: 3});
 
-        $("#{{form.price_to.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false});
+        $("#{{form.price_to.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false, autoGroup: true, groupSeparator: " ", groupSize: 3});
 
         
           $("#{{form.breed.id}}").typeahead(
