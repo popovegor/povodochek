@@ -129,6 +129,12 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     output='gen/js.js')
 assets.register('js_all', js)
 
+js_ie8 = Bundle('js/html5shiv.js', \
+    'js/respond.min.js', \
+    filters='rjsmin', \
+    output='gen/js_ie8.js')
+assets.register('js_ie8', js_ie8)
+
 css = Bundle(
     'css/bootstrap.min.css', \
     'css/typeahead.js-bootstrap.css', \

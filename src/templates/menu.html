@@ -4,19 +4,11 @@
   <!-- Brand and toggle get grouped for better mobile display -->
    
   <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-      <span class="sr-only">Развернуть</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-
 
       {% set brand_tag = 'span' if request.path == url_for('index') else 'a' %}
         <{{brand_tag}} title="Продажа и покупка породистых собак и кошек, щенков и котят" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;"></{{brand_tag}}>
 
   </div>
-
 
 
   <!-- Collect the nav links, forms, and other content for toggling -->
