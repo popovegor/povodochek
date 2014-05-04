@@ -6651,13 +6651,13 @@ form .textarea-counter {
 .dog-search .ds-filter form .ds-actions {
   position: absolute;
   right: 20px;
-  bottom: 55px;
+  bottom: 65px;
 }
 .pet-sale .ds-filter form .ds-advanced,
 .account-pet-sale .ds-filter form .ds-advanced,
 .dog-search .ds-filter form .ds-advanced {
-  height: 30px;
-  padding: 5px 20px 0 20px;
+  height: 40px;
+  padding: 10px 20px 0 20px;
   margin: 25px -20px 0 -20px;
   background: #d9edf7;
   background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #d9edf7), color-stop(1, #f4f6fc));
