@@ -1,14 +1,14 @@
 {%- macro breadcrumbs(items) -%}
 
-      <ol class="breadcrumb" >
-      <li><a href="{{url_for('index')}}" title="Главная"><small class="fa fa-home fa-lg"></small></a> </li>
+      <ol class="breadcrumb" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+      <li><a href="{{url_for('index')}}" itemprop="url" title="Главная"><small class="fa fa-home fa-lg" itemprop="name"></small></a> </li>
       
       {%for item in items | selectattr("name") %}
         
         {% if loop.last %}
-            <li class="active"><span>{{item.name}}</span> </li>
+            <li class="active"><span itemprop="name">{{item.name}}</span> </li>
         {%else%}
-            <li><a href="{{item.url}}">{{item.name}}</a> <span class="divider"></span></li>
+            <li><a itemprop="url" href="{{item.url}}"><span itemprop="name">{{item.name}}</span></a> <span class="divider"></span></li>
             
         {%endif%}
         
