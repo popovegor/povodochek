@@ -2,6 +2,33 @@
 @photo-thumbail-width : 150px;
 @bottom-height : 160px;
 
+.gradient(@color: #F5F5F5, @start: #EEE, @stop: #FFF) {
+      background: @color;
+      background: -webkit-gradient(linear,
+                                   left bottom,
+                                   left top,
+                                   color-stop(0, @start),
+                                   color-stop(1, @stop));
+      background: -ms-linear-gradient(bottom,
+                                      @start,
+                                      @stop);
+      background: -moz-linear-gradient(center bottom,
+                                       @start 0%,
+                                       @stop 100%);
+      background: -o-linear-gradient(@stop,
+                                     @start);
+      filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@stop,@start));
+}
+
+.box-shadow(@arguments) {
+  -webkit-box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  box-shadow: @arguments;
+}
+
+
+
+
 .opacity (@op) {
     filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)"; /* IE 5.5+*/
     -moz-opacity: @op; /* Mozilla 1.6 и ниже */
@@ -376,6 +403,48 @@ form {
         hr {margin-top: 10px;}
     }
 
+    .ds-filter {
+        background-color: @state-info-bg;
+        .box-shadow(2px 2px 5px 0px #ccc);
+        border-radius:0px 10px 10px 10px; 
+        margin-top:50px;
+        form {
+           padding:15px 20px 0px 20px;
+           position:relative;
+           label {
+            font-weight: normal;
+           }
+           
+           .ds-actions {
+                position:absolute; 
+                right:20px; 
+                bottom:55px
+           }
+
+           .ds-advanced {
+                margin: 25px -20px 0 -20px;
+                border-radius: 0px 0px 10px 10px;
+                padding:5px 20px 0px 20px;
+                height:30px;
+                .gradient(@color:#d9edf7, @start:#d9edf7, @stop:#f4f6fc);
+                .checkbox {
+                    margin-top: 0px;
+                }
+           }
+
+           .ds-header {
+                position:absolute;
+                padding:10px 20px 0px 20px; 
+                border-radius:10px 10px 0px 0px;
+                top:-40px; left:0px;
+                height: 40px;
+                font-size: @font-size-h4;
+                .gradient(@color:#d9edf7, @start:#d9edf7, @stop:#f4f6fc);
+           }
+
+        }
+    }
+
     .adv {
         border-radius:5px;
 
@@ -620,12 +689,8 @@ form {
             border: none;
             margin: 0 0 10px;
             background: #fff;
-            /*border: 4px solid #fff;*/
-            
             position: relative;
-            /*border-radius: 4px;*/
-            /*box-shadow: 0 0px 0px rgba(0,0,0,.2);*/
-            box-shadow: none;
+            .box-shadow(none);
             zoom: 1;
         }
 
@@ -636,7 +701,7 @@ form {
             background-repeat: no-repeat;
             min-height: 400px;
             border:none;
-            box-shadow: none;
+            .box-shadow(none);
             .flex-direction-nav a {
                 width: 20% !important;
             }

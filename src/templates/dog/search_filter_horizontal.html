@@ -1,34 +1,34 @@
 {%- macro first_line() -%}
 <div class="row">
         <div class="col-sm-5">
-                  <table style="width:100%"><tr>
-                  <td>
-                      <label for="{{form.breed.name}}" class="control-label" style="font-weight:normal">Порода</label>
-                      <div class="input-group">
-                          <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
+            <table style="width:100%"><tr>
+            <td>
+                <label for="{{form.breed.name}}" class="control-label">Порода</label>
+                <div class="input-group">
+                    <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
 
-                          <div class="input-group-btn">
+                    <div class="input-group-btn">
 
-                             <button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>
-                          </div>
-                      </div>
-                      {%from "breed_picker.html" import dog_breed_picker %}
+                       <button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>
+                    </div>
+                </div>
+                {%from "breed_picker.html" import dog_breed_picker %}
 
-                       {{dog_breed_picker(form.breed.id, "breed_picker")}}
-                  </td>
-                  </tr></table>
+                 {{dog_breed_picker(form.breed.id, "breed_picker")}}
+            </td>
+            </tr></table>
         </div>
         <div class="col-sm-7">
         <table style="width:100%"><tbody><tr>
            
             <td>
-                <label for="{{form.city.name}}" class="control-label" style="font-weight:normal">Местоположение</label>
+                <label for="{{form.city.name}}" class="control-label">Местоположение</label>
               <input name="{{form.city.name}}" class="form-control" placeholder="Укажите населенный пункт", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
             <td style="width:20px;padding-top:30px" class="text-center">+</td>
             <td style="width:110px">
-              <label for="{{form.distance.name}}" class=" control-label" style="font-weight:normal">удаленность</label>
+              <label for="{{form.distance.name}}" class=" control-label">удаленность</label>
               <div class="input-group">
                 
                 <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
@@ -47,7 +47,7 @@
           <table style="width:100%">
             <tr>
               <td style="width:45px;">
-                <label for="{{form.price_from.name}}" class="control-label" style="font-weight:normal">Цена</label>
+                <label for="{{form.price_from.name}}" class="control-label">Цена</label>
               </td>
               <td style="width:130px">
                 <div class="input-group input-group-md">
@@ -75,16 +75,12 @@
 
 {%- macro header() -%}
 
- <p class="bg-info lead" style="position:absolute;padding:10px 20px 0px 20px; border-radius:10px 10px 0px 0px;top:-39px; left:0px; background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);"><small>Поиск объявлений</small></p>
+ <div class="ds-header" style="">Поиск объявлений</div>
 
 {%- endmacro -%}
 
-{%- macro footer() -%}
-  <div style="
-margin: 20px -20px 0 -20px;
-border-radius: 0px 0px 10px 10px;
-padding:0px 20px;
-background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
+{%- macro advanced() -%}
+  <div class="ds-advanced" >
     <ul class="list-inline" style="">
       <li>
          {{form_field(form.photo)}}
@@ -100,8 +96,8 @@ background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
 {%- endmacro-%}
 
 {%- macro actions() -%}
-  <div style="position:absolute; right:20px; bottom:60px">
-      <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий поиск">Сбросить</span></a>
+  <div class="ds-actions">
+      <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий фильтр">Сбросить</span></a>
           <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
   </div>
 {%- endmacro -%}
@@ -109,13 +105,11 @@ background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
 {#<h4 class="text-semi-muted">Поиск объявлений о продаже породистых щенков и собак</h4>#}
 
 
-<div class="bg-info" style="box-shadow:2px 2px 5px 0px #ccc; border-radius:0px 10px 10px 10px; margin-top:50px;">
-
-  
+<div class="ds-filter">
 
       {% from "forms.html" import form_field_boolean, form_field, action_buttons  %}
 
-      <form action="" method="get" class="" style="padding:15px 20px 0px 20px;position:relative" role="form">
+      <form action="" method="get" class="" role="form">
 
       {{header()}}
 
@@ -123,7 +117,7 @@ background-image: linear-gradient(to bottom,#F4F6FC,#d9edf7);height:40px" >
 
       {{second_line()}}
 
-      {{footer()}}
+      {{advanced()}}
 
       {{actions()}}
       
