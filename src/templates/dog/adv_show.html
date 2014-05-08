@@ -26,7 +26,8 @@
     {{breadcrumbs( [
     {'name':"Продажа собак", 'url':url_for("dog_search")}, 
     {'name':adv.get('breed_id') | breed_dog_name, 'url':url_for("dog_search", breed=adv.get("breed_id"))}, 
-    {'name': adv.get('city_id') | city_region, 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
+     {'name': adv.get('region_id') | region_name, 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("region_id"))},
+    {'name': adv.get('city_id') | city_name, 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
     {'name':adv.get("title") | capitalize}
     ] ) }}
               

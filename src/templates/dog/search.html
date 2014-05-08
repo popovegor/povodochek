@@ -7,6 +7,7 @@
     {{breadcrumbs( [
     {'name':"Продажа собак", 'url':url_for("dog_search")}, 
     {'name':breed, 'url':url_for("dog_search", breed=breed_id)}, 
+    {'name':region, 'url':url_for("dog_search", breed=breed_id, city=region_id)},
     {'name':city, 'url':url_for("dog_search", breed=breed_id, city=city_id)}, 
     ] ) }}
               
@@ -18,14 +19,14 @@
 
 <div class="dog-search">
     
-      <div class="" style="max-width:920px; margin:10px auto 30px">
-          {% include 'dog/search_filter_horizontal.html' %}
-      </div>
+      
+  {% include 'dog/search_filter_horizontal.html' %}
+    
     
 
   <h1 class="">{{header}}</h1>
   
-    <div style="margin-top:30px;">
+    <div style="margin-top:40px;">
 
       {% include 'dog/search_advs.html'%}
 

@@ -16,10 +16,10 @@
 			
 			<div class="row">	
 
-			{% from "index/pet_top_breeds_1.html" import top_breeds %}
+			{% from "index/breeds_rating.html" import top_breeds %}
 
 			<div class="col-sm-2">
-				{{ top_breeds(top_dogs, pet_id = 1)}}
+				{{ top_breeds(dog_breeds_rating, pet_id = 1)}}
 			</div>
 
 			<div class="col-sm-8">
@@ -30,7 +30,7 @@
 			</div>
 
 			<div class="col-sm-2">
-				{{ top_breeds(top_cats, pet_id = 2)}}
+				{{ top_breeds(cat_breeds_rating, pet_id = 2)}}
 			</div>
 
 			{#<div class="col-md-4">

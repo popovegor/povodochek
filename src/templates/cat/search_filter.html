@@ -14,7 +14,7 @@
        </div>#}
 
 
-       {{ form_field(form.city, placeholder="Введите город", class="input-sm form-control") }}
+       {{ form_field(form.city, placeholder="Город или область", class="input-sm form-control") }}
 
        <!-- distance -->
        <div class="row filter-distance hidden-xs" style="display:none">
@@ -116,7 +116,7 @@
 
         $("#{{form.city.id}}").typeahead(
           povodochek.typeahead(
-          "{{url_for('ajax_typeahead_location')}}",
+          "{{url_for('ajax_typeahead_geo_all')}}",
           "{{form.city.id}}")); //typeahead 
 
         $("#{{form.city.id}}").change(function() {

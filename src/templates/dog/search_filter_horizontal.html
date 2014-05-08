@@ -5,7 +5,7 @@
             <td>
                 <label for="{{form.breed.name}}" class="control-label">Порода</label>
                 <div class="input-group">
-                    <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
+                    <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
 
                     <div class="input-group-btn">
 
@@ -22,8 +22,8 @@
         <table style="width:100%"><tbody><tr>
            
             <td>
-                <label for="{{form.city.name}}" class="control-label">Местоположение</label>
-              <input name="{{form.city.name}}" class="form-control" placeholder="Укажите населенный пункт", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
+              <label for="{{form.city.name}}" class="control-label">Местоположение</label>
+              <input name="{{form.city.name}}" class="form-control" placeholder="Город или область", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
             <td style="width:20px;padding-top:30px" class="text-center">+</td>
@@ -102,10 +102,8 @@
   </div>
 {%- endmacro -%}
 
-{#<h4 class="text-semi-muted">Поиск объявлений о продаже породистых щенков и собак</h4>#}
 
-
-<div class="ds-filter">
+<div class="ds-filter" style="">
 
       {% from "forms.html" import form_field_boolean, form_field, action_buttons  %}
 
@@ -150,7 +148,7 @@
         
           $("#{{form.city.id}}").typeahead(
           povodochek.typeahead(
-          "{{url_for('ajax_typeahead_location')}}",
+          "{{url_for('ajax_typeahead_geo_all')}}",
           "{{form.city.id}}")); //typeahead  
 
           

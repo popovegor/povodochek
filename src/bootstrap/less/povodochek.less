@@ -26,15 +26,19 @@
   box-shadow: @arguments;
 }
 
+.border-radius(@radius: 2px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+}
 
+.opacity(@op: 0.5) {
+     filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)"; /* IE 5.5+*/
+     -moz-opacity: @op; /* Mozilla 1.6 и ниже */
+     -khtml-opacity: @op; /* Konqueror 3.1, Safari 1.1 */
+     opacity: @op; /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
+     zoom: 1; /* для элемента в ИЕ, у которого не заданы width и height */
 
-
-.opacity (@op) {
-    filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)"; /* IE 5.5+*/
-    -moz-opacity: @op; /* Mozilla 1.6 и ниже */
-    -khtml-opacity: @op; /* Konqueror 3.1, Safari 1.1 */
-    opacity: @op; /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-    zoom: 1; /* для элемента в ИЕ, у которого не заданы width и height */
 
 }
 
@@ -45,14 +49,6 @@ html, body {
 
 
 form {
-
-    /*.form-field-name {
-        margin-bottom: 10px !important;
-    }
-
-    .form-field {
-        margin-bottom: 15px;
-    }*/
 
     .form-field-desc {
         text-indent:3px;
@@ -406,11 +402,13 @@ form {
     .ds-filter {
         background-color: @state-info-bg;
         .box-shadow(2px 2px 5px 0px #ccc);
-        border-radius:0px 10px 10px 10px; 
-        margin-top:50px;
+        .border-radius(0px 10px 10px 10px); 
+        max-width:920px; 
+        margin:60px auto 40px auto;
         form {
            padding:15px 20px 0px 20px;
            position:relative;
+           
            label {
             font-weight: normal;
            }
@@ -424,8 +422,8 @@ form {
            .ds-advanced {
                 margin: 25px -20px 0 -20px;
                 border-radius: 0px 0px 10px 10px;
-                padding:10px 20px 0px 20px;
-                height:40px;
+                padding:8px 20px 0px 20px;
+                height:35px;
                 .gradient(@color:#d9edf7, @start:#d9edf7, @stop:#f4f6fc);
                 .checkbox {
                     margin-top: 0px;
@@ -891,7 +889,7 @@ form {
         margin-top: 20px;
         .city-letter {
             margin-top: 30px;
-            font-size: 32px !important;
+            font-size: 52px;
             .city-fullname {
                 margin-top: 20px;
             }

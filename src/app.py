@@ -9,9 +9,9 @@ from flask_login import (LoginManager, current_user,
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
 from forms import (SignUp, SignIn, Cat, Contact, \
     Activate,ResetPassword, ChangePassword, \
-    SaleSearch, get_city_by_city_field, \
+    SaleSearch, \
     SendMail, ChangeEmail, SignUpBasic, \
-    get_breed_by_form_field, Dog, DogSearch)
+    get_breed_by_form_field, Dog, DogSearch, get_geo_from_field)
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from werkzeug.utils import secure_filename
@@ -44,10 +44,8 @@ from dic.pets import (pets, get_pet_name, DOG_ID, CAT_ID)
 from dic.breeds import (dogs, get_breed_name, cats, \
     get_breed_by_name, breeds, get_breed_dog_name, \
     get_breed_cat_name)
-from dic.cities import (get_city_region, get_city, get_city_name, format_city_region, cities, get_region_name_by_city_id)
+from dic.geo import (get_city_region, get_city_by_id, get_city_name, format_city_region, cities, get_region_name_by_city_id, get_region_name)
 import dic.pet_docs
-
-
 
 from dic.countries import (get_country_name)
 
@@ -59,6 +57,7 @@ import db
 
 import random
 import json
+from pprint import pprint 
 from form_helper import (get_fields, calc_attraction)
 
 import cProfile
@@ -216,8 +215,10 @@ def get_age_name(age_id):
 app.jinja_env.filters['age_name'] = get_age_name
 app.jinja_env.filters['city_region'] = get_city_region
 app.jinja_env.filters['city_name'] = get_city_name
+app.jinja_env.filters['region_name'] = get_region_name
 app.jinja_env.filters['region_name_by_city_id'] = get_region_name_by_city_id
 app.jinja_env.filters['morph_word'] = morph_word
+
 
 def change_query(url, param, old, new):
     if url and param and old and new:
@@ -289,12 +290,13 @@ def load_user(id):
 @app.route("/")
 def index():
     mosaic_advs = get_pet_advs_for_mosaic(0, 10, pet_id = DOG_ID)
-    top_dog_breeds = db.get_top_dog_breeds()
-    top_cat_breeds = db.get_top_cat_breeds()
+    dog_breeds_rating = db.get_dog_breeds_rating()
+    print(dog_breeds_rating)
+    cat_breeds_rating = db.get_cat_breeds_rating()
     tmpl = render_template('index1.html', \
         pet_search_form = SaleSearch(), \
-        top_cats = top_cat_breeds, \
-        top_dogs = top_dog_breeds, \
+        cat_breeds_rating = cat_breeds_rating, \
+        dog_breeds_rating = dog_breeds_rating, \
         mosaic_advs = mosaic_advs, \
         title = u"Продажа и покупка породистых собак и кошек по всей России")
     return tmpl
@@ -325,56 +327,49 @@ def ajax_activate_remember_later():
     later = session["activate_remember_later"] = True
     return "success"
 
-@app.route("/ajax/typeahead/location/", methods = ["GET"])
-def ajax_typeahead_location():
+@app.route("/ajax/typeahead/geo/city/", methods = ["GET"])
+def ajax_typeahead_geo_cities():
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
-    locations = db.get_locations_for_typeahead(query, limit)
-    return jsonify(items = locations )    
+    cities = db.get_geo_cities_for_typeahead(query, limit)
+    return jsonify(items = cities )   
 
-@app.route("/ajax/typeahead/breed/", defaults={'pet_id':None}, methods = ["GET"])
-@app.route("/ajax/typeahead/breed/<int:pet_id>/", methods = ["GET"])
-def ajax_typeahead_breed(pet_id = None):
+@app.route("/ajax/typeahead/geo/all/", methods = ["GET"])
+def ajax_typeahead_geo_all():
+    query = (request.args.get("query") or u"").strip()
+    limit = max(int(request.args.get("limit") or 8), 8)
+    geo_all = db.get_geo_all_for_typeahead(query, limit)
+    print(geo_all)
+    return jsonify(items = geo_all)  
+
+@app.route("/ajax/typeahead/breed/all/", methods = ["GET"])
+def ajax_typeahead_breed():
     # print(str(request.args.get("query")))
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
-    matcher = query.lower()
-    breeds = []
-    _dogs = _cats = []    
-    if not pet_id or pet_id == DOG_ID:
-        _dogs = [u"{0}{1}".format(dog, u", Собаки") \
-        for dog in dogs.values() if matcher in dog.lower() ] 
-    if not pet_id or pet_id == CAT_ID:
-        _cats = [u"{0}{1}".format(cat, u", Кошки") \
-        for cat in cats.values() if matcher in cat.lower() ]
-        _cats = sorted(_cats)
+    dog_breeds = [u"%s, Собаки" % name for name 
+        in db.get_dog_breeds_for_typeahead(query, limit /2)]
+    cat_breeds = [u"%s, Кошки" % name for name 
+        in db.get_cat_breeds_for_typeahead(query, limit /2)]
 
-    if not matcher:
-        breeds = _dogs[:limit/2] + _cats[:limit/2]
-    else:
-        breeds = _dogs[:limit/2] + _cats[:limit/2]
-    return jsonify(items = breeds )  
+    return jsonify(items = dog_breeds + cat_breeds )  
 
-@app.route("/ajax/typeahead/dog/", methods = ["GET"])
+@app.route("/ajax/typeahead/breed/dog/", methods = ["GET"])
 def ajax_typeahead_dog():
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
 
-    breeds = db.get_dogs_for_typeahead(query, limit)
+    breeds = db.get_dog_breeds_for_typeahead(query, limit)
     return jsonify(items = breeds ) 
 
 
-@app.route("/ajax/typeahead/cat/", methods = ["GET"])
+@app.route("/ajax/typeahead/breed/cat/", methods = ["GET"])
 def ajax_typeahead_cat():
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
     matcher = query.lower()
 
-    if matcher:
-        breeds = [cat for cat in cats.values() \
-        if matcher in cat.lower() ]
-    else:
-        breeds = cats.values()[:limit]
+    breeds = db.get_cat_breeds_for_typeahead(query, limit)
     return jsonify(items = breeds ) 
 
 
@@ -589,7 +584,7 @@ def signout():
     return redirect( url if url else url_for('index'))
 
 
-def sale_find_header(form, pet_id, breed_id):
+def sale_find_header(pet_id, breed_id, city, region):
     # generate title
     header = u"Купить <span>(продают)</span> <span class=''>{0}</span>{1}{2}"
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
@@ -608,27 +603,36 @@ def sale_find_header(form, pet_id, breed_id):
         breed_header = Markup(u" породы <span class='ajax-link ds-header-breed'>%s</span>" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
-    city = get_city_name(form.city.city_id, "i") if form.city.city_id else u''
-    city_header = city
-    city_title = city
+    geo_header = u""
+    geo_title = u""
     if city:
-        city_header = u" в г. <span class='ajax-link ds-header-location'>{0}</span>".format(city)
-        city_title = u" в г. {0}".format(city)
+        geo_header = u" в г. <span class='ajax-link ds-header-location'>{0}</span>".format(city.get('city_name'))
+        geo_title = u" в г. {0}".format(city.get('city_name'))
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
-    # else:
-    #     city_header = u" в России"
-    #     city_title = u" в России"
+    elif region:
+        geo_header = u" в <span class='ajax-link ds-header-location'>%s</span>" % region.get('region_name_p')
+        geo_title = u" в %s" % region.get('region_name_p')
 
-    return (header.format(pet, breed_header, city_header), \
-        title.format(pet, breed_title, morph_word(pet, {"gent", "plur"}), city_title), pet, breed) 
+    return (header.format(pet, breed_header, geo_header), \
+        title.format(pet, breed_title, morph_word(pet, {"gent", "plur"}), geo_title), pet, breed) 
 
+
+#city=Ленинградская область
+#city=Сосновый Бор, Ленинградская область
+#city=1
+#city=-1
 @app.route("/prodazha-sobak/")
 def dog_search():
     form = DogSearch(request.args)
-    city = get_city_by_city_field(form.city)
-    (form.city.data, form.city.city_id) = \
-        (format_city_region(city), city.get("city_id")) if city else (None, None)
+
+    (city, region) = get_geo_from_field(form.city)
+
+    if city:
+        form.city.data = format_city_region(city)
+    elif region:
+        form.city.data = region.get('region_name')
+
     (breed_id, pet_id) = get_breed_by_form_field(form.breed)
     if breed_id and pet_id:
         form.breed.data = get_breed_name(breed_id, pet_id)
@@ -640,6 +644,7 @@ def dog_search():
     (advs, count, total) = db.find_dog_advs(
         breed_id = breed_id, \
         gender_id = form.gender.data, \
+        region = region, \
         city = city, \
         distance = (form.distance.data + 0.01) if form.distance.data else None, \
         photo = form.photo.data, \
@@ -652,13 +657,15 @@ def dog_search():
         limit = form.perpage.data
         )
 
-    (header, title, pet_name, breed_name) = sale_find_header(form, pet_id, breed_id)
+    (header, title, pet_name, breed_name) = sale_find_header(pet_id, breed_id, city, region)
 
     tmpl = render_template("dog/search.html", header=Markup(header), \
       title=title, form = form, advs = advs, \
-      pet = pet_name, pet_id = pet_id, \
-      breed = breed_name, breed_id = breed_id, \
-      city = get_city_region(city.get("city_id")) if city else None, \
+      pet = pet_name, pet_id = pet_id,
+      breed = breed_name, breed_id = breed_id,
+      region = region.get("region_name") if region else None,
+      region_id = region.get('region_id') if region else None, 
+      city = city.get("city_name") if city else None, \
       city_id = city.get("city_id") if city else None, \
       sort = session.get("dog_sort"), \
       count = count, total = total )
@@ -668,9 +675,15 @@ def dog_search():
 @app.route("/prodazha-koshek/")
 def cat_search(sale_search_form = None):
     form = sale_search_form or SaleSearch(request.args)
-    city = get_city_by_city_field(form.city)
-    (form.city.data, form.city.city_id) = \
-        (format_city_region(city), city.get("city_id")) if city else (None, None)
+    
+
+    (city, region) = get_geo_from_field(form.city)
+
+    if city:
+        form.city.data = format_city_region(city)
+    elif region:
+        form.city.data = region.get('region_name')
+
     (breed_id, pet_id) = get_breed_by_form_field(form.breed)
     if breed_id and pet_id:
     	form.breed.data = get_breed_name(breed_id, pet_id)
@@ -681,6 +694,7 @@ def cat_search(sale_search_form = None):
     (advs, count, total) = db.find_cat_advs(pet_id = pet_id, \
         breed_id = breed_id, \
         gender_id = form.gender.data, \
+        region = region, \
         city = city, \
         distance = form.distance.data + 0.01, \
         photo = form.photo.data, \
@@ -691,13 +705,15 @@ def cat_search(sale_search_form = None):
         limit = form.perpage.data
         )
 
-    (header, title, pet_name, breed_name) = sale_find_header(form, pet_id, breed_id)
+    (header, title, pet_name, breed_name) = sale_find_header(pet_id, breed_id, city, region)
 
     tmpl = render_template("cat/search.html", header=Markup(header), \
       title=title, form = form, advs = advs, \
       pet = pet_name, pet_id = pet_id, \
       breed = breed_name, breed_id = breed_id, \
-      city = get_city_region(city.get("city_id")) if city else None, \
+      region = region.get("region_name") if region else None,
+      region_id = region.get('region_id') if region else None, 
+      city = city.get("city_name") if city else None, \
       city_id = city.get("city_id") if city else None, \
       sort = session.get("cat_sort"), \
       count = count, total = total )
@@ -992,6 +1008,7 @@ def save_cat_adv(form, adv_id = None, moderator = None):
         'price' : form.price.data, \
         'update_date' : now, \
         "city_id": form.city.city_id, \
+        "region_id" : form.city.region_id, \
         "phone" : form.phone.data, \
         "skype" : form.skype.data, \
         "gender_id": num(form.gender.data)}
@@ -1055,13 +1072,11 @@ def account_cat_adv_new():
 
 
 @app.route("/spravka/")
-@app.route("/help/")
 def help():
     return render_template("/help.html", \
-        title=u"Помощь", header=Markup(u"Помощь"))
+        title=u"Справка", header=Markup(u"Справка"))
 
 @app.route("/spravka/privlekatelnost-obyavleniya/")
-@app.route("/help/privlekatelnost-obyavleniya/")
 def help_attraction():
     return render_template("/help/faq_attraction.html", \
         title=u"Привлекательность объявления", header=Markup(u"Привлекательность объявления"))
@@ -1203,24 +1218,47 @@ def favicon():
         'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/prodazha-koshek/goroda/')
-def sale_cats_cities():
-    return sale_pets_cities(pet_id = CAT_ID) 
+def cat_advs_by_cities():
+    return pet_advs_by_cities(pet_id = CAT_ID) 
 
 @app.route('/prodazha-sobak/goroda/')
-def sale_dogs_cities():
-    return sale_pets_cities(pet_id = DOG_ID) 
+def dog_advs_by_cities():
+    return pet_advs_by_cities(pet_id = DOG_ID) 
 
-def sale_pets_cities(pet_id):
+def pet_advs_by_cities(pet_id):
     pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
 
-    advs = db.get_dog_by_cities() if pet_id == DOG_ID \
-        else db.get_cat_by_cities()
+    advs = db.get_dog_advs_by_cities() if pet_id == DOG_ID \
+        else db.get_cat_advs_by_cities()
 
-    breeds_by_cities = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['city_name'][0])]
+    advs_by_cities = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['city_name'][0])]
 
-    return render_template("/sale_cities.html", \
+    return render_template("/advs_by_cities.html", \
         title=u"Объявления о продаже {0} в городах России".format(pet_name), \
-        breeds_by_cities = breeds_by_cities, \
+        advs_by_cities = advs_by_cities, \
+        pet_id = pet_id, \
+        pet_name = pet_name)
+
+
+@app.route('/prodazha-koshek/oblasti/')
+def cat_advs_by_regions():
+    return pet_advs_by_regions(pet_id = CAT_ID) 
+
+@app.route('/prodazha-sobak/oblasti/')
+def dog_advs_by_regions():
+    return pet_advs_by_regions(pet_id = DOG_ID) 
+
+def pet_advs_by_regions(pet_id):
+    pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
+
+    advs = db.get_dog_advs_by_regions() if pet_id == DOG_ID \
+        else db.get_cat_advs_by_regions()
+
+    advs_by_regions = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['region_name'][0])]
+
+    return render_template("/advs_by_regions.html", \
+        title=u"Объявления о продаже {0} в областях России".format(pet_name), \
+        advs_by_regions = advs_by_regions, \
         pet_id = pet_id, \
         pet_name = pet_name)
 

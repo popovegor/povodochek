@@ -271,7 +271,7 @@ def get_breed_by_id(breed_id):
 	 		return (breed_id, breeds[breed_id]['pet'])
 	return (None, None)
 
-def get_breed_name(breed_id, pet_id):
+def get_breed_name(breed_id, pet_id = 0):
     breed_id = num(breed_id or 0)
     breed = breeds.get(breed_id)
     return breed.get("name") if breed else u""

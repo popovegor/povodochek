@@ -23,17 +23,13 @@ from dic.genders import genders
 from dic.ages import ages
 from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed_by_id, get_breed_dog_name)
 from dic.pets import pets, get_pet_name
-from dic.cities import (get_city, get_city_region)
+from dic.geo import (get_city_by_id, get_city_region, get_region_by_id)
 from dic.countries import (countries, get_countries_for_dog_adv)
 from dic.pet_docs import (dog_docs, doc_dog_pedigrees, doc_dog_pedigrees_rkf, doc_puppy_cards)
 
+
 import config
-
-def db():
-    return MongoClient().povodochek
-
-def users():
-    return db().users
+import db
 
 
 MSG_REQUIRED = u"Обязательное поле"
@@ -61,40 +57,42 @@ def get_breed_by_form_field(field):
 			(breed, pet) = get_breed_by_name(field.data)
 	return (breed, pet)
 
-def get_city_by_city_field(field):
+def get_geo_from_field(field):
+    region = get_region_from_field(field)
+    print(1, region)
+    city = None
+    if not region:
+        city = get_city_by_field(field)
+        if city:
+            region = db.get_region_by_id(city.get("region_id"))
+    return (city, region)
+
+def get_region_from_field(field):
+    region = None
+    if field.data:
+        region = db.get_region_by_id(field.data)
+        if not region:
+            region = db.get_region_by_name(field.data)
+    return region
+
+def get_city_by_field(field):
     city = None
     if field.data:
-        city = get_city_by_city_id(field.data)
+        city = db.get_city_by_id(field.data)
         if not city:
-            city = get_city_by_city_and_region(field.data)
-    return city
-
-def get_city_by_city_and_region(city_and_region):
-    city = None
-    if city_and_region: 
-        matcher = re.compile(u"^" + re.escape(city_and_region.strip()), re.IGNORECASE)
-        city = db().cities.find_one({"city_region": matcher},\
-            sort = [('city_size',-1)], fileds=["city_id"])
-        if city:
-            return get_city_by_city_id(city.get('city_id'))
-    return city
-
-def get_city_by_city_id(city_id):
-    city = None
-    if (isinstance(city_id, unicode) and city_id.isdigit()) \
-        or (isinstance(city_id, int)):
-        city = get_city(int(city_id))
+            city = db.get_city_by_city_and_region(field.data)
     return city
 
 
 def validate_location(form, field):
     field.city_id = None
     if field.data:
-        city = get_city_by_city_field(field)
+        city = get_city_by_field(field)
         if not city:
             raise ValidationError(u'Совпадений не найдено. Выберите населенный пункт из выпадающего списка, введя часть названия.')
         else:
             field.city_id = city.get("city_id")
+            field.region_id = city.get("region_id")
             field.location = city.get("location")
 
 
@@ -109,7 +107,7 @@ def validate_breed(form, field):
 
 def validate_login_used(form, field):
     matcher = re.compile("^" + re.escape(field.data) + "$", re.IGNORECASE)
-    user = users().find_one({'login': {'$regex': matcher}})
+    user = db.users.find_one({'login': {'$regex': matcher}})
     if user:
         raise ValidationError(u"Логин '%s' занят" % field.data)
 
@@ -118,7 +116,7 @@ class ChangePassword(Form):
         [Required(message=MSG_REQUIRED)])
 
     def validate_current_password(form, field):
-        user = users().find_one({'_id': ObjectId(form.current_user.id)})
+        user = db.users.find_one({'_id': ObjectId(form.current_user.id)})
         if not user or not check_password(user.get("pwd_hash"), field.data):
             raise ValidationError(u"Указан неправильный пароль")
 
@@ -139,7 +137,7 @@ class ChangeEmail(Form):
     def validate_new_email(form, field):
         print("validate confirm email %s" % field.data)
         check = config.DOMAIN_NAME_CHECK and config.DOMAIN_NAME in field.data
-        user = users().find_one({'email': field.data})
+        user = db.users.find_one({'email': field.data})
         if check or user:
             raise ValidationError(u"Адрес '%s' уже зарегистрирован" % field.data)
 
@@ -153,7 +151,7 @@ class ResetPassword(Form):
 
     def validate_email_or_login(form, field):
         matcher = re.compile("^" + re.escape(field.data) + "$", re.IGNORECASE)
-        user = users().find_one({'$or': [{'email': {'$regex' : matcher}},{'login': {'$regex' : matcher}}]})
+        user = db.users.find_one({'$or': [{'email': {'$regex' : matcher}},{'login': {'$regex' : matcher}}]})
         if not user:
             raise ValidationError(u"Электронная почта или логин '%s' не найдены" % field.data)
         else:
@@ -171,7 +169,7 @@ class DogSearch(Form):
 
     city = TextField(u"Местоположение", default = u"")
 
-    distance = IntegerField(u"удаленность")
+    distance = IntegerField(u"удаленность", default = 150)
 
     photo = BooleanField(u"с фото")
     video = BooleanField(u"с видео")
@@ -439,7 +437,7 @@ class Activate(Form):
 
     def validate_email(form, field):
         print("validate confirm  email %s" % field.data)
-        if not users().find_one({'email': field.data}):
+        if not db.users.find_one({'email': field.data}):
             raise ValidationError(u"Адрес '%s' не зарегистрирован" % field.data)
 
 class Stud(Form):
@@ -484,7 +482,7 @@ class SignUpBasic(Form):
         description = u"После регистрации не забудьте подтвердить эл. почту, перейдя по ссылке в письме.")
 
     def validate_email(form, field):
-        user = users().find_one({'email': field.data})
+        user = db.users.find_one({'email': field.data})
         check = config.DOMAIN_NAME_CHECK and config.DOMAIN_NAME in field.data
         if check or user:
             raise ValidationError(u"Адрес '%s' занят" % field.data)
@@ -515,7 +513,7 @@ class SignUp(Form):
         description = u"После регистрации не забудьте подтвердить эл. почту, перейдя по ссылке в письме.")
 
     def validate_email(form, field):
-        user = users().find_one({'email': field.data})
+        user = db.users.find_one({'email': field.data})
         if user:
             raise ValidationError(u"Адрес '%s' занят" % field.data)
 

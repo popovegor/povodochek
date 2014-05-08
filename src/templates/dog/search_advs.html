@@ -23,18 +23,16 @@
         
         {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
         
-        <i class="fa fa-video-camera fa-lg text-danger pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
+        <i class="fa fa-video-camera text-danger pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
 
         {%endif%}
 
         {% if adv.get("champion_bloodlines") %}
 
-        <i class="fa fa-trophy fa-lg text-warning pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
+        <i class="fa fa-trophy text-warning pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
 
         {%endif%}
         
-      
-
       </div>
 
     </div>
@@ -112,7 +110,7 @@
                 {#<small class="">Местоположение:</small> #}<b title="Местоположение">{{ city_id | city_region }}</b>
 
                 {% if adv.get("distance") and adv.get("distance") > 0 %}
-                (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г.{{form.city.city_id | city_name("i") }})
+                (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г. <b>{{city}}</b>)
                 {% endif %}
 
               </span>
@@ -268,20 +266,22 @@
           {{dog_adv(adv, loop)}}
 
       {% endfor %}
+
+      {%set pages = (count / form.perpage.data ) | round(0, 'ceil') | int | max(1) %}
+
+       
+          <div style="margin-top:20px">Страницы:</div>
+
+            <!-- desktop -->
+          {{ pagination(pages, form.page.data, 10, paging_class="advs-paging pagination-left") }}
       
 {%endif%}
 
 
-         {%set pages = (count / form.perpage.data ) | round(0, 'ceil') | int %}
-
-        {% if pages > 1 %}
-          <div style="margin-top:20px">Страницы:</div>
-
-            <!-- desktop -->
-          {{ pagination(pages, form.page.data, 30, paging_class="advs-paging pagination-left") }}
+         
           
 
-         {%endif%}
+       
 
 
 </div>

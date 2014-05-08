@@ -19,7 +19,7 @@
             {% set breed = ( breeds | random) %}
             {% set pet = breed.get('pet') | pet_name | morph_word(['plur']) | lower %}
             <label for="{{pet_search_form.breed.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Какой породы? Например, <a tabindex="-1"  style="text-decoration:none;border-bottom:1px dotted;" href="#" title="{{breed.get('name') + ', '  + pet}}" id="breed_example">{{breed.get('name') | truncate(40, killwords = True) | lower}}</a>.</label>
-            <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.breed.id}}" placeholder="Укажите породу собаки или кошки" name="{{pet_search_form.breed.name}}">
+            <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.breed.id}}" placeholder="Порода собаки или кошки" name="{{pet_search_form.breed.name}}">
           </div>
         </div>
         <div class="">
@@ -29,7 +29,7 @@
             {% set city = (large_cities | random).get("city_name")%}
 
             <label for="{{pet_search_form.city.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Из какого города? Например, <a title="{{city}}" id="city_example" tabindex="-1" href="#" style="text-decoration:none;border-bottom:1px dotted;">{{city}}</a>.</label>
-            <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.city.id}}" placeholder="Укажите населенный пункт" name="{{pet_search_form.city.name}}">
+            <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.city.id}}" placeholder="Город или область" name="{{pet_search_form.city.name}}">
           </div>
 
         </div>
@@ -64,7 +64,7 @@
 
    $("#{{pet_search_form.city.id}}").typeahead(
       povodochek.typeahead(
-      "{{url_for('ajax_typeahead_location')}}",
+      "{{url_for('ajax_typeahead_geo_all')}}",
       "{{pet_search_form.city.id}}")); //typeahead  
 
    breed_typeahead = povodochek.typeahead(

@@ -8,7 +8,8 @@
     {{breadcrumbs( [
     {'name':"Продажа кошек", 'url':url_for("cat_search")}, 
     {'name':adv.get('breed_id') | breed_cat_name, 'url':url_for("cat_search", breed=adv.get("breed_id"))}, 
-    {'name': adv.get('city_id') | city_region, 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
+    {'name': adv.get('region_id') | region_name, 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("region_id"))},
+    {'name': adv.get('city_id') | city_name, 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
     {'name':adv.get("title") | capitalize}
     ] ) }}
               
@@ -78,7 +79,7 @@
         <p style="white-space:pre-wrap">{{adv.get('desc') | trim }}</p>
       </div>
 
-      <div class="adv-block">
+      <div class="adv-block" style="margin-bottom:30px">
       <h3>О {{adv.get("pet_id") | pet_name | morph_word(["sing", "loct"]) | lower}}</h3>
 
       <table class="tbl-key-value">
@@ -113,7 +114,7 @@
     </div> <!-- adv-info -->
 
 
-      <div class="seller-block">  
+      <div class="seller-block well">  
       <h3>Контакты</h3>      
         <noindex>  
         <table class="tbl-key-value">
@@ -145,14 +146,17 @@
           </tbody>
         </table>
         </noindex>
+
+        <noindex> 
+        <div class="text-left" style="margin-top:20px">
+          <a class="btn btn-primary" href="{{url_for('cat_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
+        </div>
+        </noindex>
+
       </div>  <!-- /seller-block -->
       
 
-      <noindex> 
-      <div class="text-left" style="margin-top:20px">
-        <a class="btn btn-primary" href="{{url_for('cat_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=800,height=700,scrollbars=yes');w.focus();return false;">Написать письмо</a>
-      </div>
-      </noindex>
+      
 
 
     </div> <!-- right-side -->

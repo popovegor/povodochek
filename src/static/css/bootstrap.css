@@ -5065,6 +5065,10 @@ a.list-group-item-info.active:focus {
   border-color: #ddd;
   border-color: rgba(0, 0, 0, .15);
 }
+.well-info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
 .well-lg {
   padding: 24px;
   border-radius: 6px;
@@ -6315,15 +6319,6 @@ body {
   min-width: 830px;
   height: 100%;
 }
-form {
-  /*.form-field-name {
-        margin-bottom: 10px !important;
-    }
-
-    .form-field {
-        margin-bottom: 15px;
-    }*/
-}
 form .form-field-desc {
   margin-top: 3px;
   text-indent: 3px;
@@ -6628,12 +6623,16 @@ form .textarea-counter {
 .pet-sale .ds-filter,
 .account-pet-sale .ds-filter,
 .dog-search .ds-filter {
-  margin-top: 50px;
+  max-width: 920px;
+  margin: 60px auto 40px auto;
   background-color: #d9edf7;
-  border-radius: 0 10px 10px 10px;
+          border-radius: 0 10px 10px 10px;
   -webkit-box-shadow: 2px 2px 5px 0 #ccc;
      -moz-box-shadow: 2px 2px 5px 0 #ccc;
           box-shadow: 2px 2px 5px 0 #ccc;
+
+  -webkit-border-radius: 0 10px 10px 10px;
+     -moz-border-radius: 0 10px 10px 10px;
 }
 .pet-sale .ds-filter form,
 .account-pet-sale .ds-filter form,
@@ -6656,8 +6655,8 @@ form .textarea-counter {
 .pet-sale .ds-filter form .ds-advanced,
 .account-pet-sale .ds-filter form .ds-advanced,
 .dog-search .ds-filter form .ds-advanced {
-  height: 40px;
-  padding: 10px 20px 0 20px;
+  height: 35px;
+  padding: 8px 20px 0 20px;
   margin: 25px -20px 0 -20px;
   background: #d9edf7;
   background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #d9edf7), color-stop(1, #f4f6fc));
@@ -7258,7 +7257,7 @@ form .textarea-counter {
 }
 .sale-cities .cities .city-letter {
   margin-top: 30px;
-  font-size: 32px !important;
+  font-size: 52px;
 }
 .sale-cities .cities .city-letter .city-fullname {
   margin-top: 20px;

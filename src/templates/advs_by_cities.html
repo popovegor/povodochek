@@ -1,0 +1,81 @@
+{% extends "layout.html" %} 
+
+
+{%- macro city_navigation(advs_by_cities) -%}
+    <div class="city-navigation">
+      
+      {% for letter, advs in advs_by_cities %}
+        <a href="#{{letter}}">{{letter}}</a>&nbsp;
+      {%endfor%}
+
+    </div>
+{%- endmacro-%}
+
+
+{%- macro list_cities(advs_by_cities) -%}
+        {% for letter, advs in advs_by_cities %}
+        <div class="cleafix" id="{{letter}}">
+          <p class="muted city-letter">
+            {{letter}}
+          </p>
+          
+        
+          {%for adv in advs %}
+          <div class="city-fullname">
+              {%set city_name = adv.get('city_name')%}
+              {%set city_id = adv.get('city_id') %}
+              <h3>
+              {{city_name}}<small class="city-region">&nbsp;&nbsp;{{adv.get("region_name")}}</small>
+              </h3>
+
+              <ul class="list-unstyled">
+              {%for (breed_id, breeds) in adv.get('breeds') | groupby('breed_id')  %}
+                 
+                  <li class="" style="display:inline-block;width:400px;margin-bottom:5px;">
+                  {% set breed_name = breed_id | breed_name(pet_id) %}
+                  {%set url = url_for('dog_search' if pet_id == 1 else 'cat_search', breed = breed_id, city = city_id, distance = 1)%}
+                    <a class="breed-name" style="" href="{{url}}">{{breed_name }}</a>&nbsp;&emsp;&nbsp;<span class="breed-count">{{breeds | length}}</span>            
+                
+                </li> <!-- breed-column -->
+
+              {%endfor%}
+              </ul> <!-- breeds -->
+          </div>
+      
+          {%endfor%}
+
+          
+          </div>
+        {%endfor%}
+{%- endmacro-%}
+
+
+{% block content %}  
+
+
+<h1>{{title}}</h1>
+
+<div class="sale-cities"> 
+
+    {{city_navigation(advs_by_cities)}}
+
+    <div class="cities">
+     
+    {% if advs_by_cities | length <=0 %}
+        К сожалению, пока не добавлено ни одного объявления о продаже {{pet_name}}.
+    {% else %}
+
+        
+        {{list_cities(advs_by_cities)}}
+
+              
+      {%endif%}        
+
+  </div>
+
+   
+</div> <!-- sale-cities -->
+
+
+
+  {% endblock %} 

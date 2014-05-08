@@ -42,13 +42,13 @@
               {%endif%}
 
                 <p class="adv-city">
-                  {% set city_id = adv.get("city_id") %}
+                  {% set city_id =  adv.get('city_id')%}
 
                   {% if city_id %}
                   <b title="Местоположение">{{ city_id | city_region }}</b>
 
                   {% if adv.get("distance") and adv.get("distance") > 0 %}
-                  (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г.{{form.city.city_id | city_name("i") }})
+                  (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г. <b>{{city}}</b>)
                   {% endif %}
 
                 </span>

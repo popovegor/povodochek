@@ -8,7 +8,6 @@ from gridfs import GridFS
 import re
 from datetime import (datetime, timedelta)
 from uuid import (uuid4, uuid1)
-import dic.cities
 from helpers import (num, str2date)
 from dic.pet_docs import (dog_docs, doc_dog_pedigrees)
 import sys
@@ -23,13 +22,24 @@ cat_advs_archive = mongo.cat_advs_archive
 dog_advs = mongo.dog_advs
 dog_advs_archive = mongo.dog_advs_archive
 pets_by_cities = mongo.pets_by_cities
-top_dog_breeds = mongo.top_dog_breeds
-top_cat_breeds = mongo.top_cat_breeds
-dog_by_cities = mongo.dog_by_cities
-cat_by_cities = mongo.cat_by_cities
+dog_breeds_rating = mongo.dog_breeds_rating
+cat_breeds_rating = mongo.cat_breeds_rating
+
+dog_advs_by_cities = mongo.dog_advs_by_cities
+cat_advs_by_cities = mongo.cat_advs_by_cities
+dog_advs_by_regions = mongo.dog_advs_by_regions
+cat_advs_by_regions = mongo.cat_advs_by_regions
+
 cities = mongo.cities
+regions = mongo.regions
 photos = mongo.photos
 photos_gridfs = GridFS(mongo, "photos")
+typeahead_geo_all = mongo.typeahead_geo_all
+typeahead_geo_cities = mongo.typeahead_geo_cities
+
+typeahead_dog_breeds = mongo.typeahead_dog_breeds
+typeahead_cat_breeds = mongo.typeahead_cat_breeds
+
 
 def get_user(user_id):
 	return users.find_one({'_id':ObjectId(user_id)})
@@ -136,7 +146,8 @@ def save_dog_adv_2(user_id, adv_id, form, attraction):
     dog_set = {
         'user_id' : str(user_id), \
         'update_date' : now, \
-        'attraction': attraction
+        'attraction': attraction, \
+        'region_id' : form.city.region_id
         }
     dog_unset = {}
 
@@ -148,81 +159,13 @@ def save_dog_adv_2(user_id, adv_id, form, attraction):
         else: 
             dog_unset[db_name] = ""
 
+    print(dog_set)
+
     dog = dog_advs.update(\
         {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}, \
         {'$set': dog_set, \
         '$unset': dog_unset, \
         '$setOnInsert' : {"add_date": now}}, upsert = True)
-
-    return dog
-
-def save_dog_adv(user_id, adv_id, form, photonames):
-
-    now = datetime.utcnow()
-    # print(str2date(form.birthday.data))
-
-    dog_unset = {}
-    dog_set = {
-        'breed_id': form.breed.breed_id, \
-        "gender_id": form.gender.data, \
-        'title': form.title.data, \
-        'desc': form.desc.data, \
-        'photos': photonames, \
-        'price' : form.price.data, \
-        'price_haggle' : form.price_haggle.data, \
-        'price_hp' : form.price_hp.data, \
-        'contract' : form.contract.data, \
-        'delivery' : form.delivery.data, \
-        'birthday' : str2date(form.birthday.data), \
-        'vaccination' : form.vaccination.data, \
-        'vetpassport' : form.vetpassport.data, \
-        'microchip' : form.microchip.data, \
-        "city_id": form.city.city_id, \
-        'color' : form.color.data, \
-        "phone" : form.phone.data, \
-        'username' : form.username.data, \
-        "skype" : form.skype.data, \
-        'user_id' : str(user_id), \
-        'update_date' : now
-        }
-    if form.doc.data in dog_docs:
-    	dog_set['doc_id'] = form.doc.data
-    	if form.doc.data in doc_dog_pedigrees:
-    		dog_set['pedigree'] = form.pedigree.data
-    	else:
-    		dog_unset['pedigree'] = ""
-    	dog_set['father_name'] = form.father_name.data
-    	dog_set['father_country_id'] = form.father_country.data
-    	dog_set['father_misc'] = form.father_misc.data
-    	dog_set['father_pedigree'] = form.father_pedigree.data
-    	dog_set['mother_name'] = form.mother_name.data
-    	dog_set['mother_country_id'] = form.mother_country.data
-        dog_set['mother_misc'] = form.mother_misc.data
-    	dog_set['mother_pedigree'] = form.mother_pedigree.data
-    	dog_set['breeding'] = form.breeding.data
-    	dog_set['show'] = form.show.data
-    	dog_set['tatoo'] = form.tatoo.data
-    	
-    else:
-    	dog_unset['doc_id'] = ""
-    	dog_unset['pedigree'] = ""
-    	dog_unset['father_name'] = ""
-    	dog_unset['father_country_id'] = ""
-    	dog_unset['father_misc'] = ""
-    	dog_unset['father_pedigree'] = ""
-    	dog_unset['mother_name'] = ""
-        dog_unset['mother_country_id'] = ""
-        dog_unset['mother_misc'] = ""
-    	dog_unset['mother_pedigree'] = ""
-    	dog_unset['breeding'] = ""
-    	dog_unset['show'] = ""
-    	dog_unset['tatoo'] = ""
-
-    dog = dog_advs.update(\
-    	{'_id': ObjectId(adv_id), 'user_id' : str(user_id)}, \
-    	{'$set': dog_set, \
-    	'$unset': dog_unset, \
-    	'$setOnInsert' : {"add_date": now}}, upsert = True)
 
     return dog
 
@@ -238,35 +181,57 @@ def get_cat_advs_by_user(user_id):
         sort = [("update_date", DESCENDING), \
         ("add_date", DESCENDING)])
 
-def get_top_dog_breeds(limit = 25):
-	return [adv for adv in top_dog_breeds.find( \
+def get_dog_breeds_rating(limit = 25):
+	return [breed for breed in dog_breeds_rating.find( \
 		sort = [('count', DESCENDING)], limit = limit)]
 
-def get_top_cat_breeds(limit = 25):
-	return [adv for adv in top_cat_breeds.find( \
+def get_cat_breeds_rating(limit = 25):
+	return [breed for breed in cat_breeds_rating.find( \
 		sort = [('count', DESCENDING)], limit = limit)]
 
-def get_dogs_for_typeahead(query, limit):
-    matcher = re.compile(re.escape(query), re.IGNORECASE)
+def get_dog_breeds_for_typeahead(query, limit):
+    matcher = re.compile(re.escape(query))
     breeds = [breed.get('breed_name') \
-        for breed in top_dog_breeds.find(\
-            {'breed_name': {"$regex": matcher}}, \
+        for breed in typeahead_dog_breeds.find(\
+            {'breed_name_search': {"$regex": matcher}}, \
             limit = limit, \
-            fields = ["breed_name"], \
             sort = [
-            ('breed_name', ASCENDING), 
-            ('count', DESCENDING)] )]
+            ('rating', DESCENDING),
+            ('breed_name', ASCENDING)
+            ] )]
     return breeds
 
-def get_locations_for_typeahead(query, limit):
-	matcher = re.compile("^" + re.escape(query), re.IGNORECASE)
-	locations = [ city.get("city_region")  \
-	    for city in cities.find(\
-	    	{'city_region': {"$regex": matcher}}, \
+def get_cat_breeds_for_typeahead(query, limit):
+    matcher = re.compile(re.escape(query))
+    breeds = [breed.get('breed_name') \
+        for breed in typeahead_cat_breeds.find(\
+            {'breed_name_search': {"$regex": matcher}}, \
+            limit = limit, \
+            sort = [
+            ('rating', DESCENDING),
+            ('breed_name', ASCENDING)
+            ] )]
+    return breeds
+
+def get_geo_cities_for_typeahead(query, limit):
+	matcher = re.compile("^" + re.escape(query.lower()))
+	locations = [ city.get("name")  \
+	    for city in typeahead_geo_cities.find(\
+	    	{'name_search': {"$regex": matcher}}, \
 	    	limit = limit, \
-	    	fields = ["city_region", "city_size", "city_name"], \
-	    	sort = [('city_size', DESCENDING)] )]
+	    	fields = ["name"], \
+	    	sort = [('rating', DESCENDING), ('name_search',ASCENDING)] )]
 	return locations
+
+def get_geo_all_for_typeahead(query, limit):
+    matcher = re.compile("^" + re.escape(query.lower()))
+    locations = [ geo.get("name")  \
+        for geo in typeahead_geo_all.find(\
+            {'name_search': {"$regex": matcher}}, \
+            limit = limit, \
+            fields = ["name"], \
+            sort = [('rating', DESCENDING), ('name_search',ASCENDING)] )]
+    return locations
 
 
 def get_near_cities(city = None, distance = None):
@@ -284,10 +249,11 @@ def get_near_cities(city = None, distance = None):
     return near_cities
 
 def find_dog_advs(
-	breed_id = None, gender_id = None, city = None, \
-    distance = None, photo = False, \
-    video = False, champion_bloodlines = False, \
-    price_from = None, price_to = None, \
+	breed_id = None, gender_id = None, 
+    region = None, city = None,
+    distance = None, photo = False,
+    video = False, champion_bloodlines = False,
+    price_from = None, price_to = None,
 	sort = None, skip = None, limit = None):
 
     _filter = {}
@@ -312,6 +278,8 @@ def find_dog_advs(
             	for city, dis in near_cities]})
         else:
             extend_filter("city_id", {"$in": [city.get('city_id')]})
+    elif region:
+        extend_filter("region_id", region.get('region_id'))
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})
@@ -331,9 +299,9 @@ def find_dog_advs(
         sortby = [("update_date", -1)]
     else:
         sortby = [("attraction",-1), ("update_date", -1)]
-    print("filter %s" % _filter)
-    print("sort %s" % sortby)
-    print(limit)
+    # print("filter %s" % _filter)
+    # print("sort %s" % sortby)
+    # print(limit)
     total = dog_advs.count()
     query = dog_advs.find(SON(_filter),\
         limit = limit or total,\
@@ -352,7 +320,7 @@ def find_dog_advs(
 
 
 def find_cat_advs(pet_id = 2, gender_id = None, \
-	breed_id = None, city = None, distance = None, \
+	breed_id = None,  region = None, city = None, distance = None, \
 	photo = False, price_from = None, price_to = None, \
 	sort = None, skip = None, limit = None):
 
@@ -379,6 +347,8 @@ def find_cat_advs(pet_id = 2, gender_id = None, \
         	   for city, dis in near_cities]})
         else:
             extend_filter("city_id", {"$in": [city.get('city_id')]})
+    elif region:
+        extend_filter("region_id", region.get('region_id'))
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})
@@ -509,16 +479,26 @@ def get_cat_advs_for_mosaic(skip, limit):
         sort = [('update_date', DESCENDING), \
         ("add_date", DESCENDING)])
 
-def get_dog_by_cities():
-    return sorted([adv for adv in dog_by_cities.find()], \
+def get_dog_advs_by_cities():
+    return [adv for adv in dog_advs_by_cities.find(
+        sort=[('city_name', ASCENDING)])]
+
+def get_cat_advs_by_cities():
+    return sorted([adv for adv in cat_advs_by_cities.find()], \
         key = lambda x : x['city_name'])
 
-def get_cat_by_cities():
-    return sorted([adv for adv in cat_by_cities.find()], \
-        key = lambda x : x['city_name'])
+
+def get_dog_advs_by_regions():
+    return [adv for adv in dog_advs_by_regions.find(
+        sort=[('region_name', ASCENDING)])]
+
+def get_cat_advs_by_regions():
+    return sorted([adv for adv in cat_advs_by_regions.find()], \
+        key = lambda x : x['region_name'])
 
 def admin_get_users(limit, skip):
-    return users.find(sort = [('signup_date', DESCENDING)], \
+    return users.find(
+        sort = [('signup_date', DESCENDING)],
         limit = limit, skip = skip)
 
 
@@ -551,3 +531,40 @@ def get_dog_advs_for_fb(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
     return dog_advs.find({'update_date' : {'$gte':dt}, 
         'fb.post':{'$ne':True} })
+
+def get_region_by_id(region_id):
+    region = None
+    try:
+        region = regions.find_one({"region_id":int(region_id)})
+    except:
+        pass
+    return region
+
+def get_region_by_name(region_name):
+    region = None
+    if region_name:
+        matcher = re.compile(u"^" + re.escape(region_name.strip().lower()))
+        region = regions.find_one({"region_name_search": matcher},\
+            sort = [('region_size', -1)])
+    return region
+
+def get_city_by_city_and_region(city_and_region):
+    city = None
+    if city_and_region: 
+        matcher = re.compile(u"^" + re.escape(city_and_region.strip().lower()))
+        city = cities.find_one({"city_region_search": matcher},\
+            sort = [('city_size',-1)])
+        # if city:
+            # return get_city_by_city_id(city.get('city_id'))
+        return city
+    return city
+
+
+def get_city_by_id(city_id):
+    city = None
+    try:
+        city = cities.find_one({"city_id":int(city_id)})
+    except:
+        pass
+        
+    return city
