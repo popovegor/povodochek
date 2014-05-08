@@ -13,13 +13,10 @@ from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.client import SignedJwtAssertionCredentials
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 import re
-
-
-db = MongoClient()['povodochek']
+import db
 
 PROFILE_ID = "75433672"
 

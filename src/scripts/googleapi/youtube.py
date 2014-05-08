@@ -9,17 +9,10 @@ from apiclient.http import MediaFileUpload
 from oauth2client import client
 from apiclient import discovery
 
-
-
-from pymongo import MongoClient
 import os
 import sys
-import subprocess
 from datetime import datetime
 import re
-
-
-db = MongoClient()['povodochek']
 
 PRIVATE_KEY = os.path.join(os.path.dirname(__file__), 'pk.pem')
 
@@ -28,7 +21,6 @@ def get_service():
 		f = file(PRIVATE_KEY, "rb")
 		key = f.read()
 		f.close()
-
 
 		credentials = SignedJwtAssertionCredentials(
 		  "575093701296-4fme7oorbh6jp39srobnv57ghq8i58l4@developer.gserviceaccount.com", \

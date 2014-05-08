@@ -246,7 +246,6 @@ cats = {
 
 from dic.pets import (pets, DOG_ID, CAT_ID)
 from helpers import (num)
-from pymongo import (MongoClient)
 
 breeds = dict([(dog, {'name':dog_name, 'pet':DOG_ID}) for (dog, dog_name) in dogs.items()] + \
 	[(cat, {'name': cat_name, 'pet': CAT_ID}) for (cat, cat_name) in cats.items()])
@@ -284,19 +283,5 @@ def get_breed_cat_name(breed_id):
     breed_id = num(breed_id or 0)
     return cats.get(breed_id) or u""
 
-import random
-from bson.objectid import ObjectId
-from pets import pets
-
-def shuffle_breeds_in_advs():
-    c = MongoClient()
-    db = c['povodochek']
-    for adv in db.sales.find():
-        pet_id = random.choice(pets.keys())
-        breed_id = random.choice((dogs if pet_id == 1 else cats).keys())
-        db.sales.update(adv, \
-            {'$set': {'breed_id': breed_id, 'pet_id' : pet_id}}, upsert = False)
-
 if __name__ == '__main__':
-    #shuffle_breeds_in_advs()
     pass

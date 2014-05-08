@@ -17,5 +17,7 @@ DOMAIN_NAME = 'povodochek.com'
 DOMAIN_NAME_CHECK = True
 ADMIN_EMAILS = ['egor@povodochek.com', 'vika@povodochek.com', 'admin@povodochek.com', 'popovegor@gmail.com']
 
+MONGODB_URI = "mongodb://127.0.0.1:27017/?replicaSet=repl_povodochek&connectTimeoutMS=5000&readPreference=secondaryPreferred"
+
 
 ASSETS_DEBUG = False

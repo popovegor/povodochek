@@ -106,8 +106,7 @@ def validate_breed(form, field):
             field.breed_id = breed_id
 
 def validate_login_used(form, field):
-    matcher = re.compile("^" + re.escape(field.data) + "$", re.IGNORECASE)
-    user = db.users.find_one({'login': {'$regex': matcher}})
+    user = db.get_user_by_login(field.data)
     if user:
         raise ValidationError(u"Логин '%s' занят" % field.data)
 
@@ -116,7 +115,7 @@ class ChangePassword(Form):
         [Required(message=MSG_REQUIRED)])
 
     def validate_current_password(form, field):
-        user = db.users.find_one({'_id': ObjectId(form.current_user.id)})
+        user = db.get_user(form.current_user.id)
         if not user or not check_password(user.get("pwd_hash"), field.data):
             raise ValidationError(u"Указан неправильный пароль")
 

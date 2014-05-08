@@ -9,16 +9,11 @@ from apiclient.http import MediaFileUpload
 from oauth2client import client
 from apiclient import discovery
 
-
-
-from pymongo import MongoClient
 import os
 import sys
 import subprocess
 from datetime import datetime
 
-
-db = MongoClient()['povodochek']
 
 PRIVATE_KEY = os.path.join(os.path.dirname(__file__), 'pk.pem')
 

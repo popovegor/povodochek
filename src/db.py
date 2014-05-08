@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from pymongo import (MongoClient, ASCENDING, DESCENDING)
+from pymongo import (MongoReplicaSetClient, ASCENDING, DESCENDING)
 from bson.objectid import ObjectId
 from bson.son import SON
 from gridfs import GridFS
@@ -13,32 +13,35 @@ from dic.pet_docs import (dog_docs, doc_dog_pedigrees)
 import sys
 import os
 import time
+import config
 
-mongo = MongoClient().povodochek
+print(config.MONGODB_URI)
+mongo = MongoReplicaSetClient(config.MONGODB_URI)
+povodochek = mongo['povodochek']
 
-users = mongo.users
-cat_advs = mongo.cat_advs
-cat_advs_archive = mongo.cat_advs_archive
-dog_advs = mongo.dog_advs
-dog_advs_archive = mongo.dog_advs_archive
-pets_by_cities = mongo.pets_by_cities
-dog_breeds_rating = mongo.dog_breeds_rating
-cat_breeds_rating = mongo.cat_breeds_rating
+users = povodochek.users
+cat_advs = povodochek.cat_advs
+cat_advs_archive = povodochek.cat_advs_archive
+dog_advs = povodochek.dog_advs
+dog_advs_archive = povodochek.dog_advs_archive
+pets_by_cities = povodochek.pets_by_cities
+dog_breeds_rating = povodochek.dog_breeds_rating
+cat_breeds_rating = povodochek.cat_breeds_rating
 
-dog_advs_by_cities = mongo.dog_advs_by_cities
-cat_advs_by_cities = mongo.cat_advs_by_cities
-dog_advs_by_regions = mongo.dog_advs_by_regions
-cat_advs_by_regions = mongo.cat_advs_by_regions
+dog_advs_by_cities = povodochek.dog_advs_by_cities
+cat_advs_by_cities = povodochek.cat_advs_by_cities
+dog_advs_by_regions = povodochek.dog_advs_by_regions
+cat_advs_by_regions = povodochek.cat_advs_by_regions
 
-cities = mongo.cities
-regions = mongo.regions
-photos = mongo.photos
-photos_gridfs = GridFS(mongo, "photos")
-typeahead_geo_all = mongo.typeahead_geo_all
-typeahead_geo_cities = mongo.typeahead_geo_cities
+cities = povodochek.cities
+regions = povodochek.regions
+photos = povodochek.photos
+photos_gridfs = GridFS(povodochek, "photos")
+typeahead_geo_all = povodochek.typeahead_geo_all
+typeahead_geo_cities = povodochek.typeahead_geo_cities
 
-typeahead_dog_breeds = mongo.typeahead_dog_breeds
-typeahead_cat_breeds = mongo.typeahead_cat_breeds
+typeahead_dog_breeds = povodochek.typeahead_dog_breeds
+typeahead_cat_breeds = povodochek.typeahead_cat_breeds
 
 
 def get_user(user_id):
@@ -241,7 +244,7 @@ def get_near_cities(city = None, distance = None):
         	{'city_id': city.get('city_id')})
         if search_city and distance and search_city.get("location"):
             location = search_city.get("location")
-            geoNear = mongo.command(SON([("geoNear",  "cities"), \
+            geoNear = db.command(SON([("geoNear",  "cities"), \
             	("near", location), ( "spherical", True ), \
             	("maxDistance", distance * 1000), ("limit", 5000)]))
             near_cities = [(geo["obj"], geo["dis"]) \
