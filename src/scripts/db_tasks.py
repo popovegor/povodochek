@@ -32,7 +32,7 @@ def rebuild_breeds_rating(pet):
 	else:
 		top_breeds.drop()
 
-def rebuild_typeahed_breeds():
+def rebuild_typeahead_breeds():
 	db.mongo.typeahead_dog_breeds_tmp.drop()
 	db.mongo.typeahead_cat_breeds_tmp.drop()
 
