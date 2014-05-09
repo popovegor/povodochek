@@ -60,6 +60,7 @@ import json
 from pprint import pprint 
 from form_helper import (get_fields, calc_attraction)
 import cProfile
+import sys
 
 
 photos = UploadSet('photos', IMAGES)
@@ -270,15 +271,14 @@ def jinja_large_cities():
     return large_cities
 
 app.jinja_env.globals['large_cities'] = jinja_large_cities()
-
 app.jinja_env.filters['country_name'] = get_country_name
 
 
 if not app.debug and app.config["MAIL_SERVER"] != '':
     import logging
-    from logging.handlers import SMTPHandler
+    from ThreadedSMTPHandler import ThreadedSMTPHandler
     credentials = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
-    mail_handler = SMTPHandler((app.config["MAIL_SERVER"], 25), app.config["MAIL_DEFAULT_SENDER"], app.config["ADMIN_EMAILS"], 'Povodochek:Error', credentials)
+    mail_handler = ThreadedSMTPHandler((app.config["MAIL_SERVER"], 25), app.config["MAIL_USERNAME"], app.config["ADMIN_EMAILS"], 'Povodochek:Error', credentials)
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 
