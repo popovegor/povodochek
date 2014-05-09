@@ -244,7 +244,7 @@ def get_near_cities(city = None, distance = None):
         	{'city_id': city.get('city_id')})
         if search_city and distance and search_city.get("location"):
             location = search_city.get("location")
-            geoNear = db.command(SON([("geoNear",  "cities"), \
+            geoNear = povodochek.command(SON([("geoNear",  "cities"), \
             	("near", location), ( "spherical", True ), \
             	("maxDistance", distance * 1000), ("limit", 5000)]))
             near_cities = [(geo["obj"], geo["dis"]) \

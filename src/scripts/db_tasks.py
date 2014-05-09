@@ -15,11 +15,11 @@ from form_helper import (calc_attraction)
 
 def rebuild_breeds_rating(pet):
 	breeds = cats if pet == 'cat' else dogs
-	advs = db.mongo['%s_advs' % pet]
+	advs = db.povodochek['%s_advs' % pet]
 	tmp_top_breeds_name = '%s_breeds_rating_tmp' % pet
-	tmp_top_breeds = db.mongo[tmp_top_breeds_name]
+	tmp_top_breeds = db.povodochek[tmp_top_breeds_name]
 	top_breeds_name = '%s_breeds_rating' % pet
-	top_breeds = db.mongo[top_breeds_name]
+	top_breeds = db.povodochek[top_breeds_name]
 	tmp_top_breeds.drop()
 
 	for (breed_id, breed_name) in breeds.items():
@@ -27,14 +27,14 @@ def rebuild_breeds_rating(pet):
 		tmp_top_breeds.insert({'count': count, 
 			'breed_id': breed_id, 'breed_name': breed_name})
 
-	if tmp_top_breeds_name in db.mongo.collection_names():
+	if tmp_top_breeds_name in db.povodochek.collection_names():
 		tmp_top_breeds.rename(top_breeds_name, dropTarget=True)
 	else:
 		top_breeds.drop()
 
 def rebuild_typeahead_breeds():
-	db.mongo.typeahead_dog_breeds_tmp.drop()
-	db.mongo.typeahead_cat_breeds_tmp.drop()
+	db.povodochek.typeahead_dog_breeds_tmp.drop()
+	db.povodochek.typeahead_cat_breeds_tmp.drop()
 
 	group_dog_breeds = { 
 		k.get('_id'):k.get('count') for k in db.dog_advs.aggregate({'$group' : {'_id':'$breed_id', 'count': {'$sum':1}}})["result"] }
@@ -58,24 +58,24 @@ def rebuild_typeahead_breeds():
 		'breed_name' : breed_name, 
 		'breed_name_search' : breed_name.lower()})
 
-	db.mongo.typeahead_dog_breeds_tmp.insert(typeahead_dog_breeds)
-	db.mongo.typeahead_cat_breeds_tmp.insert(typeahead_cat_breeds)
+	db.povodochek.typeahead_dog_breeds_tmp.insert(typeahead_dog_breeds)
+	db.povodochek.typeahead_cat_breeds_tmp.insert(typeahead_cat_breeds)
 
 
-	db.mongo.typeahead_dog_breeds_tmp.ensure_index([('name_search', ASCENDING)])
+	db.povodochek.typeahead_dog_breeds_tmp.ensure_index([('name_search', ASCENDING)])
 
-	db.mongo.typeahead_cat_breeds_tmp.ensure_index([('name_search', ASCENDING)])
+	db.povodochek.typeahead_cat_breeds_tmp.ensure_index([('name_search', ASCENDING)])
 
-	db.mongo.typeahead_dog_breeds_tmp.rename('typeahead_dog_breeds', dropTarget=
-		'typeahead_dog_breeds' in db.mongo.collection_names())
+	db.povodochek.typeahead_dog_breeds_tmp.rename('typeahead_dog_breeds', dropTarget=
+		'typeahead_dog_breeds' in db.povodochek.collection_names())
 
-	db.mongo.typeahead_cat_breeds_tmp.rename('typeahead_cat_breeds', dropTarget=
-		'typeahead_cat_breeds' in db.mongo.collection_names())
+	db.povodochek.typeahead_cat_breeds_tmp.rename('typeahead_cat_breeds', dropTarget=
+		'typeahead_cat_breeds' in db.povodochek.collection_names())
 
 
 def rebuild_typeahead_geos():
-	db.mongo.typeahead_geo_cities_tmp.drop()	
-	db.mongo.typeahead_geo_cities_tmp.drop()
+	db.povodochek.typeahead_geo_cities_tmp.drop()	
+	db.povodochek.typeahead_geo_cities_tmp.drop()
 
 	dog_group_regions = { 
 		k.get('_id'):k.get('count') for k in db.dog_advs.aggregate({'$group' : {'_id':'$region_id', 'count': {'$sum':1}}})["result"] }
@@ -112,20 +112,20 @@ def rebuild_typeahead_geos():
 				'name_search' : r['region_name'].lower()})
 
 
-	db.mongo.typeahead_geo_cities_tmp.insert(rating_geo_cities)
+	db.povodochek.typeahead_geo_cities_tmp.insert(rating_geo_cities)
 
-	db.mongo.typeahead_geo_cities_tmp.ensure_index([("rating", DESCENDING), ('name_search', ASCENDING)])
-	db.mongo.typeahead_geo_cities_tmp.ensure_index([('name_search', ASCENDING)])
+	db.povodochek.typeahead_geo_cities_tmp.ensure_index([("rating", DESCENDING), ('name_search', ASCENDING)])
+	db.povodochek.typeahead_geo_cities_tmp.ensure_index([('name_search', ASCENDING)])
 
 
-	db.mongo.typeahead_geo_all_tmp.insert(rating_geo_all)
-	db.mongo.typeahead_geo_all_tmp.ensure_index([("rating", DESCENDING), ('name_search', ASCENDING)])
-	db.mongo.typeahead_geo_all_tmp.ensure_index([('name_search', ASCENDING)])
+	db.povodochek.typeahead_geo_all_tmp.insert(rating_geo_all)
+	db.povodochek.typeahead_geo_all_tmp.ensure_index([("rating", DESCENDING), ('name_search', ASCENDING)])
+	db.povodochek.typeahead_geo_all_tmp.ensure_index([('name_search', ASCENDING)])
 
-	db.mongo.typeahead_geo_cities_tmp.rename('typeahead_geo_cities', dropTarget=
-		'typeahead_geo_cities' in db.mongo.collection_names())
-	db.mongo.typeahead_geo_all_tmp.rename('typeahead_geo_all', dropTarget=
-		'typeahead_geo_all' in db.mongo.collection_names())
+	db.povodochek.typeahead_geo_cities_tmp.rename('typeahead_geo_cities', dropTarget=
+		'typeahead_geo_cities' in db.povodochek.collection_names())
+	db.povodochek.typeahead_geo_all_tmp.rename('typeahead_geo_all', dropTarget=
+		'typeahead_geo_all' in db.povodochek.collection_names())
 
 def update_regions_in_advs():
 	# dogs
@@ -142,8 +142,8 @@ def update_regions_in_advs():
 
 
 def rebuild_geos():
-	db.mongo.cities_tmp.drop()
-	db.mongo.regions_tmp.drop()
+	db.povodochek.cities_tmp.drop()
+	db.povodochek.regions_tmp.drop()
 
 	for c in cities.values():
 		c_id = c['city_id']
@@ -151,7 +151,7 @@ def rebuild_geos():
 		c_size = c['city_size']
 		r = get_region_by_id(r_id)
 		location = {'type': "Point", 'coordinates' : [ c['longitude'], c['latitude'] ] }
-		db.mongo.cities_tmp.update({'city_id': c_id}, \
+		db.povodochek.cities_tmp.update({'city_id': c_id}, \
 			{'$set' : { 
 			'city_id': c_id, \
 			'city_name' : c['city_name'], \
@@ -162,7 +162,7 @@ def rebuild_geos():
 			'region_id' : r_id, \
 			'location' :  location }}, \
 			upsert=True)
-		db.mongo.regions_tmp.update({'region_id': r_id}, \
+		db.povodochek.regions_tmp.update({'region_id': r_id}, \
 			{'$set': {
 			'region_id': r_id, 
 			'region_name': r['region_name'], 
@@ -172,26 +172,26 @@ def rebuild_geos():
 			"$inc" : {'region_size' : c_size},
 			'$push': {'cities': c_id} }, upsert = True)
 
-		db.mongo.cities_tmp.ensure_index([("location", GEOSPHERE)])
+		db.povodochek.cities_tmp.ensure_index([("location", GEOSPHERE)])
 
-		db.mongo.cities_tmp.ensure_index([("city_id", ASCENDING)])
+		db.povodochek.cities_tmp.ensure_index([("city_id", ASCENDING)])
 
-		db.mongo.regions_tmp.ensure_index([("region_id", ASCENDING)])
+		db.povodochek.regions_tmp.ensure_index([("region_id", ASCENDING)])
 
-	db.mongo.cities_tmp.rename('cities', dropTarget=True)
-	db.mongo.regions_tmp.rename('regions', dropTarget=True)
+	db.povodochek.cities_tmp.rename('cities', dropTarget=True)
+	db.povodochek.regions_tmp.rename('regions', dropTarget=True)
 
 
 def rebuild_advs_by_geos(pet):
-    advs = db.mongo['%s_advs' % pet]
+    advs = db.povodochek['%s_advs' % pet]
     tmp_pet_by_cities_name = '%s_advs_by_cities_tmp' % pet
-    tmp_pet_by_cities = db.mongo[tmp_pet_by_cities_name]
+    tmp_pet_by_cities = db.povodochek[tmp_pet_by_cities_name]
     tmp_pet_by_regions_name = '%s_advs_by_regions_tmp' % pet
-    tmp_pet_by_regions = db.mongo[tmp_pet_by_regions_name]
+    tmp_pet_by_regions = db.povodochek[tmp_pet_by_regions_name]
     pet_by_cities_name = '%s_advs_by_cities' % pet
-    pet_by_cities = db.mongo[pet_by_cities_name]
+    pet_by_cities = db.povodochek[pet_by_cities_name]
     pet_by_regions_name = '%s_advs_by_regions' % pet
-    pet_by_regions = db.mongo[pet_by_regions_name]
+    pet_by_regions = db.povodochek[pet_by_regions_name]
 
     tmp_pet_by_cities.drop()
 
@@ -223,10 +223,10 @@ def rebuild_advs_by_geos(pet):
 
 
     tmp_pet_by_cities.rename(
-    	pet_by_cities_name, dropTarget=tmp_pet_by_cities_name in db.mongo.collection_names())
+    	pet_by_cities_name, dropTarget=tmp_pet_by_cities_name in db.povodochek.collection_names())
 
     tmp_pet_by_regions.rename(
-    	pet_by_regions_name, dropTarget=tmp_pet_by_regions_name in db.mongo.collection_names())
+    	pet_by_regions_name, dropTarget=tmp_pet_by_regions_name in db.povodochek.collection_names())
 
 
 def recalc_attraction_in_advs():
@@ -239,6 +239,15 @@ def recalc_attraction_in_advs():
 		db.dog_advs.update(dog, \
 			{'$set': {'attraction': attraction}}, upsert = False)
 
+
+def rebuild_all():
+	rebuild_advs_by_geos('cat')
+	rebuild_advs_by_geos('dog')
+	rebuild_geos()
+	rebuild_typeahead_geos()
+	rebuild_typeahead_breeds()
+	rebuild_breeds_rating('cat')
+	rebuild_breeds_rating('dog')
 
 if __name__ == '__main__':
 	func = sys.argv[1]
