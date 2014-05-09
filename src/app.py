@@ -1294,7 +1294,7 @@ def page_not_found(e):
     return render_template('404.html', title = u"Запрашиваемая вами страница не найдена"), 404
 
 @app.errorhandler(500)
-def page_not_found(e):
+def internal_server_error(e):
     return render_template('500.html', title = u"Упс, у нас на сервере произошла ошибка!"), 500
 
 
