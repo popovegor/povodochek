@@ -1,17 +1,11 @@
-{% extends "layout_base.html" %}
+{% extends "layout_popup.html" %}
 
-{% block layout %}  
+{% block content %}  
 
 
-<div class="error-404"> 
-    <div>
-        <h1 class="error-404-number">404</h1>
-      <p class="lead">К сожалению, нам не удалось найти запрашиваемую вами страницу, возможно, она была удалена или был указан неправильный адрес.</p>
-      </div>
-      <div class="error-text"> 
-	     
-        <p>Вернитесь обратно или перейдите на один из следующих разделов сайта: </p>
-			   <ul class="nav nav-pills nav-stacked"><li>
+<div class=""> 
+        <p>Вернитесь <a href="javascript:window.history.back(-1);return false;">обратно</a> или перейдите на один из следующих разделов сайта: </p>
+			   <ul class=""><li>
             <a href="{{url_for('index')}}">Главная</a>   
          </li>
           <li>
@@ -27,7 +21,6 @@
             <a href="{{url_for('contacts')}}">Контакты</a>
           </li>
          </ul>
-      
-</div>
+ 
 
 {% endblock %} 

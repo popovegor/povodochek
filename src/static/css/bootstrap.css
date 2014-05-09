@@ -3774,7 +3774,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   font-family: "Russo One", "Arial Black", sans-serif;
   font-size: 22px;
   line-height: 20px;
-  background-image: url(../img/povodochek_brand.png);
+  background-image: url("../img/povodochek_brand_2.png");
   background-repeat: no-repeat;
   background-position: 12px 8px;
   border-radius: 4px 0 0 4px;
@@ -7316,5 +7316,17 @@ form .textarea-counter {
 }
 #menu .menu-account {
   border-radius: 0 4px 4px 0;
+}
+.layout-popup {
+  margin-bottom: 30px;
+}
+.layout-popup .lp-brand .lp-logo {
+  display: inline-block;
+  width: 170px;
+  height: 55px;
+  margin-left: -10px;
+  background-image: url("../img/povodochek_brand_2.png");
+  background-repeat: no-repeat;
+  background-position: 0 -158px;
 }
 /*# sourceMappingURL=bootstrap.css.map */

@@ -59,8 +59,8 @@ import random
 import json
 from pprint import pprint 
 from form_helper import (get_fields, calc_attraction)
-
 import cProfile
+
 
 photos = UploadSet('photos', IMAGES)
 
@@ -102,8 +102,7 @@ config = os.path.join(app.root_path, 'config.py')
 app.config.from_pyfile(config)
 
 mail = Mail(app)
-
-Markdown(app)
+markdown = Markdown(app)
 assets = Environment(app)
 
 js = Bundle('js/jquery-1.11.0.min.js', \
@@ -274,6 +273,24 @@ app.jinja_env.globals['large_cities'] = jinja_large_cities()
 
 app.jinja_env.filters['country_name'] = get_country_name
 
+
+if not app.debug and app.config["MAIL_SERVER"] != '':
+    import logging
+    from logging.handlers import SMTPHandler
+    credentials = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
+    mail_handler = SMTPHandler((app.config["MAIL_SERVER"], 25), app.config["MAIL_DEFAULT_SENDER"], app.config["ADMIN_EMAILS"], 'Povodochek:Error', credentials)
+    mail_handler.setLevel(logging.ERROR)
+    app.logger.addHandler(mail_handler)
+
+if not app.debug:
+    import logging
+    from logging.handlers import RotatingFileHandler
+    file_handler = RotatingFileHandler('log/povodochek.log', 'a', 1 * 1024 * 1024, 10)
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('povodochek startup')
 
 
 @login_manager.user_loader
@@ -1274,7 +1291,12 @@ def contacts():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html', title = u"Страница не найдена"), 404
+    return render_template('404.html', title = u"Запрашиваемая вами страница не найдена"), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template('500.html', title = u"Упс, у нас на сервере произошла ошибка!"), 500
+
 
 # admin
 
@@ -1415,5 +1437,4 @@ def ajax_mosaic_showmore(pet, skip, limit):
 
 
 if __name__ == "__main__":
-    app.debug = True
     app.run(host='0.0.0.0', port=5000)

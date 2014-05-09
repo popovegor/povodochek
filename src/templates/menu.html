@@ -14,11 +14,10 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
-
-               <li class="{{'active' if url_for('dog_search') in request.path else ''}}"><a href="{{url_for('dog_search')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
-               <li class="{{'active' if url_for('cat_search') in request.path else ''}}"><a href="{{url_for('cat_search')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
-               <li class=" {{'active' if url_for('advice') in request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
-               {#<li class=" {{'active' if url_for('help') in request.path else ''}}"><a href="{{url_for('help')}}"  title="Справочная информация о сайте Поводочек">Справка</a></li>#}
+       <li class="{{'active' if url_for('dog_search') in request.path else ''}}"><a href="{{url_for('dog_search')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
+       <li class="{{'active' if url_for('cat_search') in request.path else ''}}"><a href="{{url_for('cat_search')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
+       <li class=" {{'active' if url_for('advice') in request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
+       {#<li class=" {{'active' if url_for('help') in request.path else ''}}"><a href="{{url_for('help')}}"  title="Справочная информация о сайте Поводочек">Справка</a></li>#}
       
     </ul>
 
