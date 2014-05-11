@@ -1703,7 +1703,6 @@ output {
   border: 1px solid #ccc;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
   -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
           transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
@@ -1712,7 +1711,6 @@ output {
   border-color: #66afe9;
   outline: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-     -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
           box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
 }
 .form-control:-moz-placeholder {
@@ -1851,13 +1849,11 @@ textarea.input-lg {
 .has-warning .form-control {
   border-color: #8a6d3b;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .has-warning .form-control:focus {
   border-color: #66512c;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #c0a16b;
 }
 .has-warning .input-group-addon {
@@ -1879,13 +1875,11 @@ textarea.input-lg {
 .has-error .form-control {
   border-color: #a94442;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .has-error .form-control:focus {
   border-color: #843534;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
 }
 .has-error .input-group-addon {
@@ -1907,13 +1901,11 @@ textarea.input-lg {
 .has-success .form-control {
   border-color: #3c763d;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .has-success .form-control:focus {
   border-color: #2b542c;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #67b168;
 }
 .has-success .input-group-addon {
@@ -2029,7 +2021,6 @@ textarea.input-lg {
   background-image: none;
   outline: 0;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-     -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
           box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
 }
 .btn.disabled,
@@ -2037,21 +2028,10 @@ textarea.input-lg {
 fieldset[disabled] .btn {
   pointer-events: none;
   cursor: not-allowed;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=65);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* для элемента в ИЕ, у которого не заданы width и height */
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
           box-shadow: none;
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .65;
-
-  /* IE 5.5+*/
-  -moz-opacity: .65;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .65;
+  opacity: .65;
 }
 .btn-default {
   color: #333;
@@ -2311,7 +2291,6 @@ fieldset[disabled] .btn-info.active {
 fieldset[disabled] .btn-link {
   background-color: transparent;
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
           box-shadow: none;
 }
 .btn-link,
@@ -3038,7 +3017,6 @@ input[type="button"].btn-block {
   border: 1px solid rgba(0, 0, 0, .15);
   border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-     -moz-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
           box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
 .dropdown-menu.pull-right {
@@ -3247,12 +3225,10 @@ input[type="button"].btn-block {
 }
 .btn-group.open .dropdown-toggle {
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-     -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
           box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
 }
 .btn-group.open .dropdown-toggle.btn-link {
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
           box-shadow: none;
 }
 .btn .caret {
@@ -3600,7 +3576,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a:hover,
 .nav-pills > li.active > a:focus {
   color: #fff;
-  background-color: #fa0;
+  background-color: #f60;
   border-radius: 4px;
 }
 .nav-stacked > li {
@@ -3669,7 +3645,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .navbar {
   position: relative;
-  min-height: 52px;
+  min-height: 40px;
   /*margin-bottom: @navbar-margin-bottom;*/
   /*border: 1px dotted transparent;*/
   /*margin-bottom: 30px;*/
@@ -3769,21 +3745,15 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .navbar-brand {
   display: inline-block;
   float: left;
-  width: 170px;
-  height: 52px;
-  padding: 16px 15px 16px 15px;
-  font-family: "Russo One", "Arial Black", sans-serif;
+  height: 40px;
+  padding: 10px 15px 10px 15px;
   font-size: 22px;
   line-height: 20px;
-  background-image: url("../img/povodochek_brand_2.png");
-  background-repeat: no-repeat;
-  background-position: 12px 8px;
   border-radius: 4px 0 0 4px;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
   text-decoration: none;
-  background-position-y: -56px;
 }
 .navbar-brand > .glyphicon {
   float: left;
@@ -3799,16 +3769,15 @@ textarea.input-group-sm > .input-group-btn > .btn {
 span.navbar-brand {
   color: #fff !important;
   cursor: default;
-  background-color: #fa0 !important;
-  background-position-y: 8px !important;
+  background-color: #f60 !important;
 }
 .navbar-toggle {
   position: relative;
   float: right;
   padding: 9px 10px;
-  margin-top: 9px;
+  margin-top: 3px;
   margin-right: 15px;
-  margin-bottom: 9px;
+  margin-bottom: 3px;
   background-color: transparent;
   background-image: none;
   border: 1px solid transparent;
@@ -3829,7 +3798,7 @@ span.navbar-brand {
   }
 }
 .navbar-nav {
-  margin: 8px -15px;
+  margin: 5px -15px;
 }
 .navbar-nav > li > a {
   padding-top: 10px;
@@ -3867,11 +3836,14 @@ span.navbar-brand {
     float: left;
   }
   .navbar-nav > li > a {
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
   .navbar-nav.navbar-right:last-child {
     margin-right: -15px;
+  }
+  .navbar-nav.navbar-left:first-child {
+    margin-left: -15px;
   }
 }
 @media (min-width: 1px) {
@@ -3884,14 +3856,13 @@ span.navbar-brand {
 }
 .navbar-form {
   padding: 10px 15px;
-  margin-top: 9px;
+  margin-top: 3px;
   margin-right: -15px;
-  margin-bottom: 9px;
+  margin-bottom: 3px;
   margin-left: -15px;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);
-     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);
           box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 1px 0 rgba(255, 255, 255, .1);
 }
 @media (min-width: 1px) {
@@ -3940,7 +3911,6 @@ span.navbar-brand {
     margin-left: 0;
     border: 0;
     -webkit-box-shadow: none;
-       -moz-box-shadow: none;
             box-shadow: none;
   }
   .navbar-form.navbar-right:last-child {
@@ -3957,20 +3927,20 @@ span.navbar-brand {
   border-bottom-left-radius: 0;
 }
 .navbar-btn {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+.navbar-btn.btn-sm {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.navbar-btn.btn-xs {
   margin-top: 9px;
   margin-bottom: 9px;
 }
-.navbar-btn.btn-sm {
-  margin-top: 11px;
-  margin-bottom: 11px;
-}
-.navbar-btn.btn-xs {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
 .navbar-text {
-  margin-top: 16px;
-  margin-bottom: 16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 @media (min-width: 1px) {
   .navbar-text {
@@ -3998,8 +3968,8 @@ span.navbar-brand {
   color: #fff;
 }
 .navbar-default .navbar-nav > li > a {
-  font-size: 1.1em;
-  /*font-weight: bold;*/
+  font-size: 14px;
+  font-weight: bold;
   color: #fff;
 }
 .navbar-default .navbar-nav > li > a:hover,
@@ -4011,7 +3981,7 @@ span.navbar-brand {
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
   color: #fff;
-  background-color: #fa0;
+  background-color: #f60;
 }
 .navbar-default .navbar-nav > .disabled > a,
 .navbar-default .navbar-nav > .disabled > a:hover,
@@ -4037,7 +4007,7 @@ span.navbar-brand {
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #fff;
-  background-color: #fa0;
+  background-color: #f60;
 }
 @media (max-width: 0) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
@@ -4052,7 +4022,7 @@ span.navbar-brand {
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #fff;
-    background-color: #fa0;
+    background-color: #f60;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,
   .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,
@@ -4577,7 +4547,6 @@ a.thumbnail.active {
   background-color: #f5f5f5;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
-     -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
           box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
 }
 .progress-bar {
@@ -4590,7 +4559,6 @@ a.thumbnail.active {
   text-align: center;
   background-color: #428bca;
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
-     -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
           box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
   -webkit-transition: width .6s ease;
           transition: width .6s ease;
@@ -4703,8 +4671,8 @@ a.list-group-item.active:hover,
 a.list-group-item.active:focus {
   z-index: 2;
   color: #fff;
-  background-color: #fa0;
-  border-color: #fa0;
+  background-color: #f60;
+  border-color: #f60;
 }
 a.list-group-item.active .list-group-item-heading,
 a.list-group-item.active:hover .list-group-item-heading,
@@ -4714,7 +4682,7 @@ a.list-group-item.active:focus .list-group-item-heading {
 a.list-group-item.active .list-group-item-text,
 a.list-group-item.active:hover .list-group-item-text,
 a.list-group-item.active:focus .list-group-item-text {
-  color: #fec;
+  color: #ffe0cc;
 }
 .list-group-item-success {
   color: #3c763d;
@@ -4818,7 +4786,6 @@ a.list-group-item-info.active:focus {
   border: 1px solid transparent;
   border-radius: 4px;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
           box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 .panel-body {
@@ -5059,7 +5026,6 @@ a.list-group-item-info.active:focus {
   border: 1px solid #e3e3e3;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
 }
 .well blockquote {
@@ -5085,36 +5051,16 @@ a.list-group-item-info.active:focus {
   line-height: 1;
   color: #000;
   text-shadow: 0 1px 0 #fff;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=20);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .2;
-
-  /* IE 5.5+*/
-  -moz-opacity: .2;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .2;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: .2;
 }
 .close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=50);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .5;
-
-  /* IE 5.5+*/
-  -moz-opacity: .5;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .5;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: .5;
 }
 button.close {
   -webkit-appearance: none;
@@ -5167,7 +5113,6 @@ button.close {
   border-radius: 6px;
   outline: none;
   -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-     -moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
           box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
 }
 .modal-backdrop {
@@ -5180,32 +5125,12 @@ button.close {
   background-color: #000;
 }
 .modal-backdrop.fade {
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=0);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: 0;
-
-  /* IE 5.5+*/
-  -moz-opacity: 0;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: 0;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: 0;
 }
 .modal-backdrop.in {
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=50);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .5;
-
-  /* IE 5.5+*/
-  -moz-opacity: .5;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .5;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: .5;
 }
 .modal-header {
   min-height: 16.428571429px;
@@ -5246,7 +5171,6 @@ button.close {
   }
   .modal-content {
     -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
-       -moz-box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
             box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
   }
   .modal-sm {
@@ -5263,32 +5187,12 @@ button.close {
   font-size: 12px;
   line-height: 1.4;
   visibility: visible;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=0);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: 0;
-
-  /* IE 5.5+*/
-  -moz-opacity: 0;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: 0;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: 0;
 }
 .tooltip.in {
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=90);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .9;
-
-  /* IE 5.5+*/
-  -moz-opacity: .9;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .9;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: .9;
 }
 .tooltip.top {
   padding: 5px 0;
@@ -5390,7 +5294,6 @@ button.close {
   border: 1px solid rgba(0, 0, 0, .2);
   border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
-     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
           box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 .popover.top {
@@ -5551,22 +5454,12 @@ button.close {
   bottom: 0;
   left: 0;
   width: 15%;
-  /* для элемента в ИЕ, у которого не заданы width и height */
   font-size: 20px;
   color: #fff;
   text-align: center;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=50);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .5;
-
-  /* IE 5.5+*/
-  -moz-opacity: .5;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .5;
+  opacity: .5;
 }
 .carousel-control.left {
   background-image: -webkit-linear-gradient(left, color-stop(rgba(0, 0, 0, .5) 0%), color-stop(rgba(0, 0, 0, .0001) 100%));
@@ -5586,19 +5479,9 @@ button.close {
 .carousel-control:focus {
   color: #fff;
   text-decoration: none;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   filter: alpha(opacity=90);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
   outline: none;
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .9;
-
-  /* IE 5.5+*/
-  -moz-opacity: .9;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .9;
-  /* для элемента в ИЕ, у которого не заданы width и height */
+  opacity: .9;
 }
 .carousel-control .icon-prev,
 .carousel-control .icon-next,
@@ -5948,7 +5831,6 @@ td.visible-print {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   -webkit-box-shadow: 0 8px 8px rgba(0, 0, 0, .25);
-     -moz-box-shadow: 0 8px 8px rgba(0, 0, 0, .25);
           box-shadow: 0 8px 8px rgba(0, 0, 0, .25);
 }
 .chosen-container.chosen-with-drop .chosen-drop {
@@ -6047,7 +5929,6 @@ td.visible-print {
           background-clip: padding-box;
   border: 1px solid #ccc;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .chosen-container-single .chosen-single span {
@@ -6108,7 +5989,6 @@ td.visible-print {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .chosen-container-single .chosen-drop {
@@ -6138,7 +6018,6 @@ td.visible-print {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .chosen-container-multi .chosen-choices li {
@@ -6159,7 +6038,6 @@ td.visible-print {
   border: 0 !important;
   outline: 0;
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
           box-shadow: none;
 }
 .chosen-container-multi .chosen-choices .search-field .default {
@@ -6186,7 +6064,6 @@ td.visible-print {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 }
 .chosen-container-multi .chosen-choices .search-choice .search-choice-close {
@@ -6218,7 +6095,6 @@ td.visible-print {
 .chosen-container-active .chosen-single {
   border: 1px solid rgba(82, 168, 236, .8);
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
-     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
           box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
   -webkit-transition: border linear .2s, box-shadow linear .2s;
           transition: border linear .2s, box-shadow linear .2s;
@@ -6227,7 +6103,6 @@ td.visible-print {
   background-color: #eee;
   border: 1px solid rgba(82, 168, 236, .8);
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
-     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
           box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
   -webkit-transition: border linear .2s, box-shadow linear .2s;
           transition: border linear .2s, box-shadow linear .2s;
@@ -6244,7 +6119,6 @@ td.visible-print {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
-     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
           box-shadow: 0 1px 1px rgba(0, 0, 0, .075) inset, 0 0 8px rgba(82, 168, 236, .6);
   -webkit-transition: border linear .2s, box-shadow linear .2s;
           transition: border linear .2s, box-shadow linear .2s;
@@ -6321,7 +6195,7 @@ body {
   height: 100%;
 }
 form .form-field-desc {
-  margin-top: 3px;
+  margin-top: 5px;
   text-indent: 3px;
 }
 form .form-field-errors {
@@ -6390,12 +6264,6 @@ form .textarea-counter {
 .ajax-link:focus,
 .ajax-link:hover {
   text-decoration: none !important;
-}
-.tagline {
-  font-family: Georgia, "Times New Roman", Times, serif;
-  font-style: italic;
-  /*color: @navbar-default-bg;*/
-  /*font-size: 1.1em;*/
 }
 .index {
   /*pet-post*/
@@ -6590,25 +6458,15 @@ form .textarea-counter {
   position: absolute;
   right: 0;
   bottom: 10px;
-  /* для элемента в ИЕ, у которого не заданы width и height */
   z-index: 2;
   width: 80px;
   padding: 2px 0;
   color: #000;
   text-align: center;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   background: #fff;
-  /*line-height: 24px;*/
   filter: alpha(opacity=80);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .8;
-
-  /* IE 5.5+*/
-  -moz-opacity: .8;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .8;
+  /*line-height: 24px;*/
+  opacity: .8;
 }
 .pet-sale .delimiter,
 .account-pet-sale .delimiter,
@@ -6625,15 +6483,11 @@ form .textarea-counter {
 .account-pet-sale .ds-filter,
 .dog-search .ds-filter {
   max-width: 920px;
-  margin: 60px auto 40px auto;
+  margin: 60px 0 40px 0;
   background-color: #d9edf7;
-          border-radius: 0 10px 10px 10px;
+  border-radius: 0 10px 10px 10px;
   -webkit-box-shadow: 2px 2px 5px 0 #ccc;
-     -moz-box-shadow: 2px 2px 5px 0 #ccc;
           box-shadow: 2px 2px 5px 0 #ccc;
-
-  -webkit-border-radius: 0 10px 10px 10px;
-     -moz-border-radius: 0 10px 10px 10px;
 }
 .pet-sale .ds-filter form,
 .account-pet-sale .ds-filter form,
@@ -6659,12 +6513,10 @@ form .textarea-counter {
   height: 35px;
   padding: 8px 20px 0 20px;
   margin: 25px -20px 0 -20px;
-  background: #d9edf7;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #d9edf7), color-stop(1, #f4f6fc));
-  background:  -ms-linear-gradient(bottom, #d9edf7, #f4f6fc);
-  background: -moz-linear-gradient(center bottom, #d9edf7 0%, #f4f6fc 100%);
-  background:   -o-linear-gradient(#f4f6fc, #d9edf7);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f6fc', endColorstr='#d9edf7', GradientType=0);
+  background-image: -webkit-linear-gradient(top, #f4f6fc 0%, #d9edf7 100%);
+  background-image:         linear-gradient(to bottom, #f4f6fc 0%, #d9edf7 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff4f6fc', endColorstr='#ffd9edf7', GradientType=0);
+  background-repeat: repeat-x;
   border-radius: 0 0 10px 10px;
 }
 .pet-sale .ds-filter form .ds-advanced .checkbox,
@@ -6681,12 +6533,10 @@ form .textarea-counter {
   height: 40px;
   padding: 10px 20px 0 20px;
   font-size: 18px;
-  background: #d9edf7;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #d9edf7), color-stop(1, #f4f6fc));
-  background:  -ms-linear-gradient(bottom, #d9edf7, #f4f6fc);
-  background: -moz-linear-gradient(center bottom, #d9edf7 0%, #f4f6fc 100%);
-  background:   -o-linear-gradient(#f4f6fc, #d9edf7);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f6fc', endColorstr='#d9edf7', GradientType=0);
+  background-image: -webkit-linear-gradient(top, #f4f6fc 0%, #d9edf7 100%);
+  background-image:         linear-gradient(to bottom, #f4f6fc 0%, #d9edf7 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff4f6fc', endColorstr='#ffd9edf7', GradientType=0);
+  background-repeat: repeat-x;
   border-radius: 10px 10px 0 0;
 }
 .pet-sale .adv,
@@ -6710,6 +6560,10 @@ form .textarea-counter {
 .account-pet-sale .adv .adv-desc,
 .dog-search .adv .adv-desc {
   margin-top: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  overflow-wrap: break-word;
 }
 .pet-sale .adv .adv-actions a.btn,
 .account-pet-sale .adv .adv-actions a.btn,
@@ -7031,7 +6885,6 @@ form .textarea-counter {
   background: #fff;
   border: none;
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
           box-shadow: none;
 }
 .dog-adv-show .photos #slider,
@@ -7045,7 +6898,6 @@ form .textarea-counter {
   background-position: 50% 50%;
   border: none;
   -webkit-box-shadow: none;
-     -moz-box-shadow: none;
           box-shadow: none;
 }
 .dog-adv-show .photos #slider .flex-direction-nav a,
@@ -7116,26 +6968,16 @@ form .textarea-counter {
   position: absolute;
   bottom: 0;
   left: 0;
-  /* для элемента в ИЕ, у которого не заданы width и height */
   z-index: 2;
   width: 20px;
   padding: 2px 0;
   color: #000;
   text-align: center;
   visibility: hidden;
-  /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-  zoom: 1;
   background: #fff;
-  /*line-height: 24px;*/
   filter: alpha(opacity=80);
-  filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)";
-  /* Konqueror 3.1, Safari 1.1 */
-       opacity: .8;
-
-  /* IE 5.5+*/
-  -moz-opacity: .8;
-  /* Mozilla 1.6 и ниже */
-  -khtml-opacity: .8;
+  /*line-height: 24px;*/
+  opacity: .8;
 }
 .dog-adv-show .photos .photo-thumbnail:hover .photo-fullscreen,
 .sale-pet-show .photos .photo-thumbnail:hover .photo-fullscreen,
@@ -7161,6 +7003,14 @@ form .textarea-counter {
 .sale-pet-show .adv-title {
   /*margin-top:15px !important;*/
   /*font-weight: bold;*/
+}
+.dog-adv-show .sps-desc,
+.sale-pet-show .sps-desc {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-wrap;
+
+  overflow-wrap: break-word;
 }
 .dog-adv-show .adv-block,
 .sale-pet-show .adv-block {
@@ -7312,22 +7162,36 @@ form .textarea-counter {
   text-decoration: none;
   border-bottom: dotted 1px;
 }
+#header {
+  height: 92px;
+  background-color: #f5f5f5;
+}
+#header .header-tagline {
+  padding-bottom: 5px;
+  vertical-align: bottom;
+}
+#header .header-post-adv {
+  padding: 5px 0 0;
+}
+#menu li.menu-item-divider {
+  height: 40px;
+  border-right: 1px solid #9fbfdf;
+  border-left: 1px solid #369;
+}
 #menu .menu-signin {
   border-radius: 0 4px 4px 0;
 }
 #menu .menu-account {
   border-radius: 0 4px 4px 0;
 }
-.layout-popup {
-  margin-bottom: 30px;
+#menu .menu-account-list {
+  min-width: 100%;
 }
-.layout-popup .lp-brand .lp-logo {
-  display: inline-block;
-  width: 170px;
-  height: 55px;
-  margin-left: -10px;
-  background-image: url("../img/povodochek_brand_2.png");
-  background-repeat: no-repeat;
-  background-position: 0 -158px;
+#menu .menu-breed-selector {
+  border-radius: 4px 0 0 4px;
+}
+.img-logo {
+  width: 160px;
+  height: 42px;
 }
 /*# sourceMappingURL=bootstrap.css.map */

@@ -53,8 +53,8 @@
 		</div>
 
 		<ul class="list-unstyled dbp-dog-names" style="max-height:400px; overflow-y:auto">
-		{% for dog in dogs %}
-			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:;" class="dbp-dog-name" title='{{"Выбрать породу " + dog | lower }}'>{{dog}}</a></li>
+		{% for dog in breeds.dogs.values() %}
+			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:;" class="dbp-dog-name" title='{{"Выбрать породу " + dog.get("breed_name") | lower }}'>{{dog.get("breed_name")}}</a></li>
 		{%endfor%}
 		</ul>
       		

@@ -25,9 +25,9 @@
 
     {{breadcrumbs( [
     {'name':"Продажа собак", 'url':url_for("dog_search")}, 
-    {'name':adv.get('breed_id') | breed_dog_name, 'url':url_for("dog_search", breed=adv.get("breed_id"))}, 
-     {'name': adv.get('region_id') | region_name, 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("region_id"))},
-    {'name': adv.get('city_id') | city_name, 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
+    {'name': breeds.get_breed_name(adv.get('breed_id')), 'url':url_for("dog_search", breed=adv.get("breed_id"))}, 
+     {'name': geo.get_region_name(adv.get('region_id')), 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("region_id"))},
+    {'name': geo.get_city_name(adv.get('city_id')), 'url': url_for("dog_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
     {'name':adv.get("title") | capitalize}
     ] ) }}
               
@@ -402,7 +402,7 @@
             <p class="{{col_left_class}}">Страна происхождения</p>
             <p class="{{col_right_class}}">
               {% if country %}
-                    {{ country | country_name }}
+                    {{ geo.get_country_name(country) }}
               {% else %}
                 <span class='text-muted' >не указана</span>
               {%endif%}
@@ -454,12 +454,12 @@
         <div class="row" itemscope itemprop="availableAtOrFrom" itemtype="http://schema.org/Place">
           <p class="{{col_left_class}}">Местоположение</p>
           <p class="{{col_right_class}}">
-          <span itemprop="name">{{adv.get("city_id") | city_region}}</span>
+          <span itemprop="name">{{geo.format_city_region_by_city_id(adv.get("city_id"))}}</span>
 
             <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
             <meta itemprop="addressCountry" content="RU"/>
-            <meta itemprop="addressLocality" content="{{adv.get('city_id') | city_name }}" />
-            <meta itemprop="addressRegion" content="{{adv.get('city_id') | region_name_by_city_id }}" />
+            <meta itemprop="addressLocality" content="{{geo.get_city_name(adv.get('city_id')) }}" />
+            <meta itemprop="addressRegion" content="{{geo.get_region_name_by_city_id(adv.get('city_id')) }}" />
             </div>
           </p>
         </div>
@@ -479,10 +479,10 @@
 
         <div class="row">
           <p class="{{col_left_class}}">Порода</p>
-          <p class="{{col_right_class}}">{{adv.get("breed_id") | breed_dog_name | lower }}</p>
+          <p class="{{col_right_class}}">{{breeds.get_breed_name(adv.get('breed_id')) | lower }}</p>
         </div>
 
-        {% set gender = adv.get("gender_id") | gender_name %}
+        {% set gender = genders.get_gender_name(adv.get("gender_id")) %}
         {% if gender %}
         <div class="row">
           <p class="{{col_left_class}}">Пол</p>

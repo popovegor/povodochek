@@ -1,7 +1,7 @@
 {%- macro breadcrumbs(items) -%}
 
       <ol class="breadcrumb" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
-      <li><a href="{{url_for('index')}}" itemprop="url" title="Главная"><small class="fa fa-home fa-lg" itemprop="name"></small></a> </li>
+      <li><a href="{{url_for('index')}}" itemprop="url" title="Главная"><i class="fa fa-home" itemprop="name"></i></a> </li>
       
       {%for item in items | selectattr("name") %}
         

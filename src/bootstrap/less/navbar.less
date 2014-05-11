@@ -157,20 +157,14 @@
   padding: @navbar-padding-vertical @navbar-padding-horizontal @navbar-padding-vertical @navbar-padding-horizontal;
   font-size: @navbar-default-brand-font-size;
   line-height: @line-height-computed;
-  font-family: @font-brand-family;
 
   display: inline-block;
-  width: 170px;
   height: @navbar-height;
-  background-image: url(@navbar-default-brand-bg-image);
-  background-repeat: no-repeat;
-  background-position: 12px 8px;
   border-radius: @navbar-border-radius 0px 0px @navbar-border-radius;
 
   &:hover,
   &:focus {
     text-decoration: none;
-    background-position-y:-56px;
   }
 
   // Prevent Glyphicons from increasing height of navbar
@@ -192,7 +186,6 @@ span.navbar-brand {
     cursor:default;
     background-color: @navbar-default-brand-active-bg !important;
     color:@navbar-default-brand-active-color !important;
-    background-position-y:8px !important;
 }
 
 
@@ -284,6 +277,9 @@ span.navbar-brand {
 
     &.navbar-right:last-child {
       margin-right: -@navbar-padding-horizontal;
+    }
+    &.navbar-left:first-child {
+      margin-left: -@navbar-padding-horizontal;
     }
   }
 }
@@ -416,8 +412,8 @@ span.navbar-brand {
 
   .navbar-nav {
     > li > a {
-      font-size: 1.1em;
-      /*font-weight: bold;*/
+      font-size: @navbar-default-link-size; 
+      font-weight: bold;
       color: @navbar-default-link-color;
 
       &:hover,

@@ -6,7 +6,7 @@
 {% from "attraction.html" import render_stars %}
 
 {% set pet_id = adv.get("pet_id")%}        
-{% set breed_name = adv.get("breed_id") | breed_name(pet_id) %}
+{% set breed_name = breeds.get_breed_name(adv.get("breed_id")) %}
 
 <div class="adv {{loop.cycle('adv-odd', 'adv-even')}}" style="position:relative">
 
@@ -107,7 +107,7 @@
                 {% set city_id = adv.get("city_id") %}
 
                 {% if city_id %}
-                {#<small class="">Местоположение:</small> #}<b title="Местоположение">{{ city_id | city_region }}</b>
+                {#<small class="">Местоположение:</small> #}<b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id) }}</b>
 
                 {% if adv.get("distance") and adv.get("distance") > 0 %}
                 (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г. <b>{{city}}</b>)

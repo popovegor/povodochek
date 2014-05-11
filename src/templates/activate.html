@@ -2,15 +2,13 @@
 
 {% block content %}      
 
-<div class="container">	
-
 <h1>{{title}}</h1>
 <div class="row">
     <div class="col-md-8">
 
        
-        {%if confirm %} <p class="text-danger">Не удалось активировать регистрацию, так как ссылка устарела или неверна.</p> {%endif%}
-         <p>Pапросите новую ссылку на активацию, введя адрес своей электронной почты и нажав кнопку "Выслать".</p>
+        {%if confirm %} <span class="text-danger">Не удалось активировать регистрацию, так как ссылка устарела или неверна.</span> {%endif%}
+         <p>Запросите новую ссылку на активацию, введя адрес своей электронной почты и нажав кнопку "Выслать".</p>
 
       {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
@@ -25,9 +23,6 @@
   </div>
 
 </div>
-
-</div>
-
 
 <script type="text/javascript">
 

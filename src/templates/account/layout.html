@@ -9,7 +9,7 @@
 
 
 {% macro render_nav_item(title, path) -%}
-      <li class="{{'active' if request.path  == path}}">
+      <li class="{{'active' if request.path == path}}">
      <a  href="{{path}}" >{{title}}</a>
      </li>
 {%- endmacro %}
@@ -31,7 +31,7 @@
       </li>
 
       <li class="{{'active' if request.path  == url_for('account_dog_advs_archived')}}">
-        <a href="{{url_for('account_dog_advs_archived')}}">Архив собак</a>
+        <a href="{{url_for('account_dog_advs_archived')}}">Архив мои собак</a>
       </li>
 
       <li class="nav-divider"></li>
@@ -41,14 +41,14 @@
       </li>
 
       <li class="{{'active' if request.path  == url_for('account_cat_advs_archived')}}">
-        <a href="{{url_for('account_cat_advs_archived')}}">Архив кошек</a>
+        <a href="{{url_for('account_cat_advs_archived')}}">Архив мои кошек</a>
       </li>
 
       <li class="nav-divider"></li>
 
 
         {% for (title, path) in [
-          ("Контактная информация", url_for('account_contact'))
+          ("Профиль", url_for('account_profile'))
           , ("Смена пароля", url_for('account_change_password'))
           , ("Смена эл. почты", url_for('account_change_email'))] 
         %}

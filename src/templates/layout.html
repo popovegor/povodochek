@@ -1,35 +1,22 @@
 {% extends "layout_base.html" %}
 
 
-
 {%block layout %}
 
   {% include "header.html" %}
 
   <div id="wrap" class="container">
 
-    
-
-     {% block breadcrumbs %}
-        
+    {% block breadcrumbs %}
       {% from "breadcrumbs.html" import breadcrumbs %}
-
       {{breadcrumbs( [{'name':title}] ) }}
-
-      {% endblock %}   
-    
+    {% endblock %}   
 
   
-
-  
-  {% include "flashed_messages.html" %}
-    
-
+    {% include "flashed_messages.html" %}
     {% block content %}
-
     {% endblock %}
 
- 
 
   <div id="push">&nbsp;</div>
 

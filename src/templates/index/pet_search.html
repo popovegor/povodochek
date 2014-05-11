@@ -16,9 +16,9 @@
 
         <div class="">
           <div class="form-group">
-            {% set breed = ( breeds | random) %}
-            {% set pet = breed.get('pet') | pet_name | morph_word(['plur']) | lower %}
-            <label for="{{pet_search_form.breed.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Какой породы? Например, <a tabindex="-1"  style="text-decoration:none;border-bottom:1px dotted;" href="#" title="{{breed.get('name') + ', '  + pet}}" id="breed_example">{{breed.get('name') | truncate(40, killwords = True) | lower}}</a>.</label>
+            {% set breed =  breeds.dogs.values() | random %}
+            {% set pet = pets.get_pet_name(pets.DOG_ID) | morph_word(['plur']) | lower %}
+            <label for="{{pet_search_form.breed.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Порода, например, <a tabindex="-1"  style="text-decoration:none;border-bottom:1px dotted;" href="#" title="{{breed.get('breed_name') + ', '  + pet}}" id="breed_example">{{breed.get('breed_name') | truncate(40, killwords = True) | lower}}</a>.</label>
             <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.breed.id}}" placeholder="Порода собаки или кошки" name="{{pet_search_form.breed.name}}">
           </div>
         </div>
@@ -26,9 +26,9 @@
 
             <div class="form-group">
 
-            {% set city = (large_cities | random).get("city_name")%}
+            {% set region = (geo.regions.values() | random) %}
 
-            <label for="{{pet_search_form.city.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Из какого города? Например, <a title="{{city}}" id="city_example" tabindex="-1" href="#" style="text-decoration:none;border-bottom:1px dotted;">{{city}}</a>.</label>
+            <label for="{{pet_search_form.city.id}}" class="{#small#}" style="font-weight:normal;{#color:#555#}">Местоположение, например, <a title="{{region.get('region_name')}}" id="city_example" tabindex="-1" href="#" style="text-decoration:none;border-bottom:1px dotted;">{{region.get('region_name')}}</a>.</label>
             <input autocomplete="off" type="text" class="form-control input-lg" id="{{pet_search_form.city.id}}" placeholder="Город или область" name="{{pet_search_form.city.name}}">
           </div>
 

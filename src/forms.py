@@ -19,12 +19,11 @@ import re
 from security import hash_password, check_password
 
 from helpers import (num, morph_word, str2date, date2str)
-from dic.genders import genders
-from dic.ages import ages
-from dic.breeds import (dogs, cats, get_breed_name, get_breed_by_name, get_breed_by_id, get_breed_dog_name)
+import dic.genders as genders
+import dic.ages as ages
+import dic.breeds as breeds 
 from dic.pets import pets, get_pet_name
-from dic.geo import (get_city_by_id, get_city_region, get_region_by_id)
-from dic.countries import (countries, get_countries_for_dog_adv)
+import dic.geo as geo
 from dic.pet_docs import (dog_docs, doc_dog_pedigrees, doc_dog_pedigrees_rkf, doc_puppy_cards)
 
 
@@ -41,21 +40,13 @@ MSG_MAX_LENGTH = u"Пожалуйста, введите не больше {0} с
 MSG_EMAIL = u"Пожалуйста, введите корректный адрес электронной почты"
 MSG_CHOISE = u""
 
-def pets_breeds():
-    _dogs = [(morph_word(get_pet_name(1), ["plur"]), \
-        [("%s_%s" % (1, dog_id), dog_name) for dog_id, dog_name in dogs.items()])]
-    _cats = [(morph_word(get_pet_name(2), ["plur"]), \
-        [("%s_%s" % (2, cat_id), cat_name) for cat_id, cat_name in cats.items()])]
-    return _dogs + _cats
-
-
-def get_breed_by_form_field(field):
-	(breed, pet) = (None, None)
+def get_breed_from_field(field):
+	breed = None
 	if field.data:
-		(breed, pet) = get_breed_by_id(field.data)
-		if not breed or not pet:
-			(breed, pet) = get_breed_by_name(field.data)
-	return (breed, pet)
+		breed = breeds.get_breed_by_id(field.data)
+		if not breed:
+			breed = breeds.get_breed_by_name(field.data)
+	return breed
 
 def get_geo_from_field(field):
     region = get_region_from_field(field)
@@ -98,12 +89,11 @@ def validate_location(form, field):
 
 def validate_breed(form, field):
     if field.data:
-        (breed_id, pet_id) = get_breed_by_name(field.data)
-        if not breed_id or not pet_id:
+        breed = breeds.get_breed_by_name(field.data)
+        if not breed:
             raise ValidationError(u'Совпадений не найдено. Выберите породу из выпадающего списка, введя часть названия.')
         else:
-            field.pet_id = pet_id
-            field.breed_id = breed_id
+            field.breed_id = breed.get("breed_id")
 
 def validate_login_used(form, field):
     user = db.get_user_by_login(field.data)
@@ -163,7 +153,7 @@ class DogSearch(Form):
 
     gender = SelectField(u"Пол", \
         choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
-        gender_id, gender_name in genders.items()])
+        gender_id, gender_name in genders.genders.items()])
 
 
     city = TextField(u"Местоположение", default = u"")
@@ -197,7 +187,7 @@ class SaleSearch(Form):
 
     gender = SelectField(u"Пол", \
         choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
-        gender_id, gender_name in genders.items()])
+        gender_id, gender_name in genders.genders.items()])
 
 
     city = TextField(u"Местоположение")
@@ -222,7 +212,7 @@ class Contact(Form):
     city = PTextField(u"Город", validators = [validate_location], 
         db_name = 'city_id', \
         db_in = lambda f: f.city_id, \
-        db_out = lambda v : get_city_region(v))
+        db_out = lambda v : geo.get_city_region(v))
     
     phone = PTextField(u"Телефонный номер")
     
@@ -238,7 +228,7 @@ class Cat(Form):
         validators = [Required(message=MSG_REQUIRED), validate_breed]) 
 
     gender = SelectField(u"Пол", \
-        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.items()])
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for gender_id, gender_name in genders.genders.items()])
    
     title = TextField(u"Заголовок объявления", [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
          description = u"Не более 80 символов."
@@ -274,11 +264,11 @@ class Dog(Form):
         validators = [Required(message=MSG_REQUIRED), validate_breed], \
         db_name = 'breed_id', \
         db_in = lambda f: f.breed_id, \
-        db_out = lambda v: get_breed_dog_name(v)) 
+        db_out = lambda v: breeds.get_breed_dog_name(v)) 
 
     gender = PSelectField(u"Пол", \
         choices = [(0, u'-- не указан --')] + [ (gender_id, gender_name) \
-        for gender_id, gender_name in genders.items()], \
+        for gender_id, gender_name in genders.genders.items()], \
         coerce=int, \
         attraction = True, \
         db_name = 'gender_id', \
@@ -320,7 +310,7 @@ class Dog(Form):
         description = u"", \
         db_name = 'city_id', \
         db_in = lambda f: f.city_id, \
-        db_out = lambda v : get_city_region(v))
+        db_out = lambda v : geo.get_city_region(v))
 
     
     color = PTextField(u"Окрас", \
@@ -350,7 +340,7 @@ class Dog(Form):
         depends = {"id":"doc"})
 
     father_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
-        choices = [(0, u"-- не указана --")] + get_countries_for_dog_adv(), \
+        choices = [(0, u"-- не указана --")] + geo.get_countries_for_dog_adv(), \
         coerce = int, \
         attraction = True, \
         depends = {"id":"doc"}, \
@@ -375,7 +365,7 @@ class Dog(Form):
         depends = {"id":"doc"})
 
     mother_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
-        choices = [(0, u"-- не указана --")] + get_countries_for_dog_adv(), \
+        choices = [(0, u"-- не указана --")] + geo.get_countries_for_dog_adv(), \
         coerce = int, \
         attraction = True,\
         depends = {"id":"doc"}, \
@@ -467,19 +457,14 @@ class SignIn(Form):
         [Required(message=MSG_REQUIRED)])
 
 class SignUpBasic(Form):
-    login = TextField(u"Логин", \
-        [Required(message=MSG_REQUIRED), 
-        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36)), \
-        validate_login_used],\
-        filters = [lambda x : (x or '')], \
-        description = u'Длина логина от 6 до 36 символов.')
+    username = TextField(u"Ваше имя", \
+        [Required(message=MSG_REQUIRED)], description = u"Увидят другие пользователи.")
 
-
-    email = TextField(u'Электронная почта / Email', \
+    email = TextField(u'Электронная почта', \
         validators = [Required(message=MSG_REQUIRED),\
         Email(message=MSG_EMAIL)], \
-        filters = [lambda x : (x or '').lower()], \
-        description = u"После регистрации не забудьте подтвердить эл. почту, перейдя по ссылке в письме.")
+    filters = [lambda x : (x or '').lower()], \
+        description = u"")
 
     def validate_email(form, field):
         user = db.users.find_one({'email': field.data})
@@ -489,8 +474,7 @@ class SignUpBasic(Form):
 
     password = PasswordField(u"Пароль", \
         [Required(message=MSG_REQUIRED), \
-        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))],
-        description = u"Длина пароля от 6 до 36 символов.")
+        Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))], description=u"Введите надежный пароль от 6 до 36 символов.")
 
     accept_tos = BooleanField(Markup(u'Я согласен с <a target="_blank" href="/tos/">правилами</a>'), [Required(u"Требуется ваше согласие")])
 
@@ -542,6 +526,3 @@ class SendMail(Form):
 
     sms_alert = BooleanField(Markup(u"Отправить автору <abbr title='Получатель письма получет короткое sms-оповещение о новом электронном письме.'>sms-оповещение</abbr> (<i>бесплатно</i>)"))
 
-
-if __name__ == "__main__":
-    print(pets_breeds())

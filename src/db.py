@@ -45,6 +45,8 @@ typeahead_geo_cities = povodochek.typeahead_geo_cities
 typeahead_dog_breeds = povodochek.typeahead_dog_breeds
 typeahead_cat_breeds = povodochek.typeahead_cat_breeds
 
+def revert_singup(user_id):
+    users.remove({'_id':ObjectId(user_id)})
 
 def get_user(user_id):
 	return users.find_one({'_id':ObjectId(user_id)})
@@ -91,8 +93,8 @@ def change_user_email(user_id, email):
 	return users.find_and_modify({"_id": ObjectId(user_id)}, \
         {"$set": {"new_email": email}})
 
-def signup_user(login, email, pwd_hash, username, confirm, ):
-	return users.insert({'login': login, \
+def signup_user(email, pwd_hash, username, confirm, ):
+	return users.insert({
 		'email': email, \
 		'pwd_hash': pwd_hash, \
 		'username': username, 'confirm': confirm, \
@@ -108,9 +110,7 @@ def save_user_contact(user_id, form):
 
     now = datetime.utcnow()
     
-    user_set = {
-        'update_date' : now 
-        }
+    user_set = {'update_date' : now}
     user_unset = {}
 
     for field in form:

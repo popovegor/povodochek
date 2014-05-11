@@ -5,7 +5,7 @@
             <td>
                 <label for="{{form.breed.name}}" class="control-label">Порода</label>
                 <div class="input-group">
-                    <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
+                    <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
 
                     <div class="input-group-btn">
 
@@ -23,7 +23,7 @@
            
             <td>
               <label for="{{form.city.name}}" class="control-label">Местоположение</label>
-              <input name="{{form.city.name}}" class="form-control" placeholder="Город или область", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
+              <input name="{{form.city.name}}" class="form-control" placeholder="Укажите город или область", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
             <td style="width:20px;padding-top:30px" class="text-center">+</td>
@@ -32,7 +32,7 @@
               <div class="input-group">
                 
                 <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
-                <span class="input-group-addon">км</span>
+                <span class="input-group-addon" style="font-size:1.2em;font-weight:bold;">км</span>
               </div>
             </td>
           </tr></tbody></table>
@@ -52,14 +52,14 @@
               <td style="width:130px">
                 <div class="input-group input-group-md">
                 <input class="form-control" name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
-                <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble"></i></span>
+                <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
               </div>
               </td>
               <td style="width:25px;" class="text-center small">&ndash;</td>
               <td style="width:130px;">
                <div class="input-group input-group-md">
                 <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
-                <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble"></i></span>
+                <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
               </div>  
               </td>
             </tr>

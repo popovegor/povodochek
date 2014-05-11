@@ -3,7 +3,7 @@
 {%block page_desc%}
 
 <p>
-  На этой странице вы можете просмотреть, восстановить или удалить объявления, ранее перемещенные в архив.
+  На этой странице вы можете просмотреть, восстановить, а также удалить объявления, ранее перемещенные в архив.
 </p>
 
 {%endblock%}
@@ -69,7 +69,7 @@
               
 
                 <p class="adv-breed">
-                {% set breed_name = adv.get("breed_id") | breed_dog_name %}
+                {% set breed_name = breeds.get_breed_name(adv.get("breed_id")) %}
                 {% if breed_name %}
                 <span  title="Порода">{{breed_name }}</span>
                 {%endif%}
@@ -80,11 +80,7 @@
                   {% set city_id = adv.get("city_id") %}
 
                   {% if city_id %}
-                  <span class="glyphicon glyphicon-map-marker" title="Местоположение"></span>&nbsp;<span title="Местоположение">{{ city_id | city_region }}</span>
-
-                  {% if adv.get("distance") and adv.get("distance") > 0 %}
-                  (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г.{{form.city.city_id | city_name("i") }})
-                  {% endif %}
+                  <i class="fa fa-map-marker" title="Местоположение"></i>&ensp;<span title="Местоположение">{{ geo.get_city_region(city_id) }}</span>
 
                 </span>
                 {%endif%}
@@ -93,7 +89,7 @@
               
 
               {% if adv.get("desc") %}
-              <p class="hidden-xs hidden-sm">
+              <p class="adv-desc">
                  {{adv.get("desc") | truncate (120, end='...', killwords = False)}} 
               </p>
               {%endif%}

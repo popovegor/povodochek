@@ -9,9 +9,8 @@ from flask_login import (LoginManager, current_user,
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
 from forms import (SignUp, SignIn, Cat, Contact, \
     Activate,ResetPassword, ChangePassword, \
-    SaleSearch, \
-    SendMail, ChangeEmail, SignUpBasic, \
-    get_breed_by_form_field, Dog, DogSearch, get_geo_from_field)
+    SaleSearch, SendMail, ChangeEmail, SignUpBasic, \
+    get_breed_from_field, Dog, DogSearch, get_geo_from_field)
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from werkzeug.utils import secure_filename
@@ -38,21 +37,18 @@ from helpers import (num, qoute_rus, morph_word, date2str)
 
 from smsgate import send_sms
 
-from dic.ages import ages
-from dic.genders import genders
-from dic.pets import (pets, get_pet_name, DOG_ID, CAT_ID)
-from dic.breeds import (dogs, get_breed_name, cats, \
-    get_breed_by_name, breeds, get_breed_dog_name, \
-    get_breed_cat_name)
-from dic.geo import (get_city_region, get_city_by_id, get_city_name, format_city_region, cities, get_region_name_by_city_id, get_region_name)
+import dic.ages as ages
+import dic.genders as genders
+import dic.pets as pets
+import dic.breeds as breeds
+import dic.geo as geo
 import dic.pet_docs
-
-from dic.countries import (get_country_name)
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
 from advs_parser import parse_avito_adv
 import db
+from pymongo.errors import InvalidId
              
 
 import random
@@ -67,7 +63,7 @@ photos = UploadSet('photos', IMAGES)
 
 class User(UserMixin):
     def __init__(self, user):
-        self.name = user.get('login')
+        # self.name = user.get('login')
         self.username = user.get('username')
         self.id = user.get('_id')
         self.active = user.get('activated')
@@ -140,7 +136,6 @@ css = Bundle(
     'css/nouislider.fox.css', \
     'css/font-awesome.min.css', \
     'css/flexslider.css', \
-    'http://fonts.googleapis.com/css?family=Russo+One&subset=cyrillic', \
     filters = 'cssmin', \
     output = 'gen/css.css')
 assets.register('css_all', css)
@@ -165,7 +160,6 @@ user_logged_in.connect(is_signed_in, app)
 # jinja custom filters and globals
 
 app.jinja_env.globals['momentjs'] = MomentJS
-
 app.jinja_env.filters['json'] = json.dumps
 
 def jinja_format_datetime(value, format='%H:%M, %d.%m.%y'):
@@ -188,35 +182,17 @@ def jinja_format(template=u"{0}", *args):
 
 app.jinja_env.globals['format'] = jinja_format
 
-app.jinja_env.filters['pet_name'] = get_pet_name
-
-app.jinja_env.filters['breed_name'] = get_breed_name
-
-app.jinja_env.filters['breed_dog_name'] = get_breed_dog_name
-app.jinja_env.filters['breed_cat_name'] = get_breed_cat_name
-
 def jinja_sorted(iterable, key = None, reverse = False):
     return sorted(iterable, key = eval(key), reverse = reverse) 
 
 app.jinja_env.filters['sorted'] = jinja_sorted
-
-# todo: add caching layer 
-def get_gender_name(gender_id):
-    id = num(gender_id)
-    return genders[id] if id in genders else u""
-
-app.jinja_env.filters['gender_name'] = get_gender_name
-
-# todo: add caching layer 
-def get_age_name(age_id):
-    id = num(age_id)
-    return ages[id] if id in ages else u""
-
-app.jinja_env.filters['age_name'] = get_age_name
-app.jinja_env.filters['city_region'] = get_city_region
-app.jinja_env.filters['city_name'] = get_city_name
-app.jinja_env.filters['region_name'] = get_region_name
-app.jinja_env.filters['region_name_by_city_id'] = get_region_name_by_city_id
+app.jinja_env.globals['genders'] = genders
+app.jinja_env.globals['ages'] = ages
+app.jinja_env.globals['geo'] = geo
+app.jinja_env.globals['utcnow'] = datetime.utcnow()
+app.jinja_env.globals['pet_docs'] = dic.pet_docs
+app.jinja_env.globals['breeds'] = breeds
+app.jinja_env.globals['pets'] = pets
 app.jinja_env.filters['morph_word'] = morph_word
 
 
@@ -241,37 +217,7 @@ app.jinja_env.filters['min'] = jinja_min
 
 
 
-def jinja_utcnow():
-    return datetime.utcnow()
 
-app.jinja_env.globals['utcnow'] = jinja_utcnow
-
-app.jinja_env.globals['pet_docs'] = dic.pet_docs
-
-
-def debug_write(msg):
-    print("DEBUG INFO: %s" % msg)
-
-
-def jinja_breeds():
-	return [ breed for breed in breeds.values() ]
-
-app.jinja_env.globals['breeds'] = jinja_breeds()
-
-def jinja_dogs():
-    return [ dog for dog in sorted(dogs.values()) ]
-
-app.jinja_env.globals['dogs'] = jinja_dogs()
-
-def jinja_large_cities():
-    dt1 = datetime.now()
-    large_cities = [city for city in cities.values() if city.get('city_size') >= 5]
-    dt2 = datetime.now()
-    print(dt2 - dt1)
-    return large_cities
-
-app.jinja_env.globals['large_cities'] = jinja_large_cities()
-app.jinja_env.filters['country_name'] = get_country_name
 
 
 if not app.debug and app.config["MAIL_SERVER"] != '':
@@ -305,9 +251,8 @@ def load_user(id):
 
 @app.route("/")
 def index():
-    mosaic_advs = get_pet_advs_for_mosaic(0, 10, pet_id = DOG_ID)
+    mosaic_advs = get_pet_advs_for_mosaic(0, 10, pet_id = pets.DOG_ID)
     dog_breeds_rating = db.get_dog_breeds_rating()
-    print(dog_breeds_rating)
     cat_breeds_rating = db.get_cat_breeds_rating()
     tmpl = render_template('index1.html', \
         pet_search_form = SaleSearch(), \
@@ -325,13 +270,13 @@ def signin():
         user = db.get_user_by_login(login_or_email) or db.get_user_by_email(login_or_email)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
-                if login_user(User({'login':user.get('login'), '_id' : user["_id"]}), remember=remember):
+                if login_user(User({'_id' : user["_id"]}), remember=remember):
                     return redirect(request.args.get("next") \
-                        or url_for("account_contact"))
+                        or url_for("account_profile"))
                 else:
                     flash(u"Извините, но вы не можете войти.", "error")
             else:
-                print('disactivated')
+                app.logger.info('disactivated')
                 flash(Markup(u"Вы не можете войти на сайт, так как регистрация не подтверждена. Проверьте, пожалуйста, электронную почту или отправьте <a target='_blank' href='{0}'>ссылку на активацию</a> повторно.".format(url_for('activate', confirm=''))), "error")
         else:
             flash(u"Неправильный логин или пароль.", "error")
@@ -355,12 +300,10 @@ def ajax_typeahead_geo_all():
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
     geo_all = db.get_geo_all_for_typeahead(query, limit)
-    print(geo_all)
     return jsonify(items = geo_all)  
 
 @app.route("/ajax/typeahead/breed/all/", methods = ["GET"])
 def ajax_typeahead_breed():
-    # print(str(request.args.get("query")))
     query = (request.args.get("query") or u"").strip()
     limit = max(int(request.args.get("limit") or 8), 8)
     dog_breeds = [u"%s, Собаки" % name for name 
@@ -424,14 +367,14 @@ def send_confirm_email(email):
     msg.html = render_template("email/confirm_email.html", base64_email = base64.b64encode(email))
     mail.send(msg)
 
-def send_signup(username, login, email, password, confirm):
+def send_signup(username, email, password, confirm):
     msg = Message(u"Регистрация на сайте Поводочек", recipients=[email])
-    msg.html = render_template("email/signup.html", username=username, login = login, email = email, password = password, confirm = confirm)
+    msg.html = render_template("email/signup.html", username=username, email = email, password = password, confirm = confirm)
     mail.send(msg)
 
 def send_reset_password(email, login, asign, password):
     msg = Message(u"Сброс пароля для сайта Поводочек", recipients=[email])
-    msg.html = render_template("email/reset_password.html", login = login, password = password, asign = asign)
+    msg.html = render_template("email/reset_password.html", email = email, password = password, asign = asign)
     mail.send(msg)
 
 def send_from_sale(adv_id, adv_title, adv_url, email, username, \
@@ -566,15 +509,22 @@ def test_email_activate():
 def signup_basic():
     form = SignUpBasic(request.form)
     if request.method == "POST" and form.validate():
-        (login, email, password, confirm, username) = (form.login.data, form.email.data, form.password.data, str(uuid4()), "Пользователь")
-        user_id = db.signup_user(login, email, \
-            hash_password(password), username, confirm)
-        send_signup(username, login, email, password, confirm)
+        (email, password, confirm, username) = (form.email.data,  form.password.data, str(uuid4()), form.username.data)
+        user_id = db.signup_user(email, hash_password(password), username, confirm)
+        try:
+            send_signup(username, email, password, confirm)
+        except Exception, e:
+            db.revert_singup(user_id)
+            flash(u"У нас на сервере произошла ошибка, попробуйте зарегистрироваться чуть позже.", "error")
+            raise e
+
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
-        if login_user(User({'login':login, '_id' : user_id}), remember = True):
-            return redirect(request.args.get('next') or url_for('account_contact'))
+        if login_user(User({'_id' : user_id}), remember = True):
+            return redirect(request.args.get('next') or url_for('account_profile'))
         else:
-            return redirect(url_for('signin'))
+                return redirect(url_for('signin'))
+
+        
     return render_template('signup_basic.html', form=form, title=u"Регистрация")
 
 @app.route("/reset-password/", methods = ["GET", "POST"])
@@ -605,12 +555,12 @@ def sale_find_header(pet_id, breed_id, city, region):
     title = u"Купить {0}{1}{3}: Продажа {2}{1}{3}"
     pet = u"собаку или кошку"
 
-    if pet_id == DOG_ID:
+    if pet_id == pets.DOG_ID:
         pet = u"собаку"
-    elif pet_id == CAT_ID:
+    elif pet_id == pets.CAT_ID:
         pet = u"кошку"
 
-    breed = get_breed_name(breed_id, pet_id)
+    breed = breeds.get_breed_name(breed_id)
     breed_header = breed
     breed_title = breed
     if breed:
@@ -644,14 +594,16 @@ def dog_search():
     (city, region) = get_geo_from_field(form.city)
 
     if city:
-        form.city.data = format_city_region(city)
+        form.city.data = geo.format_city_region(city)
     elif region:
         form.city.data = region.get('region_name')
 
-    (breed_id, pet_id) = get_breed_by_form_field(form.breed)
-    if breed_id and pet_id:
-        form.breed.data = get_breed_name(breed_id, pet_id)
-    pet_id = DOG_ID
+    breed = get_breed_from_field(form.breed)
+    breed_id = None
+    if breed:
+        form.breed.data = breed.get("breed_name")
+        breed_id = breed.get("breed_id")
+    pet_id = pets.DOG_ID
     # sort
     session["dog_sort"] = form.sort.data or \
         session.get("dog_sort") or (3 if current_user.is_signed() else 4)
@@ -695,19 +647,20 @@ def cat_search(sale_search_form = None):
     (city, region) = get_geo_from_field(form.city)
 
     if city:
-        form.city.data = format_city_region(city)
+        form.city.data = geo.format_city_region(city)
     elif region:
         form.city.data = region.get('region_name')
 
-    (breed_id, pet_id) = get_breed_by_form_field(form.breed)
-    if breed_id and pet_id:
-    	form.breed.data = get_breed_name(breed_id, pet_id)
-    pet_id = CAT_ID
+    breed = get_breed_from_field(form.breed)
+    breed_id = None
+    if breed:
+    	form.breed.data = breed.get("breed_name")
+        breed_id = breed.get("breed_id")
+    pet_id = pets.CAT_ID
     # sort
     session["cat_sort"] = form.sort.data or session.get("cat_sort") or (3 if current_user.is_signed() else 4)
     
-    (advs, count, total) = db.find_cat_advs(pet_id = pet_id, \
-        breed_id = breed_id, \
+    (advs, count, total) = db.find_cat_advs(breed_id = breed_id, \
         gender_id = form.gender.data, \
         region = region, \
         city = city, \
@@ -737,18 +690,23 @@ def cat_search(sale_search_form = None):
 
 @app.route('/prodazha-sobak/<adv_id>/')
 def dog_adv_show(adv_id):
-    adv = db.get_dog_adv(adv_id)
+    adv = None
+    try:
+        adv = db.get_dog_adv(adv_id)
+    except InvalidId, e:
+        abort(404)
+    
     if not adv:
         abort(404)
 
     name = u"Продам собаку породы {0} в г. {1}".format( \
-        get_breed_dog_name(adv.get("breed_id")).lower(),\
-        get_city_name(adv.get("city_id"), "i"))
+        breeds.get_breed_name(adv.get("breed_id")).lower(),\
+        geo.get_city_name(adv.get("city_id"), "i"))
 
     header = \
     Markup(u"Продам собаку породы {0} в г.&nbsp;{1}".format( \
-        get_breed_dog_name(adv.get("breed_id")).lower(),\
-        get_city_name(adv.get("city_id"), "i")
+        breeds.get_breed_name(adv.get("breed_id")).lower(),\
+        geo.get_city_name(adv.get("city_id"), "i")
     ))
     title = u"{0} за {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
@@ -766,18 +724,18 @@ def cat_adv_show(adv_id):
     try:
         adv = db.get_cat_adv(adv_id)
     except Exception, e:
-        print(e)
+        app.logger.warning(e)
     
     if not adv:
         abort(404)
 
     name = u"Продам кошку породы {0} в г. {1}".format( \
-        get_breed_name(adv.get("breed_id")).lower(),\
-        get_city_name(adv.get("city_id"), "i")
+        breeds.get_breed_name(adv.get("breed_id")).lower(),\
+        geo.get_city_name(adv.get("city_id"), "i")
     )
     header = Markup(u"Продам кошку породы {0} в г.&nbsp;{1}".format( \
-        get_breed_name(adv.get("breed_id")).lower(),\
-        get_city_name(adv.get("city_id"), "i")
+        breeds.get_breed_name(adv.get("breed_id")).lower(),\
+        geo.get_city_name(adv.get("city_id"), "i")
     ))
     title = u"{0} за {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
@@ -793,7 +751,7 @@ def sale_show(id):
     try:
         adv = sales().find_one({'_id': ObjectId(id)}) if id else None
     except Exception, e:
-        print(e)
+        app.logger.warning(e)
     
     if not adv:
         abort(404)
@@ -801,12 +759,12 @@ def sale_show(id):
     name = u"Продам {0} породы {1} в г. {2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
-        get_city_name(adv.get("city_id"), "i")
+        geo.get_city_name(adv.get("city_id"), "i")
     )
     header = Markup(u"Продам {0} породы {1} в г.&nbsp;{2}".format( \
         morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
         get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
-        get_city_name(adv.get("city_id"), "i")
+        geo.get_city_name(adv.get("city_id"), "i")
     ))
     title = u"{0} за {1}".format(name, \
         u"{0} {1}".format(u"{0:,}".format(adv.get("price")).replace(","," "), morph_word(u"рубль", count=adv.get("price"))))
@@ -845,21 +803,21 @@ def account_user():
     tmpl = render_template("account/user.html", title=u"Учетные данные")
     return tmpl
 
-@app.route("/account/contact/", methods = ["GET", "POST"])
+@app.route("/account/profile/", methods = ["GET", "POST"])
 @login_required
-def account_contact():
+def account_profile():
     user = db.get_user(current_user.id)
     form = Contact(request.form)
     if request.method == "POST":
         if form.validate():
             db.save_user_contact(current_user.id, form)
-            flash(u"Контактная информация обновлена.", "success")
-            return redirect(url_for("account_contact"))
+            flash(u"Профиль обновлен.", "success")
+            return redirect(url_for("account_profile"))
     else:
         for f in form:
             f.set_db_val(user.get(f.get_db_name()))
 
-    tmpl = render_template("account/contact.html", title=u"Контактная информация", form = form)
+    tmpl = render_template("account/contact.html", title=u"Профиль", form = form)
     return tmpl
 
 @app.route("/account/adoption/")
@@ -1014,6 +972,7 @@ def account_dog_adv_new():
             return render_template("/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
         autofill_user_to_adv(form)
+        form.city.data = form.city.data or geo.format_city_region_by_city_id(current_user.city_id)
 
     return render_template("/account/dog/adv_edit.html", \
         form = form, \
@@ -1167,13 +1126,13 @@ def account_cat_adv_edit(adv_id):
             flash(Markup(u"Объявление <a href='{1}' target='_blank'>&laquo;{0}&raquo;</a> опубликовано.".format(form.title.data, url_for('cat_adv_show', adv_id = adv.get('_id')))), "success")
             return redirect(url_for("account_cat_advs"))
     else:
-        form.breed.data = get_breed_name(cat.get("breed_id"), cat.get("pet_id"))
+        form.breed.data = breeds.get_breed_name(cat.get("breed_id"))
         form.title.data = cat.get("title")
         form.desc.data = cat.get('desc')
         form.price.data = num(cat.get('price'))
         form.gender.data = str(num(cat.get('gender_id')) or '')
         form.photos.data = ",".join(cat.get("photos"))
-        form.city.data = get_city_region(cat.get("city_id"))
+        form.city.data = geo.get_city_region(cat.get("city_id"))
         form.phone.data = cat.get("phone") or current_user.phone
         form.skype.data = cat.get("skype") or current_user.skype
     return render_template("/account/cat/adv_edit.html", form=form, title=u"Редактировать объявление о продаже", btn_name = u"Опубликовать", cat = cat)
@@ -1190,7 +1149,7 @@ def account_cat_adv_new():
             flash(msg, "success")
             return render_template("/account/cat/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
-        form.city.data = get_city_region(current_user.city_id)
+        form.city.data = geo.get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
         form.skype.data = current_user.skype
     return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки")
@@ -1264,7 +1223,7 @@ def photo(filename):
             if height:
                 resize_image(path, height = height)    
         except Exception, e:
-            print(e)
+            app.logger.error(e)
             os.remove(path)
 
     return send_file(path)
@@ -1283,7 +1242,6 @@ def dog_adv_email(adv_id):
         abort(404)
     seller_email = adv.get('email') or seller.get('email')
     seller_username = adv.get('username') or seller.get('username') 
-    print("seller_username", seller_username)
 
     if request.method == "POST":
         if form.validate():
@@ -1317,7 +1275,6 @@ def cat_adv_email(adv_id):
         abort(404)
     seller_email = adv.get('email') or seller.get('email')
     seller_username = adv.get('username') or seller.get('username') 
-    print("seller_username", seller_username)
 
     if request.method == "POST":
         if form.validate():
@@ -1344,16 +1301,16 @@ def favicon():
 
 @app.route('/prodazha-koshek/goroda/')
 def cat_advs_by_cities():
-    return pet_advs_by_cities(pet_id = CAT_ID) 
+    return pet_advs_by_cities(pet_id = pets.CAT_ID) 
 
 @app.route('/prodazha-sobak/goroda/')
 def dog_advs_by_cities():
-    return pet_advs_by_cities(pet_id = DOG_ID) 
+    return pet_advs_by_cities(pet_id = pets.DOG_ID) 
 
 def pet_advs_by_cities(pet_id):
-    pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
+    pet_name = morph_word(pets.get_pet_name(pet_id), ["plur", "gent"]).lower()
 
-    advs = db.get_dog_advs_by_cities() if pet_id == DOG_ID \
+    advs = db.get_dog_advs_by_cities() if pet_id == pets.DOG_ID \
         else db.get_cat_advs_by_cities()
 
     advs_by_cities = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['city_name'][0])]
@@ -1367,16 +1324,16 @@ def pet_advs_by_cities(pet_id):
 
 @app.route('/prodazha-koshek/oblasti/')
 def cat_advs_by_regions():
-    return pet_advs_by_regions(pet_id = CAT_ID) 
+    return pet_advs_by_regions(pet_id = pets.CAT_ID) 
 
 @app.route('/prodazha-sobak/oblasti/')
 def dog_advs_by_regions():
-    return pet_advs_by_regions(pet_id = DOG_ID) 
+    return pet_advs_by_regions(pet_id = pets.DOG_ID) 
 
 def pet_advs_by_regions(pet_id):
-    pet_name = morph_word(get_pet_name(pet_id), ["plur", "gent"]).lower()
+    pet_name = morph_word(pets.get_pet_name(pet_id), ["plur", "gent"]).lower()
 
-    advs = db.get_dog_advs_by_regions() if pet_id == DOG_ID \
+    advs = db.get_dog_advs_by_regions() if pet_id == pets.DOG_ID \
         else db.get_cat_advs_by_regions()
 
     advs_by_regions = [(letter, list(group)) for letter, group in groupby(advs, lambda adv : adv['region_name'][0])]
@@ -1439,7 +1396,6 @@ def admin_sale():
     advs = [adv for adv in sales().find(sort = [('update_date', DESCENDING)], limit = perpage, skip = (page - 1) * perpage)]
     for seller in users.find({'_id':{'$in' : [ObjectId(adv.get('user_id')) for adv in advs if adv.get('user_id') ]}}):
         for adv in [adv for adv in advs if not adv.get('email')]:
-            # print(seller['email'])
             if ObjectId(adv.get('user_id')) == seller['_id']:
                 adv['email'] = seller['email']
                 adv['username'] = seller['username']
@@ -1472,7 +1428,6 @@ def admin_sale_edit(adv_id):
 
     form = Sale(request.form)
     if request.method == "POST":
-        print(form.price.data)
         if form.validate():
             sale_save(form, adv_id, moderator = current_user)
             flash(u"Объявление &laquo;%s&raquo; обновлено." % form.title.data, "info")
@@ -1484,7 +1439,7 @@ def admin_sale_edit(adv_id):
         form.price.data = num(adv.get('price'))
         form.gender.data = str(num(adv.get('gender_id')) or '')
         form.photos.data = ",".join(adv.get("photos"))
-        form.city.data = get_city_region(adv.get("city_id"))
+        form.city.data = geo.get_city_region(adv.get("city_id"))
         # form.age.data = str(num(adv.get("age_id")))
         form.phone.data = adv.get("phone")
         form.skype.data = adv.get("skype")
@@ -1511,24 +1466,24 @@ def robots():
     return send_from_directory(app.static_folder, request.path[1:])
 
 
-def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
-    if pet_id == DOG_ID:
+def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = pets.DOG_ID):
+    if pet_id == pets.DOG_ID:
         return [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
         'url' : url_for('dog_adv_show', adv_id = adv.get('_id')), \
         'id': str(adv.get('_id')), \
         'p' : adv.get('price'), \
-        'b' : get_breed_dog_name(adv.get('breed_id')), \
+        'b' : breeds.get_breed_name(adv.get('breed_id')), \
         's' : {'h':100, 'w':150}, 
         't' : Markup.escape(adv.get('title'))}
         for adv in db.get_dog_advs_for_mosaic(skip, limit)]
-    elif pet_id == CAT_ID:
+    elif pet_id == pets.CAT_ID:
         return  [{"src":url_for('thumbnail', \
             filename = adv.get('photos')[0], width= 300), \
         'url' : url_for('cat_adv_show', adv_id = adv.get('_id')), \
         'id': str(adv.get('_id')), \
         'p' : adv.get('price'), \
-        'b' : get_breed_cat_name(adv.get('breed_id')), \
+        'b' : breeds.get_breed_name(adv.get('breed_id')), \
         's' : {'h':100, 'w':150}, 
         't' : adv.get('title')}
         for adv in db.get_cat_advs_for_mosaic(skip, limit)]
@@ -1539,7 +1494,6 @@ def get_pet_advs_for_mosaic(skip, limit = 10, pet_id = DOG_ID):
 @app.route("/ajax/mosaic/showmore/<int:pet>/<int:skip>/", methods = ["GET"], defaults= {"limit":10})
 @app.route("/ajax/mosaic/showmore/<int:pet>/<int:skip>/<int:limit>/", methods = ["GET"])
 def ajax_mosaic_showmore(pet, skip, limit):
-    print(pet)
     advs = get_pet_advs_for_mosaic(skip, limit = limit, pet_id = pet)
     return jsonify(advs = advs)
 

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{%block breadcrumbs%}
+
+    {% from "breadcrumbs.html" import breadcrumbs %}
+
+    {{breadcrumbs( [
+    {'name':"Полезное", 'url':url_for('advice')}, 
+    {'name':title | truncate(50)}
+    ] ) }}
+
+{%endblock%}
+
+{% block content %}
+
+
+<div class="row">
+
+<div class="advice-article col-md-8">
+
+	{%block advice_content%}
+
+	{%endblock%}
+
+</div> <!-- advice -->
+
+</div> <!-- /row -->
+
+{% endblock %}

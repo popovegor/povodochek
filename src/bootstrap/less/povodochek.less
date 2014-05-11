@@ -2,46 +2,6 @@
 @photo-thumbail-width : 150px;
 @bottom-height : 160px;
 
-.gradient(@color: #F5F5F5, @start: #EEE, @stop: #FFF) {
-      background: @color;
-      background: -webkit-gradient(linear,
-                                   left bottom,
-                                   left top,
-                                   color-stop(0, @start),
-                                   color-stop(1, @stop));
-      background: -ms-linear-gradient(bottom,
-                                      @start,
-                                      @stop);
-      background: -moz-linear-gradient(center bottom,
-                                       @start 0%,
-                                       @stop 100%);
-      background: -o-linear-gradient(@stop,
-                                     @start);
-      filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@stop,@start));
-}
-
-.box-shadow(@arguments) {
-  -webkit-box-shadow: @arguments;
-  -moz-box-shadow: @arguments;
-  box-shadow: @arguments;
-}
-
-.border-radius(@radius: 2px) {
-  -webkit-border-radius: @radius;
-  -moz-border-radius: @radius;
-  border-radius: @radius;
-}
-
-.opacity(@op: 0.5) {
-     filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=@op * 100)"; /* IE 5.5+*/
-     -moz-opacity: @op; /* Mozilla 1.6 и ниже */
-     -khtml-opacity: @op; /* Konqueror 3.1, Safari 1.1 */
-     opacity: @op; /* CSS3 - Mozilla 1.7b +, Firefox 0.9 +, Safari 1.2+, Opera 9+ */
-     zoom: 1; /* для элемента в ИЕ, у которого не заданы width и height */
-
-
-}
-
 html, body {
     height: 100%;
     min-width: @container-sm;
@@ -52,7 +12,7 @@ form {
 
     .form-field-desc {
         text-indent:3px;
-        margin-top:3px;
+        margin-top:5px;
     }
 
     .form-field-errors {
@@ -134,14 +94,6 @@ form {
         text-decoration: none !important;
     };
 }
-
-.tagline {
-    font-style:italic; 
-    font-family: @font-family-serif;
-    /*color: @navbar-default-bg;*/
-    /*font-size: 1.1em;*/
-}
-
 
 .index {
 
@@ -402,9 +354,9 @@ form {
     .ds-filter {
         background-color: @state-info-bg;
         .box-shadow(2px 2px 5px 0px #ccc);
-        .border-radius(0px 10px 10px 10px); 
+        border-radius: 0px 10px 10px 10px; 
         max-width:920px; 
-        margin:60px auto 40px auto;
+        margin:60px 0 40px 0;
         form {
            padding:15px 20px 0px 20px;
            position:relative;
@@ -424,7 +376,7 @@ form {
                 border-radius: 0px 0px 10px 10px;
                 padding:8px 20px 0px 20px;
                 height:35px;
-                .gradient(@color:#d9edf7, @start:#d9edf7, @stop:#f4f6fc);
+                #gradient > .vertical(#f4f6fc, #d9edf7);
                 .checkbox {
                     margin-top: 0px;
                 }
@@ -437,7 +389,7 @@ form {
                 top:-40px; left:0px;
                 height: 40px;
                 font-size: @font-size-h4;
-                .gradient(@color:#d9edf7, @start:#d9edf7, @stop:#f4f6fc);
+                #gradient > .vertical(#f4f6fc, #d9edf7);
            }
 
         }
@@ -454,7 +406,11 @@ form {
          }
 
         .adv-actions,  .adv-desc {
+            text-overflow: ellipsis;
+            overflow-wrap: break-word;
+            overflow: hidden;
             margin-top:15px;
+
             a.btn { margin-bottom: 5px; }
         }
 
@@ -784,7 +740,12 @@ form {
         /*font-weight: bold;*/
     }
 
-    .adv-desc {}
+    .sps-desc {
+        text-overflow: ellipsis;
+        overflow-wrap: break-word;
+        overflow: hidden;
+        white-space:pre-wrap;
+    }
 
     .adv-block {
         margin-bottom: 10px;
@@ -975,29 +936,47 @@ form {
     }
 }
 
+#header {
+    background-color:#f5f5f5;
+    height:92px;
+
+    .header-logo {}
+
+    .header-tagline {
+        vertical-align:bottom; padding-bottom:5px;
+    }
+
+    .header-post-adv {
+        padding:5px 0px 0px;
+    }
+}
+
 #menu {
+
+    li.menu-item-divider {
+        height: @navbar-height;
+        border-right:1px solid lighten(@navbar-default-bg, 15%);
+        border-left:1px solid darken(@navbar-default-bg, 20%);
+    }
+
     .menu-signin {
         border-radius: 0 @border-radius-base @border-radius-base 0;
     }
     .menu-account {
         border-radius: 0 @border-radius-base @border-radius-base 0;
+
+    }
+    .menu-account-list { min-width: 100%;}
+
+    .menu-breed-selector {
+        border-radius: @border-radius-base 0 0 @border-radius-base;   
     }
     .menu-signup {
         
     }
 }
 
-.layout-popup {
-    margin-bottom:30px;
-    .lp-brand {
-        .lp-logo {
-            display: inline-block; 
-            width: 170px; 
-            height: 55px; 
-            background-image: url(@navbar-default-brand-bg-image); 
-            background-repeat: no-repeat; 
-            margin-left:-10px;
-            background-position: 0px -158px;
-        }
-    }
+.img-logo {
+    height: 42px;
+    width:160px;
 }

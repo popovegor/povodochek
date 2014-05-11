@@ -3,39 +3,51 @@
 {% block content %}      
 
 
-  
-  <h1>{{title}}</h1>
-  <p class="">Пожалуйста, введите логин и пароль, чтобы получить доступ к вашим персональным данным и объявлениям.</p>
+   <h1>{{title}}</h1>
 
+   <div class="row">
 
-  <div class="signin row">
-    <div class="col-md-5 col-sm-5 col-lg-4">
+    <div class="col-sm-7">
+   
 
         {% from "forms.html" import form_field_boolean, form_field %}
 
-        <form class="form-signin" id="sigin" method="post" role="form" action="{{request.url}}" >
+        <form style="width:270px" class="form-signin" id="sigin" method="post" role="form" action="{{request.url}}" >
 
-          {{ form_field(form.login, placeholder="Введите ваш логин или эл. почту") }}
+          {{ form_field(form.login, placeholder="Введите эл. почту или логин", class="form-control") }}
+          
+          {{ form_field(form.password, placeholder="Пароль", class="form-control") }}
 
-          {{ form_field(form.password, placeholder="Пароль, указанный при регистрации") }}
-
+          <div style="display:none">
           {{ form_field(form.remember) }}
+          </div>
 
-        <button class="btn btn-primary" type="submit" data-loading-text="Войти..." id="signin_submit">Войти</button> 
-        <a class="btn btn-link" href='{{url_for("reset_password")}}'>Напомнить пароль</a>
-        
+          <div class="row">
+              <div class="col-sm-4">
+                 <button class="btn btn-primary" type="submit" data-loading-text="Войти..." id="signin_submit">Войти</button> 
+              </div>
+              <div class="col-sm-8 text-right">
+                 <a class="btn btn-link" href='{{url_for("reset_password")}}'><small>Напомнить пароль</small></a>
+              </div>
+          </div>
+
       </form>
 
+    
     </div>
-
-    <div class="visible-xs">
-      <div class="text-center">
-      <br/>
-      <a class="btn btn-lg" href="{{url_for('signup_basic')}}">Регистрация</a>
+    <div class="col-sm-5">
+        <div style="margin-top:30px;width:300px" class="well">
+      
+        <p>Нет учетной записи на Поводочке?</p>
+        <a class="lead" href="{{url_for('signup_basic')}}">Зарегистрируйтесь &rarr;</a>
+      
       </div>
     </div>
 
-  </div>
+    </div>
+
+
+
 
 
 <script type="text/javascript">
@@ -47,6 +59,9 @@
           login : {required : true}, 
           password : { required: true }
        });
+
+
+      $("#{{form.login.id}}").focus();
 
     });
 

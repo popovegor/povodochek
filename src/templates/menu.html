@@ -1,38 +1,36 @@
 
-<div class="navbar navbar-default" role="navigation" id="menu">
+<div class="navbar navbar-default " role="navigation" id="menu">
 
   <!-- Brand and toggle get grouped for better mobile display -->
-   
-  <div class="navbar-header">
-
-      {% set brand_tag = 'span' if request.path == url_for('index') else 'a' %}
-        <{{brand_tag}} title="Продажа и покупка породистых собак и кошек, щенков и котят" class="navbar-brand" href="{{url_for('index')}}" style="font-family: 'Russo One', 'Arial Black', sans-serif;"></{{brand_tag}}>
-
-  </div>
-
 
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav navbar-left">
+      <li class="{{'active' if url_for('index') == request.path else ''}}"><a href="{{url_for('index')}}" class="menu-breed-selector" title="Поводочек – подбор породы">&nbsp;<i class="fa fa-home"></i>&nbsp;</a></li>
+      <li class="menu-item-divider"></li>
        <li class="{{'active' if url_for('dog_search') in request.path else ''}}"><a href="{{url_for('dog_search')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
+       <li class="menu-item-divider"></li>
        <li class="{{'active' if url_for('cat_search') in request.path else ''}}"><a href="{{url_for('cat_search')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
+       <li class="menu-item-divider"></li>
        <li class=" {{'active' if url_for('advice') in request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
+       
        {#<li class=" {{'active' if url_for('help') in request.path else ''}}"><a href="{{url_for('help')}}"  title="Справочная информация о сайте Поводочек">Справка</a></li>#}
       
     </ul>
 
     <ul class="nav navbar-nav navbar-right">  
-
+      
 
     <!-- current.user -->
       {%if current_user.is_signed() %}
+
         <li class="dropdown {{'active' if url_for('account') in request.path}}">
           <a title="{{current_user.username}}" style="cursor:pointer" user_id="{{current_user.id}}" href="#" class="dropdown-toggle menu-account" data-toggle="dropdown"><i class="fa fa-user"></i><span class="">&emsp;Личный кабинет&ensp;</span><b class="caret"></b></a>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu menu-account-list">
             <li><a class="text-right" href="{{url_for('account_dog_advs')}}"><span class="pull-left">Мои собаки</span><span title="Количество объявлений о продаже собак" class="badge">{{current_user.dog_advs_cnt}}</span></a></li>
              <li><a class="text-right" href="{{url_for('account_cat_advs')}}"><span class="pull-left">Мои кошки</span><span title="Количество объявлений о продаже кошек" class="badge">{{current_user.cat_advs_cnt}}</span></a></li>
              <li class="divider"></li>
-            <li><a href="{{url_for('account_contact')}}">Контактная информация</a></li>
+            <li><a href="{{url_for('account_profile')}}">Профиль</a></li>
             <li><a href="{{url_for('account_change_password')}}">Смена пароля</a></li>
             <li><a href="{{url_for('account_change_email')}}">Смена эл. почты</a></li>
             <li class="divider"></li>
@@ -45,7 +43,7 @@
           <li class="{{'active' if url_for('signup_basic') in request.path }}">
              <a href="{{url_for('signup_basic')}}" class="menu-signup">Регистрация</a>
            </li>
-           <li class="divider-vertical hidden-phone"></li>
+           <li class="menu-item-divider"></li>
            <li class="{{'active' if url_for('signin') in request.path  }}">
                <a class="menu-signin" href="{{url_for('signin')}}">Вход</a>
           </li>

@@ -22,7 +22,9 @@ def rebuild_breeds_rating(pet):
 	top_breeds = db.povodochek[top_breeds_name]
 	tmp_top_breeds.drop()
 
-	for (breed_id, breed_name) in breeds.items():
+	for breed in breeds.values():
+		breed_id = breed.get("breed_id")
+		breed_name = breed.get("breed_name")
 		count = advs.find({'breed_id':breed_id}).count()	
 		tmp_top_breeds.insert({'count': count, 
 			'breed_id': breed_id, 'breed_name': breed_name})
@@ -37,13 +39,19 @@ def rebuild_typeahead_breeds():
 	db.povodochek.typeahead_cat_breeds_tmp.drop()
 
 	group_dog_breeds = { 
-		k.get('_id'):k.get('count') for k in db.dog_advs.aggregate({'$group' : {'_id':'$breed_id', 'count': {'$sum':1}}})["result"] }
+		k.get('_id'):k.get('count') 
+		for k in db.dog_advs.aggregate({'$group' : 
+			{'_id':'$breed_id', 'count': {'$sum':1}}})["result"] }
 
 	group_cat_breeds = { 
-		k.get('_id'):k.get('count') for k in db.cat_advs.aggregate({'$group' : {'_id':'$breed_id', 'count': {'$sum':1}}})["result"] }
+		k.get('_id'):k.get('count') 
+		for k in db.cat_advs.aggregate({'$group' : 
+			{'_id':'$breed_id', 'count': {'$sum':1}}})["result"] }
 
 	typeahead_dog_breeds = []
-	for (breed_id, breed_name) in dogs.items():
+	for breed in dogs.values():
+		breed_id = breed.get("breed_id")
+		breed_name = breed.get("breed_name")
 		rating = group_dog_breeds.get(breed_id) or 0
 		typeahead_dog_breeds.append({'rating':rating, 
 		'breed_id': breed_id, 
@@ -51,7 +59,9 @@ def rebuild_typeahead_breeds():
 		'breed_name_search' : breed_name.lower()})
 
 	typeahead_cat_breeds = []
-	for (breed_id, breed_name) in cats.items():
+	for breed in cats.values():
+		breed_id = breed.get("breed_id")
+		breed_name = breed.get("breed_name")
 		rating = group_cat_breeds.get(breed_id) or 0
 		typeahead_cat_breeds.append({'rating':rating, 
 		'breed_id': breed_id, 
@@ -78,16 +88,24 @@ def rebuild_typeahead_geos():
 	db.povodochek.typeahead_geo_cities_tmp.drop()
 
 	dog_group_regions = { 
-		k.get('_id'):k.get('count') for k in db.dog_advs.aggregate({'$group' : {'_id':'$region_id', 'count': {'$sum':1}}})["result"] }
+		k.get('_id'):k.get('count') 
+			for k in db.dog_advs.aggregate({'$group' : 
+				{'_id':'$region_id', 'count': {'$sum':1}}})["result"] }
 
 	cat_group_regions = { 
-		k.get('_id'):k.get('count') for k in db.cat_advs.aggregate({'$group' : {'_id':'$region_id', 'count': {'$sum':1}}})["result"] }
+		k.get('_id'):k.get('count') 
+			for k in db.cat_advs.aggregate({'$group' : 
+				{'_id':'$region_id', 'count': {'$sum':1}}})["result"] }
 
 	dog_group_cities = { 
-		k.get('_id'):k.get('count') for k in db.dog_advs.aggregate({'$group' : {'_id':'$city_id', 'count': {'$sum':1}}})["result"] }
+		k.get('_id'):k.get('count') 
+			for k in db.dog_advs.aggregate({'$group' : 
+				{'_id':'$city_id', 'count': {'$sum':1}}})["result"] }
 
 	cat_group_cities = { 
-		k.get('_id'):k.get('count') for k in db.cat_advs.aggregate({'$group' : {'_id':'$city_id', 'count': {'$sum':1}}})["result"] }
+		k.get('_id'):k.get('count') 
+			for k in db.cat_advs.aggregate({'$group' : 
+				{'_id':'$city_id', 'count': {'$sum':1}}})["result"] }
 
 	rating_geo_cities = []
 	

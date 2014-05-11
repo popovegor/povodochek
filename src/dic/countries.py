@@ -256,13 +256,3 @@ countries = { \
 	250 : {'country_id' : 250, 'name' : u'Ямайка', 'fullname' : u' ', 'english' : u'Jamaica', 'alpha2': u'JM', 'alpha3': u'JAM', 'iso': u'388',  'location' : u'Америка', 'location-precise' : u'Карибский бассейн'}, 
 	251 : {'country_id' : 251, 'name' : u'Япония', 'fullname' : u' ', 'english' : u'Japan', 'alpha2': u'JP', 'alpha3': u'JPN', 'iso': u'392',  'location' : u'Азия', 'location-precise' : u'Восточная Азия', 'dog' : True}	
 }
-
-def get_country_by_id(country_id):
-	return countries.get(country_id) or u''
-
-def get_country_name(country_id):
-	c = countries.get(country_id)
-	return c.get('name') if c else u""
-
-def get_countries_for_dog_adv():
-	return [ (c.get("country_id"), u"%s (%s)" % (c["name"], c["alpha3"])) for c in countries.values() if c.get("dog")] 

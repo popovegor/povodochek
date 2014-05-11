@@ -5,29 +5,43 @@
 
 
 <h1>{{title}}</h1>
-<p class="">Зарегистрировавшись на сайте, вы сразу же сможете разместить объявление о продаже кошек и собак.</p>
 
-<div class="">
-    <div class="">
+
+    <div class="row">
+    <div class="col-sm-7">
+      
+
+    
 
         {% from "forms.html" import form_field_boolean, form_field %}
 
-        <form class="form-signup" method="post" role="form" action="{{request.url}}" >
+        <form style="width:350px" class="form-signup" method="post" role="form" action="{{request.url}}" >
 
-          {{ form_field(form.login, placeholder="Введите логин", class="form-control", size="col-sm-5") }}
+          {{ form_field(form.username, placeholder="Введите ваше имя", class="form-control") }}
 
-          {{ form_field(form.email, placeholder="Введите адрес электронной почты", class="form-control", size="col-sm-5") }}
+          {{ form_field(form.email, placeholder="Введите эл. почту", class="form-control") }}
 
-          {{ form_field(form.password, placeholder="Введите пароль", class="form-control", size="col-sm-5") }}
+          {{ form_field(form.password, placeholder="Введите пароль", class="form-control") }}
 
           {{ form_field(form.accept_tos, checked="checked") }}
+
+          <br>
 
             <button class="btn btn-primary" type="submit" data-loading-text="Регистрация..." id="signup">Зарегистрировать</button>
      
       </form>
   </div>
 
-</div>
+  <div class="col-sm-5">
+      <div style="margin-top:30px; width:350px" class="well">
+        <p>Уже есть учетная запись на Поводочке?</p>
+        <a class="lead" href="{{url_for('signin')}}">Войдите &rarr;</a>
+      
+      </div>
+
+  </div>
+
+  </div>
 
 
 <script type="text/javascript">
@@ -36,11 +50,14 @@
   $(function(){
 
     povodochek.validate($("form"), {
-        login : {required : true, rangelength: [6, 36]},
+        username : {required : true},
         email : {required : true , email: true},
         password: {required: true, rangelength: [6, 36]},
         accept_tos: {required: true}
      });
+
+
+    $("#{{form.username.id}}").focus();
   });
   
 </script>

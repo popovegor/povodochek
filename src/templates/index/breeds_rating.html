@@ -1,11 +1,11 @@
 
-{%- macro top_breeds(pets, pet_id) -%}
+{%- macro top_breeds(top_pets, pet_id) -%}
 		
 		<div style="margin-top:30px;">
 			
 			<div class="" style="">
 				<h5 class="text-left" style="">
-					<b>{{pet_id | pet_name | morph_word(["plur"]) | title }}</b>
+					<b>{{pets.get_pet_name(pet_id) | morph_word(["plur"]) | title }}</b>
 					<br>
 					<small>популярные породы</small>
 				</h5>
@@ -16,9 +16,9 @@
 			
 			<div class="col-md-12 small">
 				<table style="width:100%"><tbody>
-				{% for pet in pets %}
+				{% for pet in top_pets %}
 					{% set breed_id = pet.get('breed_id') %}
-					{%set breed_name = breed_id | breed_name(pet_id) %}
+					{%set breed_name = breeds.get_breed_name(breed_id) %}
 					<tr>
 						<!-- <td>{{loop.index}}.&nbsp;</td> -->
 						<td class="breed-name" style="width:60%;">

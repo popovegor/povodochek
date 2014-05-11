@@ -7,9 +7,9 @@
 
     {{breadcrumbs( [
     {'name':"Продажа кошек", 'url':url_for("cat_search")}, 
-    {'name':adv.get('breed_id') | breed_cat_name, 'url':url_for("cat_search", breed=adv.get("breed_id"))}, 
-    {'name': adv.get('region_id') | region_name, 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("region_id"))},
-    {'name': adv.get('city_id') | city_name, 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
+    {'name':breeds.get_breed_name(adv.get('breed_id')), 'url':url_for("cat_search", breed=adv.get("breed_id"))}, 
+    {'name': geo.get_region_name(adv.get('region_id')), 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("region_id"))},
+    {'name': geo.get_city_name(adv.get('city_id')), 'url': url_for("cat_search", breed=adv.get("breed_id"), city=adv.get("city_id"))}, 
     {'name':adv.get("title") | capitalize}
     ] ) }}
               
@@ -18,7 +18,7 @@
 
 {% block content %}  
 
-<div class="sale-pet-show container"> 
+<div class="sale-pet-show"> 
 
 
   <h1>{{header}}</h1>
@@ -76,7 +76,7 @@
       <h3>{{adv.get("title")}}</h3>
       
       <div style="margin-bottom:20px">
-        <p style="white-space:pre-wrap">{{adv.get('desc') | trim }}</p>
+        <p class="sps-desc">{{adv.get('desc') | trim }}</p>
       </div>
 
       <div class="adv-block" style="margin-bottom:30px">
@@ -84,7 +84,7 @@
 
       <table class="tbl-key-value">
       <tbody>
-        {%set city = adv.get("city_id") | city_region %}
+        {%set city = geo.format_city_region_by_city_id(adv.get("city_id")) %}
           {% if city %}
           <tr>
               <td style="width:135px"><small>Местоположение</small></td>
@@ -94,13 +94,13 @@
 
           <tr>
             <td><small>Порода</small></td>
-            <td>{{adv.get("breed_id") | breed_name(adv.get('pet_id'))}}</td> 
+            <td>{{breeds.get_breed_name(adv.get("breed_id"))}}</td> 
           </tr>
            
              {%if adv.get("gender_id") %}
            <tr>
              <td ><small>Пол</small></td>
-             <td>{{adv.get("gender_id") | gender_name | title }}</td>
+             <td>{{genders.get_gender_name(adv.get("gender_id")) | title }}</td>
            </tr>
             {%endif%}
 

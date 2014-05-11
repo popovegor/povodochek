@@ -34,7 +34,7 @@
                 <h4 style="overflow:hidden" class="adv-head"><a href="{{url_for('cat_adv_show',  adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title")}}</a></h4>
               
               {% set pet_id = adv.get("pet_id")%}        
-              {% set breed_name = adv.get("breed_id") | breed_name(pet_id) %}
+              {% set breed_name = breeds.get_breed_name(adv.get("breed_id")) %}
               {% if breed_name %}
               <p class="adv-breed">
                 <span>{{breed_name }}</span> 
@@ -45,7 +45,7 @@
                   {% set city_id =  adv.get('city_id')%}
 
                   {% if city_id %}
-                  <b title="Местоположение">{{ city_id | city_region }}</b>
+                  <b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id) }}</b>
 
                   {% if adv.get("distance") and adv.get("distance") > 0 %}
                   (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г. <b>{{city}}</b>)
@@ -68,7 +68,7 @@
               {%endif%#}
 
               {% if adv.get("desc") %}
-              <p class="" style="">
+              <p class="adv-desc" style="">
                  <span>{{adv.get("desc") | truncate (120, end='...', killwords = False)}} </span>
               </p>
               {%endif%}
