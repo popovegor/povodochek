@@ -5,12 +5,11 @@
 import vk_auth
 import json
 import os
-import getpass
 from pprint import pprint
 import requests
 import db
 from dic.breeds import (get_breed_dog_name)
-from dic.cities import (get_city_region, get_city_name)
+from dic.geo import (get_city_name)
 import app
 from photo_helper import (create_thumbnail, get_thumbnail_filename)
 import config
@@ -72,7 +71,7 @@ def post_dog_adv(adv):
         'attachments': ",".join([ photo_id, url]), 'owner_id': -VK_GROUP_ID, 'from_group': '0', 'signed': 0}, token)
 
 def post_dog_advs_to_vk():
-    for adv in db.get_dog_advs_for_vk(mins = 1440):
+    for adv in db.get_dog_advs_for_vk(mins = 3*24*60):
         post = post_dog_adv(adv)
         pprint(post)
         db.mark_dog_adv_as_vk_posted(adv.get('_id'), post['post_id'])
