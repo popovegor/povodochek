@@ -13,6 +13,7 @@ import os
 import sys
 import subprocess
 from datetime import datetime
+from config import (MONGODB_HOSTS,MONGODB_REPLSET) 
 
 
 PRIVATE_KEY = os.path.join(os.path.dirname(__file__), 'pk.pem')
@@ -23,9 +24,8 @@ def get_service():
 		key = f.read()
 		f.close()
 
-
 		credentials = SignedJwtAssertionCredentials(
-		  "575093701296-4fme7oorbh6jp39srobnv57ghq8i58l4@developer.gserviceaccount.com", \
+		  "575093701296-8ihh0r1gmt7ji895mtq6to5401hj8bls@developer.gserviceaccount.com", \
 		  key, \
 		  scope=[
 	      'https://www.googleapis.com/auth/drive', 
@@ -35,6 +35,7 @@ def get_service():
 		# Create an httplib2.Http object to handle our HTTP requests and authorize it
 		# with our good Credentials.
 		http = httplib2.Http()
+		credentials.refresh(http)
 		http = credentials.authorize(http)
 
 		# Construct the service object for the interacting with the Google Analytics API.
@@ -49,7 +50,8 @@ def get_service():
 def create_backup_tar():
 	ret_code = subprocess.call(["rm", "-Rf" , "/tmp/povodochek/"])
 	print(ret_code)
-	ret_code = subprocess.call(["mongodump", "-d", "povodochek", "-o", "/tmp/"])
+	host = "{0}/{1}".format(MONGODB_REPLSET, ",".join(MONGODB_HOSTS))
+	ret_code = subprocess.call(["mongodump", "-d", "povodochek", "-o", "/tmp/", "--host", host])
 	print(ret_code)
 	ret_code = subprocess.call(["tar", "-cf", "/tmp/povodochek.tar", "/tmp/povodochek/"])
 	print(ret_code)
@@ -57,7 +59,8 @@ def create_backup_tar():
 
 def backup_db_to_gdrive():
 
-	path = create_backup_tar()
+	# path = create_backup_tar()
+	path = '/tmp/povodochek.tar'
 	service = get_service()
 	now = datetime.now()
 
