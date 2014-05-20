@@ -59,8 +59,7 @@ def create_backup_tar():
 
 def backup_db_to_gdrive():
 
-	# path = create_backup_tar()
-	path = '/tmp/povodochek.tar'
+	path = create_backup_tar()
 	service = get_service()
 	now = datetime.now()
 
