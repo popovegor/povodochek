@@ -422,9 +422,8 @@ def get_short_adv_id(adv):
 
 
 def remove_dog_adv(adv_id, user_id):
-    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
-        'user_id': {'$in': [user_id, \
-        str(user_id)]}}
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
     adv = dog_advs.find_one(query)
     if adv:
         dog_advs_archive.update(query, adv, upsert = True, multi = False)
@@ -432,9 +431,8 @@ def remove_dog_adv(adv_id, user_id):
     return adv
 
 def undo_remove_dog_adv(adv_id, user_id):
-    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
-        'user_id': {'$in': [user_id, \
-        str(user_id)]}}
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
     adv = dog_advs_archive.find_one(query)
     if adv:
         dog_advs.update(query, adv, upsert = True, multi  = False)
@@ -443,9 +441,8 @@ def undo_remove_dog_adv(adv_id, user_id):
 
 
 def remove_cat_adv(adv_id, user_id):
-    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
-        'user_id': {'$in': [user_id, \
-        str(user_id)]}}
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
     adv = cat_advs.find_one(query)
     if adv:
         cat_advs_archive.update(query, adv, upsert = True, multi = False)
@@ -453,9 +450,8 @@ def remove_cat_adv(adv_id, user_id):
     return adv
 
 def undo_remove_cat_adv(adv_id, user_id):
-    query = {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
-        'user_id': {'$in': [user_id, \
-        str(user_id)]}}
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
     adv = cat_advs_archive.find_one(query)
     if adv:
         cat_advs.update(query, adv, upsert = True, multi  = False)
