@@ -427,7 +427,7 @@ def remove_dog_adv(adv_id, user_id):
     adv = dog_advs.find_one(query)
     if adv:
         dog_advs_archive.update(query, adv, upsert = True, multi = False)
-        dog_advs.remove(adv)
+        dog_advs.remove(query, multi  = False)
     return adv
 
 def undo_remove_dog_adv(adv_id, user_id):
@@ -436,7 +436,7 @@ def undo_remove_dog_adv(adv_id, user_id):
     adv = dog_advs_archive.find_one(query)
     if adv:
         dog_advs.update(query, adv, upsert = True, multi  = False)
-        dog_advs_archive.remove(adv)
+        dog_advs_archive.remove(query, multi  = False)
     return adv
 
 
@@ -446,7 +446,7 @@ def remove_cat_adv(adv_id, user_id):
     adv = cat_advs.find_one(query)
     if adv:
         cat_advs_archive.update(query, adv, upsert = True, multi = False)
-        cat_advs.remove(adv)
+        cat_advs.remove(query, multi  = False)
     return adv
 
 def undo_remove_cat_adv(adv_id, user_id):
@@ -455,7 +455,7 @@ def undo_remove_cat_adv(adv_id, user_id):
     adv = cat_advs_archive.find_one(query)
     if adv:
         cat_advs.update(query, adv, upsert = True, multi  = False)
-        cat_advs_archive.remove(adv)
+        cat_advs_archive.remove(query, multi  = False)
     return adv
 
 def get_dog_advs_for_mosaic(skip, limit):
