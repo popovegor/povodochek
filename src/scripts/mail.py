@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import db
-import config
 
 from smtplib import SMTP_SSL as SMTP
 
@@ -10,9 +8,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText 
 import sys
 from jinja2 import Template, Environment, PackageLoader
+import config
+import db
 
-env = Environment(loader=PackageLoader('scripts', \
-	'mail_templates'))
+
+env = Environment(loader=PackageLoader('scripts', 'mail_templates'))
+
+
 
 def send_email(From = u"Поводочек <%s>" % config.MAIL_USERNAME, \
 	To = "popovegor.ati@gmail.com", \
@@ -89,6 +91,25 @@ def send_news_video():
 			Subject = u"Новости проекта Поводочек.рф: фильм, фильм, фильм!", \
 			To =  to )
 
+def send_about_fix_issue_172():
+	counter = 0
+	for user in db.users.find():
+		counter += 1
+		email = user.get('email')
+		name = user.get('username')
+		print(counter, name, email)
+		to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
+		template = env.get_template('fix_issue_172.html')
+		send_email(HTML = template.render(),\
+			Subject = u"Решена проблема с удалением объявлений", \
+			To =  to )
+
+
+
 
 if __name__ == '__main__':
-	eval('{0}()'.format(sys.argv[1]))
+	func = sys.argv[1]
+	args = "{0}".format(sys.argv[2:]).strip("[]")
+	ex = '{0}({1})'.format(func, args )
+	print(ex)
+	eval(ex)
