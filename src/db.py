@@ -525,7 +525,7 @@ def mark_dog_adv_as_vk_posted(adv_id, post_id):
         multi = False, upsert = False)
 
 def get_dog_advs_to_remove_from_vk():
-    return dog_advs_archive.find({'vk.post_deleted' : {'$ne':True} })
+    return dog_advs_archive.find({'vk.post_deleted' : {'$ne':True}, 'vk.post' : True })
 
 def mark_dog_adv_as_vk_deleted(adv_id):
     now = datetime.utcnow()
@@ -544,7 +544,7 @@ def mark_dog_adv_as_fb_posted(adv_id, post_id):
         multi = False, upsert = False)
 
 def get_dog_advs_to_remove_from_fb():
-    return dog_advs_archive.find({'fb.post_deleted' : {'$ne':True} })
+    return dog_advs_archive.find({'fb.post_deleted' : {'$ne':True}, 'fb.post' : True })
 
 def mark_dog_adv_as_fb_deleted(adv_id):
     now = datetime.utcnow()
