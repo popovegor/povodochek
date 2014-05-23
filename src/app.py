@@ -277,8 +277,7 @@ app.jinja_env.filters['country_name'] = get_country_name
 if not app.debug and app.config["MAIL_SERVER"] != '':
     import logging
     from ThreadedSMTPHandler import ThreadedSMTPHandler
-    credentials = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
-    mail_handler = ThreadedSMTPHandler((app.config["MAIL_SERVER"], 25), app.config["MAIL_USERNAME"], app.config["ADMIN_EMAILS"], 'Povodochek:Error', credentials)
+    mail_handler = ThreadedSMTPHandler(subject = 'povodochek:error:web')
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 

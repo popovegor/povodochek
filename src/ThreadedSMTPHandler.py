@@ -4,6 +4,7 @@
 
 import logging.handlers
 from threading import Thread
+import config
 
 def smtp_at_your_own_leasure(mailhost, port, username, password, fromaddr, toaddrs, msg, secure, timeout):
     import smtplib
@@ -24,8 +25,7 @@ class ThreadedSMTPHandler(logging.Handler):
     """
     A handler class which sends an SMTP email for each logging event.
     """
-    def __init__(self, mailhost, fromaddr, toaddrs, subject,
-                 credentials=None, secure = None, timeout = 5.0):
+    def __init__(self, subject = "povodochek:error"):
         """
         Initialize the handler.
 
@@ -41,6 +41,12 @@ class ThreadedSMTPHandler(logging.Handler):
         certificate file. (This tuple is passed to the `starttls` method).
         """
         logging.Handler.__init__(self)
+        mailhost = (config.MAIL_SERVER, 25)
+        fromaddr = config.MAIL_USERNAME
+        toaddrs = config.ADMIN_EMAILS
+        credentials=(config.MAIL_USERNAME, config.MAIL_PASSWORD)
+        secure = None
+        timeout = 5.0
         if isinstance(mailhost, tuple):
             self.mailhost, self.mailport = mailhost
         else:
