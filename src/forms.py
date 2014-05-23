@@ -339,6 +339,7 @@ class Dog(Form):
 
     puppy_card_kennel = PTextAreaField(Markup(u"<small>Наименование, адрес и телефон питомника, выдавшего метрику</small>"), \
         attraction = True, \
+        attraction_depends = {"id":"doc", "values": doc_puppy_cards.keys()},
         depends = {"id":"doc", "values": doc_puppy_cards.keys()})
 
     champion_bloodlines = PBooleanField(Markup(u"<small>Чемпионские крови</small>"), 
