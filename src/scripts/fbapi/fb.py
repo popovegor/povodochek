@@ -70,7 +70,7 @@ def remove_dog_adv(adv_id):
 
 def post_dog_advs_to_fb():
     for adv in db.get_dog_advs_to_post_in_fb(mins = 1440):
-        post = post_dog_adv(adv)
+        post = post_dog_adv(adv.get('_id'))
         pprint(post)
 
 
