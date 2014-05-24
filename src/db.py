@@ -199,7 +199,7 @@ def get_cat_breeds_rating(limit = 25):
 		sort = [('count', DESCENDING)], limit = limit)]
 
 def get_dog_breeds_for_typeahead(query, limit):
-    matcher = re.compile(re.escape(query))
+    matcher = re.compile(re.escape(query.lower()))
     breeds = [breed.get('breed_name') \
         for breed in typeahead_dog_breeds.find(\
             {'breed_name_search': {"$regex": matcher}}, \
@@ -211,7 +211,7 @@ def get_dog_breeds_for_typeahead(query, limit):
     return breeds
 
 def get_cat_breeds_for_typeahead(query, limit):
-    matcher = re.compile(re.escape(query))
+    matcher = re.compile(re.escape(query.lower()))
     breeds = [breed.get('breed_name') \
         for breed in typeahead_cat_breeds.find(\
             {'breed_name_search': {"$regex": matcher}}, \
