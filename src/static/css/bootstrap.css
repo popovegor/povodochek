@@ -3510,6 +3510,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .nav .nav-divider {
   height: 1px;
+  height: 3px;
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;

@@ -2,7 +2,9 @@
 
 {%block page_desc%}
 
-	<p class="">На этой странице вы можете просматривать, редактировать и удалять свои объявления о продаже кошек.</p>
+<p>
+  На этой странице вы можете просмотреть, восстановить или удалить объявления, ранее перемещенные в архив.
+</p>
 
 {%endblock%}
 
@@ -10,29 +12,13 @@
 
 <div class="account-pet-sale">
 
-    <p class="text-left" style="margin-bottom:30px">
-        <a target="_blank" href="{{url_for('account_cat_adv_new')}}" class="btn btn-default">Подать новое объявление о продаже кошки &rarr;</a> 
-    </p>
-    
-
-
     {% for adv in advs %}
 
-    
-      {{render_adv(adv, loop)}}
-
- 
+      {{render_adv(adv, loop)}} 
 
     {% endfor %}
 
 </div>
-
-<script type="text/javascript">
-
-    $(function(){
-    });
-    
-</script>
 
 
 {% endblock%}
@@ -40,7 +26,16 @@
 
 {%- macro render_adv(adv, loop) -%}
 
+{% from "attraction.html" import render_stars %}
+
+
 <div class="adv {{loop.cycle('adv-odd', 'adv-even')}}" style="">
+
+
+
+<div class="" style="margin:-5px -25px 10px -25px; padding:0px 25px 0px 25px;">
+      {{render_stars(adv.get("attraction"))}}
+</div>
 
   <div class="row clearfix" style="">
      <div class="col-md-3 col-sm-4">
@@ -48,15 +43,13 @@
 
           {% set photo = (adv.get('photos') or [])[0]%}
           {% if photo %}
-
-          <a title='{{adv.get("title")}}' href="{{url_for('cat_adv_show', adv_id = adv['_id'])}}" target="_blank" class="photo-img">
-            <img src="{{url_for('thumbnail', filename=photo)}}">
+          
+            <img src="{{url_for('thumbnail', filename=photo)}}" class="img-responsive">
             <div class="photo-count"><small><b>{{adv.get("photos") | length }}&nbsp; фото</b></small></div>                          
-          </a>  
 
           {% else %}
 
-            <img src="/static/img/no_photo.png" class="img-thumbnail no-photo" style="margin:0 auto" />
+            <img src="/static/img/no_photo.png" class="img-responsive no-photo" style="margin:0 auto" />
           
           {%endif%}
 
@@ -72,11 +65,11 @@
         <div class="row">
             <div class="col-md-8 col-lg-9 col-sm-8">
 
-                <h4 class="adv-head"><a target="_blank" href="{{url_for('cat_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title")}}</a></h4>
+                <h4 class="adv-head">{{adv.get("title")}}</h4>
               
 
                 <p class="adv-breed">
-                {% set breed_name = adv.get("breed_id") | breed_cat_name %}
+                {% set breed_name = adv.get("breed_id") | breed_dog_name %}
                 {% if breed_name %}
                 <span  title="Порода">{{breed_name }}</span>
                 {%endif%}
@@ -136,37 +129,28 @@
     {#<span><span class="text-muted">Объявление №</span><span> {{adv | short_adv_id}}</span>#}
 
 
-
     <!-- adv date -->
-     {% set update_date = adv.get("update_date") %}
-      {% set add_date = adv.get("add_date") %}
-      
-      {%if add_date %}
-      <span class="text-muted" style="">Размещено&nbsp;</span> 
-      <span style="white-space:nowrap">{{ momentjs(add_date).format("D MMMM, H:mm") }}</span> 
-      {%endif%}
-      {%if add_date != update_date %}
-      <span class="text-muted" style="margin-left:15px;">Обновлено&nbsp;</span> 
-      <span style="white-space:nowrap">{{ momentjs(update_date).format("D MMMM, H:mm") }}</span> 
+     {% set archive_date = adv.get("archive_date") %}
+
+      {%if archive_date %}
+      <span class="text-muted" style="">В архиве с&nbsp;</span> 
+      <span style="white-space:nowrap">{{ momentjs(archive_date).format("D MMMM, H:mm") }}</span> 
       {%endif%}
 
 
       <!-- adv views -->
 
        <span class="text-muted" style="margin-left:15px;">Смотрели:&nbsp;</span> 
-        <span style="white-space:nowrap">{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
+      <span style="white-space:nowrap">{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
 
   </div>
 
   <div style="border-top:1px solid #e5e5e5; margin:10px -30px 15px -30px; padding:15px 5px 0px 5px">
       
       <div class="col-sm-12 text-left">
-           <a type="button" title="Посмотреть объявление" class="btn btn-xs btn-link pull-right" target="_blank" href="{{url_for('cat_adv_show', adv_id = adv['_id'])}}"><i class="fa fa-eye"></i>&ensp;Посмотреть</a>
-            <a type="" target="_blank" title="Редактировать объявление" class="btn btn-xs btn-primary"  target="_self" href="{{url_for('account_cat_adv_edit', adv_id = adv['_id'])}}"><i class="fa fa-pencil"></i>&ensp;Редактировать</a>
+            <a type="" target="_blank" title="Восстановить" class="btn btn-xs btn-primary"  target="_self" href="{{url_for('account_dog_adv_archived_restore', adv_id = adv['_id'])}}"><i class="fa fa-undo"></i>&ensp;Восстановить</a>
 
-            <a type="button" title="Переместить объявление в архив" class="btn btn-xs btn-warning"  target="_self" href="{{url_for('account_cat_adv_archive', adv_id = adv['_id'])}}"><i class="fa fa-archive"></i>&ensp;В архив</a>
-
-            <a action="remove" type="button" title="Удалить объявление" class="btn btn-xs btn-danger"  target="_self" href="{{url_for('account_cat_adv_remove', adv_id = adv['_id'])}}"><i class="fa fa-trash-o"></i>&ensp;Удалить</a>
+            <a action="remove" type="button" title="Удалить объявление" class="btn btn-xs btn-danger"  target="_self" href="{{url_for('account_dog_adv_archived_remove', adv_id = adv['_id'])}}"><i class="fa fa-trash-o fa-lg"></i>&ensp;Удалить</a>
       </div>
 
      </div>

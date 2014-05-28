@@ -1,8 +1,24 @@
-{% extends "account/layout.html" %}
+{% extends "layout_popup.html" %}
 
-{% block account_content %}
+{% block page_desc %}
+<hr/>
+
+    {% from "forms.html" import form_field_attraction, form_field_required %}
+<p>
+{{form_field_required()}} &mdash; поля, обязательные для заполнения.
+</p>
+
+
+<hr/>
+
+{%endblock%}
+
+
+{% block content %}
 
 <!-- <p class="">Редактирвать</p> -->
+
+
 
 <div class="sale-edit">
     <div class="">
@@ -42,8 +58,6 @@
 
         <h2>Контактная ифнормация</h2>
 
-          <p>Контактная информация не является обязательной для заполнения, так как с вами всегда смогут связаться по электронной почте, которую вы указали при регистрации.</p>
-
            <div class="row">
               <div class="col-lg-3 col-md-4 col-sm-5">
 
@@ -60,9 +74,7 @@
 
 
         <div class="actions">
-          <button type="submit" class="btn btn-primary" id="update" data-loading-text="Сохраняется...">Сохранить</button>
-          &nbsp;
-          <a class="btn" href="{{url_for('account_cat_advs')}}" id="cancel">Отменить</a>
+          <button type="submit" class="btn btn-primary" id="update" data-loading-text="{{btn_name_progress or 'Публикуется...'}}">{{btn_name or "Опубликовать"}}</button>
         </div>
 
             <script type="text/javascript">

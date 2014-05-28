@@ -7,7 +7,7 @@
     {{breadcrumbs( [
     {'name':"Продажа кошек", 'url':url_for("cat_search")}, 
     {'name':breed, 'url':url_for("cat_search", breed=breed_id)},
-    {'name':region, 'url':url_for("dog_search", breed=breed_id, city=region_id)}, 
+    {'name':region, 'url':url_for("cat_search", breed=breed_id, city=region_id)}, 
     {'name':city, 'url':url_for("cat_search", breed=breed_id, city=city_id)}, 
     ] ) }}
               

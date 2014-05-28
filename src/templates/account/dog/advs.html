@@ -2,7 +2,7 @@
 
 {%block page_desc%}
 
-	<span class="">На этой странице вы можете просматривать, редактировать и удалять свои объявления о продаже собак.</span>
+	<p class="">На этой странице вы можете просматривать, редактировать и удалять свои объявления о продаже собак.</p>
 
 {%endblock%}
 
@@ -19,7 +19,7 @@
     {% for adv in advs %}
 
     
-      {{dog_adv(adv, loop)}}
+      {{render_adv(adv, loop)}}
 
  
 
@@ -38,7 +38,7 @@
 {% endblock%}
 
 
-{%- macro dog_adv(adv, loop) -%}
+{%- macro render_adv(adv, loop) -%}
 
 {% from "attraction.html" import render_stars %}
 
@@ -150,28 +150,32 @@
      {% set update_date = adv.get("update_date") %}
       {% set add_date = adv.get("add_date") %}
       
+      {%if add_date %}
       <span class="text-muted" style="">Размещено&nbsp;</span> 
-      <span style="white-space:nowrap">{{ momentjs(add_date).format("D MMM, H:mm") }}</span> 
+      <span style="white-space:nowrap">{{ momentjs(add_date).format("D MMMM, H:mm") }}</span> 
+      {%endif%}
       {%if add_date != update_date %}
       <span class="text-muted" style="margin-left:15px;">Обновлено&nbsp;</span> 
-      <span style="white-space:nowrap">{{ momentjs(update_date).format("D MMM, H:mm") }}</span> 
+      <span style="white-space:nowrap">{{ momentjs(update_date).format("D MMMM, H:mm") }}</span> 
       {%endif%}
 
 
       <!-- adv views -->
 
        <span class="text-muted" style="margin-left:15px;">Смотрели:&nbsp;</span> 
-      <span style="white-space:nowrap">{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
+        <span style="white-space:nowrap">{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
 
   </div>
 
   <div style="border-top:1px solid #e5e5e5; margin:10px -30px 15px -30px; padding:15px 5px 0px 5px">
       
       <div class="col-sm-12 text-left">
-           <a type="button" title="Посмотреть" class="btn btn-xs btn-default" target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}"><i class="fa fa-eye"></i>&ensp;Посмотреть</a>
-            <a type="" target="_blank" title="Редактировать" class="btn btn-xs btn-primary"  target="_self" href="{{url_for('account_dog_adv_edit', adv_id = adv['_id'])}}"><i class="fa fa-pencil"></i>&ensp;Редактировать</a>
+           <a type="button" title="Посмотреть объявление" class="btn btn-xs btn-link pull-right" target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}"><i class="fa fa-eye"></i>&ensp;Посмотреть</a>
+            <a type="" target="_blank" title="Редактировать объявление" class="btn btn-xs btn-primary"  target="_self" href="{{url_for('account_dog_adv_edit', adv_id = adv['_id'])}}"><i class="fa fa-pencil"></i>&ensp;Редактировать</a>
 
-            <a action="remove" type="button" title="Удалить" class="btn btn-xs btn-danger"  target="_self" href="{{url_for('account_dog_adv_remove', adv_id = adv['_id'])}}"><i class="fa fa-trash-o fa-lg"></i>{#&ensp;Удалить#}</a>
+            <a type="button" title="Переместить объявление в архив" class="btn btn-xs btn-warning"  target="_self" href="{{url_for('account_dog_adv_archive', adv_id = adv['_id'])}}"><i class="fa fa-archive"></i>&ensp;В архив</a>
+
+            <a action="remove" type="button" title="Удалить объявление" class="btn btn-xs btn-danger"  target="_self" href="{{url_for('account_dog_adv_remove', adv_id = adv['_id'])}}"><i class="fa fa-trash-o"></i>&ensp;Удалить</a>
       </div>
 
      </div>

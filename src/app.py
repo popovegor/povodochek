@@ -501,7 +501,6 @@ def activate(confirm):
             return render_template("activate.html", form = form, title = u"Активация регистрации")
         
 
-
 @app.route("/asignin/<asign>/", methods = ["GET"])
 def asignin(asign):
     user = db.get_user_by_asign(asign)
@@ -772,14 +771,12 @@ def cat_adv_show(adv_id):
     if not adv:
         abort(404)
 
-    name = u"Продам {0} породы {1} в г. {2}".format( \
-        morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
-        get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
+    name = u"Продам кошку породы {0} в г. {1}".format( \
+        get_breed_name(adv.get("breed_id")).lower(),\
         get_city_name(adv.get("city_id"), "i")
     )
-    header = Markup(u"Продам {0} породы {1} в г.&nbsp;{2}".format( \
-        morph_word(get_pet_name(adv.get("pet_id")), {"accs"}).lower(), \
-        get_breed_name(adv.get("breed_id"), adv.get("pet_id")).lower(),\
+    header = Markup(u"Продам кошку породы {0} в г.&nbsp;{1}".format( \
+        get_breed_name(adv.get("breed_id")).lower(),\
         get_city_name(adv.get("city_id"), "i")
     ))
     title = u"{0} за {1}".format(name, \
@@ -825,7 +822,7 @@ def sale_show(id):
 @app.route("/account/")
 @login_required
 def account():
-    return redirect(url_for('account_sale'))
+    return redirect(url_for('account_dog_advs'))
 
 
 @app.route("/account/stud/")
@@ -877,7 +874,7 @@ def account_cat_advs():
     advs = db.get_cat_advs_by_user(current_user.id)
     tmpl = render_template("account/cat/advs.html", \
         title=u"Мои объявления о продаже кошек", \
-        advs = [dict(adv, **{'active_date': adv.get('update_date') + timedelta(days=14)}) for adv in advs])
+        advs = [adv for adv in advs])
     return tmpl
 
 
@@ -887,9 +884,89 @@ def account_dog_advs():
     advs = db.get_dog_advs_by_user(current_user.id)
     tmpl = render_template("account/dog/advs.html", \
         title=u"Мои объявления о продаже собак", \
-        advs = [dict(adv, **{'active_date': adv.get('update_date') + timedelta(days=14)}) for adv in advs])
+        advs = [adv for adv in advs])
     return tmpl
 
+
+@app.route("/account/dog/archived/")
+@login_required
+def account_dog_advs_archived():
+    advs = db.get_dog_advs_archived_by_user(current_user.id)
+    tmpl = render_template("account/dog/advs_archived.html", \
+        title=u"Архив моих объявлений о продаже собак", \
+        advs = advs)
+    return tmpl
+
+@app.route("/account/cat/archived/")
+@login_required
+def account_cat_advs_archived():
+    advs = db.get_cat_advs_archived_by_user(current_user.id)
+    tmpl = render_template("account/cat/advs_archived.html", \
+        title=u"Архив моих объявлений о продаже кошек", \
+        advs = advs)
+    return tmpl
+
+
+@app.route("/account/cat/archived/<adv_id>/restore", 
+    methods = ['GET', 'POST'])
+@login_required
+def account_cat_adv_archived_restore(adv_id):
+    cat = db.get_cat_adv_archived_for_user(adv_id, current_user.id)
+    if not cat:
+        abort(404)
+
+    form = Cat(request.form)
+    if request.method == "POST":
+        if form.validate():
+            adv = save_cat_adv(form)
+            db.remove_cat_adv_archived(adv_id, current_user.id) # 
+            msg = Markup(u"Объявление <a href='{1}' target='_blank'>&laquo;{0}&raquo;</a> восстановлено и опубликовано.".format(form.title.data, url_for('cat_adv_show', adv_id = adv.get('_id'))))
+            flash(msg, "success")
+            return render_template("/account/cat/adv_edit_success.html", header=msg, title = u"Объявление '%s' восстановлено" % form.title.data)
+    else:
+        form.breed.data = get_breed_name(cat.get("breed_id"), cat.get("pet_id"))
+        form.title.data = cat.get("title")
+        form.desc.data = cat.get('desc')
+        form.price.data = num(cat.get('price'))
+        form.gender.data = str(num(cat.get('gender_id')) or '')
+        form.photos.data = ",".join(cat.get("photos"))
+        form.city.data = get_city_region(cat.get("city_id"))
+        form.phone.data = cat.get("phone") or current_user.phone
+        form.skype.data = cat.get("skype") or current_user.skype
+    return render_template("/account/cat/adv_edit.html", form=form, title=u"Восстановить объявление о продаже кошки", 
+        btn_name_progress = u"Восстанавливается...", 
+        btn_name = Markup(u"<i class='fa fa-undo'></i>&ensp;Восстановить"), cat = cat)
+
+
+@app.route("/account/dog/archived/<adv_id>/restore/", 
+    methods = ['GET', 'POST'])
+@login_required
+def account_dog_adv_archived_restore(adv_id):
+    dog = db.get_dog_adv_archived_for_user(adv_id, current_user.id)
+    if not dog:
+        abort(404)
+
+    form = Dog(request.form)
+    if request.method == "POST":
+        if form.validate():
+            adv = save_dog_adv(form = form)# adv_id is missed to insert a new adv
+            db.remove_dog_adv_archived(adv_id, current_user.id) # remove the old one
+            msg = Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> восстановлено и опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('_id')), form.title.data))
+            flash(msg, "success")
+            return render_template("/account/dog/adv_edit_success.html", header = msg, title = u"Объявление '%s' восстановлено и опубликовано" % form.title.data)
+    else:
+        for f in form:
+            f.set_db_val(dog.get(f.get_db_name()))
+      
+        autofill_user_to_adv(form)
+        
+    return render_template("/account/dog/adv_edit.html", \
+        form = form, \
+        title = u"Восстановить объявление о продаже собаки", \
+        dog = dog, \
+        btn_name = Markup(u'<i class="fa fa-undo"></i>&ensp;Восстановить'), \
+        btn_name_progress = u'Восстанавливается...', \
+        fields = get_fields(form))
 
 def autofill_user_to_adv(form):
     form.username.data = form.username.data or (current_user.username if current_user.username != u'Пользователь' else u'')
@@ -910,7 +987,7 @@ def account_dog_adv_edit(adv_id):
     if request.method == "POST":
         if form.validate():
             save_dog_adv(adv_id = adv_id, form = form)
-            msg = Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv_id), form.title.data))
+            msg = Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv_id), form.title.data))
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", header = msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
@@ -932,7 +1009,7 @@ def account_dog_adv_new():
     if request.method == "POST":
         if  form.validate():
             adv = save_dog_adv(form)
-            msg =  Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('upserted')), form.title.data))
+            msg =  Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('_id')), form.title.data))
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
@@ -953,11 +1030,10 @@ def save_dog_adv(form, adv_id = None):
                 with open(photos.path(photoname)) as file:
                     db.save_photo(file)
 
-    adv = db.save_dog_adv_2(user_id = current_user.id, \
+    adv = db.upsert_dog_adv(user_id = current_user.id, \
         adv_id = adv_id, \
         form  = form, \
-        attraction = calc_attraction(form)
-        )
+        attraction = calc_attraction(form))
     return adv
 
 @app.route("/account/dog/<adv_id>/remove/undo/", methods = ['GET'])
@@ -967,7 +1043,7 @@ def account_dog_adv_remove_undo(adv_id):
     if adv:
         adv_show_url = url_for('dog_adv_show', \
             adv_id = adv.get('_id'))
-        flash(Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> вновь активно." % (adv_show_url, adv["title"])), \
+        flash(Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> вновь опубликовано." % (adv_show_url, adv["title"])), \
             "success")
     return redirect(url_for("account_dog_advs"))
 
@@ -977,10 +1053,51 @@ def account_dog_adv_remove(adv_id):
     adv = db.remove_dog_adv(adv_id, current_user.id)
     if adv:
         undo_url = url_for('account_dog_adv_remove_undo', adv_id = adv.get('_id'))
-        flash(Markup(u"Объявление '%s' удалено. <a target='_self' title='Восстановить удаленное объявление' href='%s'>Отменить удаление</a>." % (adv["title"], undo_url)), \
+        flash(Markup(u"Объявление &laquo;%s&raquo; удалено. <a target='_self' title='Восстановить удаленное объявление' href='%s'>Отменить удаление</a>." % (adv["title"], undo_url)), \
             "success")
     return redirect(url_for("account_dog_advs"))
 
+
+
+@app.route("/account/dog/archived/<adv_id>/remove/", methods = ['GET'])
+@login_required
+def account_dog_adv_archived_remove(adv_id):
+    adv = db.remove_dog_adv_archived(adv_id, current_user.id)
+    if adv:
+        flash(Markup(u"Объявление &laquo;%s&raquo; удалено." % adv["title"]), \
+            "success")
+    return redirect(url_for("account_dog_advs_archived"))
+
+
+@app.route("/account/cat/archived/<adv_id>/remove/", methods = ['GET'])
+@login_required
+def account_cat_adv_archived_remove(adv_id):
+    adv = db.remove_cat_adv_archived(adv_id, current_user.id)
+    if adv:
+        flash(Markup(u"Объявление &laquo;%s&raquo; удалено." % adv["title"]), \
+            "success")
+    return redirect(url_for("account_cat_advs_archived"))
+
+@app.route("/account/dog/<adv_id>/archive/", methods = ['GET'])
+@login_required
+def account_dog_adv_archive(adv_id):
+    adv = db.archive_dog_adv(adv_id, current_user.id)
+    if adv:
+        flash(Markup(u"Объявление <i>&laquo;%s&raquo;</i> перещено в <a href='%s' target='_self'>архив</a>." % (adv["title"], 
+            url_for('account_dog_advs_archived') )), \
+            "success")
+    return redirect(url_for("account_dog_advs"))
+
+
+@app.route("/account/cat/<adv_id>/archive/", methods = ['GET'])
+@login_required
+def account_cat_adv_archive(adv_id):
+    adv = db.archive_cat_adv(adv_id, current_user.id)
+    if adv:
+        flash(Markup(u"Объявление <i>&laquo;%s&raquo;</i> перещено в <a href='%s' target='_self'>архив</a>." % (adv["title"], 
+            url_for('account_dog_advs_archived')  )), \
+            "success")
+    return redirect(url_for("account_cat_advs"))
 
 @app.route("/account/cat/<adv_id>/remove/undo/", methods = ['GET'])
 @login_required
@@ -989,7 +1106,7 @@ def account_cat_adv_remove_undo(adv_id):
     if adv:
         adv_show_url = url_for('cat_adv_show', \
             adv_id = adv.get('_id'))
-        flash(Markup(u"Объявление <a target='_blank' href='%s'>'%s'</a> вновь активно." % (adv_show_url, adv["title"])), \
+        flash(Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> вновь опубликовано." % (adv_show_url, adv["title"])), \
             "success")
     return redirect(url_for("account_cat_advs"))
 
@@ -999,11 +1116,10 @@ def account_cat_adv_remove(adv_id):
     adv = db.remove_cat_adv(adv_id, current_user.id)
     if adv:
         undo_url = url_for('account_cat_adv_remove_undo', adv_id = adv.get('_id'))
-        flash(Markup(u"Объявление '%s' удалено. <a target='_self' title='Восстановить удаленное объявление' href='%s'>Отменить удаление</a>." % (adv["title"], undo_url)), \
+        flash(Markup(u"Объявление &laquo;%s&raquo; удалено. <a target='_self' title='Восстановить удаленное объявление' href='%s'>Отменить удаление</a>." % (adv["title"], undo_url)), \
             "success")
     return redirect(url_for("account_cat_advs"))
  
-
 def save_cat_adv(form, adv_id = None, moderator = None):
     filenames = []
     if form.photos.data:
@@ -1016,7 +1132,6 @@ def save_cat_adv(form, adv_id = None, moderator = None):
 
     now = datetime.utcnow()
     cat = {
-        'pet_id': form.breed.pet_id, \
         'breed_id': form.breed.breed_id, \
         'title': form.title.data, \
         'desc': form.desc.data, \
@@ -1027,22 +1142,15 @@ def save_cat_adv(form, adv_id = None, moderator = None):
         "region_id" : form.city.region_id, \
         "phone" : form.phone.data, \
         "skype" : form.skype.data, \
-        "gender_id": num(form.gender.data)}
-    if moderator:
-        cat['username'] = form.username.data
-        cat['email'] = form.email.data
-        cat['moderator_id'] = str(moderator.id)
-        cat['moderate_date'] = now
-    else:
-        cat['user_id'] = str(current_user.id)
-    if id:
-        db.cat_advs.update(
-            {'_id': ObjectId(adv_id)} 
-            , {'$set': cat}, upsert=True)
-    else:
-        cat["add_date"] = now
-        adv_id = db.cat_advs.insert(cat)
-    return adv_id
+        "gender_id": num(form.gender.data),
+        "user_id" : str(current_user.id)}
+
+    adv = db.cat_advs.find_and_modify({'_id': ObjectId(adv_id), 
+        'user_id' : str(current_user.id)} , 
+        {'$set': cat, 
+        '$setOnInsert' : {'add_date': now}}, 
+        upsert = True, new = True)
+    return adv
 
 
 @app.route("/account/cat/<adv_id>/", methods = ['GET', 'POST'])
@@ -1055,8 +1163,8 @@ def account_cat_adv_edit(adv_id):
     form = Cat(request.form)
     if request.method == "POST":
         if form.validate():
-            save_cat_adv(form, adv_id)
-            flash(u"Объявление '%s' опубликовано." % form.title.data, "success")
+            adv = save_cat_adv(form, adv_id)
+            flash(Markup(u"Объявление <a href='{1}' target='_blank'>&laquo;{0}&raquo;</a> опубликовано.".format(form.title.data, url_for('cat_adv_show', adv_id = adv.get('_id')))), "success")
             return redirect(url_for("account_cat_advs"))
     else:
         form.breed.data = get_breed_name(cat.get("breed_id"), cat.get("pet_id"))
@@ -1077,14 +1185,15 @@ def account_cat_adv_new():
     form = Cat(request.form)
     if request.method == "POST":
         if  form.validate():
-            id = save_cat_adv(form)
-            flash(u"Объявление '%s' добавлено." % form.title.data, "success")
-            return redirect(url_for('account_cat_advs'))
+            adv = save_cat_adv(form)
+            msg =  Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> опубликовано." % (url_for('cat_adv_show', adv_id = adv.get('_id')), form.title.data))
+            flash(msg, "success")
+            return render_template("/account/cat/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
         form.city.data = get_city_region(current_user.city_id)
         form.phone.data = current_user.phone
         form.skype.data = current_user.skype
-    return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки", btn_name = u"Добавить")
+    return render_template("/account/cat/adv_edit.html", form=form, title=u"Новое объявление о продаже кошки")
 
 
 @app.route("/spravka/")
@@ -1344,7 +1453,7 @@ def admin_sale_add():
     form = Sale(request.form)
     if request.method == "POST" and form.validate():
         id = sale_save(form, moderator = current_user)
-        flash(u"Объявление '%s' добавлено." % form.title.data, "info")
+        flash(u"Объявление &laquo;%s&raquo; добавлено." % form.title.data, "info")
         return redirect(url_for('admin_sale'))
     return render_template("/admin/sale_edit.html", form = form, title = Markup(u"Админка: добавить объявление о продаже"), btn_name = u"Добавить")
 
@@ -1366,7 +1475,7 @@ def admin_sale_edit(adv_id):
         print(form.price.data)
         if form.validate():
             sale_save(form, adv_id, moderator = current_user)
-            flash(u"Объявление '%s' обновлено." % form.title.data, "info")
+            flash(u"Объявление &laquo;%s&raquo; обновлено." % form.title.data, "info")
             return redirect(url_for("admin_sale"))
     else:
         form.breed.data = get_breed_name(adv.get("breed_id"), adv.get("pet_id"))

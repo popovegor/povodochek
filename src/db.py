@@ -21,9 +21,11 @@ povodochek = mongo['povodochek']
 
 users = povodochek.users
 cat_advs = povodochek.cat_advs
-cat_advs_archive = povodochek.cat_advs_archive
+cat_advs_archived = povodochek.cat_advs_archived
+cat_advs_deleted = povodochek.cat_advs_deleted
 dog_advs = povodochek.dog_advs
-dog_advs_archive = povodochek.dog_advs_archive
+dog_advs_archived = povodochek.dog_advs_archived
+dog_advs_deleted = povodochek.dog_advs_deleted
 pets_by_cities = povodochek.pets_by_cities
 dog_breeds_rating = povodochek.dog_breeds_rating
 cat_breeds_rating = povodochek.cat_breeds_rating
@@ -139,18 +141,25 @@ def get_cat_adv_for_user(adv_id, user_id):
 def get_dog_adv(adv_id):
     return dog_advs.find_one({'_id': ObjectId(adv_id)})
 
+def get_dog_adv_archived_for_user(adv_id, user_id):
+    return dog_advs_archived.find_one({'_id': ObjectId(adv_id), 'user_id' : str(user_id)})
+
+def get_cat_adv_archived_for_user(adv_id, user_id):
+    return cat_advs_archived.find_one({'_id': ObjectId(adv_id), 'user_id' : str(user_id)})
+
 def get_dog_adv_archived(adv_id):
-    return dog_advs_archive.find_one({'_id': ObjectId(adv_id)})
+    return dog_advs_archived.find_one({'_id': ObjectId(adv_id)})
 
 def get_cat_adv(adv_id):
     return cat_advs.find_one({'_id': ObjectId(adv_id)})    
 
 def get_cat_adv_archived(adv_id):
-    return cat_advs_archive.find_one({'_id': ObjectId(adv_id)})
+    return cat_advs_archived.find_one({'_id': ObjectId(adv_id)})
 
 
-def save_dog_adv_2(user_id, adv_id, form, attraction):
+def upsert_dog_adv(user_id, adv_id, form, attraction):
     now = datetime.utcnow()
+    updater = {}
     
     dog_set = {
         'user_id' : str(user_id), \
@@ -165,18 +174,18 @@ def save_dog_adv_2(user_id, adv_id, form, attraction):
         db_name = field.get_db_name()
         if db_val:
             dog_set[db_name] = db_val
-        else: 
+        else:
             dog_unset[db_name] = ""
 
-    print(dog_set)
+    updater['$set'] = dog_set
+    updater['$setOnInsert'] = {'add_date':now}
 
-    dog = dog_advs.update(\
-        {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}, \
-        {'$set': dog_set, \
-        '$unset': dog_unset, \
-        '$setOnInsert' : {"add_date": now}}, upsert = True)
+    if dog_unset:
+        updater['$unset'] = dog_unset
 
-    return dog
+    query = {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}
+    adv = dog_advs.find_and_modify(query, updater, upsert = True, new = True)
+    return adv
 
 def get_dog_advs_by_user(user_id):
 	return dog_advs.find(
@@ -184,8 +193,20 @@ def get_dog_advs_by_user(user_id):
 	    sort = [("update_date", DESCENDING), \
         ("add_date", DESCENDING)])
 
+def get_dog_advs_archived_by_user(user_id):
+    return dog_advs_archived.find(
+        {'user_id': {'$in' : [str(user_id), user_id]} },\
+        sort = [("update_date", DESCENDING), \
+        ("add_date", DESCENDING)])
+
 def get_cat_advs_by_user(user_id):
     return cat_advs.find(
+        {'user_id': {'$in' : [str(user_id), user_id]} },\
+        sort = [("update_date", DESCENDING), \
+        ("add_date", DESCENDING)])
+
+def get_cat_advs_archived_by_user(user_id):
+    return cat_advs_archived.find(
         {'user_id': {'$in' : [str(user_id), user_id]} },\
         sort = [("update_date", DESCENDING), \
         ("add_date", DESCENDING)])
@@ -427,22 +448,62 @@ def get_short_adv_id(adv):
     return short_adv_id ^ short_user_id
 
 
+def archive_dog_adv(adv_id, user_id):
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
+    adv = dog_advs.find_one(query)
+    if adv:
+        adv['archive_date'] = datetime.utcnow()
+        dog_advs_archived.update(query, adv, multi = False, upsert = True)
+        dog_advs.remove(query, multi = False)
+    return adv
+
+def archive_cat_adv(adv_id, user_id):
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
+    adv = cat_advs.find_one(query)
+    if adv:
+        adv['archive_date'] = datetime.utcnow()
+        cat_advs_archived.update(query, adv, multi = False, upsert = True)
+        cat_advs.remove(query, multi = False)
+    return adv
+
+
+def remove_dog_adv_archived(adv_id, user_id):
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
+    adv = dog_advs_archived.find_and_modify(query, remove = True)
+    if adv:
+        adv['delete_date'] = datetime.utcnow()
+        dog_advs_deleted.save(adv)
+    return adv
+
+def remove_cat_adv_archived(adv_id, user_id):
+    query = {'_id': ObjectId(adv_id), 
+        'user_id': {'$in': [user_id, str(user_id)]}}
+    adv = cat_advs_archived.find_and_modify(query, remove = True)
+    if adv:
+        adv['delete_date'] = datetime.utcnow()
+        cat_advs_deleted.save(adv)
+    return adv
+
 def remove_dog_adv(adv_id, user_id):
     query = {'_id': ObjectId(adv_id), 
         'user_id': {'$in': [user_id, str(user_id)]}}
     adv = dog_advs.find_one(query)
     if adv:
-        dog_advs_archive.update(query, adv, upsert = True, multi = False)
+        adv['delete_date'] = datetime.utcnow()
+        dog_advs_deleted.update(query, adv, upsert = True, multi = False)
         dog_advs.remove(query, multi  = False)
     return adv
 
 def undo_remove_dog_adv(adv_id, user_id):
     query = {'_id': ObjectId(adv_id), 
         'user_id': {'$in': [user_id, str(user_id)]}}
-    adv = dog_advs_archive.find_one(query)
+    adv = dog_advs_deleted.find_one(query)
     if adv:
         dog_advs.update(query, adv, upsert = True, multi  = False)
-        dog_advs_archive.remove(query, multi  = False)
+        dog_advs_deleted.remove(query, multi  = False)
     return adv
 
 
@@ -451,17 +512,18 @@ def remove_cat_adv(adv_id, user_id):
         'user_id': {'$in': [user_id, str(user_id)]}}
     adv = cat_advs.find_one(query)
     if adv:
-        cat_advs_archive.update(query, adv, upsert = True, multi = False)
+        adv['delete_date'] = datetime.utcnow()
+        cat_advs_deleted.update(query, adv, upsert = True, multi = False)
         cat_advs.remove(query, multi  = False)
     return adv
 
 def undo_remove_cat_adv(adv_id, user_id):
     query = {'_id': ObjectId(adv_id), 
         'user_id': {'$in': [user_id, str(user_id)]}}
-    adv = cat_advs_archive.find_one(query)
+    adv = cat_advs_deleted.find_one(query)
     if adv:
         cat_advs.update(query, adv, upsert = True, multi  = False)
-        cat_advs_archive.remove(query, multi  = False)
+        cat_advs_deleted.remove(query, multi  = False)
     return adv
 
 def get_dog_advs_for_mosaic(skip, limit):
@@ -525,11 +587,11 @@ def mark_dog_adv_as_vk_posted(adv_id, post_id):
         multi = False, upsert = False)
 
 def get_dog_advs_to_remove_from_vk():
-    return dog_advs_archive.find({'vk.post_deleted' : {'$ne':True}, 'vk.post' : True })
+    return dog_advs_archived.find({'vk.post_deleted' : {'$ne':True}, 'vk.post' : True })
 
 def mark_dog_adv_as_vk_deleted(adv_id):
     now = datetime.utcnow()
-    dog_advs_archive.update({'_id': ObjectId(adv_id)}, {'$set': {'vk.post_deleted' : True, 'vk.post_delete_date' : now}}, multi = False, upsert = False)
+    dog_advs_archived.update({'_id': ObjectId(adv_id)}, {'$set': {'vk.post_deleted' : True, 'vk.post_delete_date' : now}}, multi = False, upsert = False)
 
 def get_dog_advs_to_post_in_fb(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
@@ -544,11 +606,11 @@ def mark_dog_adv_as_fb_posted(adv_id, post_id):
         multi = False, upsert = False)
 
 def get_dog_advs_to_remove_from_fb():
-    return dog_advs_archive.find({'fb.post_deleted' : {'$ne':True}, 'fb.post' : True })
+    return dog_advs_archived.find({'fb.post_deleted' : {'$ne':True}, 'fb.post' : True })
 
 def mark_dog_adv_as_fb_deleted(adv_id):
     now = datetime.utcnow()
-    dog_advs_archive.update({'_id': ObjectId(adv_id)}, {'$set': {'fb.post_deleted' : True, 'fb.post_delete_date' : now}}, multi = False, upsert = False)
+    dog_advs_archived.update({'_id': ObjectId(adv_id)}, {'$set': {'fb.post_deleted' : True, 'fb.post_delete_date' : now}}, multi = False, upsert = False)
 
 def get_region_by_id(region_id):
     region = None

@@ -30,9 +30,21 @@
         <a href="{{url_for('account_dog_advs')}}">Мои собаки <span class="badge pull-right">{{current_user.dog_advs_cnt}}</span></a>
       </li>
 
+      <li class="{{'active' if request.path  == url_for('account_dog_advs_archived')}}">
+        <a href="{{url_for('account_dog_advs_archived')}}">Архив собак</a>
+      </li>
+
+      <li class="nav-divider"></li>
+
       <li class="{{'active' if request.path  == url_for('account_cat_advs')}}">
         <a  href="{{url_for('account_cat_advs')}}">Мои кошки <span class="badge pull-right">{{current_user.cat_advs_cnt}}</span></a>
       </li>
+
+      <li class="{{'active' if request.path  == url_for('account_cat_advs_archived')}}">
+        <a href="{{url_for('account_cat_advs_archived')}}">Архив кошек</a>
+      </li>
+
+      <li class="nav-divider"></li>
 
 
         {% for (title, path) in [
