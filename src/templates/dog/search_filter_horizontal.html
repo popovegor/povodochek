@@ -19,18 +19,22 @@
             </tr></table>
         </div>
         <div class="col-sm-7">
-        <table style="width:100%"><tbody><tr>
+        <table class="dsf-geo"><tbody><tr>
            
-            <td>
+            <td class="dsf-geo-location">
               <label for="{{form.city.name}}" class="control-label">Местоположение</label>
-              <input name="{{form.city.name}}" class="form-control" placeholder="Укажите город или область", value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}">
+              <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}" style="" />
+
+              <div class="dsf-geo-delivery">
+                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" /><span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="Показать объявления с доставкой из других населенных пунктов, помимо выбранного местоположения." class="fa fa-question-circle"></i>
+              </div>
+
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
             <td style="width:20px;padding-top:30px" class="text-center">+</td>
             <td style="width:110px">
               <label for="{{form.distance.name}}" class=" control-label">удаленность</label>
               <div class="input-group">
-                
                 <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
                 <span class="input-group-addon" style="font-size:1.2em;font-weight:bold;">км</span>
               </div>
@@ -47,11 +51,11 @@
           <table style="width:100%">
             <tr>
               <td style="width:45px;">
-                <label for="{{form.price_from.name}}" class="control-label">Цена</label>
+                <label class="control-label">Цена</label>
               </td>
               <td style="width:130px">
                 <div class="input-group input-group-md">
-                <input class="form-control" name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
+                <input name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
                 <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
               </div>
               </td>
@@ -75,13 +79,13 @@
 
 {%- macro header() -%}
 
- <div class="ds-header" style="">Поиск объявлений</div>
+ <div class="dsf-header" style="">Поиск объявлений</div>
 
 {%- endmacro -%}
 
 {%- macro advanced() -%}
-  <div class="ds-advanced" >
-    <ul class="list-inline" style="">
+  <div class="dsf-advanced" >
+    <ul class="list-inline">
       <li>
          {{form_field(form.photo)}}
       </li>
@@ -91,12 +95,15 @@
       <li>
         {{form_field(form.champion_bloodlines)}}
       </li>
+      <li data-toggle='popover' data-trigger="hover" data-content="Возможна доставка в другие населенные пункты">
+      
+      </li>
   </ul>
   </div>
 {%- endmacro-%}
 
 {%- macro actions() -%}
-  <div class="ds-actions">
+  <div class="dsf-actions">
       <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий фильтр">Сбросить</span></a>
           <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
   </div>
@@ -152,11 +159,11 @@
           "{{form.city.id}}")); //typeahead  
 
           
-           $(".ds-header-breed").click(function(){
+           $(".dsf-header-breed").click(function(){
               $("#{{form.breed.id}}").val("").focus();
           });
 
-           $(".ds-header-location").click(function(){
+           $(".dsf-header-location").click(function(){
               $("#{{form.city.id}}").val("").focus();
           });
         

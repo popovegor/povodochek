@@ -365,13 +365,13 @@ form {
             font-weight: normal;
            }
            
-           .ds-actions {
+           .dsf-actions {
                 position:absolute; 
                 right:20px; 
                 bottom:65px
            }
 
-           .ds-advanced {
+           .dsf-advanced {
                 margin: 25px -20px 0 -20px;
                 border-radius: 0px 0px 10px 10px;
                 padding:8px 20px 0px 20px;
@@ -382,7 +382,7 @@ form {
                 }
            }
 
-           .ds-header {
+           .dsf-header {
                 position:absolute;
                 padding:10px 20px 0px 20px; 
                 border-radius:10px 10px 0px 0px;
@@ -392,11 +392,40 @@ form {
                 #gradient > .vertical(#f4f6fc, #d9edf7);
            }
 
+           .dsf-geo {
+                width:100%;
+                .dsf-geo-location {
+                    position: relative;
+                    #city {
+                       border-radius: @border-radius-base @border-radius-base @border-radius-base 0;
+                    }
+                    .dsf-geo-delivery {
+                        position: absolute;
+                        bottom: -26px;
+                        left: 1px;
+                        border: solid 1px #ccc;
+                        display: block;
+                        min-height: 20px;
+                        margin:0px 0px;
+                        padding: 3px 10px 3px 30px;
+                        label {
+                            display: inline;
+                            cursor: pointer;
+                            #delivery {
+                                float: left;
+                                margin-left: -20px;
+                            }
+                        }
+                        .fa-question-circle {cursor: help;}
+                    }
+                }
+           }
+
         }
     }
 
     .adv {
-        border-radius:5px;
+        border-radius:@border-radius-base;
 
          padding:25px 30px 25px 30px;
          margin-bottom:20px;
@@ -482,7 +511,7 @@ form {
     
     .filter {
 
-        border-radius:5px;
+        border-radius:@border-radius-base;
 
         background-color: #f5f5f5;
         padding: 15px;

@@ -99,42 +99,36 @@
             
             {% if breed_name %}
             <p class="adv-breed">
-              {#<small>Порода:</small> #}<span>{{breed_name }}</span> 
+              <span>{{breed_name }}</span> 
             </p>
             {%endif%}
 
+            {% set city_id = adv.get("city_id") %}
+            {% if city_id %}
               <p class="adv-city">
-                {% set city_id = adv.get("city_id") %}
 
-                {% if city_id %}
-                {#<small class="">Местоположение:</small> #}<b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id) }}</b>
+              	
+                
+                <b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id) }}</b>
 
-                {% if adv.get("distance") and adv.get("distance") > 0 %}
-                (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г. <b>{{city}}</b>)
+                {% if adv.get("distance") and adv.get("distance") > 0 %}<span>
+                (~{{adv.get("distance") | round(-1, "ceil") | int}} км от г. <b>{{city}}</b>)</span>
                 {% endif %}
 
-              </span>
-              {%endif%}
+                {%if adv.get('delivery') %}
+                &thinsp;&rarr;&ensp;<span class="" data-toggle="popover" data-content="Возможна доставка в ваш город" data-trigger="hover"><i class="fa fa-truck"></i>&nbsp;<small>(доставка)</small></span>
+                {%endif%}
 
-            </p>        
-            
 
-            {#% set gender_name = adv.get("gender_id")  | gender_name %}
-              
-            {%if gender_name %}
-            <p class="adv-gender">
-
-              <small class="text-muted">Пол: </small><span>{{gender_name | lower if gender_name}}</span>
-            </p>
-
-            {%endif%#}
+	          </p>    
+            {%endif%}    
 
             {% if adv.get("desc") %}
-            
             <p class="" style="">
                <span class="">{{adv.get("desc") | truncate (300, end='...', killwords = False)}} </span>
             </p>
             {%endif%}
+
           </div>
 
 

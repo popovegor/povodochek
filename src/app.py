@@ -565,18 +565,18 @@ def sale_find_header(pet_id, breed_id, city, region):
     breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed_header = Markup(u" породы <span class='ajax-link ds-header-breed'>%s</span>" % breed.lower() )
+        breed_header = Markup(u" породы <span class='ajax-link dsf-header-breed'>%s</span>" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
     geo_header = u""
     geo_title = u""
     if city:
-        geo_header = u" в г. <span class='ajax-link ds-header-location'>{0}</span>".format(city.get('city_name'))
+        geo_header = u" в г. <span class='ajax-link dsf-header-location'>{0}</span>".format(city.get('city_name'))
         geo_title = u" в г. {0}".format(city.get('city_name'))
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
     elif region:
-        geo_header = u" в <span class='ajax-link ds-header-location'>%s</span>" % region.get('region_name_p')
+        geo_header = u" в <span class='ajax-link dsf-header-location'>%s</span>" % region.get('region_name_p')
         geo_title = u" в %s" % region.get('region_name_p')
 
     return (header.format(pet, breed_header, geo_header), \
@@ -589,6 +589,7 @@ def sale_find_header(pet_id, breed_id, city, region):
 #city=-1
 @app.route("/prodazha-sobak/")
 def dog_search():
+    
     form = DogSearch(request.args)
 
     (city, region) = get_geo_from_field(form.city)
@@ -611,11 +612,12 @@ def dog_search():
     (advs, count, total) = db.find_dog_advs(
         breed_id = breed_id, \
         gender_id = form.gender.data, \
-        region = region, \
-        city = city, \
+        region_id = region.get('region_id') if region else None, \
+        city_id = city.get('city_id') if city else None, \
         distance = (form.distance.data + 0.01) if form.distance.data else None, \
         photo = form.photo.data, \
         video = form.video.data, \
+        delivery = form.delivery.data, \
         champion_bloodlines = form.champion_bloodlines.data, \
         price_from = form.price_from.data if form.price_from.data else None, \
         price_to = form.price_to.data if form.price_to.data else None, \

@@ -264,30 +264,46 @@ def get_geo_all_for_typeahead(query, limit):
     return locations
 
 
-def get_near_cities(city = None, distance = None):
+def get_distances_from_city(city_id):
+	distances = {} # city_id : distance
+	city = cities.find_one({'city_id': city_id})
+	if city and city.get("location"):
+		location = city.get("location")
+        geoNear = povodochek.command(
+        	SON([("geoNear",  "cities"), 
+        	("near", location), ( "spherical", True ), 
+        	("limit", 15000)]))
+        distances = { geo["obj"]['city_id'] : geo["dis"]
+        	for geo in geoNear.get("results")}
+	return distances
+
+def get_near_cities(city_id = None, distance = None):
     near_cities = []
-    if city:
+    if city_id:
         search_city = cities.find_one(\
-        	{'city_id': city.get('city_id')})
+        	{'city_id': city_id})
         if search_city and distance and search_city.get("location"):
             location = search_city.get("location")
             geoNear = povodochek.command(SON([("geoNear",  "cities"), \
             	("near", location), ( "spherical", True ), \
-            	("maxDistance", distance * 1000), ("limit", 5000)]))
-            near_cities = [(geo["obj"], geo["dis"]) \
-            for geo in geoNear.get("results")]
+            	("maxDistance", distance * 1000), ("limit", 15000)]))
+            near_cities = { 
+            geo["obj"].get('city_id') : geo["dis"]
+            for geo in geoNear.get("results")}
     return near_cities
+
 
 def find_dog_advs(
 	breed_id = None, gender_id = None, 
-    region = None, city = None,
+    region_id = None, city_id = None,
     distance = None, photo = False,
-    video = False, champion_bloodlines = False,
+    video = False, delivery = False, 
+    champion_bloodlines = False,
     price_from = None, price_to = None,
 	sort = None, skip = None, limit = None):
 
-    _filter = {}
-    extend_filter = lambda k,v: _filter.update({k:v}) if v else None
+    _filter = []
+    extend_filter = lambda k,v: _filter.append((k,v)) if v else None
     if num(gender_id):
         extend_filter('$or', [{'gender_id' : num(gender_id)}, \
         	{'gender_id' : {'$exists': False}}])
@@ -300,16 +316,23 @@ def find_dog_advs(
         extend_filter("price", \
             {"$gte" : price_from if price_from > 0 else 0,\
              "$lte" : price_to if price_to else sys.maxint })
-    near_cities = []
-    if city:
+    geo_distances = {}
+    geo_filter = None
+
+    if city_id:
+    	geo_distances = get_distances_from_city(city_id)
         if distance:
-            near_cities = get_near_cities(city, distance)
-            extend_filter("city_id", {"$in": [city.get("city_id") \
-            	for city, dis in near_cities]})
+    		near_cities = [c_id for c_id, dis in geo_distances.items() if dis <= distance * 1000]
+    		geo_filter = ('$or', [{"city_id" : {"$in": near_cities}}])
         else:
-            extend_filter("city_id", {"$in": [city.get('city_id')]})
-    elif region:
-        extend_filter("region_id", region.get('region_id'))
+        	geo_filter = ('$or', [{"city_id" : city_id}])
+    elif region_id:
+    	geo_filter = ("$or", [{"region_id" : region_id}])
+    
+    if geo_filter:
+    	if delivery:
+    		geo_filter[1].append({"delivery":True})
+    	extend_filter(geo_filter[0], geo_filter[1])	
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})
@@ -329,6 +352,7 @@ def find_dog_advs(
         sortby = [("update_date", -1)]
     else:
         sortby = [("attraction",-1), ("update_date", -1)]
+
     # print("filter %s" % _filter)
     # print("sort %s" % sortby)
     # print(limit)
@@ -340,11 +364,12 @@ def find_dog_advs(
     count = query.count()
     advs = [adv for adv in query]
 
-    if near_cities:
-        for adv in advs:
-            adv_city_id = adv.get("city_id")
-            (near_city, dist) = next( ((city, dist) for city, dist in near_cities if city["city_id"] == adv_city_id), (None, None))
-            adv["distance"] = int(round(dist / 1000, 0))
+    #add distance into each adv 
+    if geo_distances:
+	    for adv in advs:
+	        dist = geo_distances.get(adv.get('city_id'))
+	        if dist:
+		        adv["distance"] = int(round(dist / 1000, 0))
 
     return (advs, count, total)
 

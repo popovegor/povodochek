@@ -163,6 +163,7 @@ class DogSearch(Form):
     photo = BooleanField(u"с фото")
     video = BooleanField(u"с видео")
     champion_bloodlines = BooleanField(u"чемпионские крови")
+    delivery = BooleanField(u"из других городов с дотавкой")
 
     # price
     price_from = TextField(u"Цена от", \
