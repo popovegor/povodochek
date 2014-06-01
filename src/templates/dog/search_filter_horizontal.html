@@ -26,7 +26,7 @@
               <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}" style="" />
 
               <div class="dsf-geo-delivery">
-                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" /><span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="Показать объявления с доставкой из других населенных пунктов, помимо выбранного местоположения." class="fa fa-question-circle text-semi-muted"></i>
+                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" />&ensp;<span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="Показать объявления с доставкой из других населенных пунктов, помимо выбранного местоположения." class="fa fa-question-circle text-semi-muted"></i>
               </div>
 
             </td>
@@ -137,7 +137,7 @@
 
       //location with autocomplete built on typeahead.js
       $(document).ready(function(){
-        
+
           $("#{{form.breed.id}}").typeahead(
           povodochek.typeahead(
           "{{url_for('ajax_typeahead_dog')}}",

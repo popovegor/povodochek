@@ -6176,25 +6176,18 @@ form .textarea-counter {
 .account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery,
 .dog-search .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery {
   position: absolute;
-  bottom: -26px;
+  bottom: -30px;
   left: 1px;
-  display: block;
   min-height: 20px;
-  padding: 3px 10px 3px 30px;
-  margin: 0 0;
+  padding: 0 10px 0 10px;
+  margin: 0;
   border: solid 1px #ccc;
 }
-.pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label,
-.account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label,
-.dog-search .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label {
-  display: inline;
-  cursor: pointer;
-}
-.pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label #delivery,
-.account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label #delivery,
-.dog-search .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label #delivery {
-  float: left;
-  margin-left: -20px;
+.pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery #delivery,
+.account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery #delivery,
+.dog-search .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery #delivery {
+  margin-top: 0;
+  vertical-align: middle;
 }
 .pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery .fa-question-circle,
 .account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery .fa-question-circle,
