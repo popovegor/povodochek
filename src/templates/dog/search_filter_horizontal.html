@@ -26,7 +26,7 @@
               <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}" style="" />
 
               <div class="dsf-geo-delivery">
-                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" /><span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="Показать объявления с доставкой из других населенных пунктов, помимо выбранного местоположения." class="fa fa-question-circle"></i>
+                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" /><span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="Показать объявления с доставкой из других населенных пунктов, помимо выбранного местоположения." class="fa fa-question-circle text-semi-muted"></i>
               </div>
 
             </td>
@@ -36,7 +36,7 @@
               <label for="{{form.distance.name}}" class=" control-label">удаленность</label>
               <div class="input-group">
                 <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
-                <span class="input-group-addon" style="font-size:1.2em;font-weight:bold;">км</span>
+                <span class="input-group-addon" style="font-weight:bold;">км</span>
               </div>
             </td>
           </tr></tbody></table>
@@ -56,14 +56,14 @@
               <td style="width:130px">
                 <div class="input-group input-group-md">
                 <input name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
-                <span class="input-group-addon" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
+                <span class="input-group-addon" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>
               </div>
               </td>
               <td style="width:25px;" class="text-center small">&ndash;</td>
               <td style="width:130px;">
                <div class="input-group input-group-md">
                 <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
-                <span class="input-group-addon rur" title="Рубль"><i class="fa fa-ruble fa-lg"></i></span>
+                <span class="input-group-addon rur" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>
               </div>  
               </td>
             </tr>
@@ -131,22 +131,12 @@
 
 </div>
 
-
-
-
-
 <script type="text/javascript">
 
 
+
       //location with autocomplete built on typeahead.js
-      $(function(){
-
-        $("#{{form.distance.id}}").inputmask("integer", { allowMinus: false, allowPlus: false , rightAlignNumerics: false});
-
-        $("#{{form.price_from.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false, autoGroup: true, groupSeparator: " ", groupSize: 3});
-
-        $("#{{form.price_to.id}}").inputmask("integer", { allowMinus: false, allowPlus: false, rightAlignNumerics: false, autoGroup: true, groupSeparator: " ", groupSize: 3});
-
+      $(document).ready(function(){
         
           $("#{{form.breed.id}}").typeahead(
           povodochek.typeahead(
