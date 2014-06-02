@@ -619,6 +619,8 @@ def dog_search():
         video = form.video.data, \
         delivery = form.delivery.data, \
         champion_bloodlines = form.champion_bloodlines.data, \
+        contract = form.contract.data, \
+        pedigree = form.pedigree.data, \
         price_from = form.price_from.data if form.price_from.data else None, \
         price_to = form.price_to.data if form.price_to.data else None, \
         sort = session.get("dog_sort"),
@@ -776,8 +778,6 @@ def sale_show(id):
         title = title,
         adv = adv,
         seller = seller)
-
-
 
 @app.route("/account/")
 @login_required

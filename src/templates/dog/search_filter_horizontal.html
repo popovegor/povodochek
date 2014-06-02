@@ -26,14 +26,14 @@
               <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}" style="" />
 
               <div class="dsf-geo-delivery">
-                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" />&ensp;<span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="Показать объявления с доставкой из других населенных пунктов, помимо выбранного местоположения." class="fa fa-question-circle text-semi-muted"></i>
+                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" />&ensp;<span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="<div style='width:300px'>Показывать объявления с&nbsp;доставкой из других населенных пунктов, помимо выбранного местоположения.</div>" data-placement="top" class="fa fa-question-circle text-muted" data-html="true"></i>
               </div>
 
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
             <td style="width:20px;padding-top:30px" class="text-center">+</td>
             <td style="width:110px">
-              <label for="{{form.distance.name}}" class=" control-label">удаленность</label>
+              <label for="{{form.distance.name}}" class="control-label">удаленность&nbsp;<i class="fa fa-question-circle text-muted" data-toggle="popover" data-placement="left" data-content="<div style='width:200px; font-weight:normal'>Учитывать города в близлежащей окрестность от указаного местоположения.</div>" data-html="true" data-trigger="hover"></i></label>
               <div class="input-group">
                 <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
                 <span class="input-group-addon" style="font-weight:bold;">км</span>
@@ -46,14 +46,16 @@
 
 {%- macro second_line() -%}
    <!-- price -->
-      <div class="row" style="margin-top:25px">
+      <div class="row" style="margin-top:15px">
         <div class="col-sm-5">
+          <label class="control-label">Цена <i>(руб)</i></label>
           <table style="width:100%">
             <tr>
-              <td style="width:45px;">
+              {#<td style="width:45px;">
                 <label class="control-label">Цена</label>
-              </td>
+              </td>#}
               <td style="width:130px">
+               
                 <div class="input-group input-group-md">
                 <input name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
                 <span class="input-group-addon" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>
@@ -93,10 +95,19 @@
         {{form_field(form.video)}}
       </li>
       <li>
-        {{form_field(form.champion_bloodlines)}}
+        <div style="float:left; display:inline-block">{{form_field(form.contract)}}</div>&nbsp;<i class="cursor-help fa fa-question-circle text-muted"  data-placement="top" data-trigger="hover" data-toggle="popover" data-content="<div>Продавец заключает с покупателем договор купли-продажи.</div>" data-html="true"></i>
       </li>
-      <li data-toggle='popover' data-trigger="hover" data-content="Возможна доставка в другие населенные пункты">
-      
+      <li>
+        <div style="float:left; display:inline-block">
+            {{form_field(form.pedigree)}}
+        </div>&nbsp;<i class="cursor-help fa fa-question-circle text-muted"  data-placement="top" data-trigger="hover" data-toggle="popover" data-content="<div>Продавец предоставляет официальный документ, гарантирующий породистое происхождение собаки.</div>" data-html="true"></i>
+      </li>
+      <li>
+      <div style="float:left; display:inline-block">
+        {{form_field(form.champion_bloodlines)}}
+      </div>
+      &nbsp;<i class="cursor-help fa fa-question-circle text-muted"  data-placement="top" data-trigger="hover" data-toggle="popover" data-content="<div style='width:250px'>Родители собаки завоевали на выставах чемпионские титулы.</div>" data-html="true"></i>
+        
       </li>
   </ul>
   </div>

@@ -299,6 +299,8 @@ def find_dog_advs(
     distance = None, photo = False,
     video = False, delivery = False, 
     champion_bloodlines = False,
+    contract = False, 
+    pedigree = False,
     price_from = None, price_to = None,
 	sort = None, skip = None, limit = None):
 
@@ -328,7 +330,7 @@ def find_dog_advs(
         	geo_filter = ('$or', [{"city_id" : city_id}])
     elif region_id:
     	geo_filter = ("$or", [{"region_id" : region_id}])
-    
+
     if geo_filter:
     	if delivery:
     		geo_filter[1].append({"delivery":True})
@@ -342,6 +344,12 @@ def find_dog_advs(
 
     if champion_bloodlines: 
         extend_filter("champion_bloodlines", True)
+
+    if contract:
+        extend_filter("contract", True)
+
+    if pedigree:
+        extend_filter("doc_id", {'$exists' : True})
 
     sortby = [("update_date", -1)]
     if sort == 1:

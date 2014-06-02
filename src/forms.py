@@ -162,8 +162,10 @@ class DogSearch(Form):
 
     photo = BooleanField(u"с фото")
     video = BooleanField(u"с видео")
-    champion_bloodlines = BooleanField(u"чемпионские крови")
+    champion_bloodlines = BooleanField(u"чемпионских кровей")
     delivery = BooleanField(u"из других городов с дотавкой")
+    contract = BooleanField(u"с договором")
+    pedigree = BooleanField(u"c родословной")
 
     # price
     price_from = TextField(u"Цена от", \

@@ -23,13 +23,13 @@
         
         {%set adv_video_url = url_for('dog_adv_show', adv_id = adv['_id']) + "#video" %}
         
-        <i class="fa fa-video-camera text-danger pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Автор предоставил ссылку на видео." data-placement="top"></i>
+        <i class="fa fa-video-camera text-danger pull-right cursor-help" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="<div style='width:200px'>Автор предоставил видеоролик.</div>" data-html="true" data-placement="top"></i>
 
         {%endif%}
 
         {% if adv.get("champion_bloodlines") %}
 
-        <i class="fa fa-trophy text-warning pull-right" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы." data-placement="top"></i>
+        <i class="fa fa-trophy text-warning pull-right cursor-help" style="margin-right:5px;margin-top:3px" data-trigger="hover" data-toggle="popover" data-placemnet="top" data-html="true" data-content="<div style='width:250px'>Чемпионские крови &mdash; родители завоевали на выставках чемпионские титулы.</div>" data-placement="top"></i>
 
         {%endif%}
         
@@ -116,7 +116,7 @@
                 {% endif %}
 
                 {%if adv.get('delivery') %}
-                &thinsp;&rarr;&ensp;<span class="" data-toggle="popover" data-content="Возможна доставка в ваш населенный пункт" data-trigger="hover"><i class="fa fa-truck"></i>&nbsp;<small>(доставка)</small></span>
+                &thinsp;&rarr;&ensp;<span style="white-space:nowrap" data-placement="top" data-toggle="popover" data-html="true" data-content="<div style='width:200px'>Возможна доставка в ваш населенный пункт</div>" class="cursor-help" data-trigger="hover"><i class="fa fa-truck"></i>&nbsp;<i class="small">(доставка)</i></span>
                 {%endif%}
 
 
@@ -170,7 +170,7 @@
 
 <div class="more">
 
-    <a class="btn btn-md btn-info"  target="_blank"href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}">Подробнее</a>
+    <a class="btn btn-sm btn-info"  target="_blank"href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}">Подробнее</a>
 
 </div>
 

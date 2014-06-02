@@ -6113,17 +6113,12 @@ form .textarea-counter {
   position: relative;
   padding: 15px 20px 0 20px;
 }
-.pet-sale .ds-filter form label,
-.account-pet-sale .ds-filter form label,
-.dog-search .ds-filter form label {
-  font-weight: normal;
-}
 .pet-sale .ds-filter form .dsf-actions,
 .account-pet-sale .ds-filter form .dsf-actions,
 .dog-search .ds-filter form .dsf-actions {
   position: absolute;
   right: 20px;
-  bottom: 65px;
+  bottom: 60px;
 }
 .pet-sale .ds-filter form .dsf-advanced,
 .account-pet-sale .ds-filter form .dsf-advanced,
@@ -6182,6 +6177,11 @@ form .textarea-counter {
   padding: 0 10px 0 10px;
   margin: 0;
   border: solid 1px #ccc;
+}
+.pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label,
+.account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label,
+.dog-search .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label {
+  font-weight: normal;
 }
 .pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery #delivery,
 .account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery #delivery,
@@ -6848,5 +6848,8 @@ form .textarea-counter {
 .img-logo {
   width: 160px;
   height: 42px;
+}
+.cursor-help {
+  cursor: help;
 }
 /*# sourceMappingURL=bootstrap.css.map */
