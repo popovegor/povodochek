@@ -109,6 +109,8 @@ def reset_user_password(user, pwd_hash, asign):
 def save_user_contact(user_id, form):
 
     now = datetime.utcnow()
+
+    updater = {}
     
     user_set = {'update_date' : now}
     user_unset = {}
@@ -121,10 +123,13 @@ def save_user_contact(user_id, form):
         else: 
             user_unset[db_name] = ""
 
+    if user_unset:
+        updater['$unset'] = user_unset
+    if user_set:
+        updater['$set'] = user_set
+
     user = users.update(\
-        {'_id': ObjectId(user_id)}, \
-        {'$set': user_set, \
-        '$unset': user_unset}, upsert = True)
+        {'_id': ObjectId(user_id)}, updater, upsert = True)
 
     return user
 
