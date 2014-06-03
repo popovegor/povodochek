@@ -26,7 +26,7 @@
               <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}" style="" />
 
               <div class="dsf-geo-delivery">
-                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" />&ensp;<span class="small">из других городов с доставкой</span></label>{#&ensp;<i data-toggle="popover" data-trigger="hover" data-content="<div style='width:300px'>Показывать объявления с&nbsp;доставкой из других населенных пунктов, помимо выбранного местоположения.</div>" data-placement="top" class="fa fa-question-circle text-muted" data-html="true"></i>#}
+                 <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" />&ensp;<span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="<div style='width:300px'>Показывать объявления с&nbsp;доставкой из других населенных пунктов, помимо выбранного местоположения.</div>" data-placement="top" class="fa fa-question-circle text-muted" data-html="true"></i>
               </div>
 
             </td>
