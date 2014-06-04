@@ -107,9 +107,7 @@ def reset_user_password(user, pwd_hash, asign):
 
 
 def save_user_contact(user_id, form):
-
     now = datetime.utcnow()
-
     updater = {}
     
     user_set = {'update_date' : now}
@@ -154,6 +152,9 @@ def get_cat_adv_archived_for_user(adv_id, user_id):
 
 def get_dog_adv_archived(adv_id):
     return dog_advs_archived.find_one({'_id': ObjectId(adv_id)})
+
+def get_dog_adv_deleted(adv_id):
+    return dog_advs_deleted.find_one({'_id':ObjectId(adv_id)})
 
 def get_cat_adv(adv_id):
     return cat_advs.find_one({'_id': ObjectId(adv_id)})    
@@ -625,16 +626,18 @@ def mark_dog_adv_as_vk_posted(adv_id, post_id):
         multi = False, upsert = False)
 
 def get_dog_advs_to_remove_from_vk():
-    return dog_advs_archived.find({'vk.post_deleted' : {'$ne':True}, 'vk.post' : True })
+    return [adv for adv in dog_advs_archived.find({'vk.post_deleted' : {'$ne':True}, 'vk.post' : True })] + [adv for adv in dog_advs_deleted.find({'vk.post_deleted' : {'$ne':True}, 'vk.post' : True })]
 
 def mark_dog_adv_as_vk_deleted(adv_id):
     now = datetime.utcnow()
-    dog_advs_archived.update({'_id': ObjectId(adv_id)}, {'$set': {'vk.post_deleted' : True, 'vk.post_delete_date' : now}}, multi = False, upsert = False)
+    dog_advs_archived.find_and_modify({'_id': ObjectId(adv_id)}, {'$set': {'vk.post_deleted' : True, 'vk.post_delete_date' : now}}, upsert = False)
+    dog_advs_deleted.find_and_modify({'_id': ObjectId(adv_id)}, {'$set': {'vk.post_deleted' : True, 'vk.post_delete_date' : now}}, upsert = False)
 
 def get_dog_advs_to_post_in_fb(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
     return dog_advs.find({'update_date' : {'$gte':dt}, 
         'fb.post':{'$ne':True} })
+
 
 def mark_dog_adv_as_fb_posted(adv_id, post_id):
     now = datetime.utcnow()
@@ -644,11 +647,14 @@ def mark_dog_adv_as_fb_posted(adv_id, post_id):
         multi = False, upsert = False)
 
 def get_dog_advs_to_remove_from_fb():
-    return dog_advs_archived.find({'fb.post_deleted' : {'$ne':True}, 'fb.post' : True })
+    return 
+    [adv for adv in dog_advs_archived.find({'fb.post_deleted' : {'$ne':True}, 'fb.post' : True })] 
+    + [adv for adv in dog_advs_deleted.find({'fb.post_deleted' : {'$ne':True}, 'fb.post' : True })]
 
 def mark_dog_adv_as_fb_deleted(adv_id):
     now = datetime.utcnow()
     dog_advs_archived.update({'_id': ObjectId(adv_id)}, {'$set': {'fb.post_deleted' : True, 'fb.post_delete_date' : now}}, multi = False, upsert = False)
+    dog_advs_deleted.find_and_modify({'_id': ObjectId(adv_id)}, {'$set': {'fb.post_deleted' : True, 'fb.post_delete_date' : now}}, upsert = False)
 
 def get_region_by_id(region_id):
     region = None

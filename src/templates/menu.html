@@ -8,9 +8,9 @@
     <ul class="nav navbar-nav navbar-left">
       <li class="{{'active' if url_for('index') == request.path else ''}}"><a href="{{url_for('index')}}" class="menu-breed-selector" title="Поводочек – подбор породы">&nbsp;<i class="fa fa-home"></i>&nbsp;</a></li>
       <li class="menu-item-divider"></li>
-       <li class="{{'active' if url_for('dog_search') in request.path else ''}}"><a href="{{url_for('dog_search')}}"  title="Объявления о продаже собак/щенков">Собаки</a></li>
+       <li class="{{'active' if url_for('dog_search') in request.path else ''}}"><a href="{{url_for('dog_search')}}"  title="Объявления о продаже собак/щенков">Продажа собак</a></li>
        <li class="menu-item-divider"></li>
-       <li class="{{'active' if url_for('cat_search') in request.path else ''}}"><a href="{{url_for('cat_search')}}"  title="Объявления о продаже кошек/котят">Кошки</a></li>
+       <li class="{{'active' if url_for('cat_search') in request.path else ''}}"><a href="{{url_for('cat_search')}}"  title="Объявления о продаже кошек/котят">Продажа кошек</a></li>
        <li class="menu-item-divider"></li>
        <li class=" {{'active' if url_for('advice') in request.path else ''}}"><a href="{{url_for('advice')}}"  title="Полезные советы и статьи о кошках, собаках и других животных">Полезное</a></li>
        

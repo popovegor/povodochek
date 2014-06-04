@@ -56,6 +56,8 @@ def post_dog_adv(adv_id):
 def remove_dog_adv(adv_id):
     try:
         adv = db.get_dog_adv_archived(adv_id)
+        if not adv:
+        	adv = db.get_dog_adv_deleted(adv_id)
         pprint(adv)
         result = call_api(method = "DELETE", 
 			node_id = adv.get('fb').get('post_id'))

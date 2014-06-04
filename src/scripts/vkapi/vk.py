@@ -50,6 +50,8 @@ def remove_dog_adv(adv_id):
     try:
         token, user_id = vk_auth.auth(USER_EMAIL, USER_PWD, USER_ID, ['wall'])
         adv = db.get_dog_adv_archived(adv_id)
+        if not adv:
+            adv = db.get_dog_adv_deleted(adv_id)
         pprint(adv)
         result = call_api('wall.delete', {
             'post_id':adv.get('vk').get('post_id'), 
@@ -60,7 +62,6 @@ def remove_dog_adv(adv_id):
     except Exception, e:
         logger.exception(e)
         raise e
-
 
 
 def post_dog_adv(adv_id):
@@ -121,6 +122,10 @@ def remove_dog_advs_from_vk():
     for adv in db.get_dog_advs_to_remove_from_vk():
         result = remove_dog_adv(adv.get('_id'))
         pprint(result)
+
+#test section
+#python -m scripts.vkapi.vk post_dog_adv adv_id
+#python -m scripts.vkapi.vk remove_dog_adv adv_id
              
 if __name__ == '__main__':
     func = sys.argv[1]
