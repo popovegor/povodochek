@@ -6818,7 +6818,7 @@ form .textarea-counter {
   border-bottom: dotted 1px;
 }
 #header {
-  height: 92px;
+  height: 100px;
   background-color: #f5f5f5;
 }
 #header .header-tagline {
@@ -6826,7 +6826,7 @@ form .textarea-counter {
   vertical-align: bottom;
 }
 #header .header-post-adv {
-  padding: 5px 0 0;
+  padding: 10px 0 0;
 }
 #menu li.menu-item-divider {
   height: 40px;
@@ -6846,8 +6846,8 @@ form .textarea-counter {
   border-radius: 4px 0 0 4px;
 }
 .img-logo {
-  width: 160px;
-  height: 42px;
+  /*height: 42px;*/
+  /*width:160px;*/
 }
 .cursor-help {
   cursor: help;
