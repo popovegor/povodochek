@@ -2,21 +2,21 @@
   
    <div class="container"> 
 
-    <div style="padding:15px 0px 5px 0">
+    <div style="padding:15px 0px 5px 3px">
       <ul class="list-inline">
         <li class="header-logo">
             {%if url_for('index') != request.path %}
             <a href="{{url_for('index')}}">
-              <img src="/static/img/logo.png" class="img-logo">
+              <img src="/static/img/logo_2.png" class="img-logo">
             </a>
             {%else%}
               <span href="{{url_for('index')}}">
-                <img src="/static/img/logo.png" class="img-logo">
+                <img src="/static/img/logo_2.png" class="img-logo">
               </span>
             {%endif%}
         </li>
         <li style="" class="header-tagline">
-          <span class="small text-semi-muted">Продажа и покупка породистых собак и кошек</span>
+          <span class="text-semi-muted">Продажа и покупка породистых собак и кошек</span>
         </li>
         <li class="header-post-adv pull-right">
           {% include "pet_post_button.html"%}   
