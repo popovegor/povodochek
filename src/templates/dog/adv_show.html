@@ -130,9 +130,6 @@
     </span>
     </span>#}
 
-    <span style="margin-right:15px">Объявление</span>
-
-
     {% set add_date = adv.get("add_date") %}
     {% set update_date = adv.get("update_date") %}
 
@@ -609,7 +606,7 @@
 <div class="seller-block well" style="padding:10px 20px 20px; box-shadow:2px 2px 5px 0px #ccc" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
     <h3 style="margin-bottom:20px">Контактная информация</h3>      
       
-      {%set username = adv.get("username") or (seller.get("username") if seller else "") %}
+      {%set username = adv.get("username") or (seller.get("username") + " " + seller.get("surname") if seller else "") %}
       {% if username %}
       <div class="row">
      <p class="{{col_left_class}}">Контактное лицо</p>
@@ -643,7 +640,7 @@
         </div>
         {%endif%}
 
-      {% set kennel_name = adv.get("kennel_name") %}
+      {#% set kennel_name = adv.get("kennel_name") %}
         {% if kennel_name %}
         <div class="row">
        <p class="{{col_left_class}}">Питомник</p>
@@ -651,7 +648,7 @@
         <span>{{kennel_name}}</span>
       </p>
       </div>
-      {%endif%}
+      {%endif%#}
   
       {%set site = adv.get("site_link") or (seller.get("site_link") if seller else "") %}
         {%if site %}

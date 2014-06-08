@@ -209,8 +209,10 @@ class SaleSearch(Form):
 
     perpage = SelectField(u"Объявлений на стр.", default = 15, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
 
-class Contact(Form):
+class Profile(Form):
     username = PTextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])
+
+    surname = PTextField(u"Фамилия")
 
     city = PTextField(u"Город", validators = [validate_location], 
         db_name = 'city_id', \
@@ -222,7 +224,7 @@ class Contact(Form):
     skype = PTextField(u"Skype")
 
     site_link = PTextField(u"Веб-сайт")
-    kennel_name = PTextField(u"Название питомника")
+    # kennel_name = PTextField(u"Название питомника")
     
 
 class Cat(Form):

@@ -7,7 +7,7 @@ from flask_login import (LoginManager, current_user,
                             confirm_login, fresh_login_required, user_logged_in)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
-from forms import (SignUp, SignIn, Cat, Contact, \
+from forms import (SignUp, SignIn, Cat, Profile, \
     Activate,ResetPassword, ChangePassword, \
     SaleSearch, SendMail, ChangeEmail, SignUpBasic, \
     get_breed_from_field, Dog, DogSearch, get_geo_from_field)
@@ -65,6 +65,7 @@ class User(UserMixin):
     def __init__(self, user):
         # self.name = user.get('login')
         self.username = user.get('username')
+        self.surname = user.get('surname')
         self.id = user.get('_id')
         self.active = user.get('activated')
         self.email = user.get('email')
@@ -805,21 +806,28 @@ def account_user():
     tmpl = render_template("account/user.html", title=u"Учетные данные")
     return tmpl
 
-@app.route("/account/profile/", methods = ["GET", "POST"])
+@app.route("/account/profile/", methods = ["GET"])
 @login_required
 def account_profile():
     user = db.get_user(current_user.id)
-    form = Contact(request.form)
+    tmpl = render_template("account/profile.html", title=u"Профиль")
+    return tmpl
+
+@app.route("/account/profile/edit/", methods = ["GET", "POST"])
+@login_required
+def account_profile_edit():
+    user = db.get_user(current_user.id)
+    form = Profile(request.form)
     if request.method == "POST":
         if form.validate():
             db.save_user_contact(current_user.id, form)
-            flash(u"Профиль обновлен.", "success")
+            flash(u"Ваш профиль обновлен.", "success")
             return redirect(url_for("account_profile"))
     else:
         for f in form:
             f.set_db_val(user.get(f.get_db_name()))
 
-    tmpl = render_template("account/contact.html", title=u"Профиль", form = form)
+    tmpl = render_template("account/profile_edit.html", title=u"Редактирование профиля", form = form)
     return tmpl
 
 @app.route("/account/adoption/")
@@ -929,11 +937,11 @@ def account_dog_adv_archived_restore(adv_id):
         fields = get_fields(form))
 
 def autofill_user_to_adv(form):
-    form.username.data = form.username.data or (current_user.username if current_user.username != u'Пользователь' else u'')
+    form.username.data = form.username.data or (current_user.username + " " + current_user.surname if current_user.username != u'Пользователь' else u'')
     form.phone.data = form.phone.data or current_user.phone
     form.skype.data = form.skype.data or current_user.skype
     form.site_link.data = form.site_link.data or current_user.site_link
-    form.kennel_name.data = form.kennel_name.data or current_user.kennel_name
+    # form.kennel_name.data = form.kennel_name.data or current_user.kennel_name
 
 
 @app.route("/account/dog/<adv_id>/", methods = ['GET', 'POST'])

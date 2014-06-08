@@ -6846,8 +6846,8 @@ form .textarea-counter {
   border-radius: 4px 0 0 4px;
 }
 .img-logo {
-  /*height: 42px;*/
-  /*width:160px;*/
+  width: 131px;
+  height: 48px;
 }
 .cursor-help {
   cursor: help;

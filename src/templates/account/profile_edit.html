@@ -2,7 +2,6 @@
 
 {%block page_desc %}
 
-<span class="">Контактная информация будет подставляться в блок с вашими контактными данными при добавлении новых объявлений.</span>    
 
 {%endblock%}
 
@@ -16,29 +15,27 @@
 
         <form action="{{request.url}}" method="POST" id="contact" role="form">
 
-            {{ form_field(form.username, placeholder="Введите ваше имя", style="width:250px") }}         
+            {{ form_field(form.username, placeholder="Введите ваше имя", style="width:250px") }}  
+
+            {{ form_field(form.surname, placeholder="Введите вашу фамилию", style="width:250px") }}    
 
            
               {{ form_field(form.phone, placeholder = "Введите тел.", style="width:150px") }}
-              
-             
 
-      
-          
-                   {{ form_field(form.skype, placeholder="Введите skype-имя", style="width:180px") }}
+                   {{ form_field(form.skype, placeholder="Введите skype", style="width:180px") }}
 
              
 
                    {{ form_field(form.city, placeholder="Введите название населенного пункта", style="width:350px", autocomplete = "off") }}
 
 
-                   {{ form_field(form.kennel_name, placeholder="Введите название питомника", style="width:350px", autocomplete = "off") }}
+                   {#{ form_field(form.kennel_name, placeholder="Введите название питомника", style="width:350px", autocomplete = "off") }#}
 
                     {{ form_field(form.site_link, placeholder="http://", style="width:350px", autocomplete = "off") }}
 
               <br/>
 
-              <button type="submit" class="btn btn-primary" id="save" data-loading-text="Сохраняется...">Сохранить</button>
+              <button type="submit" class="btn btn-primary" id="save" data-loading-text="Сохраняется...">Сохранить профиль</button>
 
 
         </form>
