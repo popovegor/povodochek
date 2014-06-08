@@ -937,7 +937,7 @@ def account_dog_adv_archived_restore(adv_id):
         fields = get_fields(form))
 
 def autofill_user_to_adv(form):
-    form.username.data = form.username.data or (current_user.username + " " + current_user.surname if current_user.username != u'Пользователь' else u'')
+    form.username.data = form.username.data or (current_user.username + " " + (current_user.surname or "") if current_user.username != u'Пользователь' else u'')
     form.phone.data = form.phone.data or current_user.phone
     form.skype.data = form.skype.data or current_user.skype
     form.site_link.data = form.site_link.data or current_user.site_link

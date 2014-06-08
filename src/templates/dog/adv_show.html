@@ -606,7 +606,7 @@
 <div class="seller-block well" style="padding:10px 20px 20px; box-shadow:2px 2px 5px 0px #ccc" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
     <h3 style="margin-bottom:20px">Контактная информация</h3>      
       
-      {%set username = adv.get("username") or (seller.get("username") + " " + seller.get("surname") if seller else "") %}
+      {%set username = adv.get("username") or (seller.get("username") + " " + (seller.get("surname") or "") if seller else "") %}
       {% if username %}
       <div class="row">
      <p class="{{col_left_class}}">Контактное лицо</p>
