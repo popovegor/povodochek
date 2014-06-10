@@ -396,7 +396,7 @@
           
           <div class="row">
            {%set country = adv.get(prefix + "_country_id") %}
-            <p class="{{col_left_class}}">Страна происхождения</p>
+            <p class="{{col_left_class}}">Страна рождения</p>
             <p class="{{col_right_class}}">
               {% if country %}
                     {{ geo.get_country_name(country) }}

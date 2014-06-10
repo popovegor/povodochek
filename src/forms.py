@@ -344,7 +344,7 @@ class Dog(Form):
         attraction = True, \
         depends = {"id":"doc"})
 
-    father_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
+    father_country = PSelectField(Markup(u"<small>Страна рождения</small>"), \
         choices = [(0, u"-- не указана --")] + geo.get_countries_for_dog_adv(), \
         coerce = int, \
         attraction = True, \
@@ -369,7 +369,7 @@ class Dog(Form):
         attraction = True,\
         depends = {"id":"doc"})
 
-    mother_country = PSelectField(Markup(u"<small>Страна происхождения</small>"), \
+    mother_country = PSelectField(Markup(u"<small>Страна рождения</small>"), \
         choices = [(0, u"-- не указана --")] + geo.get_countries_for_dog_adv(), \
         coerce = int, \
         attraction = True,\
