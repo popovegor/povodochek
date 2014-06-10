@@ -3,14 +3,15 @@
 
 from flask import (Flask, render_template, request, flash, redirect, url_for, session, send_from_directory, send_file, abort, jsonify, Markup, make_response)
 from flask_login import (LoginManager, current_user,
-                            login_user, logout_user, login_required, UserMixin, AnonymousUser,
-                            confirm_login, fresh_login_required, user_logged_in)
+    login_user, logout_user, login_required,
+    confirm_login, fresh_login_required, user_logged_in)
 
 from wtforms import (Form, BooleanField, TextField, PasswordField, validators)
 from forms import (SignUp, SignIn, Cat, Profile, \
     Activate,ResetPassword, ChangePassword, \
     SaleSearch, SendMail, ChangeEmail, SignUpBasic, \
-    get_breed_from_field, Dog, DogSearch, get_geo_from_field)
+    get_breed_from_field, Dog, DogSearch, get_geo_from_field,
+    AdminNews, Comment)
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from werkzeug.utils import secure_filename
@@ -24,8 +25,7 @@ from sys import maxint
 from itertools import groupby
 from bson.objectid import ObjectId
 
-from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,
-                              UploadNotAllowed)
+from flaskext.uploads import (UploadSet, configure_uploads, IMAGES,UploadNotAllowed)
 
 from security import hash_password, check_password
 
@@ -58,41 +58,11 @@ from form_helper import (get_fields, calc_attraction)
 import cProfile
 import sys
 
+from mailing import mail_robot
+import users
+
 
 photos = UploadSet('photos', IMAGES)
-
-class User(UserMixin):
-    def __init__(self, user):
-        # self.name = user.get('login')
-        self.username = user.get('username')
-        self.surname = user.get('surname')
-        self.id = user.get('_id')
-        self.active = user.get('activated')
-        self.email = user.get('email')
-        self.new_email = user.get('new_email')
-        self.city_id = user.get('city_id')
-        self.phone = user.get('phone')
-        self.skype = user.get('skype')
-        self.kennel_name = user.get('kennel_name')
-        self.site_link = user.get('site_link')
-        self.dog_advs_cnt = user.get('dog_advs_cnt')
-        self.cat_advs_cnt = user.get('cat_advs_cnt')
-
-    def is_signed(self):
-        return True
-
-    def is_active(self):
-        return True or self.active
-
-class Anonymous(AnonymousUser):
-    def __init__(self):
-        self.name = u"Anonymous"
-        self.username = u""
-        self.email = u""
-        self.active = False
-
-    def is_signed(self):
-        return False
 
 app = Flask(__name__)
 
@@ -145,7 +115,7 @@ configure_uploads(app, (photos))
 
 login_manager = LoginManager()
 
-login_manager.anonymous_user = Anonymous
+login_manager.anonymous_user = users.Anonymous
 login_manager.login_view = "/signin/"
 login_manager.login_message = u"Пожалуйста, войдите, чтобы увидеть содержимое страницы."
 login_manager.refresh_view = "reauth"
@@ -194,7 +164,9 @@ app.jinja_env.globals['utcnow'] = datetime.utcnow()
 app.jinja_env.globals['pet_docs'] = dic.pet_docs
 app.jinja_env.globals['breeds'] = breeds
 app.jinja_env.globals['pets'] = pets
+app.jinja_env.globals['users'] = users
 app.jinja_env.filters['morph_word'] = morph_word
+
 
 
 def change_query(url, param, old, new):
@@ -246,9 +218,9 @@ def load_user(id):
     if user and not user.get('banned'):
         user['dog_advs_cnt'] = db.get_dog_advs_by_user(id).count()
         user['cat_advs_cnt'] = db.get_cat_advs_by_user(id).count()
-        return User(user)
+        return users.User(user)
     else:
-        return Anonymous()
+        return users.Anonymous()
 
 @app.route("/")
 def index():
@@ -271,7 +243,7 @@ def signin():
         user = db.get_user_by_login(login_or_email) or db.get_user_by_email(login_or_email)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
-                if login_user(User({'_id' : user["_id"]}), remember=remember):
+                if login_user(users.User({'_id' : user["_id"]}), remember=remember):
                     return redirect(request.args.get("next") \
                         or url_for("account_profile"))
                 else:
@@ -451,7 +423,7 @@ def asignin(asign):
     title=u"Активация нового пароля"
     if user:
         db.asign_user(user)
-        if login_user(User(user)):
+        if login_user(users.User(user)):
             return render_template("asignin_success.html", title = title)
     return render_template("asignin_failed.html", title=title)
 
@@ -520,7 +492,7 @@ def signup_basic():
             raise e
 
         flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
-        if login_user(User({'_id' : user_id}), remember = True):
+        if login_user(users.User({'_id' : user_id}), remember = True):
             return redirect(request.args.get('next') or url_for('account_profile'))
         else:
                 return redirect(url_for('signin'))
@@ -1364,6 +1336,48 @@ def contacts():
     return render_template("/contacts.html", \
         title=u"Контактная информация")
 
+
+@app.route('/news/<news_id>/', methods = ["GET"])
+def news_view(news_id):
+    news = db.get_news_by_id(news_id)
+    if not news:
+        abort(404)
+
+    return render_template('/news/news_view.html', title = Markup(news.get('subject')), news = news, form = Comment(request.form))
+
+
+@app.route('/news/<news_id>/comment/', methods = ["POST", "GET"])
+@login_required
+def news_view_comment(news_id):
+    news = db.get_news_by_id(news_id)
+    if not news:
+        abort(404)
+
+    if request.method == "POST":
+        form = Comment(request.form)
+        if form.validate():
+            news = db.comment_news(news_id = news_id, 
+                levels = form.levels.data,
+                text = form.text.data, 
+                author_id = current_user.id)
+        
+        comment_levels = "_".join([str(level) for level in form.levels.data])
+        anchor = "comment_%s" % (
+            comment_levels or len(news.get("comments") or ['']) - 1 )
+    else:
+        anchor = "comment_%s" % len(news.get("comments") or ['']) - 1
+    return redirect(url_for('news_view', news_id = news_id, _anchor =  anchor ))
+
+    # return render_template('/news/news_view.html', title = Markup(news.get('subject')), news = news, form = form)
+    
+
+@app.route('/news/')
+def news():
+    news_feed = db.get_news_feed()
+    total = news_feed.count()
+    perpage = 10
+    return render_template('/news/news_feed.html', title = Markup(u"Новости проекта"), news_feed = news_feed, total = total, perpage = perpage)
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', title = u"Запрашиваемая вами страница не найдена"), 404
@@ -1371,7 +1385,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html', title = u"Упс, у нас на сервере произошла ошибка!"), 500
-
 
 # admin
 
@@ -1388,14 +1401,14 @@ def admin_requried(func):
 
 @app.route('/admin/user/')
 @admin_requried
-def admin_users():
+def admin_user():
     page = int(request.args.get("page") or 1)
     total = db.users.count()
     perpage = 1000
     u = [user for user in db.admin_get_users(perpage, \
         (page - 1) * perpage)]
 
-    return render_template('/admin/user.html', title = Markup(u"Админка: пользователи"), users = u, total = total, perpage = perpage, page = page)
+    return render_template('/admin/user.html', title = Markup(u"Админка: пользователи &mdash; %s" % total), users = u, total = total, perpage = perpage, page = page)
 
 @app.route('/admin/sale/')
 @admin_requried
@@ -1456,6 +1469,73 @@ def admin_sale_edit(adv_id):
         form.email.data = adv.get("email")
         form.username.data = adv.get("username")
     return render_template("/admin/sale_edit.html", form = form, title=u"Админка: редактировать объявление о продаже", btn_name = u"Сохранить", adv = adv)
+
+@app.route('/admin/news/new/', methods = ["POST", "GET"])
+@admin_requried
+def admin_news_new():
+    form = AdminNews(request.form)
+    if request.method == "POST" and form.validate():
+        news = save_news(news_id = None, form = form)
+        flash(u'Новость "%s" сохранена' % news.get('subject'), "success")
+        return redirect(url_for('admin_news'))
+    else:
+        return render_template('/admin/news_edit.html', title = Markup(u"Админка: публикация новости"), form = form)
+
+@app.route('/admin/mews/<news_id>/edit/', methods = ["POST", "GET"])
+@admin_requried
+def admin_news_edit(news_id):
+
+    news = db.get_news_by_id(news_id)
+    if not news:
+        abort(404)
+
+    form = AdminNews(request.form)
+    if request.method == "POST":
+        if form.validate():
+            news = save_news(news_id = news_id, form = form)
+            flash(u'Новость "%s" сохранена' % news.get('subject'), "success")
+            return redirect(url_for('admin_news'))
+    else:
+        form.load_from_db_entity(news)
+    return render_template('/admin/news_edit.html', title = Markup(u"Админка: Редактирование новости"), form = form)
+
+def save_news(news_id, form):
+    news = db.upsert_news(news_id = news_id, 
+                subject = form.subject.data, 
+                message = form.message.data, 
+                published = form.published.data, 
+                summary = form.summary.data)
+    news_url = None
+    if form.published.data:
+        news_url = url_for('news_view', 
+            news_id = news.get('_id'), _external = True)
+    if form.email_single.data:
+        template = mail_robot.get_layout_template()
+        HTML = template.render(message = news.get('message'), news_url = news_url)
+        mail_robot.send_email(Subject = news.get("subject"), HTML = HTML, To = form.email_single.data)
+    if form.email_everyone.data:
+        print("send everyone")
+        template = mail_robot.get_layout_template()
+        HTML = template.render(message = news.get('message'), news_url = news_url)
+        mail_robot.send_email_to_all(
+            Subject = news.get("subject"), 
+            HTML = HTML)
+    return news
+
+@app.route('/admin/news/')
+@admin_requried
+def admin_news():
+    news_feed = db.get_news_feed()
+    total = news_feed.count()
+    perpage = 1000
+    return render_template('/admin/news.html', title = Markup(u"Админка: новости"), news_feed = news_feed, total = total, perpage = perpage)
+
+@app.route('/admin/news/<news_id>/remove/')
+@admin_requried
+def admin_news_remove(news_id):
+    db.remove_news(news_id)
+    flash(u"Новость '%s' удалена." % news_id, 'success')
+    return redirect(url_for('admin_news'))
     
 @app.route('/test/parser/avito/')
 def test_parser_avito():

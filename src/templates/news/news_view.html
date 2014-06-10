@@ -1,0 +1,152 @@
+{% extends "layout.html" %}
+
+
+{%block breadcrumbs %}
+  
+    {% from "breadcrumbs.html" import breadcrumbs %}
+
+    {{breadcrumbs( [
+    {'name':"Новости проекта", 'url':url_for("news")}, 
+    {'name':news.get("subject") | capitalize}
+    ] ) }}
+              
+    
+{%endblock%}
+
+{%- macro render_post_comment_form(levels, reply_id = None) -%}
+	{% from "forms.html" import form_field %}
+
+		<form method="post" id="post_comment{{levels}}" action="{{url_for('news_view_comment', news_id = news.get('_id'))}}" enctype="multipart/form-data" class="bg-default post-comment-form">
+
+			 <input id="levels" name="levels" type="hidden" value="{{levels}}">
+
+			 <b class="small">Ваш комментарий ({{current_user.get_fullname()}}):</b>
+			 {{ form_field(form.text, autocomplete = "off", lbl_style="display:none", rows="6") }}
+
+			  <button type="submit" class="btn btn-primary btn-xs"  data-loading-text="Добавляется...">
+			  {{"Ответить" if reply_id else "Добавить" }} 
+			  </button>
+			  {%- if reply_id -%}
+			  &ensp;
+			  <a href="javascript:void(0);" type="cancel" class="btn btn-xs btn-default" onclick="$('#{{reply_id}}').toggle();">Отмена</a>
+			  {%- endif -%}
+
+			 <script type="text/javascript">
+
+			    $(document).ready(function(){
+			    	povodochek.validate(
+			    		$("#post_comment{{levels}}"),
+			    		{text : {required:true}}
+			    	);
+			    });
+
+		   	</script>
+
+			
+		</form>
+{%- endmacro -%}
+
+
+{%- macro render_comments(comments, levels = "") -%}
+	{%- if comments -%}
+		{%- for comment in comments -%}
+		  <div class="media comment" id="comment{{levels ~ "_" ~ loop.index0}}">
+		      {#<img class="pull-left media-object" src="/static/img/logo_120x120.png" alt="..." style="width:40px; height:40px">#}
+		      {% if levels %}
+		      <div class="pull-left media-object" style="width:40px; height:40px">&nbsp;</div>
+		      {% endif %}
+		    <div class="media-body">
+			    <div class="comment-body">
+			      <ul class="list-inline">					
+		      		<li class="small">
+		      			{%set author_id = comment.get('author_id') %}
+			     		{#<i class="fa fa-user text-muted"></i>&ensp;#}<b class="">{{ users.get_user(author_id).get_fullname() }}</b>
+		      			
+			     	</li>	
+					<li class="text-muted">
+						<small>{{momentjs(comment.get("create_date")).format("D MMMM YYYY, H:mm")}}</small>
+					</li>
+					</ul>
+					<div class="comment-text">
+						{{comment.get("text")}}	
+					</div>
+					{%- if current_user.is_signed() -%}
+						<div class="comment-reply small">
+						{% set reply_id = "comment_reply_form" ~ levels ~ "_" ~ loop.index0 %}
+						<i class="fa fa-comment text-muted"></i>&ensp;<a href="javascript:void(0);" onclick="$('#{{reply_id}}').toggle();" class="ajax-link small"><i>Ответить</i></a>
+						</div>
+						<div class="comment-reply-form" id='{{reply_id}}'>
+						{{render_post_comment_form(levels = levels ~ "_" ~ loop.index0, reply_id = reply_id )}}		
+						</div>
+					{%- endif -%}
+					
+				</div> <!-- comment-body -->
+
+				{{render_comments(comment.get('comments'), levels = levels ~ "_" ~ loop.index0) }}
+				
+		    </div>
+		  </div>
+		  {%- endfor -%}
+	{%- endif -%}
+{%- endmacro -%}
+
+
+{% block content %}
+
+<div class="news-view ">
+	
+	<h1>{{header or title}}</h1>
+
+	<ul class="list-inline text-semi-muted small">
+		<li>
+			<span title="Дата публикации">{{momentjs(news.get("update_date")).format("D MMMM YYYY, H:mm")}}</span>
+		</li>
+		<li>
+			<span title="Количество комментариев"><i class="fa fa-comments"></i>&ensp;{{news.get("comments_count") or 0}}</span>
+		</li>
+	</ul>
+
+
+	<div class="row">
+		<div class="col-lg-10">
+			<p>
+				{{news.get("message") | safe}}
+			</p>
+		</div>
+	</div> 
+
+
+	<div class="row" style="margin-top:20px">
+		<div class="col-lg-10 comments">
+
+			<h2>Комментарии</h2>
+
+
+			{% if current_user.is_signed() %}
+				{{render_post_comment_form(levels = '')}}
+				<br/>
+			{%else%}
+				<p class="lead">Для комментирования вы должны <a href="{{url_for('signin', next=request.path)}}">войти</a> или <a href="{{url_for('signup_basic', next=request.path)}}">зарегистрироваться</a>.</p>
+			{% endif %}
+
+
+
+			{% if news.get('comments') %}
+
+				{{render_comments(news.get('comments'))}}
+
+			{%else%}
+				<p class="text-semi-muted">
+					Нет комментариев. Станьте первым, кто прокомментирует данную новость.
+				</p>
+
+			{%endif%}
+
+
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock %}

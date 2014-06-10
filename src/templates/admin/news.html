@@ -1,0 +1,63 @@
+{% extends "admin/layout.html" %}
+
+    {% block content %}
+
+    <br/>
+
+    <a href="{{url_for('admin_news_new')}}" class="btn btn-default">Добавить новость&nbsp;&rarr;</a>
+
+   
+    <table class="table table-striped" style="margin-top:20px">
+      <thead>
+        <tr>
+          <th style="width:200px">ID</th>
+          <th style="width:20px">Опубликовано</th>
+          <th style="width:150px">Дата</th>
+          <th>Заголовок</th>
+          <th style="width:100px"></th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        {% for news in news_feed %}
+
+          <tr>
+          <td>{{news.get('_id')}}
+            <br/>
+            {{loop.index}}
+          </td>
+          <td>{{news.get('visible')}}</td>
+          <td>{{news.get('update_date')}}</td>
+            <td>{{news.get('subject')}}</td>
+            <td>
+
+                <a target="_blank" class="btn btn-default btn-xs" href="{{url_for('news_view', news_id = news.get('_id'))}}"><i class="fa fa-eye"></i></a>
+
+                <a class="btn btn-default btn-xs" href="{{url_for('admin_news_edit', news_id = news.get('_id'))}}"><i class="fa fa-pencil"></i></a>
+
+                <a class="btn btn-danger btn-xs" href="{{url_for('admin_news_remove', news_id = news.get('_id'))}}"><i class="fa fa-trash-o"></i></a></td>
+          </td>
+          </tr>
+
+        {%endfor%}
+
+      </tbody>
+
+    </table>
+
+
+    <div class="">
+      {%set page_count = total // perpage %}
+      <ul class="pagination-mini pagination">
+        {%for page_number in range(1, page_count) %}
+        <li class="{{'active' if page_number == page or ''}}"><a href="{{url_for('admin_sale', page = page_number)}}">{{page_number}}</a></li>
+        {%endfor%}
+      </ul>
+    </div>
+
+
+
+    {% endblock %}
+ 
+
+

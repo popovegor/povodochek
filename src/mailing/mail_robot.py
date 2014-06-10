@@ -12,16 +12,13 @@ import config
 import db
 
 
-env = Environment(loader=PackageLoader('scripts', 'mail_templates'))
+env = Environment(loader=PackageLoader('mailing', ''))
 
-
-
-def send_email(From = u"Поводочек <%s>" % config.MAIL_USERNAME, \
-	To = "popovegor.ati@gmail.com", \
-	Subject = u"Сообщение от портала Поводочек", Text = u"", \
+def send_email(From = u"Поводочек <%s>" % config.MAIL_USERNAME,
+	To = "popovegor.ati@gmail.com",
+	Subject = u"Сообщение от портала Поводочек", Text = u"",
 	HTML = u""):
 	try:
-		 
 		# Construct email
 		msg = MIMEMultipart('alternative')
 		msg['To'] = To.encode("utf-8")
@@ -43,11 +40,27 @@ def send_email(From = u"Поводочек <%s>" % config.MAIL_USERNAME, \
 		s = SMTP(config.MAIL_SERVER)
 		s.login(config.MAIL_USERNAME,config.MAIL_PASSWORD)
 		try:
-			s.sendmail(From, To, msg.as_string())
+			if not config.MAIL_ROBOT_SUPPRESS_SEND:
+				s.sendmail(From, To, msg.as_string())
 		finally:
 			s.quit()
 	except Exception, exc:
 		sys.exit( "mail failed; %s" % str(exc) ) # give a error message
+
+
+def send_email_to_all(Subject, HTML):
+	counter = 0
+	for user in db.users.find():
+		counter += 1
+		email = user.get('email')
+		name = user.get('username')
+		print(counter, name, email)
+		to = u"%s <%s>" % (name, email) if name != u"Пользователь" else email
+		send_email(HTML = HTML, Subject = Subject, To =  to)
+
+
+def get_layout_template():
+	return env.get_template('layout.html')
 
 def send_notifications_1():
 	counter = 0
@@ -103,9 +116,6 @@ def send_about_fix_issue_172():
 		send_email(HTML = template.render(),\
 			Subject = u"Решена проблема с удалением объявлений", \
 			To =  to )
-
-
-
 
 if __name__ == '__main__':
 	func = sys.argv[1]

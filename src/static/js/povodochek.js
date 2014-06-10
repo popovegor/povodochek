@@ -74,14 +74,14 @@ povodochek.validate = function (form, options, submit){
      errorElement : "li", 
       errorPlacement: function(error, element) {
        error.addClass("form-field-error");
-       $("#" + element.attr("id") + "_field .form-field-errors").append(error);
+       form.find("#" + element.attr("id") + "_field .form-field-errors").append(error);
      },
      highlight: function(element, errorClass) {
-        $("#" + element.id + "_field").addClass("has-error").removeClass('has-success');
+        form.find("#" + element.id + "_field").addClass("has-error").removeClass('has-success');
      },
      unhighlight: function(element, errorClass) {
-        $("#" + element.id + "_field").removeClass("has-error").addClass("has-success");
-        $("#" + element.id + "_field .form-field-errors .form-field-error").remove();
+        form.find("#" + element.id + "_field").removeClass("has-error").addClass("has-success");
+        form.find("#" + element.id + "_field .form-field-errors .form-field-error").remove();
      },
      submitHandler: function(form) {
         var btn = $(":submit").button("loading");

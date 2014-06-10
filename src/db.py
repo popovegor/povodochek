@@ -45,6 +45,9 @@ typeahead_geo_cities = povodochek.typeahead_geo_cities
 typeahead_dog_breeds = povodochek.typeahead_dog_breeds
 typeahead_cat_breeds = povodochek.typeahead_cat_breeds
 
+news = povodochek.news
+news_deleted = povodochek.news_deleted
+
 def revert_singup(user_id):
     users.remove({'_id':ObjectId(user_id)})
 
@@ -602,11 +605,52 @@ def get_cat_advs_by_regions():
     return sorted([adv for adv in cat_advs_by_regions.find()], \
         key = lambda x : x['region_name'])
 
+def upsert_news(news_id, subject, message, published, summary):
+    now = datetime.utcnow()
+    return news.find_and_modify({'_id' : ObjectId(news_id)}, 
+        {'$set' : {'subject': subject, 
+        'message' : message, 
+        'update_date' : now,
+        'published' : published, 
+        'summary' : summary},
+        "$setOnInsert" : {'create_date' : now}},
+        new = True, 
+        upsert = True, 
+        multi = False, )
+
+def get_news_by_id(news_id):
+    return news.find_one({'_id': ObjectId(news_id)})
+
+def remove_news(news_id):
+    news = news.find_and_modify({'_id': ObjectId(news_id)}, remove = True)
+    news_deleted.insert(news)
+
+def get_news_feed():
+    return news.find(sort = [('update_date', DESCENDING)])
+
+def comment_news(news_id, levels, text, author_id):
+    if levels != []:
+        str_path = '.'.join('comments.%d' % level for level in levels)
+        str_path += '.comments'
+    else:
+        str_path = 'comments'
+    
+    now = datetime.utcnow()
+
+    return news.find_and_modify(
+        { '_id': ObjectId(news_id) },
+        { "$inc" : {'comments_count' : 1},
+        '$push': {
+            str_path: {
+                'create_date': now,
+                'author_id': str(author_id),
+                'text': text } } }, 
+        new = True)
+
 def admin_get_users(limit, skip):
     return users.find(
         sort = [('signup_date', DESCENDING)],
         limit = limit, skip = skip)
-
 
 def get_dog_advs_for_last_mins(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
@@ -637,7 +681,6 @@ def get_dog_advs_to_post_in_fb(mins = 60):
     dt = datetime.utcnow() - timedelta(minutes = mins)
     return dog_advs.find({'update_date' : {'$gte':dt}, 
         'fb.post':{'$ne':True} })
-
 
 def mark_dog_adv_as_fb_posted(adv_id, post_id):
     now = datetime.utcnow()

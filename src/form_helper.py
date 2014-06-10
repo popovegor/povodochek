@@ -1,6 +1,6 @@
 from wtforms import (fields, widgets, TextField, \
     SelectField, HiddenField, BooleanField, TextAreaField, \
-    IntegerField)
+    IntegerField, Form)
 
 class Select2Widget(widgets.Select):
     """
@@ -24,6 +24,12 @@ class Select2Widget(widgets.Select):
 def get_fields(form):
     return dict([(f.id, {"name": f.name, \
         "attrs": f.attrs}) for f in form])
+
+class PForm(Form):
+    def load_from_db_entity(self, entity):
+        for f in self:
+            f.set_db_val(entity.get(f.get_db_name()))    
+
 
 class PField():
     def __init__(self, field, attraction = False, \

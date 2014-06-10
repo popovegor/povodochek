@@ -999,11 +999,48 @@ form {
     }
 }
 
-.img-logo {
+.img-brand {
     height: 48px;
     width:131px;
 }
 
+.img-logo {
+    height: 150px;
+    width: 150px;
+}
+
 .cursor-help {
     cursor: help;
+}
+
+.comments {
+    .post-comment-form { 
+        width:600px; 
+        padding:5px 10px 10px 10px
+    }
+    .comment {
+        margin-top: 15px;
+
+        .comment-reply {
+            /*visibility: hidden;*/
+            margin:2px 0px 6px 0px;
+        }   
+        
+        .comment-reply-form {
+            display: none;
+            margin-bottom: 10px
+        }
+
+        .comment-text {
+            text-overflow:ellipsis;
+            margin-top: -5px;
+        }
+
+        .comment-body {
+            &:focus, &:hover {
+                .comment-reply { visibility: visible;}
+            }
+        }
+    }
+     
 }

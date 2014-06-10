@@ -9,46 +9,62 @@
 {% block account_content %}
 
 
-<div class="account-contact row">
-
-  <div class="col-md-6">
-        <div class="row">
-          <p class="col-sm-4"><b>Имя</b></p>
-          <p class="col-sm-8">{{current_user.username}}</p>
-        </div>
-         <div class="row">
-          <p class="col-sm-4"><b>Фамилия</b></p>
-          <p class="col-sm-8">{{current_user.surname or "<span class='text-semi-muted'>не указан</span>" | safe}}</p>
-        </div>
-        <div class="row">
-          <p class="col-sm-4"><b>Телефон</b></p>
-          <p class="col-sm-8">{{current_user.phone or "<span class='text-semi-muted'>не указан</span>" | safe}}</p>
-        </div>
-
-          <div class="row">
-          <p class="col-sm-4"><b>Skype</b></p>
-          <p class="col-sm-8">{{current_user.skype or "<span class='text-semi-muted'>не указан</span>" | safe}}</p>
-        </div>
-
-          <div class="row">
-          <p class="col-sm-4"><b>Населенный пункт</b></p>
-          <p class="col-sm-8">{{geo.format_city_region_by_city_id(current_user.city_id) or "<span class='text-semi-muted'>не указан</span>" | safe}}</p>
-        </div>
-
-         <div class="row">
-          <p class="col-sm-4"><b>Сайт</b></p>
-          <p class="col-sm-8">{{current_user.site_link or "<span class='text-semi-muted'>не указан</span>" | safe}}</p>
-        </div>
-
+<div class="account-contact">
+        <table class="table table-non-border">
+           <colgroup>
+            <col style="width:200px">
+            <col style="">
+          </colgroup>
+          <tbody>
+            <tr>
+              <th>
+                Имя
+              </th>
+              <td>
+                {{current_user.username}}  
+              </td>
+            </tr>
+            <tr>
+              <th>Фамилия</th>
+              <td>
+                {{current_user.surname or "<span class='text-semi-muted'>не указан</span>" | safe}}  
+              </td>
+            </tr>
+            <tr>
+              <th>Телефон</th>
+              <td>
+                {{current_user.phone or "<span class='text-semi-muted'>не указан</span>" | safe}}
+              </td>
+            </tr>
+            <tr>
+              <th>Skype</th>
+              <td>
+                {{current_user.skype or "<span class='text-semi-muted'>не указан</span>" | safe}}
+              </td>
+            </tr>
+            <tr>
+              <th>Населенный пункт</th>
+              <td>
+                {{geo.format_city_region_by_city_id(current_user.city_id) or "<span class='text-semi-muted'>не указан</span>" | safe}}
+              </td>
+            </tr>
+            <tr>
+              <th>Сайт</th>
+              <td>
+                {{current_user.site_link or "<span class='text-semi-muted'>не указан</span>" | safe}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
 
        
-              <br/>
+        <br/>
 
-              <a class="btn btn-primary" id="save" href="{{url_for('account_profile_edit')}}">Редактировать профиль</a>
+        <a class="btn btn-primary" id="save" href="{{url_for('account_profile_edit')}}">Редактировать профиль</a>
 
 
-        </div>
+        
 
 </div>
 

@@ -1,0 +1,83 @@
+{% extends "admin/layout.html" %}
+
+    {% block content %}
+
+    <form action="{{request.url}}" method="POST" id="contact" role="form">
+           {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+           {{ form_field(form.published) }} 
+
+           <div class="row">
+             <div class="col-sm-6">
+                {{ form_field(form.subject, placeholder="Введите заголовок новости") }}      
+             </div>
+           </div>
+
+
+           <div class="row">
+              <div class="col-sm-6">
+                  {{ form_field(form.summary, placeholder="Введите краткое описание", rows = 4) }} 
+              </div>
+              <div class="col-sm-6">
+                  <p><b>Предварительный просмотр: краткое описание</b></p>
+                  <div id="{{form.summary.id}}_preview">
+                    
+                  </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-sm-6">
+                  {{ form_field(form.message, placeholder="Введите сообщение", rows = 20) }} 
+              </div>
+              <div class="col-sm-6">
+                  <p><b>Предварительный просмотр: текст новости</b></p>
+                  <div id="{{form.message.id}}_preview">
+                    
+                  </div>
+              </div>
+            </div>
+
+            {{ form_field(form.email_single, placeholder="Введите эл. почту получателя", style="width:250px") }} 
+
+            {{ form_field(form.email_everyone) }} 
+
+            <br/>
+
+           <button type="submit" class="btn btn-primary" id="push_news" data-loading-text="Сохраняется...">Сохранить новость</button>
+
+    </form>
+
+    <script type="text/javascript">
+
+    var autoupdate_preview = function() {
+      var message = $('#{{form.message.id}}').val();
+      var summary = $('#{{form.summary.id}}').val();
+      $("#{{form.message.id}}_preview").html(message);
+      $("#{{form.summary.id}}_preview").html(summary);
+      setTimeout('autoupdate_preview()', 500);
+    }
+
+    $(document).ready(function(){
+
+      setTimeout('autoupdate_preview()', 500);
+      
+
+      povodochek.validate($("form"),  {
+         {{form.subject.id}} : {required: true},
+         {{form.message.id}} : {required: true},
+         {{form.summary.id}} : {required : true},   
+         {{form.email_single.id}} : {email : true}
+       });
+    });
+
+    </script>
+
+    {% endblock %}
+
+
+
+ 
+
+

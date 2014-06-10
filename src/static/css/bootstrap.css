@@ -557,6 +557,12 @@ a.bg-success:hover {
 a.bg-info:hover {
   background-color: #afd9ee;
 }
+.bg-default {
+  background-color: #f5f5f5;
+}
+a.bg-default:hover {
+  background-color: #dcdcdc;
+}
 .page-header {
   padding-bottom: 9px;
   margin: 40px 0 20px;
@@ -1445,6 +1451,14 @@ th {
 .table-condensed > tbody > tr > td,
 .table-condensed > tfoot > tr > td {
   padding: 5px;
+}
+.table-non-border > thead > tr > th,
+.table-non-border > tbody > tr > th,
+.table-non-border > tfoot > tr > th,
+.table-non-border > thead > tr > td,
+.table-non-border > tbody > tr > td,
+.table-non-border > tfoot > tr > td {
+  border: none;
 }
 .table-bordered {
   border: 1px solid #ddd;
@@ -3486,7 +3500,6 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 .nav .nav-divider {
   height: 1px;
-  height: 3px;
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;
@@ -6845,11 +6858,38 @@ form .textarea-counter {
 #menu .menu-breed-selector {
   border-radius: 4px 0 0 4px;
 }
-.img-logo {
+.img-brand {
   width: 131px;
   height: 48px;
 }
+.img-logo {
+  width: 150px;
+  height: 150px;
+}
 .cursor-help {
   cursor: help;
+}
+.comments .post-comment-form {
+  width: 600px;
+  padding: 5px 10px 10px 10px;
+}
+.comments .comment {
+  margin-top: 15px;
+}
+.comments .comment .comment-reply {
+  /*visibility: hidden;*/
+  margin: 2px 0 6px 0;
+}
+.comments .comment .comment-reply-form {
+  display: none;
+  margin-bottom: 10px;
+}
+.comments .comment .comment-text {
+  margin-top: -5px;
+  text-overflow: ellipsis;
+}
+.comments .comment .comment-body:focus .comment-reply,
+.comments .comment .comment-body:hover .comment-reply {
+  visibility: visible;
 }
 /*# sourceMappingURL=bootstrap.css.map */

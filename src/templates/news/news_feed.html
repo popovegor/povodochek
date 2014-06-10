@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+	
+
+<h1>{{header or title}}</h1>
+
+<div class="row" style="margin-top:30px">
+	<div class="col-lg-10">
+	{%for news in news_feed if news.get('published') %}
+
+	  <div class="media">
+	  	{%set news_url = url_for('news_view', news_id = news.get('_id') )%}
+	    
+	      {#<img class="pull-left media-object" src="/static/img/brand.png" alt="Поводочек" style="">#}
+	    
+	    <div class="media-body">
+	      <a href="{{news_url}}"><h3 class="media-heading">{{news.get("subject")}}</h3></a>
+	      <ul class="list-inline text-semi-muted small">
+				<li>
+					<span title="Дата публикации">{{momentjs(news.get("update_date")).format("D MMMM YYYY, H:mm")}}</span>
+				</li>
+				<li>
+					<span title="Количество комментариев"><i class="fa fa-comments"></i>&ensp;{{news.get("comments_count") or 0}}</span>
+				</li>
+			</ul>
+			<p>
+				{{news.get('summary') | safe }}
+			</p>
+			
+	    </div>
+	  </div>
+
+	  {%endfor%}
+	</div>
+	
+</div> 
+
+
+{% endblock %}

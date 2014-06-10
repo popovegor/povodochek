@@ -531,3 +531,28 @@ class SendMail(Form):
 
     sms_alert = BooleanField(Markup(u"Отправить автору <abbr title='Получатель письма получет короткое sms-оповещение о новом электронном письме.'>sms-оповещение</abbr> (<i>бесплатно</i>)"))
 
+class AdminNews(PForm):
+    subject = PTextField(u"Заголовок", 
+        validators = [Required(message=MSG_REQUIRED)])
+
+    summary = PTextAreaField(u"Краткое описание", 
+        validators = [Required(MSG_REQUIRED)])
+
+    message = PTextAreaField(u"Новость", 
+        validators = [Required(message=MSG_REQUIRED)])
+
+    published = PBooleanField(u"Показать новость на сайте")
+
+    email_single = PTextField(u"Отправить на эл. адрес", validators = [validators.Optional(), Email(message=MSG_EMAIL)], 
+        filters = [lambda x : (x or '').lower()])
+
+    email_everyone = PBooleanField(u"Отправить всем пользователям")
+
+class Comment(PForm):
+    levels = PHiddenField(u"path", 
+        filters = [lambda x: [int(level) for level in 
+        (x or "").strip("_").split("_") if level]  ])
+
+    text = PTextAreaField(u"Ваш комментарий", 
+        validators = [Required(MSG_REQUIRED)])
+

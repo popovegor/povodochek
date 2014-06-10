@@ -10,12 +10,18 @@
         Уважаемый пользователь портала <a href="http://поводочек.рф/">Поводочек</a>!
         {%endblock%}</i></b>
     </p>
-
         
         {% block content %}
+        {{message}}
+
+        {% if news_url %}
+            <div style="margin-top:20px">
+            <a href="{{news_url}}">Обсуждение новости</a>
+            </div>
+        {% endif %}
 
         {% endblock %}
-        
+
     
     <!-- footer -->
     <div style="color:rgb(136,136,136); font-size:85%; line-height:18px;margin-top:30px">
