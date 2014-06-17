@@ -1481,7 +1481,7 @@ def admin_news_new():
     else:
         return render_template('/admin/news_edit.html', title = Markup(u"Админка: публикация новости"), form = form)
 
-@app.route('/admin/mews/<news_id>/edit/', methods = ["POST", "GET"])
+@app.route('/admin/news/<news_id>/edit/', methods = ["POST", "GET"])
 @admin_requried
 def admin_news_edit(news_id):
 
