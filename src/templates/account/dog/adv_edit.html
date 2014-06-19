@@ -72,24 +72,29 @@
 
 	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Введите или выберите название породы", autocomplete="off", btn_right = '<button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>' | safe) }}   
 
-	 {%from "breed_picker.html" import dog_breed_picker %}
+	 {%from "dog/breed_picker.html" import dog_breed_picker %}
 
      {{dog_breed_picker(form.breed.id, "breed_picker")}}
 	
 
     {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", help="Выберите из выпадающего списка населенный пункт, в котором продается собака, введя первые буквы названия.", autocomplete="off") }}
 
+    <div class="row" style="margin-top:-15px; margin-bottom:10px">
+		
+		<div class="col-sm-9 col-sm-push-3">
+			{{form_field(form.delivery)}}	
+		</div>
+	</div>	
+
     {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="Напишите наиболее привлекательный заголовок", size="col-sm-10")}}
 
 	{{ form_field(form.price, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="35000", addon_right = "руб", size="col-lg-3 col-md-3 col-sm-4") }}   		
     	
-	<div class="row" style="margin-top:-15px">
+	<div class="row" style="margin-top:-15px; margin-bottom:10px">
 		
 		<div class="col-sm-9 col-sm-push-3">
 			{{ form_field(form.price_haggle) }}
 			{{ form_field(form.price_hp) }}	
-			{{form_field(form.contract)}}
-			{{form_field(form.delivery)}}	
 		</div>
 	</div>	
 
@@ -140,6 +145,8 @@
 			{{form_field(form.microchip)}}	
 			{{form_field(form.vaccination)}}	
 			{{form_field(form.vetpassport)}}
+
+			{{form_field(form.contract)}}
 		</div>
 	</div>
 		

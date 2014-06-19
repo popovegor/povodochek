@@ -143,7 +143,7 @@ def jinja_date(value):
 
 app.jinja_env.filters['date'] = jinja_date
 
-def jinja_format_price(value, template=u"{0:,}"):
+def jinja_format_price(value, template=u"{0:,.0f}"):
     return Markup((template.format(value) if value else u"").replace(u",", u"&nbsp;"))
 
 app.jinja_env.filters['format_price'] = jinja_format_price
@@ -235,6 +235,14 @@ def index():
         title = u"Продажа и покупка породистых собак и кошек по всей России")
     return tmpl
 
+@app.route("/")
+def index():
+    tmpl = render_template('main.html',
+        dog_breeds_rating = db.get_dog_breeds_rating(limit = 10),
+        cat_breeds_rating = db.get_cat_breeds_rating(limit = 10),
+        title = u"Продажа и покупка породистых собак и кошек по всей России")
+    return tmpl
+
 @app.route("/signin/", methods = ["POST", "GET"])
 def signin():
     form = SignIn(request.form)
@@ -305,9 +313,13 @@ def ajax_typeahead_cat():
     return jsonify(items = breeds ) 
 
 
-@app.route("/ajax/breed/picker/", methods = ["GET"])
-def ajax_breed_picker():
-    return render_template('breed_picker.html', input_id = request.args.get("input_id"), trigger_id = request.args.get("trigger_id"))
+@app.route("/ajax/breed/picker/dog/", methods = ["GET"])
+def ajax_breed_picker_dog():
+    return render_template('dog/breed_picker.html', input_id = request.args.get("input_id"), trigger_id = request.args.get("trigger_id"))
+
+@app.route("/ajax/breed/picker/cat/", methods = ["GET"])
+def ajax_breed_picker_cat():
+    return render_template('cat/breed_picker.html', input_id = request.args.get("input_id"), trigger_id = request.args.get("trigger_id"))
 
 @app.route("/test/location/", methods = ["GET"])
 def test_location():
@@ -1504,7 +1516,9 @@ def save_news(news_id, form):
                 subject = form.subject.data, 
                 message = form.message.data, 
                 published = form.published.data, 
-                summary = form.summary.data)
+                summary = form.summary.data, 
+                publish_date = form.publish_date.data
+                )
     news_url = None
     if form.published.data:
         news_url = url_for('news_view', 
@@ -1587,6 +1601,25 @@ def ajax_mosaic_showmore(pet, skip, limit):
     advs = get_pet_advs_for_mosaic(skip, limit = limit, pet_id = pet)
     return jsonify(advs = advs)
 
+@app.route("/ajax/main/fresh/dog/", methods = ["GET"])
+def ajax_main_fresh_dog():
+    fresh_advs = db.get_dog_advs_for_fresh(0, 12)
+    return render_template("main/fresh.html", advs = fresh_advs)
+
+@app.route("/ajax/main/fresh/cat/", methods = ["GET"])
+def ajax_main_fresh_cat():
+    fresh_advs = db.get_cat_advs_for_fresh(0, 12)
+    return render_template("main/fresh.html", advs = fresh_advs)
+
+@app.route("/ajax/main/news_feed/", methods = ["GET"])
+def ajax_main_news_feed():
+    news_feed = db.get_news_feed(limit = 5, published = True)
+    return render_template("main/news_feed.html", news_feed = news_feed)
+
+@app.route("/ajax/main/popular/breed/dog", methods = ["GET"])
+def ajax_main_popular_breed_dog():
+    breed_rating = db.get_dog_breeds_rating(limit = 10)
+    return render_template("main/popular.html", breed_rating = breed_rating)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

@@ -588,6 +588,27 @@ def get_cat_advs_for_mosaic(skip, limit):
         sort = [('update_date', DESCENDING), \
         ("add_date", DESCENDING)])
 
+def get_cat_advs_for_fresh(skip, limit):
+    return cat_advs.find(
+        { }, \
+        skip = skip, \
+        fields = ["_id", "photos", "title", \
+        "price", "breed_id", "update_date", "add_date"], \
+        limit = limit, \
+        sort = [('update_date', DESCENDING), \
+        ("add_date", DESCENDING)])
+
+def get_dog_advs_for_fresh(skip, limit):
+    return dog_advs.find(
+        {}, \
+        skip = skip, \
+        fields = ["_id", "photos", "title", \
+        "price", "breed_id", "update_date", "add_date"], \
+        limit = limit, \
+        sort = [('update_date', DESCENDING), \
+        ("add_date", DESCENDING)])
+
+
 def get_dog_advs_by_cities():
     return [adv for adv in dog_advs_by_cities.find(
         sort=[('city_name', ASCENDING)])]
@@ -605,28 +626,35 @@ def get_cat_advs_by_regions():
     return sorted([adv for adv in cat_advs_by_regions.find()], \
         key = lambda x : x['region_name'])
 
-def upsert_news(news_id, subject, message, published, summary):
+def upsert_news(news_id, subject, message, 
+    published, summary, publish_date):
     now = datetime.utcnow()
     return news.find_and_modify({'_id' : ObjectId(news_id)}, 
         {'$set' : {'subject': subject, 
         'message' : message, 
         'update_date' : now,
         'published' : published, 
-        'summary' : summary},
-        "$setOnInsert" : {'create_date' : now}},
+        'summary' : summary,
+        'publish_date' : publish_date},
+        "$setOnInsert" : {'create_date' : now, 'comments_count' : 0}},
         new = True, 
         upsert = True, 
-        multi = False, )
+        multi = False)
 
 def get_news_by_id(news_id):
     return news.find_one({'_id': ObjectId(news_id)})
 
 def remove_news(news_id):
-    news = news.find_and_modify({'_id': ObjectId(news_id)}, remove = True)
-    news_deleted.insert(news)
+    ret = news.find_and_modify({'_id': ObjectId(news_id)}, remove = True)
+    news_deleted.insert(ret)
 
-def get_news_feed():
-    return news.find(sort = [('update_date', DESCENDING)])
+def get_news_feed(limit = 0, published = True):
+    query = {}
+    if published:
+        query['published'] = published
+    return news.find(query, 
+        sort = [('publish_date', DESCENDING), ('update_date', DESCENDING)], 
+        limit = limit)
 
 def comment_news(news_id, levels, text, author_id):
     if levels != []:

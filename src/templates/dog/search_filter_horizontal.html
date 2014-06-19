@@ -12,7 +12,7 @@
                        <button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>
                     </div>
                 </div>
-                {%from "breed_picker.html" import dog_breed_picker %}
+                {%from "dog/breed_picker.html" import dog_breed_picker %}
 
                  {{dog_breed_picker(form.breed.id, "breed_picker")}}
             </td>

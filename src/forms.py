@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField, RadioField, DateField)
+from wtforms import (Form, BooleanField, TextField, PasswordField, validators, ValidationError, TextAreaField, HiddenField, IntegerField, RadioField, DateField, DateTimeField)
 
 from wtforms.validators import *
 
@@ -223,7 +223,7 @@ class Profile(Form):
     
     skype = PTextField(u"Skype")
 
-    site_link = PTextField(u"Веб-сайт")
+    site_link = PTextField(Markup(u"Порсональный <span style='white-space:nowrap'>веб-сайт</span>"))
     # kennel_name = PTextField(u"Название питомника")
     
 
@@ -279,7 +279,7 @@ class Dog(Form):
         db_name = 'gender_id', \
         db_out = lambda v: num(v))
    
-    title = PTextField(u"Заголовок объявления", \
+    title = PTextField(Markup(u"Заголовок<br/>объявления"), \
         [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
          description = Markup(u"От 10 до 80 символов, осталось <span id='title_count' class='text-danger'>80</span>."), \
          db_name = 'title')
@@ -418,7 +418,7 @@ class Dog(Form):
     kennel_name = PTextField(u"Название питомника", 
         attraction = True)
 
-    site_link = PTextField(u"Веб-сайт", \
+    site_link = PTextField(Markup(u"Персональный<br/><span style='white-space:nowrap'>веб-сайт</span>"), \
         attraction = True)
 
     username = PTextField(u"Контактное лицо", \
@@ -547,6 +547,9 @@ class AdminNews(PForm):
         filters = [lambda x : (x or '').lower()])
 
     email_everyone = PBooleanField(u"Отправить всем пользователям")
+
+    publish_date = PDateTimeField(u'Дата публикации', 
+        format='%Y-%m-%d %H:%M:%S')
 
 class Comment(PForm):
     levels = PHiddenField(u"path", 

@@ -22,12 +22,23 @@ def rebuild_breeds_rating(pet):
 	top_breeds = db.povodochek[top_breeds_name]
 	tmp_top_breeds.drop()
 
-	for breed in breeds.values():
-		breed_id = breed.get("breed_id")
-		breed_name = breed.get("breed_name")
-		count = advs.find({'breed_id':breed_id}).count()	
-		tmp_top_breeds.insert({'count': count, 
-			'breed_id': breed_id, 'breed_name': breed_name})
+
+	for k in advs.aggregate({
+		'$group' : 
+		{'_id': '$breed_id',
+		'count': {'$sum':1}, 
+		'min_price' : {'$min': '$price'}, 
+		'max_price' : {'$max' : '$price'}, 
+		'avg_price' : {'$avg' : '$price'}, 
+		}}, allowDiskUse = True)["result"]:
+		breed_name = get_breed_name(k['_id'])
+		tmp_top_breeds.insert({'count': k['count'], 
+			'breed_id': k['_id'], 
+			'breed_name': breed_name, 
+			'min_price' : k['min_price'],
+			'max_price' : k['max_price'], 
+			'avg_price' : k['avg_price']
+			})
 
 	if tmp_top_breeds_name in db.povodochek.collection_names():
 		tmp_top_breeds.rename(top_breeds_name, dropTarget=True)

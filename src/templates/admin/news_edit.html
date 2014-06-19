@@ -5,7 +5,9 @@
     <form action="{{request.url}}" method="POST" id="contact" role="form">
            {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
+
            {{ form_field(form.published) }} 
+           {{ form_field(form.publish_date, style="width:200px", placeholder = '2014-04-12 12:34:01') }} 
 
            <div class="row">
              <div class="col-sm-6">
@@ -63,6 +65,7 @@
 
       setTimeout('autoupdate_preview()', 500);
       
+      $("#{{form.publish_date.id}}").inputmask("y-m-d 99:99:99")
 
       povodochek.validate($("form"),  {
          {{form.subject.id}} : {required: true},

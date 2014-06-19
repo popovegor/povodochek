@@ -1,6 +1,6 @@
 {%- macro dog_breed_picker(input_id, trigger_id) -%}
 
-<div class="modal fade text-left dog-breed-picker"   id="myModal_{{trigger_id}}" role="dialog" aria-labelledby="myModalLabel_{{trigger_id}}">
+<div class="modal fade text-left dog-breed-picker"   id="dog_breed_picker_modal_{{trigger_id}}" role="dialog" aria-labelledby="dog_breed_picker_modalLabel_{{trigger_id}}">
   <div class="modal-dialog">
     
   </div><!-- /.modal-dialog -->
@@ -10,14 +10,14 @@
 	
 	$(document).ready(function(){
 		$("#{{trigger_id}}").click(function(){
-			$("#myModal_{{trigger_id}}")
+			$("#dog_breed_picker_modal_{{trigger_id}}")
 			.on('show.bs.modal', function (e) {
 				// $(".dbp-search").attr("autofocus","autofocus");
 			  window.setTimeout(function() {
 			  	$(".dbp-search").focus();}, 500);
 			})
 			.modal({
-				remote: '{{url_for("ajax_breed_picker", input_id = input_id, trigger_id = trigger_id) | safe}}',
+				remote: '{{url_for("ajax_breed_picker_dog", input_id = input_id, trigger_id = trigger_id) | safe}}',
 				show :true
 			});
 
@@ -40,7 +40,7 @@
     
 	<div class="modal-header">
         
-		<h3 class="modal-title" style="display:inline-block" id="myModalLabel_{{trigger_id}}">Выберите породу из списка</h3>				
+		<h3 class="modal-title" style="display:inline-block" id="dog_breed_picker_modalLabel_{{trigger_id}}">Выберите породу из списка</h3>				
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         
       </div>
@@ -52,9 +52,9 @@
 
 		</div>
 
-		<ul class="list-unstyled dbp-dog-names" style="max-height:400px; overflow-y:auto">
+		<ul class="list-unstyled dbp-breed-names" style="max-height:400px; overflow-y:auto">
 		{% for dog in breeds.dogs.values() %}
-			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:;" class="dbp-dog-name" title='{{"Выбрать породу " + dog.get("breed_name") | lower }}'>{{dog.get("breed_name")}}</a></li>
+			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:;" class="dbp-breed-name" title='{{"Выбрать породу " + dog.get("breed_name") | lower }}'>{{dog.get("breed_name")}}</a></li>
 		{%endfor%}
 		</ul>
       		
@@ -73,16 +73,18 @@
 		    multiSearch: true
 		};
 
-		var dog_breed_picker = new List('myModal_{{trigger_id}}', {
+		var dog_breed_picker = new List('dog_breed_picker_modal_{{trigger_id}}', {
 		// searchClass: "dbp-search",
-			valueNames: ['dbp-dog-name'],
-			listClass : "dbp-dog-names",
+			valueNames: ['dbp-breed-name'],
+			listClass : "dbp-breed-names",
 			plugins: [ListFuzzySearch(fuzzyOptions)]
 		});
 
-		$(".dbp-dog-name").click(function(){
+		dog_breed_picker.sort('dbp-breed-name', { order: "asc" });
+
+		$(".dbp-breed-name").click(function(){
 			$("#{{input_id}}").val($(this).text());
-			$("#myModal_{{trigger_id}}").modal("hide");
+			$("#dog_breed_picker_modal_{{trigger_id}}").modal("hide");
 		});
 
 		// window.setTimeout(}, 500);

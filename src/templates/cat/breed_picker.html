@@ -1,0 +1,94 @@
+{%- macro cat_breed_picker(input_id, trigger_id) -%}
+
+<div class="modal fade text-left dog-breed-picker"   id="cat_breed_picker_modal_{{trigger_id}}" role="dialog" aria-labelledby="cat_breed_picker_modalLabel_{{trigger_id}}">
+  <div class="modal-dialog">
+    
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		$("#{{trigger_id}}").click(function(){
+			$("#cat_breed_picker_modal_{{trigger_id}}")
+			.on('show.bs.modal', function (e) {
+				// $(".cbp-search").attr("autofocus","autofocus");
+			  window.setTimeout(function() {
+			  	$(".cbp-search").focus();}, 500);
+			})
+			.modal({
+				remote: '{{url_for("ajax_breed_picker_cat", input_id = input_id, trigger_id = trigger_id) | safe}}',
+				show :true
+			});
+
+
+
+		});
+	});
+
+</script>
+
+
+
+{%- endmacro -%}
+
+
+<div class="modal-dialog modal-lg">
+
+	<div class="modal-content">
+
+    
+	<div class="modal-header">
+        
+		<h3 class="modal-title" style="display:inline-block" id="cat_breed_picker_modalLabel_{{trigger_id}}">Выберите породу из списка</h3>				
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        
+      </div>
+      <div  class="modal-body" style="">
+
+      	<div style="margin-bottom:20px; margin-top:10px" class="input-group">
+      		<span class="input-group-addon"><i class="fa fa-filter fa-lg"></i></span>
+			<input type="text" class="cbp-search form-control input-lg"  placeholder="Отфильтруйте список, введя часть названия породы" />
+
+		</div>
+
+		<ul class="list-unstyled cbp-breed-names" style="max-height:400px; overflow-y:auto">
+		{% for cat in breeds.cats.values() %}
+			<li class="" style="display:inline-block;width:345px; text-overflow: ellipsis; padding:5px 0px"><a href="javascript:;" class="cbp-breed-name" title='{{"Выбрать породу " + cat.get("breed_name") | lower }}'>{{cat.get("breed_name")}}</a></li>
+		{%endfor%}
+		</ul>
+      		
+      </div>
+</div><!-- /.modal-content -->
+</div>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		var fuzzyOptions = {
+			searchClass: "cbp-search",
+		  	location: 0,
+		  	distance: 100,
+		  	threshold: 0.4,
+		    multiSearch: true
+		};
+
+		var cat_breed_picker = new List('cat_breed_picker_modal_{{trigger_id}}', {
+		// searchClass: "cbp-search",
+			valueNames: ['cbp-breed-name'],
+			listClass : "cbp-breed-names",
+			plugins: [ListFuzzySearch(fuzzyOptions)]
+		});
+
+		cat_breed_picker.sort('cbp-breed-name', { order: "asc" });
+
+		$(".cbp-breed-name").click(function(){
+			$("#{{input_id}}").val($(this).text());
+			$("#cat_breed_picker_modal_{{trigger_id}}").modal("hide");
+		});
+
+		// window.setTimeout(}, 500);
+
+	});
+
+</script>

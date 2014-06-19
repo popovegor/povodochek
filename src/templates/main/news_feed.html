@@ -1,0 +1,72 @@
+
+{%- macro render_news_feed() -%}
+
+<div class="main-news-feed">
+				
+	<b class="big">Новости проекта</b>
+	
+
+	<div id="mnf_items" style="margin-top:30px">
+		
+	</div>			
+	
+
+	<div id="mnf_spinner" style="margin-left:20%; margin-top:50px" class="">
+		<!--i class="fa fa-spinner fa-spin fa-3x">
+		</i-->
+		<img src="{{url_for('static', filename='img/ajax-loader.gif')}}">
+	</div>
+
+
+</div>
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		$("#mnf_items").hide();
+		$("#mnf_spinner").show();
+		$.get("{{url_for('ajax_main_news_feed')}}", 
+		function(data) {
+			$("#mnf_items").html(data);
+			$("#mnf_spinner").hide();
+			$("#mnf_items").show("slower");
+		});
+	});
+
+</script>
+{%- endmacro -%}
+
+
+<ul class="media-list">
+{% for news in news_feed %}
+	<li class="media" style="margin:10px 0px 30px 0px">
+		{#<span class="pull-left small">
+			<ul class="text-right media-object list-unstyled small text-muted">
+				<li>
+					<span class="" title="Дата публикации">{{momentjs(news.get('update_date')).format("DD MMMM") }}</span>
+				</li>
+				<li>
+					<span title="Количетсво комментариев"><i class="fa fa-comments"></i>&nbsp;{{news.get("comments_count") or 0}}</span>
+				</li>
+			</ul>
+		</span>#}
+		
+		<div class="media-body">
+			<ul class="list-unstyled text-muted">
+				<li class="small">
+					<span class="" title="Дата публикации">{{momentjs(news.get('publish_date') or news.get('update_date')).format("DD MMMM") }}</span>&emsp;<span title="Количетсво комментариев"><i class="fa fa-comments"></i>&nbsp;{{news.get("comments_count") or 0}}</span>
+				</li>
+				<li>
+					<a class="" href="{{url_for('news_view', news_id = news.get('_id') )}}">{{news.get('subject')}}</a>
+				</li>
+			</ul>
+		</div>
+	</li>
+
+{%endfor%}	
+</ul>
+
+
+<div class="text-left">
+	<a href="{{url_for('news')}}" class="ajax-link">Все новости</a>
+</div>

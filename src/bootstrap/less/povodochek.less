@@ -90,8 +90,10 @@ form {
 .ajax-link {
     cursor: pointer;
     border-bottom: dotted 1px;
+    /*color:#000;*/
     &:focus, &:hover {
         text-decoration: none !important;
+        /*color:@link-hover-color;*/
     };
 }
 
@@ -401,6 +403,7 @@ form {
                         bottom: -30px;
                         left: 1px;
                         border: solid 1px #ccc;
+                        border-top: none;
                         min-height: 20px;
                         margin: 0;
                         padding: 0px 10px 0px 10px;
@@ -951,8 +954,8 @@ form {
 .help {
 }
 
-.dog-breed-picker {
-    .dbp-dog-name {
+.dog-breed-picker, .cat-breed-picker {
+    .dbp-name, .cbp-name {
         text-decoration: none;
         border-bottom: dotted 1px;
     }
@@ -1041,6 +1044,71 @@ form {
                 .comment-reply { visibility: visible;}
             }
         }
+    }     
+}
+
+.main {
+
+
+    .main-news-feed {
+        .mnf-label {
+            font-size: 26px;
+            font-weight: bold;
+        }
     }
-     
+
+    .main-pet-search {
+        padding:20px;
+        table { width:100%; }
+        .mps-label {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .mps-breed-selector {
+            border: 5px solid @state-info-bg;
+            border-radius: 4px;
+            #pet_search_breed_picker_dog {
+                border-radius:0px @border-radius-base @border-radius-base 0px;
+            }
+        }
+    }
+
+
+    .main-fresh-advs {
+        #mfa_pet_switcher {
+            text-decoration:none;
+            color: #000;
+        }
+
+        .mfa-post-adv {
+            vertical-align:top; padding-top:0px;margin-left:20px;
+        }
+
+        #mfa_spinner {
+            width:35px; margin-top:80px;margin-bottom:80px;
+        }
+
+        #mfa_items {
+            direction: ltr;
+            text-align: left;
+            min-height: 180px;
+            display: block;
+            .mfai-item {
+                display: inline-block;
+                text-align: left;
+                vertical-align: top;
+                direction: ltr;
+                white-space: normal;
+                position: relative;
+                filter: none;
+                background: #fff;
+                .box-shadow(6px 15px 45px -12px gray);
+                padding: 10px .5em .6em 1em;
+                margin:10px 0px 20px 0px;
+            }
+        }
+
+    }
+
 }

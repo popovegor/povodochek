@@ -1,0 +1,81 @@
+<div class="main-pet-search center-block" style="width:700px;">
+
+	<form action="{{url_for('dog_search')}}" method="get" class="" role="form">
+	<table style="width:100%"><tr>
+		<td style="width:95px">
+		<span class="mps-label" style="font-size: 26px;">Я ищу </span>
+		</td>
+		<td>
+			<div class="input-group mps-breed-selector bg-info" style="">
+		      <div class="input-group-btn">
+		        <button style="width:125px;"  type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">&emsp;<span class="mps-breed-selector-label">Собаку</span>&emsp;<span class="caret"></span></button>
+		        <ul class="dropdown-menu">
+		          <li><a href="javascript:void(0);" class="mps-breed-selector-dog">Собаку</a></li>
+		          <li><a href="javascript:void(0);" class="mps-breed-selector-cat">Кошку</a></li>
+		        </ul>
+		      </div><!-- /btn-group -->
+		      <input type="text" name="breed" id="pet_search_breed" class="form-control" placeholder="Введите или выберите породу" style="width:100%; box-shadow:none"/>
+		      <div class="input-group-btn">
+		      	<button type="button" id="pet_search_breed_picker_dog" class="btn btn-default"><b>&hellip;</b></button>
+		      	<button type="button" id="pet_search_breed_picker_cat" class="btn btn-default" style="display:none"><b>&hellip;</b></button>
+		      </div>
+		       
+		    </div><!-- /input-group -->
+
+		    {%from "dog/breed_picker.html" import dog_breed_picker %}
+
+		    {{dog_breed_picker("pet_search_breed", "pet_search_breed_picker_dog")}}
+
+		    {%from "cat/breed_picker.html" import cat_breed_picker %}
+
+		    {{cat_breed_picker("pet_search_breed", "pet_search_breed_picker_cat")}}
+
+		</td>
+		<td style="width:85px; text-align:right">
+			<button class="btn btn-default">Найти</button>
+		</td>
+		</tr>
+	</table>
+
+	</form>
+
+	</div>
+
+
+ <script type="text/javascript">
+	$(document).ready(function(){
+		$(".mps-breed-selector-dog").click(
+			function(event) {
+			$(".mps-breed-selector-label").text($(this).text());
+			$(".main-pet-search form").attr('action', '{{url_for("dog_search")}}');
+			$("#pet_search_breed_picker_cat").hide();
+			$("#pet_search_breed_picker_dog").show();
+			$("#pet_search_breed").typeahead('destroy').typeahead(
+				povodochek.typeahead(
+				"{{url_for('ajax_typeahead_dog')}}",
+				"pet_search_breed")); //typeahead 
+			$("#pet_search_breed").val("").focus();
+		});
+
+		$(".mps-breed-selector-cat").click(
+			function(event) {
+			$(".mps-breed-selector-label").text($(this).text());
+			$(".main-pet-search form").attr('action', '{{url_for("cat_search")}}');
+			$("#pet_search_breed_picker_dog").hide();
+			$("#pet_search_breed_picker_cat").show();
+			
+			$("#pet_search_breed").typeahead('destroy').typeahead(
+			povodochek.typeahead(
+			"{{url_for('ajax_typeahead_cat')}}",
+			"pet_search_breed")); //typeahead
+			 $("#pet_search_breed").val("").focus();
+		});
+
+	   $("#pet_search_breed").typeahead(
+povodochek.typeahead(
+"{{url_for('ajax_typeahead_dog')}}",
+"pet_search_breed")); //typeahead 
+
+
+    	})
+    </script>

@@ -475,6 +475,15 @@ small,
 .small {
   font-size: 85%;
 }
+.big {
+  font-size: 115%;
+}
+.bigger {
+  font-size: 130%;
+}
+.biggest {
+  font-size: 145%;
+}
 cite {
   font-style: normal;
 }
@@ -2293,6 +2302,47 @@ fieldset[disabled] .btn-info.active {
   color: #5bc0de;
   background-color: #fff;
 }
+.btn-pov {
+  color: #fff;
+  background-color: #f60;
+  border-color: #e65c00;
+}
+.btn-pov:hover,
+.btn-pov:focus,
+.btn-pov:active,
+.btn-pov.active,
+.open .dropdown-toggle.btn-pov {
+  color: #fff;
+  background-color: #d65600;
+  border-color: #a84300;
+}
+.btn-pov:active,
+.btn-pov.active,
+.open .dropdown-toggle.btn-pov {
+  background-image: none;
+}
+.btn-pov.disabled,
+.btn-pov[disabled],
+fieldset[disabled] .btn-pov,
+.btn-pov.disabled:hover,
+.btn-pov[disabled]:hover,
+fieldset[disabled] .btn-pov:hover,
+.btn-pov.disabled:focus,
+.btn-pov[disabled]:focus,
+fieldset[disabled] .btn-pov:focus,
+.btn-pov.disabled:active,
+.btn-pov[disabled]:active,
+fieldset[disabled] .btn-pov:active,
+.btn-pov.disabled.active,
+.btn-pov[disabled].active,
+fieldset[disabled] .btn-pov.active {
+  background-color: #f60;
+  border-color: #e65c00;
+}
+.btn-pov .badge {
+  color: #f60;
+  background-color: #fff;
+}
 .btn-link {
   font-weight: normal;
   color: #428bca;
@@ -3982,7 +4032,6 @@ span.navbar-brand {
 }
 .navbar-default .navbar-nav > li > a {
   font-size: 14px;
-  font-weight: bold;
   color: #fff;
 }
 .navbar-default .navbar-nav > li > a:hover,
@@ -5891,10 +5940,12 @@ form .textarea-counter {
 .ajax-link {
   cursor: pointer;
   border-bottom: dotted 1px;
+  /*color:#000;*/
 }
 .ajax-link:focus,
 .ajax-link:hover {
   text-decoration: none !important;
+  /*color:@link-hover-color;*/
 }
 .index {
   /*pet-post*/
@@ -6190,6 +6241,7 @@ form .textarea-counter {
   padding: 0 10px 0 10px;
   margin: 0;
   border: solid 1px #ccc;
+  border-top: none;
 }
 .pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label,
 .account-pet-sale .ds-filter form .dsf-geo .dsf-geo-location .dsf-geo-delivery label,
@@ -6826,7 +6878,10 @@ form .textarea-counter {
   margin: 30px 0 20px 0;
   background-color: #f5f5f5;
 }
-.dog-breed-picker .dbp-dog-name {
+.dog-breed-picker .dbp-name,
+.cat-breed-picker .dbp-name,
+.dog-breed-picker .cbp-name,
+.cat-breed-picker .cbp-name {
   text-decoration: none;
   border-bottom: dotted 1px;
 }
@@ -6891,5 +6946,62 @@ form .textarea-counter {
 .comments .comment .comment-body:focus .comment-reply,
 .comments .comment .comment-body:hover .comment-reply {
   visibility: visible;
+}
+.main .main-news-feed .mnf-label {
+  font-size: 26px;
+  font-weight: bold;
+}
+.main .main-pet-search {
+  padding: 20px;
+}
+.main .main-pet-search table {
+  width: 100%;
+}
+.main .main-pet-search .mps-label {
+  font-size: 32px;
+  font-weight: bold;
+}
+.main .main-pet-search .mps-breed-selector {
+  border: 5px solid #d9edf7;
+  border-radius: 4px;
+}
+.main .main-pet-search .mps-breed-selector #pet_search_breed_picker_dog {
+  border-radius: 0 4px 4px 0;
+}
+.main .main-fresh-advs #mfa_pet_switcher {
+  color: #000;
+  text-decoration: none;
+}
+.main .main-fresh-advs .mfa-post-adv {
+  padding-top: 0;
+  margin-left: 20px;
+  vertical-align: top;
+}
+.main .main-fresh-advs #mfa_spinner {
+  width: 35px;
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+.main .main-fresh-advs #mfa_items {
+  display: block;
+  min-height: 180px;
+  text-align: left;
+
+  direction: ltr;
+}
+.main .main-fresh-advs #mfa_items .mfai-item {
+  position: relative;
+  display: inline-block;
+  padding: 10px .5em .6em 1em;
+  margin: 10px 0 20px 0;
+  text-align: left;
+  white-space: normal;
+  vertical-align: top;
+  background: #fff;
+  filter: none;
+  -webkit-box-shadow: 6px 15px 45px -12px #808080;
+          box-shadow: 6px 15px 45px -12px #808080;
+
+  direction: ltr;
 }
 /*# sourceMappingURL=bootstrap.css.map */

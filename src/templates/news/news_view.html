@@ -73,7 +73,7 @@
 					{%- if current_user.is_signed() -%}
 						<div class="comment-reply small">
 						{% set reply_id = "comment_reply_form" ~ levels ~ "_" ~ loop.index0 %}
-						<i class="fa fa-comment text-muted"></i>&ensp;<a href="javascript:void(0);" onclick="$('#{{reply_id}}').toggle();" class="ajax-link small"><i>Ответить</i></a>
+						{#<i class="fa fa-comment text-muted"></i>&ensp;#}<a href="javascript:void(0);" onclick="$('#{{reply_id}}').toggle();" class="ajax-link small"><i>Ответить</i></a>
 						</div>
 						<div class="comment-reply-form" id='{{reply_id}}'>
 						{{render_post_comment_form(levels = levels ~ "_" ~ loop.index0, reply_id = reply_id )}}		
@@ -99,7 +99,7 @@
 
 	<ul class="list-inline text-semi-muted small">
 		<li>
-			<span title="Дата публикации">{{momentjs(news.get("update_date")).format("D MMMM YYYY, H:mm")}}</span>
+			<span title="Дата публикации">{{momentjs(news.get("publish_date") or news.get("update_date")).format("D MMMM YYYY, H:mm")}}</span>
 		</li>
 		<li>
 			<span title="Количество комментариев"><i class="fa fa-comments"></i>&ensp;{{news.get("comments_count") or 0}}</span>

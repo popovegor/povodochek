@@ -1,0 +1,109 @@
+{%- macro render_fresh_advs() -%}
+
+<div class="main-fresh-advs">
+	<ul class="list-inline">
+		<li>
+			<b style="font-size: 24px;">Свежие объявления
+			</b>	
+		</li>
+		<li style="width:115px;margin-left:0px" class="">
+			<div class="dropdown">
+				<span id="mfa_pet_switcher" data-toggle="dropdown" style="cursor:pointer;"><i style="border-bottom:2px dotted #000;font-size: 22px;" class="biggest" id="mfaps_label">Собаки</i>{#&ensp;▼#}&ensp;<i class="fa fa-caret-down fa-lg"></i></span>
+			 <ul class="dropdown-menu" role="menu" aria-labelledby="mfa-label">
+			    <li><a style="" role="menuitem" class="bigger" tabindex="-1" href="javascript:void(0);" id="mfaps_dog"><i>Собаки</i></a></li>
+			    <li><a style="" class="bigger" role="menuitem" tabindex="-1" id="mfaps_cat" href="javascript:void(0);"><i>Кошки</i></a></li>
+			  </ul>
+			</div>
+		</li>
+		<li class="mfa-post-adv" style="">
+			<a target="_blank" class="btn btn-primary btn-sm" type="button" href="{{url_for('account_dog_adv_new')}}" id="mfa_post_adv">
+				<i class="fa fa-plus"></i>&emsp;Разместить объявление
+			</a>
+		</li>
+	</ul>
+
+
+	<div id="mfa_spinner" style="" class="center-block">
+		<!--i class="fa fa-spinner fa-spin fa-3x">
+		</i-->
+		<img src="{{url_for('static', filename='img/ajax-loader.gif')}}">
+	</div>
+
+
+	<div id="mfa_items" style="display:none;">
+
+		{#<div style="display:inline-block; margin:20px 30px"><a class="btn btn-default" href="{{url_for('dog_search')}}">Показать все объявления &rarr;</a></div>#}
+
+	</div>
+
+</div>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		$("#mfaps_dog").click(function(event) {
+			$("#mfaps_label").text($("#mfaps_dog").text());
+			$("#mfa_items").hide();
+			$("#mfa_spinner").show();
+			$.get("{{url_for('ajax_main_fresh_dog')}}", 
+			function(data) {
+				$("#mfa_items").html(data);
+				$("#mfa_spinner").hide();
+				$("#mfa_items").show("slower");
+			});
+			$("#mfa_post_adv").attr("href", "{{url_for('account_dog_adv_new')}}");
+
+		});
+
+		$("#mfaps_cat").click(function(event) {
+			$("#mfaps_label").text($("#mfaps_cat").text());
+			$("#mfa_items").hide();
+			$("#mfa_spinner").show();
+			$.get("{{url_for('ajax_main_fresh_cat')}}", 
+			function(data) {
+				$("#mfa_items").html(data);
+				$("#mfa_spinner").hide();
+				$("#mfa_items").show("slower");
+			});
+			$("#mfa_post_adv").attr("href", "{{url_for('account_cat_adv_new')}}");
+
+		});
+
+		$("#mfaps_dog").click();
+
+		
+
+	});
+
+</script>
+
+{%- endmacro -%}
+
+{% if advs %}
+
+{% set count = advs.count() %}
+	{%for adv in advs %}
+		<div style="width: 170px; margin-top:20px; z-index: {{count - loop.index0}};" class="mfai-item {{'hidden-md' if loop.index > 10}} {{'hidden-sm' if loop.index > 8}}">
+			{% set breed_name = breeds.get_breed_name(adv.get('breed_id')) %}
+			<small title="{{breed_name}}"><small>{{ breed_name | truncate(20, killwords = True)}}</small></small>
+			
+
+			<div style="margin:5px 0px">
+
+				<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
+				{% if adv.get('photos') %}
+				<img src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="width:150px" />
+				{%endif%}
+				<div style="padding-top:10px" class="small">
+				{{adv.get('title')}}</div>
+				</a>
+
+			</div>
+			<div>
+				<b class="bigger">{{adv.get("price") | format_price}}&ensp;<i class="fa fa-rub"></i></b>
+			</div>
+		</div>
+	{% endfor %}
+
+{%endif%}

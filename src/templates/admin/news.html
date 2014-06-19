@@ -11,7 +11,7 @@
       <thead>
         <tr>
           <th style="width:200px">ID</th>
-          <th style="width:20px">Опубликовано</th>
+          <th style="width:150px">Опубликовано</th>
           <th style="width:150px">Дата</th>
           <th>Заголовок</th>
           <th style="width:100px"></th>
@@ -26,8 +26,12 @@
             <br/>
             {{loop.index}}
           </td>
-          <td>{{news.get('published')}}</td>
-          <td>{{news.get('update_date')}}</td>
+          <td><b>{{news.get('published')}}</b>
+            <br/>
+            {{momentjs(news.get('publish_date')).format("YYYY MM DD H:mm")}}
+
+          </td>
+          <td>{{momentjs(news.get('update_date')).format("YYYY MM DD H:mm")}}</td>
             <td>{{news.get('subject')}}</td>
             <td>
 

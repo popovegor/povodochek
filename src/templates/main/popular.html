@@ -1,0 +1,73 @@
+
+{% macro render_popular() %}
+
+<div class="main-popular-breeds">
+			
+	<b style="font-size:22px;">Цены на популярные породы собак</b>
+
+	<div id="mpb_items">
+		
+			
+		</div>
+
+		<div id="mpb_spinner" style="width:30px; margin-top:90px; margin-bottom:60px" class="center-block">
+			<img src="{{url_for('static', filename='img/ajax-loader.gif')}}">
+		</div>
+
+
+
+		{#<div class="">
+			<span style="font-size:26px; margin-top:0px; margin-bottom:10px;font-weight:bold">Цены на популярные породы кошек</span>
+			<ul class="list-unstyled" style="margin-top:20px">
+			{%for breed in cat_breeds_rating %}
+				<li style="display:inline-block;margin-bottom:25px;margin-right:30px">
+					<a class="ajax-link" href="{{url_for('cat_search', breed = breed.get('breed_id')) }}"><b>{{breed.get("breed_name")}}</b></a>&emsp;<span class="badge pull-right" title="Количество объявлений о продаже" style="cursor:default" >{{breed.get('count')}}</span>
+				</li>
+			{%endfor%}
+		</div>#}
+</div>
+
+
+<script type="text/javascript">
+	
+	$(document).ready(function(x){
+
+		$.get("{{url_for('ajax_main_popular_breed_dog')}}", 
+			function(data) {
+				$("#mpb_items").html(data);
+				$("#mpb_spinner").hide();
+				$("#mpb_items").show("slower");
+			});
+	});
+
+</script>
+
+{%- endmacro -%}
+
+
+
+<table style="margin-top:20px" class="table table-hover">
+	<thead>
+		<tr><th style="width:500px">Порода</th>
+		<th class="text-right">мин, руб</th>
+		<th class="text-right">макс, руб</th>
+		<th class="text-right">сред, руб</th></tr></thead>
+	<tbody>
+	{%for breed in breed_rating %}
+	<tr>
+		<td class="">
+			<a class="" href="{{url_for('dog_search', breed = breed.get('breed_id')) }}"><b>{{breed.get("breed_name")}}</b></a>&emsp;<sub class="small text-muted" title="Количество объявлений о продаже" style="cursor:default" >{{breed.get('count')}}</sub>
+		</td>
+		<td class="text-right">
+			{{breed.get('min_price') | format_price}}
+		</td>
+		<td class="text-right">
+			{{breed.get('max_price') | format_price}}
+		</td>
+		<td class="text-right">
+			{{breed.get('avg_price') | format_price}}
+		</td>
+	</tr>
+	{%endfor%}
+	</tbody>
+	</table>

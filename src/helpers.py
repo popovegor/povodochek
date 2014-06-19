@@ -6,11 +6,20 @@ from flask import (Markup)
 from pymorphy2 import MorphAnalyzer
 import re
 from datetime import datetime
+import time
 
 def str2date(str_date, format = "%d/%m/%Y"):
     dt = None
     try:
         return datetime.strptime(str_date, format)
+    except ValueError, e:
+        print(e)
+    return None    
+
+def str2datetime(str_datetime, format = "%Y-%m-%d %H:%M"):
+    dt = None
+    try:
+        return datetime.fromtimestamp(time.mktime(time.strptime(str_datetime, "%Y-%m-%d %H:%M")))
     except ValueError, e:
         print(e)
     return None    
