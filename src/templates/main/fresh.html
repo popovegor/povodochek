@@ -90,7 +90,7 @@
 			
 
 			<div style="margin:5px 0px">
-				{%if pet_id == pets.DOG_ID %}
+				{%if pet == pets.DOG_ID %}
 					<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
 				{%else%}
 					<a class="" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
