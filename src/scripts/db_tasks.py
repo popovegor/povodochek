@@ -33,7 +33,7 @@ def rebuild_breeds_rating(pet):
 		}}, allowDiskUse = True)["result"]:
 		breed_name = get_breed_name(k['_id'])
 		tmp_top_breeds.insert({'count': k['count'], 
-			'breed_id': k['_id'], 
+			'breed_id': int(k['_id']), 
 			'breed_name': breed_name, 
 			'min_price' : k['min_price'],
 			'max_price' : k['max_price'], 
