@@ -90,8 +90,11 @@
 			
 
 			<div style="margin:5px 0px">
-
-				<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
+				{%if pet_id == pets.DOG_ID %}
+					<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
+				{%else%}
+					<a class="" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
+				{%endif%}
 				{% if adv.get('photos') %}
 				<img src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="width:150px" />
 				{%endif%}

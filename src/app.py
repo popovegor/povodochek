@@ -1604,12 +1604,12 @@ def ajax_mosaic_showmore(pet, skip, limit):
 @app.route("/ajax/main/fresh/dog/", methods = ["GET"])
 def ajax_main_fresh_dog():
     fresh_advs = db.get_dog_advs_for_fresh(0, 12)
-    return render_template("main/fresh.html", advs = fresh_advs)
+    return render_template("main/fresh.html", advs = fresh_advs, pet = pets.DOG_ID)
 
 @app.route("/ajax/main/fresh/cat/", methods = ["GET"])
 def ajax_main_fresh_cat():
     fresh_advs = db.get_cat_advs_for_fresh(0, 12)
-    return render_template("main/fresh.html", advs = fresh_advs)
+    return render_template("main/fresh.html", advs = fresh_advs, pet = pets.CAT_ID)
 
 @app.route("/ajax/main/news_feed/", methods = ["GET"])
 def ajax_main_news_feed():
