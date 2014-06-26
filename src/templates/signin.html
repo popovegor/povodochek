@@ -39,7 +39,7 @@
         <div style="margin-top:30px;width:300px" class="well">
       
         <p>Нет учетной записи на Поводочке?</p>
-        <a class="lead" href="{{url_for('signup_basic')}}">Зарегистрируйтесь &rarr;</a>
+        <a class="lead" href="{{url_for('signup_basic', next = request.args.get('next') )}}">Зарегистрируйтесь &rarr;</a>
       
       </div>
     </div>

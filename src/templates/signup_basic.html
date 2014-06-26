@@ -35,7 +35,7 @@
   <div class="col-sm-5">
       <div style="margin-top:30px; width:350px" class="well">
         <p>Уже есть учетная запись на Поводочке?</p>
-        <a class="lead" href="{{url_for('signin')}}">Войдите &rarr;</a>
+        <a class="lead" href="{{url_for('signin', next = request.args.get('next') )}}">Войдите &rarr;</a>
       
       </div>
 
