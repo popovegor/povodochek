@@ -86,7 +86,7 @@
 	{%for adv in advs %}
 		<div style="width: 180px; margin-top:20px; z-index: {{count - loop.index0}};" class="mfai-item {{'hidden-md' if loop.index > 10}} {{'hidden-sm' if loop.index > 8}}">
 			{% set breed_name = breeds.get_breed_name(adv.get('breed_id')) %}
-			<small title="{{breed_name}}"><small>{{ breed_name | truncate(25, killwords = True)}}</small></small>
+			<small title="{{breed_name}}"><small>{{ breed_name | truncate(22, killwords = True)}}</small></small>
 			
 			{% if adv.get('photos') %}
 				<img class="img-responsive" src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="margin-top:5px" />
