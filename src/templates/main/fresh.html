@@ -84,22 +84,23 @@
 
 {% set count = advs.count() %}
 	{%for adv in advs %}
-		<div style="width: 170px; margin-top:20px; z-index: {{count - loop.index0}};" class="mfai-item {{'hidden-md' if loop.index > 10}} {{'hidden-sm' if loop.index > 8}}">
+		<div style="width: 180px; margin-top:20px; z-index: {{count - loop.index0}};" class="mfai-item {{'hidden-md' if loop.index > 10}} {{'hidden-sm' if loop.index > 8}}">
 			{% set breed_name = breeds.get_breed_name(adv.get('breed_id')) %}
-			<small title="{{breed_name}}"><small>{{ breed_name | truncate(20, killwords = True)}}</small></small>
+			<small title="{{breed_name}}"><small>{{ breed_name | truncate(25, killwords = True)}}</small></small>
 			
+			{% if adv.get('photos') %}
+				<img class="img-responsive" src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="margin-top:5px" />
+			{%endif%}
 
-			<div style="margin:5px 0px">
+			<div style="margin:10px 0px 5px">
 				{%if pet == pets.DOG_ID %}
 					<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
 				{%else%}
 					<a class="" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
 				{%endif%}
-				{% if adv.get('photos') %}
-				<img src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="width:150px" />
-				{%endif%}
-				<div style="padding-top:10px" class="small">
-				{{adv.get('title')}}</div>
+				
+				<span style="padding-top:10px" class="">
+				{{adv.get('title')}}</span>
 				</a>
 
 			</div>
