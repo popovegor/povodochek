@@ -39,14 +39,14 @@
 
 <ul class="media-list">
 {% for news in news_feed %}
-	<li class="media" style="margin:10px 0px 20px 0px">
+	<li class="media" style="margin:10px 0px 10px 0px">
 		{#<span class="pull-left small">
 			<ul class="text-right media-object list-unstyled small text-muted">
 				<li>
 					<span class="" title="Дата публикации">{{momentjs(news.get('update_date')).format("DD MMMM") }}</span>
 				</li>
 				<li>
-					<span title="Количетсво комментариев"><i class="fa fa-comments"></i>&nbsp;{{news.get("comments_count") or 0}}</span>
+					<span title="Количество комментариев"><i class="fa fa-comments"></i>&nbsp;{{news.get("comments_count") or 0}}</span>
 				</li>
 			</ul>
 		</span>#}
@@ -67,6 +67,6 @@
 </ul>
 
 
-<div class="text-left" style="padding-top:10px">
+<div class="text-left" style="padding-top:15px">
 	<a href="{{url_for('news')}}" class="ajax-link">Все новости</a>
 </div>

@@ -503,27 +503,30 @@ def signup_basic():
             flash(u"У нас на сервере произошла ошибка, попробуйте зарегистрироваться чуть позже.", "error")
             raise e
 
-        flash(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном Вам письме.", "info")
+        flash(Markup(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном на адрес <b>%s</b> письме." % (email)), "info")
         if login_user(users.User({'_id' : user_id}), remember = True):
             return redirect(request.args.get('next') or url_for('account_profile'))
         else:
                 return redirect(url_for('signin'))
 
-        
     return render_template('signup_basic.html', form=form, title=u"Регистрация")
 
 @app.route("/reset-password/", methods = ["GET", "POST"])
 def reset_password():
     form = ResetPassword(request.form)
     title = u"Сброс пароля"
-    if request.method == "POST" and form.validate():
-        password = str(hash(str(uuid1())) % 10000000)
-        asign = str(uuid4())
-        user = db.reset_user_password(form.email_or_login.user, \
-            hash_password(password), asign)
-        if user:
-            send_reset_password(user.get('email'), user.get("login"), asign, password)
-            return render_template("reset_password_sent.html", title=title, email = user.get('email'))
+    if request.method == "POST":
+        if form.validate():
+            password = str(hash(str(uuid1())) % 10000000)
+            asign = str(uuid4())
+            user = db.reset_user_password(form.email_or_login.user, \
+                hash_password(password), asign)
+            if user:
+                send_reset_password(user.get('email'), user.get("login"), asign, password)
+                return render_template("reset_password_sent.html", title=title, email = user.get('email'))
+    else:
+        form.email_or_login.data = current_user.email
+    
     return render_template("reset_password.html", title=title, form = form)
 
 @app.route("/signout/")

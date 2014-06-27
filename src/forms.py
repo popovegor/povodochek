@@ -119,7 +119,7 @@ class ChangePassword(Form):
 
 class ChangeEmail(Form):
     
-    new_email = TextField(u"Новая эл. почта", \
+    new_email = PTextField(u"Новая эл. почта", \
         [Required(message=MSG_REQUIRED), Email(message=MSG_EMAIL)], \
         filters = [lambda x : (x or '').lower()])
 
@@ -130,11 +130,11 @@ class ChangeEmail(Form):
         if check or user:
             raise ValidationError(u"Адрес '%s' уже зарегистрирован" % field.data)
 
-    repeat_new_email = TextField(u'Повторить эл. почту', \
+    repeat_new_email = PTextField(u'Повторить эл. почту', \
         [ Required(message=MSG_REQUIRED), EqualTo('new_email', message=u'Адреса эл. почты не совпадают')])
 
 class ResetPassword(Form):
-    email_or_login = TextField(u"Электронная почта или логин", \
+    email_or_login = PTextField(u"Электронная почта или логин", \
         [Required(message=MSG_REQUIRED)], \
         filters = [lambda x : (x or '')])
 
@@ -149,14 +149,16 @@ class ResetPassword(Form):
 class DogSearch(Form):
 
     #TODO: показывать только те породы, по которым есть объявления
-    breed = TextField(u'Порода', default = u"")
+    breed = PTextField(u'Порода',  
+        default = u"")
 
     gender = SelectField(u"Пол", \
-        choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
-        gender_id, gender_name in genders.genders.items()])
+        choices = [(u"", u"")] + [ (str(gender_id), gender_name) 
+        for gender_id, gender_name in genders.genders.items()])
 
 
-    city = TextField(u"Местоположение", default = u"")
+    city = PTextField(u"Местоположение",  
+        default = u"")
 
     distance = IntegerField(u"удаленность", default = 150)
 
@@ -168,10 +170,10 @@ class DogSearch(Form):
     pedigree = BooleanField(u"c родословной")
 
     # price
-    price_from = TextField(u"Цена от", \
+    price_from = PTextField(u"Цена от", \
         filters = [lambda x: (x or '').replace(' ', '')]
         )
-    price_to = TextField(u"Цена до", \
+    price_to = PTextField(u"Цена до", \
         filters = [lambda x: (x or '').replace(' ', '')])
 
     price_unit = SelectField(u"", choices = [(0, u"руб"), (1, u"тыс руб")])
@@ -186,14 +188,14 @@ class DogSearch(Form):
 class SaleSearch(Form):
 
     #TODO: показывать только те породы, по которым есть объявления
-    breed = TextField(u'Порода')
+    breed = PTextField(u'Порода')
 
     gender = SelectField(u"Пол", \
         choices = [(u"", u"")] + [ (str(gender_id), gender_name) for 
         gender_id, gender_name in genders.genders.items()])
 
 
-    city = TextField(u"Местоположение")
+    city = PTextField(u"Местоположение")
 
     distance = IntegerField(u"Удаленность, км", default = 150)
 
@@ -248,14 +250,14 @@ class Cat(Form):
     price = IntegerField(u"Цена (руб)", [Required(message=MSG_REQUIRED), NumberRange(min=10, max=900000, message=MSG_RANGE.format(10, 900000))], \
         description = Markup(u'Указывая реальную цену, покупатели проявят больше интереса к вашему объявлению!'))
 
-    city = TextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
+    city = PTextField(u"Местоположение", [Required(message=MSG_REQUIRED), validate_location], \
         description = u"Введите населенный пункт, в котором продается питомец.")
 
-    phone = TextField(u"Телефонный номер")
-    skype = TextField(u"Skype")
+    phone = PTextField(u"Телефонный номер")
+    skype = PTextField(u"Skype")
 
-    email = TextField(u"Электронная почта / Email")
-    username = TextField(u"Имя")
+    email = PTextField(u"Электронная почта / Email")
+    username = PTextField(u"Имя")
 
 class Dog(Form):
 
@@ -280,12 +282,12 @@ class Dog(Form):
         db_out = lambda v: num(v))
    
     title = PTextField(Markup(u"Заголовок<br/>объявления"), \
-        [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
+        validators = [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
          description = Markup(u"От 10 до 80 символов, осталось <span id='title_count' class='text-danger'>80</span>."), \
          db_name = 'title')
 
     desc = PTextAreaField(u"Текст рекламного объявления", \
-        [Required(message=MSG_REQUIRED), Length(max=1100, message=MSG_MAX_LENGTH.format(1000))], \
+        validators = [Required(message=MSG_REQUIRED), Length(max=1100, message=MSG_MAX_LENGTH.format(1000))], \
         description = Markup(u"Не более 1000 символов, осталось <span class='text-danger' id='desc_count'>1000</span>."))
 
     photos = PHiddenField(u"Имена фалов, загруженных при помощи plupload", \
@@ -299,7 +301,7 @@ class Dog(Form):
         )
 
     price = PIntegerField(u"Цена", \
-        [Required(message=MSG_REQUIRED), \
+        validators = [Required(message=MSG_REQUIRED), \
          NumberRange(min=5000, max=300000, \
             message=MSG_RANGE.format(5000, 300000))], \
         # filters = [lambda x: x.replace(' ','')], \
@@ -311,7 +313,7 @@ class Dog(Form):
     price_hp =  PBooleanField(u"Рассрочка") #рассрочка hire purchase
 
     city = PTextField(u"Местоположение", \
-        [Required(message=MSG_REQUIRED), validate_location], \
+        validators = [Required(message=MSG_REQUIRED), validate_location], \
         description = u"", \
         db_name = 'city_id', \
         db_in = lambda f: f.city_id, \
@@ -435,25 +437,9 @@ class Activate(Form):
         if not db.users.find_one({'email': field.data}):
             raise ValidationError(u"Адрес '%s' не зарегистрирован" % field.data)
 
-class Stud(Form):
-
-    pet_type = SelectField(u'Тип животного', \
-        choices = [("1", u"Собака"), ("2", u"Кошка")], \
-        validators = [Required(message=u'Тип животного не выбран')])    
-
-    breed = SelectField(u'Порода', \
-        choices = [("1", u"Померанский шпиц"), ("2", u"Овчарка")], \
-        validators = [Required(message=u'Порода не выбрана')])    
-
-    title = TextField(u"Краткое описание", [Required(message=u"Краткое описание не заполнено")])
-
-    description = TextAreaField(u"Полное описание", [Required(message=u"Полное описание не заполнено")])
-
-    photos = HiddenField(u"Имена фалов, загруженных при помощи plupload")
-
 class SignIn(Form):
 
-    login = TextField(u"Электронная почта или логин", \
+    login = PTextField(u"Электронная почта или логин", \
         [Required(message=MSG_REQUIRED)])
 
     remember = BooleanField(u"Запомнить меня", default = True)
@@ -462,10 +448,10 @@ class SignIn(Form):
         [Required(message=MSG_REQUIRED)])
 
 class SignUpBasic(Form):
-    username = TextField(u"Ваше имя", \
+    username = PTextField(u"Ваше имя", \
         [Required(message=MSG_REQUIRED)], description = u"Увидят другие пользователи.")
 
-    email = TextField(u'Электронная почта', \
+    email = PTextField(u'Электронная почта', \
         validators = [Required(message=MSG_REQUIRED),\
         Email(message=MSG_EMAIL)], \
     filters = [lambda x : (x or '').lower()], \
@@ -518,13 +504,13 @@ class SignUp(Form):
 
 
 class SendMail(Form):
-    username = TextField(u"Ваше имя", \
+    username = PTextField(u"Ваше имя", \
         validators = [Required(message=MSG_REQUIRED)])
 
-    message = TextAreaField(u"Сообщение", \
+    message = PTextAreaField(u"Сообщение", \
     	validators = [Required(message=MSG_REQUIRED)])
 
-    email = TextField(u'Ваша электронная почта', \
+    email = PTextField(u'Ваша электронная почта', \
         validators = [Required(message=MSG_REQUIRED),\
         Email(message=MSG_EMAIL)], \
         filters = [lambda x : (x or '').lower()])
