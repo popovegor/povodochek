@@ -7006,8 +7006,8 @@ form .textarea-counter {
 }
 .main .main-fresh-advs #mfa_items .mfai-title {
   overflow-x: hidden;
-  text-overflow: ellipsis;
 
+  /*text-overflow: ellipsis;*/
   overflow-wrap: break-word;
 }
 /*# sourceMappingURL=bootstrap.css.map */
