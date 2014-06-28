@@ -88,19 +88,19 @@
 			{% set breed_name = breeds.get_breed_name(adv.get('breed_id')) %}
 			<small title="{{breed_name}}"><small>{{ breed_name | truncate(22, killwords = True)}}</small></small>
 			
-			{% if adv.get('photos') %}
-				<img class="img-responsive" src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="margin-top:5px" />
-			{%endif%}
-
-			<div style="margin:10px 0px 5px">
+			
+			<div style="margin:5px 0px 5px">
 				{%if pet == pets.DOG_ID %}
-					<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
+					<a class="ajax-link" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
 				{%else%}
-					<a class="" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
+					<a class="ajax-link" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
 				{%endif%}
-				
-				<span style="padding-top:10px" class="">
-				{{adv.get('title')}}</span>
+
+				{% if adv.get('photos') %}
+					<img class="img-responsive" src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="margin-bottom:10px" />
+				{%endif%}
+
+				<div style="" class="mfai-title"> {{adv.get('title')}}</div>
 				</a>
 
 			</div>
