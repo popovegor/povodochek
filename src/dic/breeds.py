@@ -20,6 +20,13 @@ def get_breed_by_name(name):
             if breed['breed_name'].lower() == name), [])
     return None
 
+def get_breed_by_partname(name):
+    if name:
+        name = name.lower()
+        return next((breed for breed in breeds.values() 
+            if name in breed['breed_name'].lower()), [])
+    return None
+
 def get_breed_id_by_name(name):
     breed = get_breed_by_name
     return breed.get("breed_id") if breed else None

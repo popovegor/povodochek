@@ -50,10 +50,9 @@
 			$(".main-pet-search form").attr('action', '{{url_for("dog_search")}}');
 			$("#pet_search_breed_picker_cat").hide();
 			$("#pet_search_breed_picker_dog").show();
-			$("#pet_search_breed").typeahead('destroy').typeahead(
-				povodochek.typeahead(
-				"{{url_for('ajax_typeahead_dog')}}",
-				"pet_search_breed")); //typeahead 
+			$("#pet_search_breed").typeahead('destroy').typeahead(povodochek.typeahead(
+					"{{url_for('ajax_typeahead_dog')}}",
+					"pet_search_breed")); //typeahead 
 			$("#pet_search_breed").val("").focus();
 		});
 
@@ -64,17 +63,17 @@
 			$("#pet_search_breed_picker_dog").hide();
 			$("#pet_search_breed_picker_cat").show();
 			
-			$("#pet_search_breed").typeahead('destroy').typeahead(
-			povodochek.typeahead(
-			"{{url_for('ajax_typeahead_cat')}}",
-			"pet_search_breed")); //typeahead
+			$("#pet_search_breed").typeahead('destroy').typeahead(povodochek.typeahead(
+					"{{url_for('ajax_typeahead_cat')}}",
+					"pet_search_breed")); //typeahead
 			 $("#pet_search_breed").val("").focus();
 		});
 
 	   $("#pet_search_breed").typeahead(
-povodochek.typeahead(
-"{{url_for('ajax_typeahead_dog')}}",
-"pet_search_breed")); //typeahead 
+			povodochek.typeahead(
+			"{{url_for('ajax_typeahead_dog')}}",
+			"pet_search_breed")
+		); //typeahead 
 
 
     	})

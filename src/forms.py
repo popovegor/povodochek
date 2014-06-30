@@ -24,7 +24,8 @@ import dic.ages as ages
 import dic.breeds as breeds 
 from dic.pets import pets, get_pet_name
 import dic.geo as geo
-from dic.pet_docs import (dog_docs, doc_dog_pedigrees, doc_dog_pedigrees_rkf, doc_puppy_cards)
+from dic.pet_docs import (dog_docs, doc_dog_pedigrees, 
+    doc_dog_pedigrees_rkf, doc_puppy_cards)
 
 
 import config
@@ -41,12 +42,14 @@ MSG_EMAIL = u"Пожалуйста, введите корректный адре
 MSG_CHOISE = u""
 
 def get_breed_from_field(field):
-	breed = None
-	if field.data:
-		breed = breeds.get_breed_by_id(field.data)
-		if not breed:
-			breed = breeds.get_breed_by_name(field.data)
-	return breed
+    breed = None
+    if field.data:
+        breed = breeds.get_breed_by_id(field.data)
+        if not breed:
+            breed = breeds.get_breed_by_name(field.data)
+            if not breed:
+                breed = breeds.get_breed_by_partname(field.data)
+    return breed
 
 def get_geo_from_field(field):
     region = get_region_from_field(field)
@@ -89,7 +92,7 @@ def validate_location(form, field):
 
 def validate_breed(form, field):
     if field.data:
-        breed = breeds.get_breed_by_name(field.data)
+        breed = get_breed_from_field(field)
         if not breed:
             raise ValidationError(u'Совпадений не найдено. Выберите породу из выпадающего списка, введя часть названия.')
         else:
@@ -508,7 +511,7 @@ class SendMail(Form):
         validators = [Required(message=MSG_REQUIRED)])
 
     message = PTextAreaField(u"Сообщение", \
-    	validators = [Required(message=MSG_REQUIRED)])
+        validators = [Required(message=MSG_REQUIRED)])
 
     email = PTextField(u'Ваша электронная почта', \
         validators = [Required(message=MSG_REQUIRED),\
