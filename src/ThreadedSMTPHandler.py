@@ -3,23 +3,8 @@
 
 
 import logging.handlers
-from threading import Thread
 import config
-
-def smtp_at_your_own_leasure(mailhost, port, username, password, fromaddr, toaddrs, msg, secure, timeout):
-    import smtplib
-    if not port:
-        port = smtplib.SMTP_PORT
-    smtp = smtplib.SMTP(mailhost, port, timeout=timeout)
-    if username:
-        if secure is not None:
-            smtp.ehlo()
-            smtp.starttls(*secure)
-            smtp.ehlo()
-        smtp.login(username, password)
-    smtp.sendmail(fromaddr, toaddrs, msg.encode("utf-8"))
-    smtp.quit()
-
+import mailing
 
 class ThreadedSMTPHandler(logging.Handler):
     """
@@ -89,8 +74,8 @@ class ThreadedSMTPHandler(logging.Handler):
                             self.getSubject(record),
                             formatdate(), msg)
             
-            thread = Thread(target=smtp_at_your_own_leasure, args=(self.mailhost, port, self.username, self.password, self.fromaddr, self.toaddrs, msg, self.secure, self._timeout))
-            thread.start()
+            mailing.send_email(From = self.fromaddr, To = self.toaddrs, Subject = u"povodochek:web:error", Text = msg)
+
         except (KeyboardInterrupt, SystemExit):
             raise
         except:

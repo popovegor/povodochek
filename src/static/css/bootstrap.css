@@ -5098,6 +5098,10 @@ a.list-group-item-info.active:focus {
   background-color: #d9edf7;
   border-color: #bce8f1;
 }
+.well-warning {
+  background-color: #fcf8e3;
+  border-color: #faebcc;
+}
 .well-lg {
   padding: 24px;
   border-radius: 6px;

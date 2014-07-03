@@ -58,7 +58,7 @@ from form_helper import (get_fields, calc_attraction)
 import cProfile
 import sys
 
-from mailing import mail_robot
+import mailing
 import users
 
 
@@ -1527,16 +1527,16 @@ def save_news(news_id, form):
         news_url = url_for('news_view', 
             news_id = news.get('_id'), _external = True)
     if form.email_single.data:
-        template = mail_robot.get_layout_template()
+        template = mailing.get_layout_template()
         HTML = template.render(message = news.get('message'), news_url = news_url)
-        mail_robot.send_email(Subject = news.get("subject"), HTML = HTML, To = form.email_single.data)
+        mailing.send_email(Subject = news.get("subject"), HTML = HTML, To = form.email_single.data)
     if form.email_everyone.data:
-        print("send everyone")
-        template = mail_robot.get_layout_template()
+        template = mailing.get_layout_template()
         HTML = template.render(message = news.get('message'), news_url = news_url)
-        mail_robot.send_email_to_all(
+        mailing.send_email_to_users(
             Subject = news.get("subject"), 
-            HTML = HTML)
+            HTML = HTML, 
+            users = db.get_users_activated())
     return news
 
 @app.route('/admin/news/')

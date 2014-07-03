@@ -46,31 +46,31 @@
 
 {%- macro second_line() -%}
    <!-- price -->
-      <div class="row" style="margin-top:15px">
-        <div class="col-sm-5">
+      <div class="" style="margin-top:15px">
+        
           <label class="control-label">Цена <i>(руб)</i></label>
-          <table style="width:100%">
+          <table style="">
             <tr>
               {#<td style="width:45px;">
                 <label class="control-label">Цена</label>
               </td>#}
-              <td style="width:130px">
+              <td style="width:100px">
                
                 <div class="input-group input-group-md">
                 <input name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
-                <span class="input-group-addon" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>
+                {#<span class="input-group-addon" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>#}
               </div>
               </td>
               <td style="width:25px;" class="text-center small">&ndash;</td>
-              <td style="width:130px;">
+              <td style="width:100px;">
                <div class="input-group input-group-md">
                 <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
-                <span class="input-group-addon rur" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>
+                {#<span class="input-group-addon rur" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>#}
               </div>  
               </td>
             </tr>
           </table>
-          </div>
+          
 
           <div class="col-sm-7 text-right">
           </div>

@@ -331,7 +331,7 @@ class Dog(Form):
 
     delivery = PBooleanField(u"Возможна доставка в другой город")
 
-    doc = PSelectField(u"Документы о происхождении", \
+    doc = PSelectField(Markup(u"Документы <br/>о&nbsp;происхождении"), \
         choices = [(0, u"-- нет документов --")] + [(doc_id , doc_name) for (doc_id, doc_name) in dog_docs.items()], \
         coerce = int, \
         attraction = True, \
@@ -419,9 +419,6 @@ class Dog(Form):
     phone = PTextField(u"Телефонный номер")
 
     skype = PTextField(u"Skype")
-
-    kennel_name = PTextField(u"Название питомника", 
-        attraction = True)
 
     site_link = PTextField(Markup(u"Персональный<br/><span style='white-space:nowrap'>веб-сайт</span>"), \
         attraction = True)

@@ -79,6 +79,9 @@ def activate_user(user_id):
 def get_user_by_asign(asign):
 	return users.find_one({'asign': asign})
 
+def get_users_activated():
+	return users.find({'activated' : True})
+
 def asign_user(user):
 	return users.update({'_id': user["_id"]}, \
 	    {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], \

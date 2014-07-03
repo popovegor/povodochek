@@ -210,11 +210,11 @@ def calc_attraction(form):
     for f in filter(lambda f: f.attrs.get("attraction"), form):
         if is_active_attraction_field(form, f):
             count += 1; 
-            # print('count', count, f.name)
+            print('count', count, f.name)
     
             if get_attraction_field_val(form, f):
                 complete += 1;  
-                # print('complete', complete, f.name)
+                print('complete', complete, f.name)
 
 
     percent = (round(complete / float(count) * 10000) / 100) if count > 0 else 0;
