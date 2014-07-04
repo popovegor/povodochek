@@ -68,7 +68,11 @@
 
       {{dog_info(adv)}}  
 
+      {% if not archived %}
+
       {{seller_info(adv)}}
+
+      {% endif %}
 
     </div> <!-- right-side -->
 
@@ -79,15 +83,19 @@
 
 </div> <!-- sale-pet-container -->  
 
-  <script type="text/javascript">
+<script type="text/javascript">
+  {% if archived %}
+
   $(document).ready(function(){
+    var archive_date = moment("{{adv.get('archive_date').isoformat()}}").format('D MMMM YYYY года');
+    $("body").prepend("<div class='bg-info adv-expired-block' style=''><div class='text-center aeb-inner' style=''><ul class='list-inline'><li><i class='fa fa-archive fa-5x largest'></i></li><li class='text-left' style='margin-left:20px;' class='text-left'><span style='font-size:32px;'>Объявление не актуально</span> <br/>Перенесено в архив " + archive_date + "</li><ul></div></div>")
+  })
 
-    $("[data-toggle='tooltip']").tooltip();
+  {%endif%}
 
-  });
-  </script>
+</script>
 
-  {% endblock %} 
+{% endblock %} 
 
 
 {%- macro video(adv) -%}
@@ -133,13 +141,15 @@
     {% set add_date = adv.get("add_date") %}
     {% set update_date = adv.get("update_date") %}
 
-     <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
+     <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
 
      {%if update_date != add_date %}
-      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
+      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
     {%endif%}     
 
-  <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">смотрели:</span>{{ adv.get("stat").get("unique_views") if adv.get("stat") else '0' }}</span>
+  {% set views_count = adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
+  <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Посмотрели</span>{{ views_count }}&ensp;{{"пользователь" | morph_word(count=views_count)}}</span>
+  
 
 </div>
 
@@ -295,21 +305,12 @@
    {% set doc = adv.get("doc_id") %}
         {% if not doc %}
           <div class="" style="border-radius:5px">
-          <table>
-            <tr>
-              <td style="">
-                <span class="fa fa-5x fa-exclamation-circle text-warning"></span>
-            </td>
-            <td style="width:30px"></td>
-            <td>
+          
                 <h3 class="text-warning">
                    Нет документов о происхождении
                 </h3>
                 <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки.{# Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.#}</p>
-            </td>
-            
-            </tr>
-          </table>
+          
             
           </div>
         {%else%}

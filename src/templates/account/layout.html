@@ -27,21 +27,21 @@
       <ul class="nav nav-pills nav-stacked" >
 
       <li class="{{'active' if request.path  == url_for('account_dog_advs')}}">
-        <a href="{{url_for('account_dog_advs')}}">Мои собаки <span class="badge pull-right">{{current_user.dog_advs_cnt}}</span></a>
+        <a href="{{url_for('account_dog_advs')}}">Мои собаки <span class="badge pull-right">{{current_user.counters.get("dog_advs")}}</span></a>
       </li>
 
       <li class="{{'active' if request.path  == url_for('account_dog_advs_archived')}}">
-        <a href="{{url_for('account_dog_advs_archived')}}">Архив моих собак</a>
+        <a href="{{url_for('account_dog_advs_archived')}}">Архив <span class="badge pull-right">{{current_user.counters.dog_advs_archived}}</span></a>
       </li>
 
       <li class="nav-divider"></li>
 
       <li class="{{'active' if request.path  == url_for('account_cat_advs')}}">
-        <a  href="{{url_for('account_cat_advs')}}">Мои кошки <span class="badge pull-right">{{current_user.cat_advs_cnt}}</span></a>
+        <a  href="{{url_for('account_cat_advs')}}">Мои кошки <span class="badge pull-right">{{current_user.counters.cat_advs}}</span></a>
       </li>
 
       <li class="{{'active' if request.path  == url_for('account_cat_advs_archived')}}">
-        <a href="{{url_for('account_cat_advs_archived')}}">Архив моих кошек</a>
+        <a href="{{url_for('account_cat_advs_archived')}}">Архив <span class="badge pull-right">{{current_user.counters.cat_advs_archived}}</span></a>
       </li>
 
       <li class="nav-divider"></li>

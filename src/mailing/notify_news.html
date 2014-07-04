@@ -1,0 +1,14 @@
+{%extends "layout.html"%}
+
+
+{%block content%}
+
+{{message}}
+
+	{% if news_url %}
+	    <div style="margin-top:20px">
+	    <a href="{{news_url}}">Обсуждение новости</a>
+	    </div>
+	{% endif %}
+
+{%endblock%}

@@ -6,14 +6,14 @@
 
       <form id="contact" method="post" role="form"  action="{{request.url}}">
           
-            {{form_field(form.message,  size="col-sm-8", rows=5) }}
+            {{form_field(form.message,  rows=8,style="width:600px") }}
 
             {#{%if seller.get("phone_adv_sms") %}
               {{form_field(form.sms_alert) }}
             {%endif%}#}
 
-            {{form_field(form.username,  size="col-sm-4") }}
-            {{form_field(form.email,  size="col-sm-4") }}
+            {{form_field(form.username,  style="width:250px") }}
+            {{form_field(form.email,  style="width:250px") }}
        
                            
           <button class="btn btn-primary" type="submit" data-loading-text="Отправляется...">Отправить</button>

@@ -34,7 +34,7 @@
 
 
 <div class="" style="margin:-5px -25px 10px -25px; padding:0px 25px 0px 25px;">
-      {{render_stars(adv.get("attraction"))}}
+      {{render_stars(adv.get("attraction"), hint = False)}}
 </div>
 
   <div class="row clearfix" style="">
@@ -65,7 +65,7 @@
         <div class="row">
             <div class="col-md-8 col-lg-9 col-sm-8">
 
-                <h4 class="adv-head">{{adv.get("title")}}</h4>
+                <h4 class="adv-head"><a href="{{url_for('dog_adv_show', adv_id = adv.get('_id'))}}">{{adv.get("title")}}</a></h4>
               
 
                 <p class="adv-breed">
@@ -80,7 +80,7 @@
                   {% set city_id = adv.get("city_id") %}
 
                   {% if city_id %}
-                  <i class="fa fa-map-marker" title="Местоположение"></i>&ensp;<span title="Местоположение">{{ geo.get_city_region(city_id) }}</span>
+                  <b title="Местоположение">{{ geo.get_city_region(city_id) }}</b>
 
                 </span>
                 {%endif%}

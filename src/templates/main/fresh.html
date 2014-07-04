@@ -91,16 +91,16 @@
 			
 			<div style="margin:5px 0px 5px">
 				{%if pet == pets.DOG_ID %}
-					<a class="ajax-link" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
+					<a class="" href="{{url_for('dog_adv_show', adv_id = adv.get('_id')) }}">
 				{%else%}
-					<a class="ajax-link" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
+					<a class="" href="{{url_for('cat_adv_show', adv_id = adv.get('_id')) }}">
 				{%endif%}
 
 				{% if adv.get('photos') %}
 					<img class="img-responsive" src="{{url_for('thumbnail', filename = adv.get('photos')[0]) }}" style="margin-bottom:10px" />
 				{%endif%}
 
-				<div style="" class="mfai-title"> {{adv.get('title')}}</div>
+				<span style="" class="mfai-title"> {{adv.get('title')}}</span>
 				</a>
 
 			</div>

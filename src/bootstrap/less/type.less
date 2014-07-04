@@ -82,9 +82,9 @@ p {
 small,
 .small  { font-size: 85%; }
 
-.big { font-size: 115%; }
-.bigger { font-size: 130%; } 
-.biggest { font-size: 145%; }
+.big, .large { font-size: 115%; }
+.bigger, .larger { font-size: 130%; } 
+.biggest, .largest { font-size: 145%; }
 
 // Undo browser default styling
 cite    { font-style: normal; }
@@ -174,6 +174,13 @@ cite    { font-style: normal; }
   background-color: @state-default-bg;
   a&:hover {
     background-color: darken(@state-default-bg, 10%);
+  }
+}
+
+.bg-pov {
+  background-color: @state-pov-bg;
+  a&:hover {
+    background-color: darken(@state-pov-bg, 10%);
   }
 }
 

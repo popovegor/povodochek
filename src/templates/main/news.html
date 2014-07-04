@@ -4,7 +4,6 @@
 <div class="main-news-feed">
 				
 	<b class="big">Новости проекта</b>
-	
 
 	<div id="mnf_items" style="margin-top:30px">
 		
@@ -25,7 +24,7 @@
 	$(document).ready(function(){
 		$("#mnf_items").hide();
 		$("#mnf_spinner").show();
-		$.get("{{url_for('ajax_main_news_feed')}}", 
+		$.get("{{url_for('ajax_main_news')}}", 
 		function(data) {
 			$("#mnf_items").html(data);
 			$("#mnf_spinner").hide();
@@ -67,6 +66,6 @@
 </ul>
 
 
-<div class="text-left" style="padding-top:15px">
+<div class="text-left small" style="padding-top:15px">
 	<a href="{{url_for('news')}}" class="ajax-link">Все новости</a>
 </div>

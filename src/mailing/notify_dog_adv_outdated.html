@@ -1,0 +1,11 @@
+{%extends "layout.html"%}
+
+
+{%block content%}
+
+<p>
+Сообщаем вам, что подходит к концу срок размещения объявления <a href="http://поводочек.рф/prodazha-sobak/{{adv.get('_id')}}">&laquo;{{adv.get('title')}}&raquo;</a>. 
+</p>
+Если объявление не будет обновлено, то перенесение его в архив произойдет через <b>{{left_days}}&nbsp;{{"день" if left_days == 1 else ("дня" if left_days < 5 else "дней") }}</b>.
+
+{%endblock%}

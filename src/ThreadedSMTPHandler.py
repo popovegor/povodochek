@@ -74,7 +74,11 @@ class ThreadedSMTPHandler(logging.Handler):
                             self.getSubject(record),
                             formatdate(), msg)
             
-            mailing.send_email(From = self.fromaddr, To = self.toaddrs, Subject = u"povodochek:web:error", Text = msg)
+            mailing.send_email_async(
+                sender = self.fromaddr, 
+                to = self.toaddrs, 
+                subject = self.subject, 
+                text = msg)
 
         except (KeyboardInterrupt, SystemExit):
             raise

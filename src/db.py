@@ -168,15 +168,25 @@ def get_cat_adv(adv_id):
 def get_cat_adv_archived(adv_id):
     return cat_advs_archived.find_one({'_id': ObjectId(adv_id)})
 
+def refresh_dog_adv(user_id, adv_id):
+	now = datetime.utcnow()
+	expire_date = now + timedelta(days=config.DOG_ADV_EXPIRE_IN_DAYS)
+	query = {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}
+	adv = dog_advs.find_and_modify(query, 
+		{"$set":{"update_date" : now, 'expire_date' : expire_date}}, 
+		upsert = False, new = True)
+	return adv
+
 
 def upsert_dog_adv(user_id, adv_id, form, attraction):
     now = datetime.utcnow()
     updater = {}
     
     dog_set = {
-        'user_id' : str(user_id), \
-        'update_date' : now, \
-        'attraction': attraction, \
+        'user_id' : str(user_id),
+        'update_date' : now,
+        'expire_date' : now + timedelta(days=config.DOG_ADV_EXPIRE_IN_DAYS),
+        'attraction': attraction,
         'region_id' : form.city.region_id
         }
     dog_unset = {}
@@ -198,6 +208,13 @@ def upsert_dog_adv(user_id, adv_id, form, attraction):
     query = {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}
     adv = dog_advs.find_and_modify(query, updater, upsert = True, new = True)
     return adv
+
+def get_dog_advs():
+	return dog_advs.find()
+
+def get_dog_advs_expired():
+	now = datetime.utcnow()
+	return dog_advs.find({'expire_date': {'$lte' : now}})
 
 def get_dog_advs_by_user(user_id):
 	return dog_advs.find(
@@ -651,7 +668,7 @@ def remove_news(news_id):
     ret = news.find_and_modify({'_id': ObjectId(news_id)}, remove = True)
     news_deleted.insert(ret)
 
-def get_news_feed(limit = 0, published = True):
+def get_news_all(limit = 0, published = True):
     query = {}
     if published:
         query['published'] = published

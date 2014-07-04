@@ -1,4 +1,4 @@
-{%- macro render_stars(attraction) -%}
+{%- macro render_stars(attraction, hint = True) -%}
 
 	{%set percent = attraction or 0 %}
 	{% set delay = '{"show": "0", "hide":"500"}' %}
@@ -8,8 +8,11 @@
 	{% set content = "<span style=''>Привлекательность объяв. &mdash; " + format('{0:.2f}', percent).rstrip('0').rstrip('.') + "%</span><br/><a class='small' href='" + help_url + "' target='_blank'>Как мы считаем привлекательность?</a>" %}
 
 	
-	
-	<span class="attraction-stars" data-toggle="popover" data-content="{{content}}" data-html="true" data-delay='{{delay}}' data-trigger="hover" data-placement="top">
+	{%if hint %}
+		<span class="attraction-stars" data-toggle="popover" data-content="{{content}}" data-html="true" data-delay='{{delay}}' data-trigger="hover" data-placement="top" style="cursor:help">
+	{%else%}
+		<span class="attraction-stars" style="cursor:default" title="Привлекательность объявления {{format('{0:.2f}', percent).rstrip('0').rstrip('.')}}%">
+	{%endif%}
 	{%for k in [1, 2, 3, 4, 5] %}
 		{%if (percent > 0 and percent < 10 and k == 1) 
 				or (percent >= 10 and percent < 40 and k <= 2 )

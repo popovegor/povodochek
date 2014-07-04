@@ -216,9 +216,13 @@ def load_user(id):
     user = db.get_user(id)
 
     if user and not user.get('banned'):
-        user['dog_advs_cnt'] = db.get_dog_advs_by_user(id).count()
-        user['cat_advs_cnt'] = db.get_cat_advs_by_user(id).count()
-        return users.User(user)
+        counters = {
+	        "dog_advs": db.get_dog_advs_by_user(id).count(),
+	        "dog_advs_archived": db.get_dog_advs_archived_by_user(id).count(),
+	        "cat_advs" : db.get_cat_advs_by_user(id).count(),
+	        "cat_advs_archived": db.get_cat_advs_archived_by_user(id).count(),
+	        }
+        return users.User(user, counters = counters)
     else:
         return users.Anonymous()
 
@@ -320,6 +324,13 @@ def ajax_breed_picker_dog():
 @app.route("/ajax/breed/picker/cat/", methods = ["GET"])
 def ajax_breed_picker_cat():
     return render_template('cat/breed_picker.html', input_id = request.args.get("input_id"), trigger_id = request.args.get("trigger_id"))
+
+@app.route('/ajax/avito/parse/')
+def ajax_avito_parse():
+    adv_url = request.args["url"]
+    if adv_url:
+        adv = parse_avito_adv(adv_url)
+    return jsonify(adv)
 
 @app.route("/test/location/", methods = ["GET"])
 def test_location():
@@ -683,8 +694,12 @@ def cat_search(sale_search_form = None):
 @app.route('/prodazha-sobak/<adv_id>/')
 def dog_adv_show(adv_id):
     adv = None
+    archived = False
     try:
         adv = db.get_dog_adv(adv_id)
+        if not adv:
+        	adv = db.get_dog_adv_archived(adv_id)
+        	archived = True
     except InvalidId, e:
         abort(404)
     
@@ -707,7 +722,8 @@ def dog_adv_show(adv_id):
         header = header,
         title = title,
         adv = adv,
-        seller = seller)
+        seller = seller, 
+        archived = archived)
 
 
 @app.route('/prodazha-koshek/<adv_id>/')
@@ -862,7 +878,7 @@ def account_cat_advs_archived():
     return tmpl
 
 
-@app.route("/account/cat/archived/<adv_id>/restore", 
+@app.route("/account/cat/archived/<adv_id>/restore/", 
     methods = ['GET', 'POST'])
 @login_required
 def account_cat_adv_archived_restore(adv_id):
@@ -873,19 +889,19 @@ def account_cat_adv_archived_restore(adv_id):
     form = Cat(request.form)
     if request.method == "POST":
         if form.validate():
-            adv = save_cat_adv(form)
+            adv = save_cat_adv(form, adv_id = adv_id)
             db.remove_cat_adv_archived(adv_id, current_user.id) # 
             msg = Markup(u"Объявление <a href='{1}' target='_blank'>&laquo;{0}&raquo;</a> восстановлено и опубликовано.".format(form.title.data, url_for('cat_adv_show', adv_id = adv.get('_id'))))
             flash(msg, "success")
             return render_template("/account/cat/adv_edit_success.html", header=msg, title = u"Объявление '%s' восстановлено" % form.title.data)
     else:
-        form.breed.data = get_breed_name(cat.get("breed_id"), cat.get("pet_id"))
+        form.breed.data = breeds.get_breed_name(cat.get("breed_id"))
         form.title.data = cat.get("title")
         form.desc.data = cat.get('desc')
         form.price.data = num(cat.get('price'))
         form.gender.data = str(num(cat.get('gender_id')) or '')
         form.photos.data = ",".join(cat.get("photos"))
-        form.city.data = get_city_region(cat.get("city_id"))
+        form.city.data = geo.get_city_region(cat.get("city_id"))
         form.phone.data = cat.get("phone") or current_user.phone
         form.skype.data = cat.get("skype") or current_user.skype
     return render_template("/account/cat/adv_edit.html", form=form, title=u"Восстановить объявление о продаже кошки", 
@@ -904,7 +920,7 @@ def account_dog_adv_archived_restore(adv_id):
     form = Dog(request.form)
     if request.method == "POST":
         if form.validate():
-            adv = save_dog_adv(form = form)# adv_id is missed to insert a new adv
+            adv = save_dog_adv(form = form, adv_id = adv_id)
             db.remove_dog_adv_archived(adv_id, current_user.id) # remove the old one
             msg = Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> восстановлено и опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('_id')), form.title.data))
             flash(msg, "success")
@@ -931,7 +947,17 @@ def autofill_user_to_adv(form):
     # form.kennel_name.data = form.kennel_name.data or current_user.kennel_name
 
 
-@app.route("/account/dog/<adv_id>/", methods = ['GET', 'POST'])
+@app.route("/ajax/account/dog/<adv_id>/refresh/", methods = ["GET"])
+@login_required
+def ajax_account_dog_adv_refresh(adv_id):
+    adv = db.refresh_dog_adv(current_user.id, adv_id)
+    return jsonify(items = {
+    	'expire_date': str(adv.get('expire_date').isoformat()),
+    	'update_date' :str(adv.get('update_date').isoformat())
+    	})
+
+
+@app.route("/account/dog/<adv_id>/edit/", methods = ['GET', 'POST'])
 @login_required
 def account_dog_adv_edit(adv_id):
     dog = db.get_dog_adv_for_user(adv_id, current_user.id)
@@ -1109,7 +1135,7 @@ def save_cat_adv(form, adv_id = None, moderator = None):
     return adv
 
 
-@app.route("/account/cat/<adv_id>/", methods = ['GET', 'POST'])
+@app.route("/account/cat/<adv_id>/edit/", methods = ['GET', 'POST'])
 @login_required
 def account_cat_adv_edit(adv_id):
     cat = db.get_cat_adv_for_user(adv_id, current_user.id)
@@ -1256,7 +1282,7 @@ def dog_adv_email(adv_id):
     else:
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template("/dog/adv_email.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
+    return render_template("/mail.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
 
 @app.route("/prodazha-koshek/<adv_id>/email/", methods = ["POST", "GET"])
 def cat_adv_email(adv_id):
@@ -1289,7 +1315,7 @@ def cat_adv_email(adv_id):
     else:
         form.username.data = current_user.username
         form.email.data = current_user.email
-    return render_template("/mail_sale.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
+    return render_template("/mail.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
 
 @app.route('/favicon.ico')
 def favicon():
@@ -1388,7 +1414,7 @@ def news_view_comment(news_id):
 
 @app.route('/news/')
 def news():
-    news_feed = db.get_news_feed()
+    news_feed = db.get_news_all()
     total = news_feed.count()
     perpage = 10
     return render_template('/news/news_feed.html', title = Markup(u"Новости проекта"), news_feed = news_feed, total = total, perpage = perpage)
@@ -1520,29 +1546,26 @@ def save_news(news_id, form):
                 message = form.message.data, 
                 published = form.published.data, 
                 summary = form.summary.data, 
-                publish_date = form.publish_date.data
-                )
+                publish_date = form.publish_date.data)
     news_url = None
     if form.published.data:
         news_url = url_for('news_view', 
             news_id = news.get('_id'), _external = True)
     if form.email_single.data:
-        template = mailing.get_layout_template()
-        HTML = template.render(message = news.get('message'), news_url = news_url)
-        mailing.send_email(Subject = news.get("subject"), HTML = HTML, To = form.email_single.data)
+        html = mailing.get_html_notify_news(message = news.get('message'), news_url = news_url)
+        mailing.send_email(subject = news.get("subject"), html = html, to = [form.email_single.data])
     if form.email_everyone.data:
-        template = mailing.get_layout_template()
-        HTML = template.render(message = news.get('message'), news_url = news_url)
+        html = mailing.get_html_notify_news(message = news.get('message'), news_url = news_url)
         mailing.send_email_to_users(
-            Subject = news.get("subject"), 
-            HTML = HTML, 
-            users = db.get_users_activated())
+        	users = db.get_users_activated(),
+            subject = news.get("subject"), 
+            html = html)
     return news
 
 @app.route('/admin/news/')
 @admin_requried
 def admin_news():
-    news_feed = db.get_news_feed()
+    news_feed = db.get_news_all()
     total = news_feed.count()
     perpage = 1000
     return render_template('/admin/news.html', title = Markup(u"Админка: новости"), news_feed = news_feed, total = total, perpage = perpage)
@@ -1560,12 +1583,6 @@ def test_parser_avito():
     response.headers['Access-Control-Allow-Origin'] = "*"
     return response
 
-@app.route('/ajax/avito/parse/')
-def ajax_avito_parse():
-    adv_url = request.args["url"]
-    if adv_url:
-        adv = parse_avito_adv(adv_url)
-    return jsonify(adv)
 
 @app.route('/sitemap.xml')
 @app.route('/robots.txt')
@@ -1614,12 +1631,12 @@ def ajax_main_fresh_cat():
     fresh_advs = db.get_cat_advs_for_fresh(0, 12)
     return render_template("main/fresh.html", advs = fresh_advs, pet = pets.CAT_ID)
 
-@app.route("/ajax/main/news_feed/", methods = ["GET"])
-def ajax_main_news_feed():
-    news_feed = db.get_news_feed(limit = 5, published = True)
-    return render_template("main/news_feed.html", news_feed = news_feed)
+@app.route("/ajax/main/news/", methods = ["GET"])
+def ajax_main_news():
+    news_feed = db.get_news_all(limit = 5, published = True)
+    return render_template("main/news.html", news_feed = news_feed)
 
-@app.route("/ajax/main/popular/breed/dog", methods = ["GET"])
+@app.route("/ajax/main/popular/breed/dog/", methods = ["GET"])
 def ajax_main_popular_breed_dog():
     breed_rating = db.get_dog_breeds_rating(limit = 10)
     return render_template("main/popular.html", breed_rating = breed_rating)

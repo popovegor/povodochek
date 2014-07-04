@@ -29,7 +29,7 @@
 
 
 <div class="pet-post-button btn-group">
-		<button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" style=""><i class="fa fa-paw"></i>&emsp;Подать&nbsp;объявление&ensp;<span class="caret"></span></button>
+		<button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" style=""><i class="fa fa-paw fa-fw"></i>&emsp;Подать&nbsp;объявление&ensp;<span class="caret"></span></button>
 		<ul class="dropdown-menu" role="menu">
 	    <li><a class="text-left" target="_blank" href="{{'#myModal_dog' if not current_user.is_signed() else url_for('account_dog_adv_new') }}" {{'data-toggle=modal data-target=#myModal_dog' if not current_user.is_signed()}}>о продаже собаки</a></li>
 	    <li><a class="text-left" target="_blank" href="{{'#myModal_cat' if not current_user.is_signed() else url_for('account_cat_adv_new') }}" {{'data-toggle=modal data-target=#myModal_cat' if not current_user.is_signed()}}>о продаже кошки</a></li>
