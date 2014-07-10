@@ -5,7 +5,8 @@ from flask_login import (UserMixin, AnonymousUser)
 import db
 
 class User(UserMixin):
-    def __init__(self, user, counters):
+    def __init__(self, user_id):
+        user = db.get_user(user_id)
         # self.name = user.get('login')
         self.username = user.get('username')
         self.surname = user.get('surname')
@@ -18,7 +19,12 @@ class User(UserMixin):
         self.skype = user.get('skype')
         self.kennel_name = user.get('kennel_name')
         self.site_link = user.get('site_link')
-        self.counters = counters
+        self.counters = {
+            "dog_advs": db.get_dog_advs_by_user(user_id).count(),
+            "dog_advs_archived": db.get_dog_advs_archived_by_user(user_id).count(),
+            "cat_advs" : db.get_cat_advs_by_user(user_id).count(),
+            "cat_advs_archived": db.get_cat_advs_archived_by_user(user_id).count()
+            }
 
     def is_signed(self):
         return True

@@ -213,16 +213,8 @@ if not app.debug:
 
 @login_manager.user_loader
 def load_user(id):
-    user = db.get_user(id)
-
-    if user and not user.get('banned'):
-        counters = {
-	        "dog_advs": db.get_dog_advs_by_user(id).count(),
-	        "dog_advs_archived": db.get_dog_advs_archived_by_user(id).count(),
-	        "cat_advs" : db.get_cat_advs_by_user(id).count(),
-	        "cat_advs_archived": db.get_cat_advs_archived_by_user(id).count(),
-	        }
-        return users.User(user, counters = counters)
+    if id:
+        return users.User(user_id = id)
     else:
         return users.Anonymous()
 
@@ -255,7 +247,7 @@ def signin():
         user = db.get_user_by_login(login_or_email) or db.get_user_by_email(login_or_email)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
-                if login_user(users.User({'_id' : user["_id"]}), remember=remember):
+                if login_user(users.User(user_id = user["_id"]), remember=remember):
                     return redirect(request.args.get("next") \
                         or url_for("account_profile"))
                 else:
@@ -446,7 +438,7 @@ def asignin(asign):
     title=u"Активация нового пароля"
     if user:
         db.asign_user(user)
-        if login_user(users.User(user)):
+        if login_user(users.User(user_id = user['_id'])):
             return render_template("asignin_success.html", title = title)
     return render_template("asignin_failed.html", title=title)
 
@@ -515,7 +507,7 @@ def signup_basic():
             raise e
 
         flash(Markup(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном на адрес <b>%s</b> письме." % (email)), "info")
-        if login_user(users.User({'_id' : user_id}), remember = True):
+        if login_user(users.User(user_id = user_id), remember = True):
             return redirect(request.args.get('next') or url_for('account_profile'))
         else:
                 return redirect(url_for('signin'))
