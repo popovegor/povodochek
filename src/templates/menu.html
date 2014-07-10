@@ -22,7 +22,7 @@
       
 
     <!-- current.user -->
-      {%if current_user.is_signed() %}
+      {%if current_user.is_authenticated() %}
 
         <li class="dropdown {{'active' if url_for('account') in request.path}}">
           <a title="{{current_user.username}}" style="cursor:pointer" user_id="{{current_user.id}}" href="#" class="dropdown-toggle menu-account" data-toggle="dropdown"><i class="fa fa-user fa-fw"></i><span class="">&emsp;Личный кабинет&ensp;</span><b class="caret"></b></a>

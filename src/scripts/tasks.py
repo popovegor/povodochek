@@ -12,7 +12,7 @@ from bson.objectid import ObjectId
 from dic.breeds import (dogs, cats, get_breed_name)
 from forms import (Dog)
 from form_helper import (calc_attraction)
-import mailing
+from mailing import mailer
 import config
 
 def run_db_tasks():
@@ -295,7 +295,6 @@ def set_expire_date_for_dog_advs(days = 4):
             upsert = False, new = True)
 
 
-
 def notify_about_expired_dog_advs(days = 4):
     from datetime import (datetime, timedelta)
     notify_date = datetime.utcnow() + timedelta(days = 4)
@@ -304,8 +303,7 @@ def notify_about_expired_dog_advs(days = 4):
         user = db.get_user(adv.get('user_id'))
         # user = db.get_user('5278d08ba3b1086ca967262f')
         print("notify expired dog adv %s" % adv.get('_id'))
-        mailing.notify_user_of_dog_adv_expired(user, adv)
-
+        mailer.notify_user_of_dog_adv_expired(user, adv)
 
 def archive_expired_dog_advs():
     from datetime import (datetime, timedelta)
@@ -318,7 +316,7 @@ def archive_expired_dog_advs():
         db.archive_dog_adv(
             adv_id = adv.get('_id'),
             user_id = adv.get('user_id'))
-        mailing.notify_user_of_dog_adv_archived(user, adv)
+        mailer.notify_user_of_dog_adv_archived(user, adv)
 
 if __name__ == '__main__':
     func = sys.argv[1]

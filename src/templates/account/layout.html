@@ -80,7 +80,7 @@
   </div>
 </div>
 
-  {% if not current_user.active and not session["activate_remember_later"] %}
+  {% if not current_user.activated and not session["activate_remember_later"] %}
 
 
   <div id="activate_remember" class="modal fade text-left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_rem" aria-hidden="true">

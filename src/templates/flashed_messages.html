@@ -1,4 +1,4 @@
-{%- macro render_flahed_messages(category) -%}
+{%- macro render_flashed_messages(category) -%}
  {% with messages = get_flashed_messages(category_filter=[category]) %}
 {% if messages %}
 
@@ -15,11 +15,11 @@
 {% endwith %}
 {%- endmacro -%}
 
-{{render_flahed_messages("warning")}}
+{{render_flashed_messages("warning")}}
 
-{{render_flahed_messages("error")}}
+{{render_flashed_messages("error")}}
 
-{{render_flahed_messages("success")}}
+{{render_flashed_messages("success")}}
 
-{{render_flahed_messages("info")}}
+{{render_flashed_messages("info")}}
 

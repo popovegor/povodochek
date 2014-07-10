@@ -4,7 +4,7 @@
 
 import logging.handlers
 import config
-import mailing
+from mailing import mailer
 
 class ThreadedSMTPHandler(logging.Handler):
     """
@@ -74,7 +74,7 @@ class ThreadedSMTPHandler(logging.Handler):
                             self.getSubject(record),
                             formatdate(), msg)
             
-            mailing.send_email_async(
+            mailier.send_email_async(
                 sender = self.fromaddr, 
                 to = self.toaddrs, 
                 subject = self.subject, 

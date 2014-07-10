@@ -1,60 +1,37 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask_login import (UserMixin, AnonymousUser)
+from flask_login import (UserMixin, AnonymousUserMixin)
 import db
 
 class User(UserMixin):
     def __init__(self, user_id):
-        user = db.get_user(user_id)
-        # self.name = user.get('login')
-        self.username = user.get('username')
-        self.surname = user.get('surname')
-        self.id = str(user.get('_id'))
-        self.active = user.get('activated')
-        self.email = user.get('email')
-        self.new_email = user.get('new_email')
-        self.city_id = user.get('city_id')
-        self.phone = user.get('phone')
-        self.skype = user.get('skype')
-        self.kennel_name = user.get('kennel_name')
-        self.site_link = user.get('site_link')
-        self.counters = {
+        self.id = unicode(user_id)
+
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        pass
+
+def get_user(user_id):
+    user = db.get_user(user_id)
+    if user and not user.get("banned"):
+        u = User(user_id)
+        u.username = user.get('username')
+        u.surname = user.get('surname')
+        u.activated = user.get('activated')
+        u.email = user.get('email')
+        u.new_email = user.get('new_email')
+        u.city_id = user.get('city_id')
+        u.phone = user.get('phone')
+        u.skype = user.get('skype')
+        u.kennel_name = user.get('kennel_name')
+        u.site_link = user.get('site_link')
+        u.counters = {
             "dog_advs": db.get_dog_advs_by_user(user_id).count(),
             "dog_advs_archived": db.get_dog_advs_archived_by_user(user_id).count(),
             "cat_advs" : db.get_cat_advs_by_user(user_id).count(),
             "cat_advs_archived": db.get_cat_advs_archived_by_user(user_id).count()
             }
-
-    def is_signed(self):
-        return True
-
-    def is_active(self):
-        return True or self.active
-
-    def get_fullname(self):
-        fullname = self.username
-        if self.surname:
-            fullname += " " + self.surname
-        return fullname
-
-class Anonymous(AnonymousUser):
-    def __init__(self):
-        self.name = u"Anonymous"
-        self.username = u""
-        self.email = u""
-        self.active = False
-
-    def is_signed(self):
-        return False
-
-    def get_fullname(self):
-    	return u"Пользователь"
-
-
-def get_user(user_id):
-	user = db.get_user(user_id)
-	if user:
-		return User(user)
-	else:
-		return Anonymous()
+        return u
+    else:
+        return Anonymous()

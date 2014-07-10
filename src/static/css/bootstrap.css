@@ -6873,8 +6873,8 @@ form .textarea-counter {
 }
 .flashed-messages-success {
   color: #555;
-  background-color: #e8e8f8 !important;
-  border-color: #e8e8f8 !important;
+  background-color: #beffff !important;
+  border-color: #beffff !important;
 }
 .error-404 {
   max-width: 600px;

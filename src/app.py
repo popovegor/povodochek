@@ -58,7 +58,7 @@ from form_helper import (get_fields, calc_attraction)
 import cProfile
 import sys
 
-import mailing
+from mailing import mailer
 import users
 
 
@@ -189,10 +189,6 @@ def jinja_min(*args):
 app.jinja_env.filters['min'] = jinja_min
 
 
-
-
-
-
 if not app.debug and app.config["MAIL_SERVER"] != '':
     import logging
     from ThreadedSMTPHandler import ThreadedSMTPHandler
@@ -212,24 +208,13 @@ if not app.debug:
 
 
 @login_manager.user_loader
-def load_user(id):
-    if id:
-        return users.User(user_id = id)
-    else:
-        return users.Anonymous()
-
-@app.route("/")
-def index():
-    mosaic_advs = get_pet_advs_for_mosaic(0, 10, pet_id = pets.DOG_ID)
-    dog_breeds_rating = db.get_dog_breeds_rating()
-    cat_breeds_rating = db.get_cat_breeds_rating()
-    tmpl = render_template('index1.html', \
-        pet_search_form = SaleSearch(), \
-        cat_breeds_rating = cat_breeds_rating, \
-        dog_breeds_rating = dog_breeds_rating, \
-        mosaic_advs = mosaic_advs, \
-        title = u"Продажа и покупка породистых собак и кошек по всей России")
-    return tmpl
+def load_user(user_id):
+    try:
+        return users.get_user(user_id)
+    except Exception, e:
+        app.logger.error(e)
+    return
+    
 
 @app.route("/")
 def index():
@@ -247,7 +232,7 @@ def signin():
         user = db.get_user_by_login(login_or_email) or db.get_user_by_email(login_or_email)
         if user and check_password(user.get("pwd_hash"), password):
             if True or user.get("activated"):
-                if login_user(users.User(user_id = user["_id"]), remember=remember):
+                if login_user(users.User(user.get('_id')), remember=remember):
                     return redirect(request.args.get("next") \
                         or url_for("account_profile"))
                 else:
@@ -334,17 +319,6 @@ def test_email_stuff():
     mail.send(msg)
     return "Stuff email!"
 
-
-def async(f):
-    def wrapper(*args, **kwargs):
-        thr = Thread(target = f, args = args, kwargs = kwargs)
-        thr.start()
-    return wrapper
-
-@async
-def send_msg_aync(mailer, msg):
-    mailer.send(msg)
-
 def send_activate(email, confirm):
     msg = Message("Подтверждение регистрации на сайте Поводочек", recipients = [email])
     msg.html = render_template("email/activate.html", confirm = confirm)
@@ -387,7 +361,7 @@ def send_from_sale(adv_id, adv_title, adv_url, email, username, \
     
 @app.route("/test/email/from_dog_adv/")
 def test_email_from_dog_adv():
-    msg = Message(u"Сообщение от %s сайта Поводочек" % (u'пользователя' if current_user.is_signed() else u'гостя'), \
+    msg = Message(u"Сообщение от %s сайта Поводочек" % (u'пользователя' if current_user.is_authenticated() else u'гостя'), \
         recipients=["popovegor@gmail.com"])
     adv = db.dog_advs.find(limit=1)[0]
     msg.html = render_template("email/from_adv.html", \
@@ -406,7 +380,7 @@ def test_email_from_dog_adv():
 def activate(confirm):
     form = Activate(request.form)
 
-    if current_user.is_signed and current_user.active:
+    if current_user.is_authenticated() and current_user.activated:
         return render_template("activate_success.html", user = current_user, title = u"Активация регистрации")
 
     if request.method == "POST":
@@ -438,7 +412,7 @@ def asignin(asign):
     title=u"Активация нового пароля"
     if user:
         db.asign_user(user)
-        if login_user(users.User(user_id = user['_id'])):
+        if login_user(users.User(user.get('_id'))):
             return render_template("asignin_success.html", title = title)
     return render_template("asignin_failed.html", title=title)
 
@@ -507,7 +481,7 @@ def signup_basic():
             raise e
 
         flash(Markup(u"Для того чтобы подтвердить регистрацию, перейдите по ссылке в отправленном на адрес <b>%s</b> письме." % (email)), "info")
-        if login_user(users.User(user_id = user_id), remember = True):
+        if login_user(users.User(user_id), remember = True):
             return redirect(request.args.get('next') or url_for('account_profile'))
         else:
                 return redirect(url_for('signin'))
@@ -598,7 +572,7 @@ def dog_search():
     pet_id = pets.DOG_ID
     # sort
     session["dog_sort"] = form.sort.data or \
-        session.get("dog_sort") or (3 if current_user.is_signed() else 4)
+        session.get("dog_sort") or (3 if current_user.is_authenticated() else 4)
 
     (advs, count, total) = db.find_dog_advs(
         breed_id = breed_id, \
@@ -649,11 +623,11 @@ def cat_search(sale_search_form = None):
     breed = get_breed_from_field(form.breed)
     breed_id = None
     if breed:
-    	form.breed.data = breed.get("breed_name")
+        form.breed.data = breed.get("breed_name")
         breed_id = breed.get("breed_id")
     pet_id = pets.CAT_ID
     # sort
-    session["cat_sort"] = form.sort.data or session.get("cat_sort") or (3 if current_user.is_signed() else 4)
+    session["cat_sort"] = form.sort.data or session.get("cat_sort") or (3 if current_user.is_authenticated() else 4)
     
     (advs, count, total) = db.find_cat_advs(breed_id = breed_id, \
         gender_id = form.gender.data, \
@@ -690,8 +664,8 @@ def dog_adv_show(adv_id):
     try:
         adv = db.get_dog_adv(adv_id)
         if not adv:
-        	adv = db.get_dog_adv_archived(adv_id)
-        	archived = True
+            adv = db.get_dog_adv_archived(adv_id)
+            archived = True
     except InvalidId, e:
         abort(404)
     
@@ -944,9 +918,9 @@ def autofill_user_to_adv(form):
 def ajax_account_dog_adv_refresh(adv_id):
     adv = db.refresh_dog_adv(current_user.id, adv_id)
     return jsonify(items = {
-    	'expire_date': str(adv.get('expire_date').isoformat()),
-    	'update_date' :str(adv.get('update_date').isoformat())
-    	})
+        'expire_date': str(adv.get('expire_date').isoformat()),
+        'update_date' :str(adv.get('update_date').isoformat())
+        })
 
 
 @app.route("/account/dog/<adv_id>/edit/", methods = ['GET', 'POST'])
@@ -984,7 +958,8 @@ def account_dog_adv_new():
             adv = save_dog_adv(form)
             msg =  Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv.get('_id')), form.title.data))
             flash(msg, "success")
-            return render_template("/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
+            return render_template(
+                "/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
         autofill_user_to_adv(form)
         form.city.data = form.city.data or geo.format_city_region_by_city_id(current_user.city_id)
@@ -1417,7 +1392,7 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('500.html', title = u"Упс, у нас на сервере произошла ошибка!"), 500
+    return render_template('500.html', title = "У нас на сервере произошла ошибка!"), 500
 
 # admin
 
@@ -1544,12 +1519,12 @@ def save_news(news_id, form):
         news_url = url_for('news_view', 
             news_id = news.get('_id'), _external = True)
     if form.email_single.data:
-        html = mailing.get_html_notify_news(message = news.get('message'), news_url = news_url)
-        mailing.send_email(subject = news.get("subject"), html = html, to = [form.email_single.data])
+        html = mailer.get_html_notify_news(message = news.get('message'), news_url = news_url)
+        mailer.send_email(subject = news.get("subject"), html = html, to = [form.email_single.data])
     if form.email_everyone.data:
-        html = mailing.get_html_notify_news(message = news.get('message'), news_url = news_url)
-        mailing.send_email_to_users(
-        	users = db.get_users_activated(),
+        html = mailer.get_html_notify_news(message = news.get('message'), news_url = news_url)
+        mailer.send_email_to_users(
+            users = db.get_users_activated(),
             subject = news.get("subject"), 
             html = html)
     return news
