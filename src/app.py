@@ -1400,7 +1400,7 @@ from functools import wraps
 def admin_requried(func):
     @wraps(func)
     def decorated_view(*args, **kwargs):
-        if current_user.email not in app.config["ADMIN_EMAILS"]:
+        if not current_user.is_authenticated() or current_user.email not in app.config["ADMIN_EMAILS"]:
             abort(401)
         return func(*args, **kwargs)
     return decorated_view
