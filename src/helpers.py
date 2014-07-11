@@ -7,8 +7,21 @@ from pymorphy2 import MorphAnalyzer
 import re
 from datetime import datetime
 import time
+from threading import Thread
+from functools import wraps
 
-#!/usr/bin/env python
+
+def log_exception(logger):
+    def wrap(f):
+        @wraps(f)
+        def wrap_log_exception(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except Exception, e:
+                logger.exception(e)
+                raise e
+        return wrap_log_exception
+    return wrap
 
 def run_async(func):
 	"""
@@ -32,8 +45,6 @@ def run_async(func):
 			t1.join()
 			t2.join()
 	"""
-	from threading import Thread
-	from functools import wraps
 
 	@wraps(func)
 	def async_func(*args, **kwargs):

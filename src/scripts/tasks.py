@@ -13,8 +13,20 @@ from dic.breeds import (dogs, cats, get_breed_name)
 from forms import (Dog)
 from form_helper import (calc_attraction)
 from mailing import mailer
+from helpers import (log_exception)
 import config
 
+import logging
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+if not config.DEBUG:
+    from ThreadedSMTPHandler import ThreadedSMTPHandler
+    mail_handler = ThreadedSMTPHandler(subject = 'povodochek:error:tasks')
+    mail_handler.setLevel(logging.ERROR)
+    logger.addHandler(mail_handler)
+
+@log_exception(logger = logger)
 def run_db_tasks():
     rebuild_advs_by_geos('cat')
     rebuild_advs_by_geos('dog')
@@ -24,6 +36,7 @@ def run_db_tasks():
     rebuild_breeds_rating('cat')
     rebuild_breeds_rating('dog')
 
+@log_exception(logger = logger)
 def rebuild_breeds_rating(pet):
     breeds = cats if pet == 'cat' else dogs
     advs = db.povodochek['%s_advs' % pet]
@@ -56,6 +69,7 @@ def rebuild_breeds_rating(pet):
     else:
         top_breeds.drop()
 
+@log_exception(logger = logger)
 def rebuild_typeahead_breeds():
     db.povodochek.typeahead_dog_breeds_tmp.drop()
     db.povodochek.typeahead_cat_breeds_tmp.drop()
@@ -105,6 +119,7 @@ def rebuild_typeahead_breeds():
         'typeahead_cat_breeds' in db.povodochek.collection_names())
 
 
+@log_exception(logger = logger)
 def rebuild_typeahead_geos():
     db.povodochek.typeahead_geo_cities_tmp.drop()   
     db.povodochek.typeahead_geo_cities_tmp.drop()
@@ -167,6 +182,7 @@ def rebuild_typeahead_geos():
     db.povodochek.typeahead_geo_all_tmp.rename('typeahead_geo_all', dropTarget=
         'typeahead_geo_all' in db.povodochek.collection_names())
 
+@log_exception(logger = logger)
 def update_regions_in_advs():
     # dogs
     for adv in db.dog_advs.find({'region_id' : {"$in": [None, ""]}}):
@@ -180,7 +196,7 @@ def update_regions_in_advs():
         db.cat_advs.update({'_id': adv.get('_id')}, 
             {'$set': {'region_id' : r.get("region_id")}})
 
-
+@log_exception(logger = logger)
 def rebuild_geos():
     db.povodochek.cities_tmp.drop()
     db.povodochek.regions_tmp.drop()
@@ -221,7 +237,7 @@ def rebuild_geos():
     db.povodochek.cities_tmp.rename('cities', dropTarget=True)
     db.povodochek.regions_tmp.rename('regions', dropTarget=True)
 
-
+@log_exception(logger = logger)
 def rebuild_advs_by_geos(pet):
     advs = db.povodochek['%s_advs' % pet]
     tmp_pet_by_cities_name = '%s_advs_by_cities_tmp' % pet
@@ -268,7 +284,7 @@ def rebuild_advs_by_geos(pet):
     tmp_pet_by_regions.rename(
         pet_by_regions_name, dropTarget=tmp_pet_by_regions_name in db.povodochek.collection_names())
 
-
+@log_exception(logger = logger)
 def recalc_attraction_in_advs():
     for dog in db.dog_advs.find():
         form = Dog()
@@ -279,6 +295,7 @@ def recalc_attraction_in_advs():
         db.dog_advs.update(dog, \
             {'$set': {'attraction': attraction}}, upsert = False)
 
+@log_exception(logger = logger)
 def set_expire_date_for_dog_advs(days = 4):
     from datetime import (datetime, timedelta)
     now = datetime.utcnow()
@@ -294,7 +311,7 @@ def set_expire_date_for_dog_advs(days = 4):
             {"$set":{'expire_date' : expire_date}}, 
             upsert = False, new = True)
 
-
+@log_exception(logger = logger)
 def notify_about_expired_dog_advs(days = 4):
     from datetime import (datetime, timedelta)
     notify_date = datetime.utcnow() + timedelta(days = 4)
@@ -305,6 +322,7 @@ def notify_about_expired_dog_advs(days = 4):
         print("notify expired dog adv %s" % adv.get('_id'))
         mailer.notify_user_of_dog_adv_expired(user, adv)
 
+@log_exception(logger = logger)
 def archive_expired_dog_advs():
     from datetime import (datetime, timedelta)
     now = datetime.utcnow()
