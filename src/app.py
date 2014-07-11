@@ -168,12 +168,11 @@ app.jinja_env.globals['users'] = users
 app.jinja_env.filters['morph_word'] = morph_word
 
 
-
 def change_query(url, param, old, new):
     if url and param and old and new:
-        param_value = "{0}={1}".format(param, old)
-        url_non_param = url.replace("&" + param_value, "").replace(param_value, "")
-        return "{0}{1}&{2}={3}".format(url_non_param, "?" if "?" not in url_non_param else "", param, new)
+        param_value = u"{0}={1}".format(param, old)
+        url_non_param = url.replace(u"&" + param_value, u"").replace(param_value, "")
+        return u"{0}{1}&{2}={3}".format(url_non_param, u"?" if u"?" not in url_non_param else u"", param, new)
     return url
 
 app.jinja_env.filters['change_query'] = change_query
