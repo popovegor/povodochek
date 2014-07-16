@@ -52,59 +52,59 @@ def revert_singup(user_id):
     users.remove({'_id':ObjectId(user_id)})
 
 def get_user(user_id):
-	return users.find_one({'_id':ObjectId(user_id)})
+    return users.find_one({'_id':ObjectId(user_id)})
 
 def get_user_by_login(login):
-	matcher = re.compile("^" + re.escape(login) + "$", re.IGNORECASE)
-	return users.find_one({'login': {'$regex':matcher}})
+    matcher = re.compile("^" + re.escape(login) + "$", re.IGNORECASE)
+    return users.find_one({'login': {'$regex':matcher}})
 
 def get_user_by_email(email):
-	matcher = re.compile("^" + re.escape(email) + "$", re.IGNORECASE)
-	return users.find_one({'email': {'$regex': matcher}})
+    matcher = re.compile("^" + re.escape(email) + "$", re.IGNORECASE)
+    return users.find_one({'email': {'$regex': matcher}})
 
 def set_user_confirm(user_id):
     new_confirm = str(uuid4()) 
     users.update({'_id': user_id}, \
-    	{"$set": {"confirm": new_confirm}})
+        {"$set": {"confirm": new_confirm}})
     return new_confirm
 
 def get_user_by_confirm(confirm):
-	return users.find_one({'confirm': confirm})
+    return users.find_one({'confirm': confirm})
 
 def activate_user(user_id):
-	return users.update({'_id': user_id}, \
-		{"$set": {"activated": True, \
-		"activate_date" : datetime.utcnow(), "confirm" : ''}})
+    return users.update({'_id': user_id}, \
+        {"$set": {"activated": True, \
+        "activate_date" : datetime.utcnow(), "confirm" : ''}})
 
 def get_user_by_asign(asign):
-	return users.find_one({'asign': asign})
+    return users.find_one({'asign': asign})
 
 def get_users_activated():
-	return users.find({'activated' : True})
+    return users.find({'activated' : True})
 
 def asign_user(user):
-	return users.update({'_id': user["_id"]}, \
-	    {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], \
-	    'asign_pwd_hash': ''} })
+    return users.update({'_id': user["_id"]}, \
+        {"$set": {'asign': '', 'pwd_hash': user['asign_pwd_hash'], \
+        'asign_pwd_hash': ''} })
 
 def change_user_password(user_id, pwd_hash):
-	users.find_and_modify({"_id": ObjectId(user_id)}, \
+    users.find_and_modify({"_id": ObjectId(user_id)}, \
         {"$set": {"pwd_hash": pwd_hash}})
 
 def confirm_user_email(user_id, email):
-	return users.update({"_id": ObjectId(user_id)}, \
-		{"$set": {'new_email': None, "email": email}})
+    return users.update({"_id": ObjectId(user_id)}, \
+        {"$set": {'new_email': None, "email": email}})
 
 def change_user_email(user_id, email):
-	return users.find_and_modify({"_id": ObjectId(user_id)}, \
+    return users.find_and_modify({"_id": ObjectId(user_id)}, \
         {"$set": {"new_email": email}})
 
 def signup_user(email, pwd_hash, username, confirm, ):
-	return users.insert({
-		'email': email, \
-		'pwd_hash': pwd_hash, \
-		'username': username, 'confirm': confirm, \
-		'activated': False, 'signup_date': datetime.utcnow()})
+    return users.insert({
+        'email': email, \
+        'pwd_hash': pwd_hash, \
+        'username': username, 'confirm': confirm, \
+        'activated': False, 'signup_date': datetime.utcnow()})
 
 def reset_user_password(user, pwd_hash, asign):
     return users.find_and_modify(user, \
@@ -138,7 +138,7 @@ def save_user_contact(user_id, form):
     return user
 
 def get_dog_adv_for_user(adv_id, user_id):
-	return dog_advs.find_one(
+    return dog_advs.find_one(
         {'_id': {'$in':[adv_id, ObjectId(adv_id)]}, 
         'user_id': {'$in': [user_id, str(user_id)]}})
 
@@ -168,24 +168,27 @@ def get_cat_adv(adv_id):
 def get_cat_adv_archived(adv_id):
     return cat_advs_archived.find_one({'_id': ObjectId(adv_id)})
 
+def get_expire_date(dt):
+    return datetime(dt.date().year, dt.date().month, dt.date().day) + timedelta(days=config.DOG_ADV_EXPIRE_IN_DAYS)
+
 def refresh_dog_adv(user_id, adv_id):
-	now = datetime.utcnow()
-	expire_date = now + timedelta(days=config.DOG_ADV_EXPIRE_IN_DAYS)
-	query = {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}
-	adv = dog_advs.find_and_modify(query, 
-		{"$set":{"update_date" : now, 'expire_date' : expire_date}}, 
-		upsert = False, new = True)
-	return adv
+    now = datetime.utcnow()
+    expire_date = get_expire_date(now)
+    query = {'_id': ObjectId(adv_id), 'user_id' : str(user_id)}
+    adv = dog_advs.find_and_modify(query, 
+        {"$set":{"update_date" : now, 'expire_date' : expire_date}}, upsert = False, new = True)
+    return adv
 
 
 def upsert_dog_adv(user_id, adv_id, form, attraction):
     now = datetime.utcnow()
     updater = {}
+    expire_date = get_expire_date(now)
     
     dog_set = {
         'user_id' : str(user_id),
         'update_date' : now,
-        'expire_date' : now + timedelta(days=config.DOG_ADV_EXPIRE_IN_DAYS),
+        'expire_date' : expire_date,
         'attraction': attraction,
         'region_id' : form.city.region_id
         }
@@ -210,16 +213,18 @@ def upsert_dog_adv(user_id, adv_id, form, attraction):
     return adv
 
 def get_dog_advs():
-	return dog_advs.find()
+    return dog_advs.find()
 
 def get_dog_advs_expired():
-	now = datetime.utcnow()
-	return dog_advs.find({'expire_date': {'$lte' : now}})
+    now = datetime.utcnow()
+    today = datetime(now.year, now.month, now.day)
+    print(today)
+    return dog_advs.find({'expire_date': {'$lte' : today}})
 
 def get_dog_advs_by_user(user_id):
-	return dog_advs.find(
-	    {'user_id': {'$in' : [str(user_id), user_id]} },\
-	    sort = [("update_date", DESCENDING), \
+    return dog_advs.find(
+        {'user_id': {'$in' : [str(user_id), user_id]} },\
+        sort = [("update_date", DESCENDING), \
         ("add_date", DESCENDING)])
 
 def get_dog_advs_archived_by_user(user_id):
@@ -241,12 +246,12 @@ def get_cat_advs_archived_by_user(user_id):
         ("add_date", DESCENDING)])
 
 def get_dog_breeds_rating(limit = 25):
-	return [breed for breed in dog_breeds_rating.find( \
-		sort = [('count', DESCENDING)], limit = limit)]
+    return [breed for breed in dog_breeds_rating.find( \
+        sort = [('count', DESCENDING)], limit = limit)]
 
 def get_cat_breeds_rating(limit = 25):
-	return [breed for breed in cat_breeds_rating.find( \
-		sort = [('count', DESCENDING)], limit = limit)]
+    return [breed for breed in cat_breeds_rating.find( \
+        sort = [('count', DESCENDING)], limit = limit)]
 
 def get_dog_breeds_for_typeahead(query, limit):
     matcher = re.compile(re.escape(query.lower()))
@@ -273,14 +278,14 @@ def get_cat_breeds_for_typeahead(query, limit):
     return breeds
 
 def get_geo_cities_for_typeahead(query, limit):
-	matcher = re.compile("^" + re.escape(query.lower()))
-	locations = [ city.get("name")  \
-	    for city in typeahead_geo_cities.find(\
-	    	{'name_search': {"$regex": matcher}}, \
-	    	limit = limit, \
-	    	fields = ["name"], \
-	    	sort = [('rating', DESCENDING), ('name_search',ASCENDING)] )]
-	return locations
+    matcher = re.compile("^" + re.escape(query.lower()))
+    locations = [ city.get("name")  \
+        for city in typeahead_geo_cities.find(\
+            {'name_search': {"$regex": matcher}}, \
+            limit = limit, \
+            fields = ["name"], \
+            sort = [('rating', DESCENDING), ('name_search',ASCENDING)] )]
+    return locations
 
 def get_geo_all_for_typeahead(query, limit):
     matcher = re.compile("^" + re.escape(query.lower()))
@@ -294,28 +299,28 @@ def get_geo_all_for_typeahead(query, limit):
 
 
 def get_distances_from_city(city_id):
-	distances = {} # city_id : distance
-	city = cities.find_one({'city_id': city_id})
-	if city and city.get("location"):
-		location = city.get("location")
+    distances = {} # city_id : distance
+    city = cities.find_one({'city_id': city_id})
+    if city and city.get("location"):
+        location = city.get("location")
         geoNear = povodochek.command(
-        	SON([("geoNear",  "cities"), 
-        	("near", location), ( "spherical", True ), 
-        	("limit", 15000)]))
+            SON([("geoNear",  "cities"), 
+            ("near", location), ( "spherical", True ), 
+            ("limit", 15000)]))
         distances = { geo["obj"]['city_id'] : geo["dis"]
-        	for geo in geoNear.get("results")}
-	return distances
+            for geo in geoNear.get("results")}
+    return distances
 
 def get_near_cities(city_id = None, distance = None):
     near_cities = []
     if city_id:
         search_city = cities.find_one(\
-        	{'city_id': city_id})
+            {'city_id': city_id})
         if search_city and distance and search_city.get("location"):
             location = search_city.get("location")
             geoNear = povodochek.command(SON([("geoNear",  "cities"), \
-            	("near", location), ( "spherical", True ), \
-            	("maxDistance", distance * 1000), ("limit", 15000)]))
+                ("near", location), ( "spherical", True ), \
+                ("maxDistance", distance * 1000), ("limit", 15000)]))
             near_cities = { 
             geo["obj"].get('city_id') : geo["dis"]
             for geo in geoNear.get("results")}
@@ -323,7 +328,7 @@ def get_near_cities(city_id = None, distance = None):
 
 
 def find_dog_advs(
-	breed_id = None, gender_id = None, 
+    breed_id = None, gender_id = None, 
     region_id = None, city_id = None,
     distance = None, photo = False,
     video = False, delivery = False, 
@@ -331,13 +336,13 @@ def find_dog_advs(
     contract = False, 
     pedigree = False,
     price_from = None, price_to = None,
-	sort = None, skip = None, limit = None):
+    sort = None, skip = None, limit = None):
 
     _filter = []
     extend_filter = lambda k,v: _filter.append((k,v)) if v else None
     if num(gender_id):
         extend_filter('$or', [{'gender_id' : num(gender_id)}, \
-        	{'gender_id' : {'$exists': False}}])
+            {'gender_id' : {'$exists': False}}])
 
     extend_filter("breed_id", num(breed_id))
 
@@ -351,19 +356,19 @@ def find_dog_advs(
     geo_filter = None
 
     if city_id:
-    	geo_distances = get_distances_from_city(city_id)
+        geo_distances = get_distances_from_city(city_id)
         if distance:
-    		near_cities = [c_id for c_id, dis in geo_distances.items() if dis <= distance * 1000]
-    		geo_filter = ('$or', [{"city_id" : {"$in": near_cities}}])
+            near_cities = [c_id for c_id, dis in geo_distances.items() if dis <= distance * 1000]
+            geo_filter = ('$or', [{"city_id" : {"$in": near_cities}}])
         else:
-        	geo_filter = ('$or', [{"city_id" : city_id}])
+            geo_filter = ('$or', [{"city_id" : city_id}])
     elif region_id:
-    	geo_filter = ("$or", [{"region_id" : region_id}])
+        geo_filter = ("$or", [{"region_id" : region_id}])
 
     if geo_filter:
-    	if delivery:
-    		geo_filter[1].append({"delivery":True})
-    	extend_filter(geo_filter[0], geo_filter[1])	
+        if delivery:
+            geo_filter[1].append({"delivery":True})
+        extend_filter(geo_filter[0], geo_filter[1]) 
 
     if photo:
         extend_filter("photos", {"$nin": [None, []]})
@@ -403,25 +408,25 @@ def find_dog_advs(
 
     #add distance into each adv 
     if geo_distances:
-	    for adv in advs:
-	        dist = geo_distances.get(adv.get('city_id'))
-	        if dist:
-		        adv["distance"] = int(round(dist / 1000, 0))
+        for adv in advs:
+            dist = geo_distances.get(adv.get('city_id'))
+            if dist:
+                adv["distance"] = int(round(dist / 1000, 0))
 
     return (advs, count, total)
 
 
 def find_cat_advs(pet_id = 2, gender_id = None, \
-	breed_id = None,  region = None, city = None, distance = None, \
-	photo = False, price_from = None, price_to = None, \
-	sort = None, skip = None, limit = None):
+    breed_id = None,  region = None, city = None, distance = None, \
+    photo = False, price_from = None, price_to = None, \
+    sort = None, skip = None, limit = None):
 
     _filter = {}
     extend_filter = lambda k,v: _filter.update({k:v}) if v else None
     extend_filter("pet_id", num(pet_id))
     if num(gender_id):
         extend_filter('$or', [{'gender_id' : num(gender_id)}, \
-        	{'gender_id' : {'$exists': False}}])
+            {'gender_id' : {'$exists': False}}])
 
     extend_filter("breed_id", num(breed_id))
 
@@ -436,7 +441,7 @@ def find_cat_advs(pet_id = 2, gender_id = None, \
         if distance:
             near_cities = get_near_cities(city, distance)
             extend_filter("city_id", {"$in": [city.get("city_id") \
-        	   for city, dis in near_cities]})
+               for city, dis in near_cities]})
         else:
             extend_filter("city_id", {"$in": [city.get('city_id')]})
     elif region:
@@ -466,8 +471,8 @@ def find_cat_advs(pet_id = 2, gender_id = None, \
         for adv in advs:
             adv_city_id = adv.get("city_id")
             (near_city, dist) = next( ((city, dist) for city, \
-            	dist in near_cities if \
-            	city["city_id"] == adv_city_id), (None, None))
+                dist in near_cities if \
+                city["city_id"] == adv_city_id), (None, None))
             adv["distance"] = int(round(dist / 1000, 0))
 
     return (advs, count, total)
@@ -479,7 +484,7 @@ def get_photo(filename):
         name = os.path.basename(filename)
         # print("get_photo", name)
         photo = photos.files.find_one({"filename" : filename}, \
-        	fields = ['_id'])
+            fields = ['_id'])
         # print(photo)
         if photo:
             with photos_gridfs.get(photo.get('_id')) as gridfs_file:
@@ -493,7 +498,7 @@ def save_photo(file):
     try:
         print("filename", file.name)
         return photos_gridfs.put(file.read(), \
-        	filename = os.path.basename(file.name))
+            filename = os.path.basename(file.name))
     except:
        print(sys.exc_info())
 

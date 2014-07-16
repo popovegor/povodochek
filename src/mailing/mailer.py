@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 import sys
 from jinja2 import Template, Environment, PackageLoader
 import config
-from helpers import (run_async, morph_word)
+from helpers import (run_async, morph_word, log_exception)
 import helpers
 
 env = Environment(loader=PackageLoader('mailing', ''))
@@ -65,7 +65,8 @@ def send_email(
             if not config.MAIL_SUPPRESS_SEND:
                 s.sendmail(sender, to, msg.as_string())
             else:
-                print(to)
+                print(to, subject)
+
         finally:
             s.quit()
     except Exception, exc:
@@ -91,7 +92,7 @@ def notify_user_of_dog_adv_archived(user, adv):
 def notify_user_of_dog_adv_expired(user, adv):
     from datetime import (datetime, timedelta)
     now = datetime.utcnow()
-    left_days = (adv.get('expire_date') - now).days
+    left_days = (adv.get('expire_date').date() - now.date()).days
     html = env.get_template('notify_dog_adv_expired.html').render(adv = adv, left_days = left_days)
     send_email_to_user(user = user, subject = u"Срок размещения вашего объявления истекает", html = html)
 

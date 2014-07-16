@@ -299,42 +299,52 @@ def recalc_attraction_in_advs():
 def set_expire_date_for_dog_advs(days = 4):
     from datetime import (datetime, timedelta)
     now = datetime.utcnow()
-    for adv in db.dog_advs.find(
-        {'expire_date': {"$in": [None, '']}}):
-        current_period = now - adv.get('update_date')
+    today = datetime(now.year, now.month, now.day)
+    for adv in db.dog_advs.find():
+        current_period = now.date() - adv.get('update_date').date()
         if current_period.days > config.DOG_ADV_EXPIRE_IN_DAYS:
-            expire_date = now + timedelta(days = days)
+            expire_date = now.date() + timedelta(days = days)
         else:
-            expire_date = adv.get('update_date') + timedelta(days = config.DOG_ADV_EXPIRE_IN_DAYS)
+            expire_date = adv.get('update_date').date() + timedelta(days = config.DOG_ADV_EXPIRE_IN_DAYS)
         adv = db.dog_advs.find_and_modify(
             {'_id': adv.get('_id')}, 
-            {"$set":{'expire_date' : expire_date}}, 
+            {"$set":{'expire_date' : 
+                datetime(expire_date.year, 
+                    expire_date.month, 
+                    expire_date.day)}}, 
             upsert = False, new = True)
 
 @log_exception(logger = logger)
 def notify_about_expired_dog_advs(days = 4):
     from datetime import (datetime, timedelta)
-    notify_date = datetime.utcnow() + timedelta(days = 4)
+    now = datetime.utcnow()
+    notify_date = now.date() + timedelta(days = int(days))
 
-    for adv in db.dog_advs.find({'expire_date' : {'$lte':notify_date}}):
-        user = db.get_user(adv.get('user_id'))
-        # user = db.get_user('5278d08ba3b1086ca967262f')
-        print("notify expired dog adv %s" % adv.get('_id'))
-        mailer.notify_user_of_dog_adv_expired(user, adv)
+    for adv in db.dog_advs.find({'expire_date' : 
+        {'$lt':datetime(notify_date.year, notify_date.month, notify_date.day)}}):
+        if (adv.get('expire_date').date() - now.date()).days > 0:
+            user = db.get_user(adv.get('user_id'))
+            if config.DEBUG:
+                user = db.get_user('5278d08ba3b1086ca967262f')
+                print("notify expired dog adv %s" % adv.get('_id'))
+            mailer.notify_user_of_dog_adv_expired(user, adv)
+            if config.DEBUG:
+                break
 
 @log_exception(logger = logger)
 def archive_expired_dog_advs():
-    from datetime import (datetime, timedelta)
-    now = datetime.utcnow()
+    print(db.get_dog_advs_expired().count())
     for adv in db.get_dog_advs_expired():
-        left_days = (adv.get('expire_date') - now).days
         user = db.get_user(adv.get('user_id'))
-        # user = db.get_user('5278d08ba3b1086ca967262f')
-        print("archive dog adv %s" % adv.get('_id'))
+        if config.DEBUG:
+            user = db.get_user('5278d08ba3b1086ca967262f')
+            print("archive dog adv %s" % adv.get('_id'))
         db.archive_dog_adv(
             adv_id = adv.get('_id'),
             user_id = adv.get('user_id'))
         mailer.notify_user_of_dog_adv_archived(user, adv)
+        if config.DEBUG:
+            break
 
 if __name__ == '__main__':
     func = sys.argv[1]

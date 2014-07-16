@@ -829,7 +829,7 @@ def account_dog_advs():
 def account_dog_advs_archived():
     advs = db.get_dog_advs_archived_by_user(current_user.id)
     tmpl = render_template("account/dog/advs_archived.html", \
-        title=u"Архив моих объявлений о продаже собак", \
+        title=u"Архив объявлений о продаже собак", \
         advs = advs)
     return tmpl
 
@@ -838,7 +838,7 @@ def account_dog_advs_archived():
 def account_cat_advs_archived():
     advs = db.get_cat_advs_archived_by_user(current_user.id)
     tmpl = render_template("account/cat/advs_archived.html", \
-        title=u"Архив моих объявлений о продаже кошек", \
+        title=u"Архив объявлений о продаже кошек", \
         advs = advs)
     return tmpl
 
