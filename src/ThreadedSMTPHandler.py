@@ -74,7 +74,7 @@ class ThreadedSMTPHandler(logging.Handler):
                             self.getSubject(record),
                             formatdate(), msg)
             
-            mailier.send_email_async(
+            mailer.send_email_async(
                 sender = self.fromaddr, 
                 to = self.toaddrs, 
                 subject = self.subject, 

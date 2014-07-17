@@ -499,7 +499,7 @@ def reset_password():
             if user:
                 send_reset_password(user.get('email'), user.get("login"), asign, password)
                 return render_template("reset_password_sent.html", title=title, email = user.get('email'))
-    else:
+    elif current_user.is_authenticated():
         form.email_or_login.data = current_user.email
     
     return render_template("reset_password.html", title=title, form = form)
@@ -1228,7 +1228,7 @@ def dog_adv_email(adv_id):
     seller = db.get_user(adv.get("user_id"))
     if not seller and not adv.get('email'):
         abort(404)
-        
+
     seller_email = adv.get('email') or seller.get('email')
     seller_username = adv.get('username') or seller.get('username') 
 
@@ -1278,7 +1278,7 @@ def cat_adv_email(adv_id):
             #     send_sms(u"Пользователь сайта Поводочек отправил вам почтовое сообщение.", \
             #         [seller.get('phone')] )
             return render_template("/mail_sent.html", title = u"Сообщение успешно отправлено")
-    else:
+    elif current_user.is_authenticated():
         form.username.data = current_user.username
         form.email.data = current_user.email
     return render_template("/mail.html", form = form, seller_email = seller_email, seller_username = seller_username, title = u"Написать письмо пользователю %s" % seller_username, header=Markup(u"Написать письмо пользователю <small>%s</small>" % seller_username))
