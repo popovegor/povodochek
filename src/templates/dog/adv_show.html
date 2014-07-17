@@ -48,7 +48,7 @@
           {{attraction_adv(adv)}}
 
           {{photos(adv)}}
-
+       
           {{doc_info(adv)}}     
 
           {{video(adv)}} 
@@ -59,20 +59,15 @@
 
         {{price_info(adv)}}
 
-      <h2 style="margin-top:0px" itemprop="alternateName">{{adv.get("title") | capitalize}}</h2>
+        <h2 style="margin-top:0px" itemprop="alternateName">{{adv.get("title") | capitalize}}</h2>
       
-      <div style="margin-bottom:40px">
+      <div style="margin-bottom:0">
         <p style="white-space:pre-line" itemprop="description">{{adv.get('desc') | trim }}</p>
       </div>
 
+      {{dog_info(adv)}} 
 
-      {{dog_info(adv)}}  
-
-      {% if not archived %}
-
-      {{seller_info(adv)}}
-
-      {% endif %}
+        {{seller_info(adv)}}
 
     </div> <!-- right-side -->
 
@@ -162,8 +157,8 @@
         <span class="glyphicon glyphicon-stats"></span>
       </li>
       <li>
-        {% set views_count = adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
-          <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Посмотрели</span>{{ views_count }}&ensp;{{"пользователь" | morph_word(count=views_count)}}</span>     
+        {% set views_count = 1 or adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
+          <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Посмотрели:</span>{{ views_count }}&ensp;{{"пользователь" | morph_word(count=views_count)}}</span>     
       </li>
   </ul>
     
@@ -184,33 +179,37 @@
 
 {%- macro price_info(adv) -%}
 
-   <div class="das-price-block">
+  
 
+   <div class="das-price-block" style="">
 
-      <div class="das-price-number" title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
+      <div class="das-price-number text-center" style=""  title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
              <span itemprop="price">{{adv.get('price') | format_price() }}&nbsp;<i class="fa fa-ruble"></i></span>
              <meta itemprop="priceCurrency" content="RUB" />   
       </div>
 
-        <ul class="list-inline">
+      
 
-          {%if adv.get("price_haggle") %}
-            <li class="">
-              <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-danger" >торг</abbr>   
-            </li>
-            
-            {%endif%}
+    <ul class="list-inline">
 
-             {%if adv.get("price_hp") %}
-              <li class="">
-                  <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-danger ">рассрочка</abbr>
-              </li>
-                
-              {%endif%}
+    {%if adv.get("price_haggle") %}
+      <li class="">
+        <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-danger" >торг</abbr>   
+      </li>
+      
+      {%endif%}
 
-        </ul>
+       {%if adv.get("price_hp") %}
+        <li class="">
+            <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-danger ">рассрочка</abbr>
+        </li>
+          
+        {%endif%}
+  </ul>
 
     </div>
+
+   
 
 {%- endmacro-%}
 
@@ -317,54 +316,61 @@
 
 
 {%-  macro doc_info(adv) -%}
-    <div class="doc-info" style="margin-bottom:30px">
+    <div class="doc-info" style="margin-bottom:30px;">
    {% set doc = adv.get("doc_id") %}
         {% if not doc %}
           <div class="" style="border-radius:5px">
-          
-                <h3 class="text-warning">
-                   Нет документов о происхождении
-                </h3>
-                <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки.{# Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.#}</p>
-          
-            
+              <p class="text-warning lead">
+                 Нет документов о происхождении
+              </p>
+              <p style="">Продавец не предоставил информацию о документах, гарантирующих породистое происхождение собаки.{# Подобная собака не может принимать участия в выставках и не имеет допуска в разведение.#}</p>
           </div>
         {%else%}
-          
-         
-   
-         <div class="panel panel-info" style="">
-          <div class="panel-heading">
-               <h4 class="page-heade"><span style="padding-right:5px">{{pet_docs.get_doc_dog_name(doc)}}</span>
-               </h4>
-          </div>
-          <div class="panel-body">
-             
-             <!--hr/-->
 
-            <div class="row" style="margin-top:10px">
+       <div class="" style="padding:20px; border:2px solid #f5f5f5;">
 
-              {% if adv.get("doc_id") in pet_docs.doc_puppy_cards%}
 
-              {%set puppy_card_kennel = adv.get("puppy_card_kennel") %}
-              <p class="col-sm-5 col-md-4 text-semi-muted small">Питомник, выдавший метрику</p>
-              <p class="col-sm-7 col-md-8">
-                {% if puppy_card_kennel %}
-                  <span class="white-space:pre-line">{{puppy_card_kennel}}</span>
-                {%else%}
-                  <span class='text-muted' >не указан</span>
-                {%endif%}
-              </p>
+         <table style="margin-bottom:20px">
+          <tr>
+            {% set doc_id = adv.get("doc_id")%}
 
-              {%endif%}
+          {% if doc_id in pet_docs.doc_rkf%}
+          <td>
+            <img style="padding-right:20px; float:left" src="{{url_for('static', filename= 'img/fci_sm_2.png')}}"/>
+            </td>
+          {% elif doc_id in pet_docs.doc_skor%}
+            <td>
+            <img style="padding-right:20px; float:left" src="{{url_for('static', filename= 'img/iku_sm.png')}}"/>
+            </td>
+          {%endif%}
+          <td class="lead">
+              {{pet_docs.get_doc_dog_name(doc)}}
+          </td>
+          </tr>
+          </table>
+           
 
-            </div>
+      <hr>
+
+        {% if adv.get("doc_id") in pet_docs.doc_puppy_cards%}
+
+        {%set puppy_card_kennel = adv.get("puppy_card_kennel") %}
+
+        <table class="table table-non-border table-condensed" style="margin-top:20px">
+        <colgroup><col style="width:180px"></col><col></col></colgroup>
+        <tbody><tr><th class="small">Питомник, выдавший метрику</th>
+        <td> {% if puppy_card_kennel %}
+            <span class="white-space:pre-line">{{puppy_card_kennel}}</span>
+          {%else%}
+            <span class='text-muted' >не указан</span>
+          {%endif%}</td></tr></tbody>
+       </table>
+        {%endif%}
+
 
             {{ parent_info(adv, "Отец", "father") }}
             {{ parent_info(adv, "Мать", "mother") }} 
              
-
-            </div> <!-- panel-body -->
             </div> <!-- panel -->
 
         {%endif%}
@@ -374,80 +380,68 @@
 
 {%- macro parent_info(adv, title, prefix) -%}
 
-{%set col_left_class = "col-sm-5 col-md-4 text-semi-muted small" %}
-{%set col_right_class = "col-sm-7 col-md-8" %}
 
 {% set doc = adv.get("doc_id") %}
 {% if doc %}
 
-  <div class="dog-father dog-mother" style="margin-bottom:30px;">
+  <table class="table table-non-border table-condensed">
+  <colgroup>
+    <col style="width:180px;text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"></col>
+    <col style=""></col>
+  </colgroup>
+  <thead><tr><th colspan="2">
+    {{title}}
+  </th></tr></thead>
 
-         <h4 class="" style="">{{title}}</h4>
+  <tbody>
+   {%set pedigree_link = adv.get(prefix + "_pedigree_link") %}
+    <tr><th class="small">Родословная</th><td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+      {% if pedigree_link %}
+            <a rel="nofollow" title="{{pedigree_link}}" target="_blank" href="{{pedigree_link}}">{{ pedigree_link 
+          | truncate(30, killwords = True)}}</a> 
+      {% else %}
+        <span class='text-muted' >не указана</span>
+      {%endif%}
+    </td></tr>
 
-         <div class="row" class="dog-parent">
+    {%set name = adv.get(prefix + "_name") %}
+    <tr><th class="small">Кличка</th><td style="">
+      {% if name %}
+            {{ name }}
+      {% else %}
+        <span class='text-muted' >не указана</span>
+      {%endif%}
+    </td></tr>
 
-           {%set pedigree_link = adv.get(prefix + "_pedigree_link") %}
-            <p class="{{col_left_class}}">Родословная</p>
-            <p class="{{col_right_class}}" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"> {% if pedigree_link %}
-                    <a rel="nofollow" title="{{pedigree_link}}" target="_blank" href="{{pedigree_link}}">{{ pedigree_link}}</a> 
-              {% else %}
-                <span class='text-muted' >не указана</span>
-              {%endif%}
-            </p>
+    {%set country = adv.get(prefix + "_country_id") %}
+     <tr><th class="small">Страна рождения</th><td style="">
+      {% if country %}
+            {{ geo.get_country_name(country) }}
+      {% else %}
+        <span class='text-muted' >не указана</span>
+      {%endif%}
+    </td></tr>
 
-          </div>
 
-          
-          {%set name = adv.get(prefix + "_name") %}
-          <div class="row">
-          <p class="{{col_left_class}}">Кличка</p>
-          <p class="{{col_right_class}}">
-            {% if name %}
-                  {{ name }}
-            {% else %}
-              <span class='text-muted' >не указана</span>
-            {%endif%}
-          </p>
-          </div>
+    {%set color = adv.get(prefix + "_color") %}
+     <tr><th class="small">Окрас</th><td style="">
+     {% if color %}
+            {{ color }}
+      {% else %}
+        <span class='text-muted' >не указан</span>
+      {%endif%}
+    </td></tr>
 
-          
-          <div class="row">
-           {%set country = adv.get(prefix + "_country_id") %}
-            <p class="{{col_left_class}}">Страна рождения</p>
-            <p class="{{col_right_class}}">
-              {% if country %}
-                    {{ geo.get_country_name(country) }}
-              {% else %}
-                <span class='text-muted' >не указана</span>
-              {%endif%}
-            </p>
-          </div>
 
-          {%set color = adv.get(prefix + "_color") %}
-          <div class="row">
-          <p class="{{col_left_class}}">Окрас</p>
-          <p class="{{col_right_class}}">
-            {% if color %}
-                  {{ color }}
-            {% else %}
-              <span class='text-muted' >не указан</span>
-            {%endif%}
-          </p>
-          </div>
-          
+     {%set misc = adv.get(prefix + "_misc") %}
+     {% if misc %}
+    <tr><th class="small">Прочее</th><td style="">
+     {{ misc }}
+    </td></tr>
+    {%endif%}
 
-           {%set misc = adv.get(prefix + "_misc") %}
-           {% if misc %}
-           <div class="row">
-            <p class="{{col_left_class}}">Прочее</p>
-            <p class="{{col_right_class}}">
-                {{ misc }}
-            </p>
-            </div>
-           {%endif%}
-
-       
-    </div>
+  </tbody>
+  </table>
 
 
 {% endif %}
@@ -461,154 +455,128 @@
 {%set col_left_class = "col-sm-6 col-md-6 col-lg-5 text-semi-muted small" %}
 {%set col_right_class = "col-sm-6 col-md-6 col-lg-7" %}
 
-      <div class="dog-info" style="margin-bottom:40px;">
+      <div class="dog-info" style="margin-bottom:40px; margin-left:-5px">
 
-        <h3  style="margin-bottom:20px">Подробная информация</h3>
+      <table class="table table-non-border table-condensed">
+      <colgroup>
+        <col style="width:180px">
+        </col>
+        <col style=""></col>
+      </colgroup>
+        <thead>
+          <tr><th colspan="2"><h3>Подробная информация</h3></th></tr>
+        </thead>
+        <tbody>
+          <tr itemscope itemprop="availableAtOrFrom" itemtype="http://schema.org/Place">
+          <th class="small">Местоположение</th>
+          <td>
+            <span itemprop="name">{{geo.format_city_region_by_city_id(adv.get("city_id"))}}</span>
 
-        <div class="row" itemscope itemprop="availableAtOrFrom" itemtype="http://schema.org/Place">
-          <p class="{{col_left_class}}">Местоположение</p>
-          <p class="{{col_right_class}}">
-          <span itemprop="name">{{geo.format_city_region_by_city_id(adv.get("city_id"))}}</span>
-
-            <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+            <span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
             <meta itemprop="addressCountry" content="RU"/>
             <meta itemprop="addressLocality" content="{{geo.get_city_name(adv.get('city_id')) }}" />
             <meta itemprop="addressRegion" content="{{geo.get_region_name_by_city_id(adv.get('city_id')) }}" />
-            </div>
-          </p>
-        </div>
+            </span>
+          </td></tr>
 
-        <div class="row">
-          <p class="{{col_left_class}}">Доставка в др. города</p>
-          <p class="{{col_right_class}}">
+          <tr><th class="small">Доставка</th>
+          <td>
             {% if adv.get("delivery") %}
             возможна
             {%else%}
             <span class='text-muted'>нет</span>
             {%endif%}
-            </p>
-        </div>
+          </td></tr>
 
-      
+          <tr><th class="small">Порода</th>
+          <td>
+           {{breeds.get_breed_name(adv.get('breed_id')) | lower }}
+          </td></tr>
 
-        <div class="row">
-          <p class="{{col_left_class}}">Порода</p>
-          <p class="{{col_right_class}}">{{breeds.get_breed_name(adv.get('breed_id')) | lower }}</p>
-        </div>
-
-        {% set gender = genders.get_gender_name(adv.get("gender_id")) %}
-        {% if gender %}
-        <div class="row">
-          <p class="{{col_left_class}}">Пол</p>
-          <p class="{{col_right_class}}">{{ gender | lower }}</p>
-        </div>
-        {%endif%}
+          {% set gender = genders.get_gender_name(adv.get("gender_id")) %}
+          {% if gender %}
+          <tr><th class="small">Пол</th>
+          <td>
+          {{ gender | lower }}
+          </td></tr>
+          {%endif%}
 
 
-          {% set birthday = adv.get("birthday") %}
+         {% set birthday = adv.get("birthday") %}
           {% if birthday %}
-          <div class="row">
-          <p class="{{col_left_class}}">Дата рождения</p>
-          <p class="{{col_right_class}}"> 
-              {{momentjs(birthday).format("D MMMM YYYY")}}  
-              (<small>{{momentjs(birthday).fromNow(True)}}</small>)
-          </p>
-          </div>
+          <tr><th class="small">Дата рождения</th>
+          <td>
+              {{momentjs(birthday).format("D MMMM YYYY[, ]")}} 
+              ~{{momentjs(birthday).fromNow(True)}} 
+          </td></tr>
           {%endif%}
 
-          {% set color = adv.get("color") or "" | lower %}
+          {% set color = (adv.get("color") or "") | lower %}
           {% if color %}
-          <div class="row">
-          <p class="{{col_left_class}}">
-            Окрас
-          </p>
-          <p class="{{col_right_class}}">
-            {{color}}
-          </p>
-          </div>
+          <tr><th class="small">Окрас</th>
+          <td>{{color}}</td></tr>
           {%endif%}
 
-          <div class="row">
-          <p class="{{col_left_class}}">
-            Вакцинация (прививки)
-          </p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("vaccination") %}
+          <tr><th class="small">Вакцинация (прививки)</th>
+          <td> {% if adv.get("vaccination") %}
               сделана
             {%else%}
               <span class='text-muted'>не сделана</span>
             {%endif%}
-          </p>
-          </div>
+          </td></tr>    
 
-          <div class="row">
-          <p class="{{col_left_class}}">Ветеринарный паспорт</p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("vetpassport") %}
+          <tr><th class="small">Ветеринарный паспорт</th>
+          <td> {% if adv.get("vetpassport") %}
               есть
             {%else%}
               <span class='text-muted'>нет</span>
             {%endif%}
-          </p>
-          </div>
+          </td></tr>     
 
-          <div class="row">
-          <p class="{{col_left_class}}">Микрочип</p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("microchip") %}
+          <tr><th class="small">Микрочип</th>
+          <td> {% if adv.get("microchip") %}
               есть
             {%else%}
               <span class='text-muted'>нет</span>
             {%endif%}
-          </p>
-          </div>
+          </td></tr>
 
-
-          <div class="row">
-          <p class="{{col_left_class}}">Допуск в разведение</p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("breeding") %}
+          <tr><th class="small">Допуск в разведение</th>
+          <td>{% if adv.get("breeding") %}
             есть
             {%else%}
             <span class='text-muted'>нет</span>
             {%endif%}
-          </p>
-          </div>
+          </td></tr>
 
-          <div class="row">
-          <p class="{{col_left_class}}">Подходит для выставок</p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("show") %}
+          <tr><th class="small">Подходит для выставок</th>
+          <td> {% if adv.get("show") %}
             да
             {%else%}
             <span class='text-muted' >нет</span>
             {%endif%}
-          </p>
-          </div>
+          </td></tr>
 
-          <div class="row">
-          <p class="{{col_left_class}}">Чемпионские крови</p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("champion_bloodlines") %}
+          <tr><th class="small">Чемпионские крови</th>
+          <td>  {% if adv.get("champion_bloodlines") %}
             да
             {%else%}
             <span class='text-muted' >нет</span>
             {%endif%}
-          </p>
-        </div>
+          </td></tr>
 
-          <div class="row">
-         <p class="{{col_left_class}}">Договор купли-продажи</p>
-          <p class="{{col_right_class}}">
-            {% if adv.get("contract") %}
+           <tr><th class="small">Договор купли-продажи</th>
+          <td>   {% if adv.get("contract") %}
             есть
             {%else%}
             <span class='text-muted'>нет</span>
             {%endif%}
-          </p>
-        </div>
+          </td></tr>
 
-      </div>
+        </tbody>
+      </table>
+
+  </div>
 
 {%- endmacro -%}
 
@@ -616,48 +584,57 @@
 
 {%- macro seller_info(adv) -%}
 
+{% if not archived %}
 
 {%set col_left_class = "col-sm-4 text-semi-muted small" %}
 {%set col_right_class = "col-sm-8" %}
 
 <div class="seller-block well" style="padding:10px 20px 20px; box-shadow:2px 2px 5px 0px #ccc" itemprop="seller" itemscope itemtype="http://schema.org/Person">  
-    <h3 style="margin-bottom:20px">Контактная информация</h3>      
-      
-      {%set username = adv.get("username") or (seller.get("username") + " " + (seller.get("surname") or "") if seller else "") %}
-      {% if username %}
-      <div class="row">
-     <p class="{{col_left_class}}">Контактное лицо</p>
-      <p class="{{col_right_class}}" >
-        <span itemprop="name">{{username | title}}</span>
-      </p>
-      </div>
-      {%endif%}
 
-      
+    <table class="table table-non-border">
+      <thead>
+        <tr><th colspan="2"><h3>Контактная информация</h3></th></tr>  
+      </thead>
 
-    
+      <tbody>
 
-      {% set phone = adv.get("phone") or (seller.get("phone") if seller else "") %}
-      {% if phone %}
-      <div class="row">
-       <p class="{{col_left_class}}">Телефон</p>
-      <p class="{{col_right_class}}">
-        <span itemprop="telephone">{{phone}}</span>
-      </p>
-      </div>
-      {%endif%}
+        {%set username = adv.get("username") or (seller.get("username") + " " + (seller.get("surname") or "") if seller else "") %}
+        {% if username %}
+          <tr>
+          <th class="small">
+            Контактное лицо
+          </th>
+          <td>
+            <span itemprop="name">{{username | title}}</span>
+          </td>
+        </tr>
+        {%endif%}
+
+         {% set phone = adv.get("phone") or (seller.get("phone") if seller else "") %}
+        {% if phone %}
+         <tr>
+            <th class="small">
+              Телефон
+            </th>
+            <td>
+               <span itemprop="telephone">{{phone}}</span>
+            </td>
+          </tr>
+        {%endif%}
 
         {%set skype = adv.get("skype") or (seller.get("skype") if seller else "") %}
         {%if skype %}
-        <div class="row">
-         <p class="{{col_left_class}}">Skype</p>
-        <p class="{{col_right_class}}">
-            {{skype}}
-        </p>
-        </div>
+          <tr>
+            <th class="small">
+              Skype
+            </th>
+            <td>
+               <span>{{skype}}</span>
+            </td>
+          </tr>
         {%endif%}
 
-      {#% set kennel_name = adv.get("kennel_name") %}
+        {#% set kennel_name = adv.get("kennel_name") %}
         {% if kennel_name %}
         <div class="row">
        <p class="{{col_left_class}}">Питомник</p>
@@ -669,19 +646,27 @@
   
       {%set site = adv.get("site_link") or (seller.get("site_link") if seller else "") %}
         {%if site %}
-        <div class="row">
-         <p class="{{col_left_class}}">Сайт</p>
-        <p class="{{col_right_class}}" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-            <a itemprop="url" rel="nofollow" class="" target="_blank" href="{{site}}" title="{{site}}">{{site}}</a>
-        </p>
-        </div>
+        <tr>
+            <th class="small">
+              Сайт
+            </th>
+            <td>
+               <a itemprop="url" rel="nofollow" class="" target="_blank" href="{{site}}" title="{{site}}">{{site | truncate(30, killwords = True)}}</a>
+            </td>
+          </tr>
         {%endif%}
-    
+
+        </tbody>
+
+    </table>
+
       <div class="text-left" style="margin-top:20px">
           <a rel="nofollow" style="" class="btn bnt-lg btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=900,height=700,scrollbars=yes');w.focus();return false;"><i class="fa fa-envelope-o"></i>&emsp;Написать письмо</a>
       </div>
     
 
  </div>  <!-- /seller-block -->
+
+{%endif%}
 
 {% endmacro%}

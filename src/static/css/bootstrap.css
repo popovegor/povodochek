@@ -439,11 +439,11 @@ h1,
 }
 h2,
 .h2 {
-  font-size: 26px;
+  font-size: 28px;
 }
 h3,
 .h3 {
-  font-size: 22px;
+  font-size: 20px;
 }
 h4,
 .h4 {
@@ -1424,6 +1424,7 @@ pre code {
 }
 table {
   max-width: 100%;
+  font-size: 14px;
   background-color: transparent;
 }
 th {
@@ -6582,10 +6583,15 @@ form .textarea-counter {
 }
 .dog-adv-show .das-price-block .das-price-number,
 .sale-pet-show .das-price-block .das-price-number {
-  padding: 20px 0 10px 0;
+  display: inline-block;
+  padding: 20px 40px 15px 40px;
+  margin-top: 20px;
+  margin-bottom: 30px;
   font-family: "Trebuchet MS", Arial, sans-serif;
   font-size: 38px;
   font-weight: bold;
+  color: #fff;
+  background-color: #6cc644;
 }
 .dog-adv-show .das-price,
 .sale-pet-show .das-price {
