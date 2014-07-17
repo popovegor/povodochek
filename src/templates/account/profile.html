@@ -12,12 +12,12 @@
 <div class="account-contact">
         <table class="table table-non-border">
            <colgroup>
-            <col style="width:200px">
+            <col style="width:180px">
             <col style="">
           </colgroup>
           <tbody>
             <tr>
-              <th>
+              <th class="small">
                 Имя
               </th>
               <td>
@@ -25,31 +25,31 @@
               </td>
             </tr>
             <tr>
-              <th>Фамилия</th>
+              <th class="small">Фамилия</th>
               <td>
                 {{current_user.surname or "<span class='text-semi-muted'>не указан</span>" | safe}}  
               </td>
             </tr>
             <tr>
-              <th>Телефон</th>
+              <th class="small">Телефон</th>
               <td>
                 {{current_user.phone or "<span class='text-semi-muted'>не указан</span>" | safe}}
               </td>
             </tr>
             <tr>
-              <th>Skype</th>
+              <th class="small">Skype</th>
               <td>
                 {{current_user.skype or "<span class='text-semi-muted'>не указан</span>" | safe}}
               </td>
             </tr>
             <tr>
-              <th>Населенный пункт</th>
+              <th class="small">Населенный пункт</th>
               <td>
                 {{geo.format_city_region_by_city_id(current_user.city_id) or "<span class='text-semi-muted'>не указан</span>" | safe}}
               </td>
             </tr>
             <tr>
-              <th>Персональный веб-сайт</th>
+              <th class="small">Персональный веб-сайт</th>
               <td>
                 {{current_user.site_link or "<span class='text-semi-muted'>не указан</span>" | safe}}
               </td>

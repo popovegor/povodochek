@@ -181,31 +181,31 @@
 
   
 
-   <div class="das-price-block" style="">
+   <div class="das-price-block" style="margin-top:20px">
 
-      <div class="das-price-number text-center" style=""  title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
+      <div class="das-price-number text-center" style="float:left; margin-right:10px"  title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
              <span itemprop="price">{{adv.get('price') | format_price() }}&nbsp;<i class="fa fa-ruble"></i></span>
              <meta itemprop="priceCurrency" content="RUB" />   
       </div>
 
       
 
-    <ul class="list-inline">
+    <div class="clearfix" style="padding-top:5px">
 
     {%if adv.get("price_haggle") %}
-      <li class="">
-        <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Уместен торг" class="label label-danger" >торг</abbr>   
-      </li>
+      <p class="">
+        <span data-trigger="hover" data-toggle="popover" data-placement="right" data-content="Уместен торг" class="label label-danger cursor-help">торг</span>   
+      </p>
       
       {%endif%}
 
        {%if adv.get("price_hp") %}
-        <li class="">
-            <abbr data-trigger="hover" data-toggle="popover" data-placement="top" data-content="Возможна рассрочка платежа" class="label label-danger ">рассрочка</abbr>
-        </li>
+        <p class="">
+            <span data-trigger="hover" data-toggle="popover" data-placement="right" data-content="Возможна рассрочка платежа" class="label label-danger cursor-help">рассрочка</span>
+        </p>
           
         {%endif%}
-  </ul>
+    </div>
 
     </div>
 

@@ -6579,19 +6579,17 @@ form .textarea-counter {
 }
 .dog-adv-show .das-price-block,
 .sale-pet-show .das-price-block {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 .dog-adv-show .das-price-block .das-price-number,
 .sale-pet-show .das-price-block .das-price-number {
   display: inline-block;
-  padding: 20px 40px 15px 40px;
-  margin-top: 20px;
-  margin-bottom: 30px;
+  padding: 15px 30px;
   font-family: "Trebuchet MS", Arial, sans-serif;
-  font-size: 38px;
+  font-size: 28px;
   font-weight: bold;
   color: #fff;
-  background-color: #6cc644;
+  background-color: #6c3;
 }
 .dog-adv-show .das-price,
 .sale-pet-show .das-price {

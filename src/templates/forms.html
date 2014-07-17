@@ -8,18 +8,18 @@
 
 {%- macro form_field_label(field) -%}
 	{%if field.label.text %}
-    <ul class="list-inline {{kwargs.get('lbl_class')}}" style="{{kwargs.get('lbl_style')}}; ">
-      <li style="display:inline">
+    <div class="list-inline {{kwargs.get('lbl_class')}}" style="{{kwargs.get('lbl_style')}}; margin-bottom:5px">
+      <span style="display:inline">
         <label for="{{ field.id }}" style="display:inline" class="form-field-name">{{ field.label.text }}   
         </label> 
-      </li>
+      </span>&ensp;
        {%- if field.flags.required -%}
-          <li>{{form_field_required()}}</li>
+        <span>{{form_field_required()}}</span>&ensp;
       {%- endif %}
        {%- if field.attrs and field.attrs.attraction -%}
-          <li>{{form_field_attraction()}}</li>
+        <span>{{form_field_attraction()}}</span>&ensp;
     {%- endif %}
-    </ul>
+    </div>
     
     
     
