@@ -127,30 +127,46 @@
 
 {%- macro adv_number(adv) -%}
 
-<br/>
-
-<br/>
-<div class="" style="">
-    {#<span style="padding-right:15px"><span class="text-muted small">Объявление № </span>
-    {%set short_id = adv | short_adv_id %}
-    <span class="badge" title="№ объявления {{short_id}}" style="margin-left:5px;">
-    {{short_id}}
-    </span>
-    </span>#}
-
-    {% set add_date = adv.get("add_date") %}
-    {% set update_date = adv.get("update_date") %}
-
-     <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>
-
-     {%if update_date != add_date %}
+<div class="" style="margin-top:60px">
+  <ul class="list-inline">
+      <li>
+        <i class="fa fa-clock-o fa-fw" style="width:15px"></i>
+      </li>
+      {#<li>
+        <span style="padding-right:15px"><span class="text-muted small">Объявление № </span>
+          {%set short_id = adv | short_adv_id %}
+          <span class="badge" title="№ объявления {{short_id}}" style="margin-left:5px;">
+          {{short_id}}
+          </span>
+          </span>
+      </li>#}
+      {% set add_date = adv.get("add_date") %}
+      {% set update_date = adv.get("update_date") %}
+      {% set expire_date = adv.get("expire_date") %}
+      <li>
+        <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>   
+      </li>
+    {%if update_date != add_date %}
+      <li>
       <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
+      </li>
     {%endif%}     
-
-  {% set views_count = adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
-  <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Посмотрели</span>{{ views_count }}&ensp;{{"пользователь" | morph_word(count=views_count)}}</span>
-  
-
+    {%if expire_date %}
+      <li>
+      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Активно до</span>{{momentjs(expire_date).format("D MMMM")}}</span>
+      </li>
+    {%endif%}     
+  </ul>
+  <ul class="list-inline">
+      <li>
+        <span class="glyphicon glyphicon-stats"></span>
+      </li>
+      <li>
+        {% set views_count = adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
+          <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Посмотрели</span>{{ views_count }}&ensp;{{"пользователь" | morph_word(count=views_count)}}</span>     
+      </li>
+  </ul>
+    
 </div>
 
 {%- endmacro -%}

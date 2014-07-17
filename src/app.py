@@ -203,7 +203,6 @@ if not app.debug:
     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
-    app.logger.info('povodochek startup')
 
 
 @login_manager.user_loader

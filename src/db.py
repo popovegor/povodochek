@@ -218,7 +218,6 @@ def get_dog_advs():
 def get_dog_advs_expired():
     now = datetime.utcnow()
     today = datetime(now.year, now.month, now.day)
-    print(today)
     return dog_advs.find({'expire_date': {'$lte' : today}})
 
 def get_dog_advs_by_user(user_id):

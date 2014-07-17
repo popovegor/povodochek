@@ -333,7 +333,6 @@ def notify_about_expired_dog_advs(days = 4):
 
 @log_exception(logger = logger)
 def archive_expired_dog_advs():
-    print(db.get_dog_advs_expired().count())
     for adv in db.get_dog_advs_expired():
         user = db.get_user(adv.get('user_id'))
         if config.DEBUG:
