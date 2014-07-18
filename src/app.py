@@ -410,7 +410,7 @@ def asignin(asign):
     title=u"Активация нового пароля"
     if user:
         db.asign_user(user)
-        if login_user(users.User(user.get('_id'))):
+        if login_user(users.get_user(user.get('_id'))):
             return render_template("asignin_success.html", title = title)
     return render_template("asignin_failed.html", title=title)
 

@@ -104,7 +104,7 @@ def validate_login_used(form, field):
         raise ValidationError(u"Логин '%s' занят" % field.data)
 
 class ChangePassword(Form):
-    current_password = PasswordField(u"Текущий пароль", \
+    current_password = PPasswordField(u"Текущий пароль", \
         [Required(message=MSG_REQUIRED)])
 
     def validate_current_password(form, field):
@@ -112,11 +112,11 @@ class ChangePassword(Form):
         if not user or not check_password(user.get("pwd_hash"), field.data):
             raise ValidationError(u"Указан неправильный пароль")
 
-    new_password = PasswordField(u"Новый пароль", \
+    new_password = PPasswordField(u"Новый пароль", \
         [Required(message=MSG_REQUIRED), \
         Length(min=6, max=36, message=MSG_RANGE_LENGTH.format(6, 36))])
 
-    repeat_new_password = PasswordField(u'Повторить новый пароль', \
+    repeat_new_password = PPasswordField(u'Повторить новый пароль', \
         [ Required(message=MSG_REQUIRED), EqualTo('new_password', message=u'Пароли не совпадают.')])
 
 

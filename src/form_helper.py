@@ -1,6 +1,6 @@
 from wtforms import (fields, widgets, TextField, \
     SelectField, HiddenField, BooleanField, TextAreaField, \
-    IntegerField, Form, DateTimeField)
+    IntegerField, Form, DateTimeField, PasswordField)
 
 class Select2Widget(widgets.Select):
     """
@@ -71,6 +71,20 @@ class PDateTimeField(DateTimeField, PField):
         depends = None, db_name = None, \
         db_in = None, db_out = None, **kwargs):
         DateTimeField.__init__(self, label = label, \
+            validators = validators, **kwargs)
+        PField.__init__(self, field = self, attraction = attraction, \
+            attraction_depends = attraction_depends, \
+            depends = depends, db_name = db_name, \
+            db_in = db_in, db_out = db_out)
+
+class PPasswordField(PasswordField, PField):
+     def __init__(self, label = '', validators = None, \
+        attraction = False, attraction_depends = None, \
+        depends = None, db_name = None, \
+        db_in = None, db_out = None, **kwargs):
+        filters = kwargs.get("filters") or []
+        kwargs["filters"] = [lambda x : (x or '').strip()] + filters
+        PasswordField.__init__(self, label = label, \
             validators = validators, **kwargs)
         PField.__init__(self, field = self, attraction = attraction, \
             attraction_depends = attraction_depends, \
