@@ -172,7 +172,7 @@ charset="utf-8"></script>
         <span class="glyphicon glyphicon-stats"></span>
       </li>
       <li>
-        {% set views_count = 1 or adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
+        {% set views_count = adv.get("stat").get("unique_views") if adv.get("stat") else 0 %}
           <span style="white-space:nowrap;" title="Количество уникальных просмотров объявления"><span style="padding-right:5px" class="text-muted">Посмотрели:</span>{{ views_count }}&ensp;{{"пользователь" | morph_word(count=views_count)}}</span>     
       </li>
   </ul>
