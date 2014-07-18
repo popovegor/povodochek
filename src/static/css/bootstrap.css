@@ -6579,13 +6579,13 @@ form .textarea-counter {
 }
 .dog-adv-show .das-price-block .das-price-number,
 .sale-pet-show .das-price-block .das-price-number {
+  /*background-color:#66CC33;*/
   display: inline-block;
-  padding: 15px 30px;
   font-family: "Trebuchet MS", Arial, sans-serif;
-  font-size: 28px;
+  /*padding:15px 30px; */
+  font-size: 38px;
   font-weight: bold;
-  color: #fff;
-  background-color: #6c3;
+  /*color:#fff;*/
 }
 .dog-adv-show .das-price,
 .sale-pet-show .das-price {

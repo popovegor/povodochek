@@ -37,8 +37,11 @@
 
 {% block content %}  
 
+
+
 <div class="dog-adv-show" itemscope itemtype="http://schema.org/Offer"> 
 
+  {{render_share()}}
  
  <h1 itemprop="name">{{header}}</h1>
         
@@ -56,6 +59,8 @@
     </div>
 
     <div class="right-side col-sm-5">
+
+
 
         {{price_info(adv)}}
 
@@ -91,6 +96,16 @@
 </script>
 
 {% endblock %} 
+
+
+{%- macro render_share() -%}
+<div style="margin:20px 0px 30px -5px">
+<script type="text/javascript" src="//yandex.st/share/share.js"
+charset="utf-8"></script>
+<div class="yashare-auto-init" data-yashareL10n="ru"
+ data-yashareType="button" data-yashareQuickServices="yaru,vkontakte,facebook,twitter,odnoklassniki,moimir"></div>      
+ </div>
+{%- endmacro -%}
 
 
 {%- macro video(adv) -%}
@@ -169,7 +184,7 @@
 
 {%- macro attraction_adv(adv) -%}
 
-  <div class="das-attraction" style="margin-top:30px">
+  <div class="das-attraction" style="margin-top:10px">
     {% from "attraction.html" import render_stars %}
 
     <span class="" style="padding-right:5px">Привлекательность объявления</span>{{render_stars(adv.get("attraction"))}}
@@ -179,16 +194,14 @@
 
 {%- macro price_info(adv) -%}
 
-  
 
    <div class="das-price-block" style="margin-top:40px;margin-bottom:40px;">
-
-      <div class="das-price-number text-center" style="float:left; margin-right:20px"  title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
-             <span itemprop="price">{{adv.get('price') | format_price() }}&nbsp;<i class="fa fa-ruble"></i></span>
+      <div class="text-center" style="float:left; margin-right:20px; display:inline-block"  title="{{format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}" itemprop="priceSpecification" itemscope itemtype="http://schema.org/UnitPriceSpecification">
+             <span>Цена&ensp;</span>
+             <span itemprop="price" class="das-price-number">{{adv.get('price') | format_price() }}&nbsp;<i class="fa fa-ruble"></i></span>
              <meta itemprop="priceCurrency" content="RUB" />   
       </div>
 
-      
 
     <div class="clearfix" style="padding-top:5px">
 
