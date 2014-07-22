@@ -24,7 +24,7 @@ PROFILE_ID = "75433672"
 
 PRIVATE_KEY = os.path.join(os.path.dirname(__file__), 'pk.pem')
 
-def get_servive():
+def get_service():
 	try:
 
 		f = file(PRIVATE_KEY, "rb")
@@ -104,7 +104,7 @@ def get_page_views(service, profile_id):
       max_results='10000').execute()
 
 def update_page_views_stat():
-	service = get_servive()
+	service = get_service()
 	page_views = get_page_views(service, PROFILE_ID)
 	for row in page_views.get('rows'):
 		try:
