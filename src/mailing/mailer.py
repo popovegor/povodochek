@@ -13,6 +13,8 @@ from helpers import (run_async, morph_word, log_exception)
 import helpers
 import db
 
+base_url = "http://поводочек.рф"
+
 env = Environment(loader=PackageLoader('mailing', ''))
 env.globals['helpers'] = helpers
 
@@ -21,24 +23,26 @@ def send_email_async(sender = u"Поводочек <%s>" % config.MAIL_USERNAME,
     to = [],
     subject = u"Сообщение от портала Поводочек", 
     text = u"",
-    html = u""):
+    html = u"", 
+    unsubscribe = u""):
     send_email(sender = sender, to = to, subject = subject, 
-        text = text, html = html)
+        text = text, html = html, unsubscribe = unsubscribe)
 
-def send_email_to_user(user, subject, html):
+def send_email_to_user(user, subject, html, unsubscribe):
     print(user)
     if user:
         email = user.get('email')
         name = user.get('username')
         to = [u"%s <%s>" % (name, email) if name != u"Пользователь" else email]
-        send_email(to = to, subject = subject, html = html)
+        send_email(to = to, subject = subject, html = html, unsubscribe = unsubscribe)
 
 def send_email(
     sender = u"Поводочек <%s>" % config.MAIL_USERNAME,
     to = [],
     subject = u"Сообщение от портала Поводочек", 
     text = u"",
-    html = u""):
+    html = u"", 
+    unsubscribe = u""):
     try:
         if config.DEBUG:
             to = ['egor@povodochek.com']
@@ -47,6 +51,8 @@ def send_email(
         msg['To'] = ", ".join([address.encode("utf-8") for address in to])
         msg['From'] = sender.encode("utf-8")
         msg['Subject'] = subject.encode("utf-8")
+        if unsubscribe:
+            msg["List-Unsubscribe"] = unsubscribe
          
         # Record the MIME types of both parts - text/plain and text/html.
         if text:
@@ -99,7 +105,8 @@ def notify_user_of_news(user, news):
     if user and db.check_subscribe(user.get('_id'), "news"):
         html = env.get_template('notify_news.html').render(
             news = news, user = user)
-        send_email_to_user(user = user, subject = news.get('subject'), html = html)
+        unsubscribe = "%s/unsubscribe/%s/news/" % (base_url, user.get('_id'))
+        send_email_to_user(user = user, subject = news.get('subject'), html = html, unsubscribe = unsubscribe)
 
 @run_async
 def notify_users_of_news(users, news):
