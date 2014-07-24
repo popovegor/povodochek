@@ -794,10 +794,10 @@ def account_subscribe():
     if request.method == "POST":
         if form.validate():
             db.save_subscribe(user_id = current_user.id, subscribe = form)
+            flash(u"Подписки успешно обновлены.", "success")
             return redirect(url_for('account_subscribe'))
     else:
         subscribe = db.get_subscribe_for_user(current_user.id)
-        print(subscribe)
         if subscribe:
             form.load_from_db_entity(subscribe)
     tmpl = render_template("account/subscribe.html", title=u"Мои подписки", form = form)
