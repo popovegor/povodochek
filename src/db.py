@@ -134,10 +134,10 @@ def signup_user(email, pwd_hash, username, confirm, ):
         'username': username, 'confirm': confirm, \
         'activated': False, 'signup_date': datetime.utcnow()})
 
-def reset_user_password(user, pwd_hash, asign):
-    return users.find_and_modify(user, \
+def reset_user_password(user_id, pwd_hash, asign):
+    return users.find_and_modify({"_id": ObjectId(user_id)}, \
         {"$set": {'asign_pwd_hash': pwd_hash, \
-        'asign': asign}})
+        'asign': asign}}, new = True, upsert = False)
 
 
 def save_user_contact(user_id, form):

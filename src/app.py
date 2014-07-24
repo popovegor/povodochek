@@ -494,7 +494,7 @@ def reset_password():
         if form.validate():
             password = str(hash(str(uuid1())) % 10000000)
             asign = str(uuid4())
-            user = db.reset_user_password(form.email_or_login.user, \
+            user = db.reset_user_password(form.email_or_login.user.get("_id"), \
                 hash_password(password), asign)
             if user:
                 send_reset_password(user.get('email'), user.get("login"), asign, password)
