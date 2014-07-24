@@ -20,7 +20,7 @@
 
 			 <input id="levels" name="levels" type="hidden" value="{{levels}}">
 
-			 <b class="small">Ваш комментарий ({{current_user.get_fullname()}}):</b>
+			 <b class="small">Ваш комментарий ({{current_user.username}}):</b>
 			 {{ form_field(form.text, autocomplete = "off", lbl_style="display:none", rows="6") }}
 
 			  <button type="submit" class="btn btn-primary btn-xs"  data-loading-text="Добавляется...">
@@ -60,7 +60,7 @@
 			      <ul class="list-inline">					
 		      		<li class="small">
 		      			{%set author_id = comment.get('author_id') %}
-			     		{#<i class="fa fa-user text-muted"></i>&ensp;#}<b class="">{{ users.get_user(author_id).get_fullname() }}</b>
+			     		{#<i class="fa fa-user text-muted"></i>&ensp;#}<b class="">{{ users.get_user(author_id).username }}</b>
 		      			
 			     	</li>	
 					<li class="text-muted">

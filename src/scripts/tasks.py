@@ -289,7 +289,7 @@ def recalc_attraction_in_advs():
     for dog in db.dog_advs.find():
         form = Dog()
         for f in form:
-            f.set_db_val(dog.get(f.get_db_name()))
+            f.set_val(dog.get(f.get_db_name()))
         attraction = calc_attraction(form)
         print(attraction)
         db.dog_advs.update(dog, \
