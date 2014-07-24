@@ -94,7 +94,7 @@
       <div class="row">
           <div class="col-sm-9 col-lg-10" style="">
 
-            <h4 style="overflow:hidden" class="adv-head"><a href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title") | capitalize}}</a></h4>
+            <h4 class="adv-head"><a href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title") | capitalize}}</a></h4>
             
             
             {% if breed_name %}
