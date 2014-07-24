@@ -17,11 +17,13 @@
         <form action="{{request.url}}" method="POST">
 
             <p class="">
-                <strong>Текущая эл. почта:&nbsp;&nbsp;</strong><span>{{current_user.email}}</span>
+                <strong>Текущая эл. почта:&nbsp;&nbsp;</strong><span class="">{{current_user.email}}</span>
                 <br/>
             </p>
 
+            <br/>
 
+            
             {{ form_field(form.new_email, placeholder="Введите новую эл. почту") }}
 
             {{ form_field(form.repeat_new_email, placeholder="Повторите эл. почту") }}

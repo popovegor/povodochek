@@ -1,14 +1,17 @@
 {%extends "layout.html"%}
 
 
+{%block title%}
+	<h2>{{news.get("subject")}}</h2>
+{%endblock%}
+
+
 {%block content%}
 
-{{message}}
+{{news.get('message')}}
 
-	{% if news_url %}
-	    <div style="margin-top:20px">
-	    <a href="{{news_url}}">Обсуждение новости</a>
-	    </div>
-	{% endif %}
+<div style="margin-top:20px">
+<a href="{{base_url ~ '/news/' ~ news.get('_id') ~ '/'}}">Отзывы пользователей по этой теме</a>
+</div>
 
 {%endblock%}

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}      
+
+
+
+<h1>{{title}}</h1>
+<div class="row">
+    <div class="col-md-8">
+      <p>
+      <span class="text-success">Вы успешно отписаны от рассылки.</span>
+      </p>
+      <p>
+      	Чтобы вновь подписаться, перейдите в <a href="{{url_for('account_subscribe')}}">свои подписки</a>.
+      </p>
+  </div>
+
+</div>
+
+
+
+{% endblock %} 

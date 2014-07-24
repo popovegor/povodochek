@@ -532,7 +532,7 @@ class AdminNews(PForm):
     email_single = PTextField(u"Отправить на эл. адрес", validators = [validators.Optional(), Email(message=MSG_EMAIL)], 
         filters = [lambda x : (x or '').lower()])
 
-    email_everyone = PBooleanField(u"Отправить всем пользователям")
+    email_everyone = PBooleanField(u"Отправить всем активированным пользователям")
 
     publish_date = PDateTimeField(u'Дата публикации', 
         format='%Y-%m-%d %H:%M:%S')
@@ -544,4 +544,10 @@ class Comment(PForm):
 
     text = PTextAreaField(u"Ваш комментарий", 
         validators = [Required(MSG_REQUIRED)])
+
+class Subscribe(PForm):
+    news = PBooleanField(u"Новости проекта")
+    archived = PBooleanField(u"Снятие с публикации моего объявления")
+    expired = PBooleanField(u"Подходит к концу срок публикации моего объявления")
+
 

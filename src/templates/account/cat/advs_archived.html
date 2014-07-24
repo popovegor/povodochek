@@ -12,11 +12,20 @@
 
 <div class="account-pet-sale">
 
+    {%if advs.count() %}
+
     {% for adv in advs %}
 
       {{render_adv(adv, loop)}} 
 
     {% endfor %}
+
+    {%else%}
+
+      <blockquote>В архиве нет объявлений</blockquote>
+
+
+    {%endif%}
 
 </div>
 

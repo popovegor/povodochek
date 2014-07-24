@@ -29,10 +29,13 @@
           <ul class="dropdown-menu menu-account-list">
             <li><a class="text-right" href="{{url_for('account_dog_advs')}}"><span class="pull-left">Мои собаки</span><span title="Количество объявлений о продаже собак" class="badge">{{current_user.counters.dog_advs}}</span></a></li>
              <li><a class="text-right" href="{{url_for('account_cat_advs')}}"><span class="pull-left">Мои кошки</span><span title="Количество объявлений о продаже кошек" class="badge">{{current_user.counters.cat_advs}}</span></a></li>
+            
              <li class="divider"></li>
             <li><a href="{{url_for('account_profile')}}">Профиль</a></li>
             <li><a href="{{url_for('account_change_password')}}">Смена пароля</a></li>
             <li><a href="{{url_for('account_change_email')}}">Смена эл. почты</a></li>
+            <li><a href="{{url_for('account_subscribe')}}">Подписки</a></li>
+
             <li class="divider"></li>
             <li><a href="{{url_for('signout', url = request.url)}}">Выйти</a></li>
           </ul>

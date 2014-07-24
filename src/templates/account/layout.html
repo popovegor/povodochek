@@ -20,9 +20,9 @@
 
 <div class="">
 
-  <div class="row account" style="">
-    <div class="col-sm-3 col-lg-2" style="">
-      <div class="left-side">
+  
+    <div class="small" style="float:left;width:160px; margin-top:20px">
+      
         
       <ul class="nav nav-pills nav-stacked" >
 
@@ -46,26 +46,31 @@
 
       <li class="nav-divider"></li>
 
+        <li class="{{'active' if request.path  == url_for('account_profile')}}">
+        <a href="{{url_for('account_profile')}}">Профиль</span></a>
+        </li>
 
-        {% for (title, path) in [
-          ("Профиль", url_for('account_profile'))
-          , ("Смена пароля", url_for('account_change_password'))
-          , ("Смена эл. почты", url_for('account_change_email'))] 
-        %}
-        
-          {{render_nav_item(title, path)}}
+        <li class="{{'active' if request.path  == url_for('account_change_password')}}">
+        <a href="{{url_for('account_change_password')}}">Смена пароля</span></a>
+        </li>
 
-        {% endfor %}
+        <li class="{{'active' if request.path  == url_for('account_change_email')}}">
+        <a href="{{url_for('account_change_email')}}">Смена эл. почты</span></a>
+        </li>
+
+         <li class="{{'active' if request.path  == url_for('account_subscribe')}}">
+        <a href="{{url_for('account_subscribe')}}">Подписки</span></a>
+        </li>
+
 
       </ul>
-      </div> <!-- left-side -->
-    </div> 
+    </div>  <!-- left-side -->
 
 
-    <div class="col-sm-9 col-lg-10" style="">
+    <div class="clearfix" style="margin-left:220px">
       <h1 class="">{{ title }}</h1>
 
-      <div style="margin-bottom:30px">
+      <div style="margin-bottom:30px" class="text-semi-muted">
       {%block page_desc %}
 
       {%endblock%}

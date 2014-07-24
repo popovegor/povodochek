@@ -11,7 +11,7 @@ from forms import (SignUp, SignIn, Cat, Profile, \
     Activate,ResetPassword, ChangePassword, \
     SaleSearch, SendMail, ChangeEmail, SignUpBasic, \
     get_breed_from_field, Dog, DogSearch, get_geo_from_field,
-    AdminNews, Comment)
+    AdminNews, Comment, Subscribe)
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from werkzeug.utils import secure_filename
@@ -773,6 +773,36 @@ def account_user():
     tmpl = render_template("account/user.html", title=u"Учетные данные")
     return tmpl
 
+@app.route("/unsubscribe/<user_id>/<subscribe_name>/", methods = ["GET"])
+def unsubscribe(user_id, subscribe_name):
+    subscribe = db.get_subscribe_for_user(user_id)
+    title = u"Отписка от рассылки"
+    if subscribe:
+        form = Subscribe()
+        form.load_from_db_entity(subscribe)
+        form.set_field_val(subscribe_name, False)
+        db.save_subscribe(user_id, form)
+        return render_template('unsubscribe_success.html', title = title)
+    else:
+        return render_template('unsubscribe_failed.html', title = title)
+
+
+@app.route("/account/subscribe/", methods = ["GET", "POST"])
+@login_required
+def account_subscribe():
+    form = Subscribe(request.form)
+    if request.method == "POST":
+        if form.validate():
+            db.save_subscribe(user_id = current_user.id, subscribe = form)
+            return redirect(url_for('account_subscribe'))
+    else:
+        subscribe = db.get_subscribe_for_user(current_user.id)
+        print(subscribe)
+        if subscribe:
+            form.load_from_db_entity(subscribe)
+    tmpl = render_template("account/subscribe.html", title=u"Мои подписки", form = form)
+    return tmpl
+
 @app.route("/account/profile/", methods = ["GET"])
 @login_required
 def account_profile():
@@ -792,7 +822,7 @@ def account_profile_edit():
             return redirect(url_for("account_profile"))
     else:
         for f in form:
-            f.set_db_val(user.get(f.get_db_name()))
+            f.set_val(user.get(f.get_db_name()))
 
     tmpl = render_template("account/profile_edit.html", title=u"Редактирование профиля", form = form)
     return tmpl
@@ -891,7 +921,7 @@ def account_dog_adv_archived_restore(adv_id):
             return render_template("/account/dog/adv_edit_success.html", header = msg, title = u"Объявление '%s' восстановлено и опубликовано" % form.title.data)
     else:
         for f in form:
-            f.set_db_val(dog.get(f.get_db_name()))
+            f.set_val(dog.get(f.get_db_name()))
       
         autofill_user_to_adv(form)
         
@@ -937,7 +967,7 @@ def account_dog_adv_edit(adv_id):
             return render_template("/account/dog/adv_edit_success.html", header = msg, title = u"Объявление '%s' опубликовано" % form.title.data)
     else:
         for f in form:
-            f.set_db_val(dog.get(f.get_db_name()))
+            f.set_val(dog.get(f.get_db_name()))
       
         autofill_user_to_adv(form)
         
@@ -1512,20 +1542,12 @@ def save_news(news_id, form):
                 message = form.message.data, 
                 published = form.published.data, 
                 summary = form.summary.data, 
-                publish_date = form.publish_date.data)
-    news_url = None
-    if form.published.data:
-        news_url = url_for('news_view', 
-            news_id = news.get('_id'), _external = True)
+                publish_date = form.publish_date.data)        
     if form.email_single.data:
-        html = mailer.get_html_notify_news(message = news.get('message'), news_url = news_url)
-        mailer.send_email(subject = news.get("subject"), html = html, to = [form.email_single.data])
+        user = db.get_user_by_email(form.email_single.data)
+        mailer.notify_user_of_news(user, news)
     if form.email_everyone.data:
-        html = mailer.get_html_notify_news(message = news.get('message'), news_url = news_url)
-        mailer.send_email_to_users(
-            users = db.get_users_activated(),
-            subject = news.get("subject"), 
-            html = html)
+        mailer.notify_users_of_news(db.get_users_activated(), news)
     return news
 
 @app.route('/admin/news/')

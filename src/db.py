@@ -48,6 +48,34 @@ typeahead_cat_breeds = povodochek.typeahead_cat_breeds
 news = povodochek.news
 news_deleted = povodochek.news_deleted
 
+def get_subscribe(subscribe):
+    def_subscribe = {"news":True, "archived": True, "expired" : True}
+    def_subscribe.update(subscribe or {})
+    return def_subscribe
+
+def check_subscribe(user_id, subscribe_name):
+    subscribe = get_subscribe_for_user(user_id)
+    return subscribe.get(subscribe_name)
+
+def get_subscribe_for_user(user_id):
+    user = users.find_one({'_id': ObjectId(user_id)},
+     fields = ['subscribe'])
+    if user:
+        return get_subscribe(user.get("subscribe"))
+
+
+def save_subscribe(user_id, subscribe):
+    if subscribe:
+        updater = {}
+        for f in subscribe:
+            updater['subscribe.%s' % f.get_db_name()] = f.get_val(subscribe)
+    return users.find_and_modify(
+        {'_id': ObjectId(user_id)}, 
+        {"$set": updater},
+        upsert = False, new = True
+        )
+    
+
 def revert_singup(user_id):
     users.remove({'_id':ObjectId(user_id)})
 
@@ -120,10 +148,10 @@ def save_user_contact(user_id, form):
     user_unset = {}
 
     for field in form:
-        db_val = field.get_db_val(form)
+        val = field.get_val(form)
         db_name = field.get_db_name()
-        if db_val:
-            user_set[db_name] = db_val
+        if val:
+            user_set[db_name] = val
         else: 
             user_unset[db_name] = ""
 
@@ -195,10 +223,10 @@ def upsert_dog_adv(user_id, adv_id, form, attraction):
     dog_unset = {}
 
     for field in form:
-        db_val = field.get_db_val(form)
+        val = field.get_val(form)
         db_name = field.get_db_name()
-        if db_val:
-            dog_set[db_name] = db_val
+        if val:
+            dog_set[db_name] = val
         else:
             dog_unset[db_name] = ""
 

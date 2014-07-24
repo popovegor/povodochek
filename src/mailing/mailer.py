@@ -11,6 +11,7 @@ from jinja2 import Template, Environment, PackageLoader
 import config
 from helpers import (run_async, morph_word, log_exception)
 import helpers
+import db
 
 env = Environment(loader=PackageLoader('mailing', ''))
 env.globals['helpers'] = helpers
@@ -79,22 +80,32 @@ def send_email_to_users(users,subject, hmtl):
         counter += 1
         print(counter)
         send_email_to_user(user, html = html, subject = subject)
-
-
-def get_html_notify_news(message, news_url):
-    return env.get_template('notify_news.html').render(
-        message = message, news_url = news_url)
+ 
 
 def notify_user_of_dog_adv_archived(user, adv):
-    html = env.get_template('notify_dog_adv_archived.html').render(adv = adv)
-    send_email_to_user(user = user, subject = u"Ваше объявление перенесено в архив", html = html)
+    if user and db.check_subscribe(user.get("_id"), "archived"):
+        html = env.get_template('notify_dog_adv_archived.html').render(adv = adv, user = user)
+        send_email_to_user(user = user, subject = u"Ваше объявление перенесено в архив", html = html)
 
 def notify_user_of_dog_adv_expired(user, adv):
-    from datetime import (datetime, timedelta)
-    now = datetime.utcnow()
-    left_days = (adv.get('expire_date').date() - now.date()).days
-    html = env.get_template('notify_dog_adv_expired.html').render(adv = adv, left_days = left_days)
-    send_email_to_user(user = user, subject = u"Срок размещения вашего объявления истекает", html = html)
+    if user and db.check_subscribe(user.get("_id"), "expired"):
+        from datetime import (datetime, timedelta)
+        now = datetime.utcnow()
+        left_days = (adv.get('expire_date').date() - now.date()).days
+        html = env.get_template('notify_dog_adv_expired.html').render(adv = adv, left_days = left_days, user = user)
+        send_email_to_user(user = user, subject = u"Срок размещения вашего объявления истекает", html = html)
+
+def notify_user_of_news(user, news):
+    if user and db.check_subscribe(user.get('_id'), "news"):
+        html = env.get_template('notify_news.html').render(
+            news = news, user = user)
+        send_email_to_user(user = user, subject = news.get('subject'), html = html)
+
+@run_async
+def notify_users_of_news(users, news):
+    for user in users:
+        notify_user_of_news(user, news)
+
 
 if __name__ == '__main__':
     func = sys.argv[1]

@@ -28,8 +28,12 @@ def get_fields(form):
 class PForm(Form):
     def load_from_db_entity(self, entity):
         for f in self:
-            f.set_db_val(entity.get(f.get_db_name()))    
+            f.set_val(entity.get(f.get_db_name()))
 
+    def set_field_val(self, field_name, val):
+        for f in self:
+            if f.name == field_name:
+                f.set_val(val)
 
 class PField():
     def __init__(self, field, attraction = False, \
@@ -48,21 +52,15 @@ class PField():
     def get_db_name(self):
         return self.db_name if self.db_name else self.name
 
-    def get_db_val(self, form):
+    def get_val(self, form):
         f = self.field
         if is_active_field(form, f):
             return self.db_in(f) if self.db_in else f.data
         return None
 
-    def set_db_val(self, val):
+    def set_val(self, val):
         self.field.data = self.db_out(val) if self.db_out else val
 
-
-    # def get_val(self):
-    #     return get_field_val
-
-    # def set_db_val(self, val):
-    #     return self.db_out()
 
 
 class PDateTimeField(DateTimeField, PField):

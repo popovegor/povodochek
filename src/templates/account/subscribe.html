@@ -1,0 +1,45 @@
+{% extends "account/layout.html" %}
+
+{%block page_desc %}
+
+<span class="text-semi-muted">Снемите галочку с рассылки, если не хотите получать информацию по соответсвующей категории, и нажмите &laquo;Сохранить&raquo;.</span>    
+
+{%endblock%}
+
+{% block account_content %}
+
+
+<div>
+
+
+    {% from "forms.html" import form_field_boolean, form_field, action_buttons %}
+
+    <form action="{{request.url}}" method="POST" id="contact" role="form">
+
+  
+    <b>Присылайте мне новые публикации этих категорий:</b>
+    {{ form_field(form.news) }}          
+  
+    
+  
+    <b>Извещайте меня о событиях:</b>
+    {{ form_field(form.archived) }}    
+    {{ form_field(form.expired) }}    
+
+    <br/>
+
+    <button class="btn btn-primary btn-sm" id="save" type="submit">Сохранить</button>
+
+    </form>
+
+
+
+    
+
+
+        
+
+</div>
+
+
+{% endblock%}
