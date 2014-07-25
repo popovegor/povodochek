@@ -10,7 +10,7 @@
 	<div class="col-md-10 col-lg-8">
 	{%for news in news_feed if news.get('published') %}
 
-	  <div class="media">
+	  <div class="media" style="margin-top:25px">
 	  	{%set news_url = url_for('news_view', news_id = news.get('_id') )%}
 	    
 	      {#<img class="pull-left media-object" src="/static/img/brand.png" alt="Поводочек" style="">#}

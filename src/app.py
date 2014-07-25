@@ -1413,7 +1413,7 @@ def news():
     news_feed = db.get_news_all()
     total = news_feed.count()
     perpage = 10
-    return render_template('/news/news_feed.html', title = Markup(u"Новости проекта"), news_feed = news_feed, total = total, perpage = perpage)
+    return render_template('/news/index.html', title = Markup(u"Новости проекта"), news_feed = news_feed, total = total, perpage = perpage)
 
 @app.errorhandler(404)
 def page_not_found(e):
