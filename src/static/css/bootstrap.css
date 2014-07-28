@@ -7027,6 +7027,7 @@ form .textarea-counter {
   direction: ltr;
 }
 .main .main-fresh-advs #mfa_items .mfai-title {
+  display: inline-block;
   overflow-x: hidden;
   text-overflow: ellipsis;
 
