@@ -5905,7 +5905,7 @@ form .form-field-errors {
   margin-bottom: 0;
 }
 form .form-field-errors .form-field-error {
-  margin-bottom: 10px !important;
+  margin: 5px 0 0 5px;
   color: red;
 }
 form .form-field-help {
@@ -6874,8 +6874,8 @@ form .textarea-counter {
 }
 .flashed-messages-success {
   color: #555;
-  background-color: #beffff !important;
-  border-color: #beffff !important;
+  background-color: #c3f7c3 !important;
+  border-color: #c3f7c3 !important;
 }
 .error-404 {
   max-width: 600px;
@@ -6908,7 +6908,7 @@ form .textarea-counter {
   border-bottom: dotted 1px;
 }
 #header {
-  height: 100px;
+  height: 105px;
   background-color: #f5f5f5;
 }
 #header .header-tagline {
@@ -6936,8 +6936,16 @@ form .textarea-counter {
   border-radius: 4px 0 0 4px;
 }
 .img-brand {
-  width: 131px;
-  height: 48px;
+  display: block;
+  width: 155px;
+  height: 40px;
+  background-image: url(../img/brand_combo.png);
+  background-repeat: no-repeat;
+  background-position: center -60px;
+}
+a.img-brand:hover,
+a.img-brand:focus {
+  background-position: center 0;
 }
 .img-logo {
   width: 150px;

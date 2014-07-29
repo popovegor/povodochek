@@ -154,11 +154,11 @@ charset="utf-8"></script>
       {% set update_date = adv.get("update_date") %}
       {% set expire_date = adv.get("expire_date") %}
       <li>
-        <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, H:mm")}}</span>   
+        <span style="white-space:nowrap;margin-right:15px"><span class="text-muted" style="padding-right:5px">Размещено</span>{{momentjs(add_date).format("D MMMM, HH:mm")}}</span>   
       </li>
     {%if update_date != add_date %}
       <li>
-      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, H:mm")}}</span>
+      <span style="white-space:nowrap;margin-right:15px"><span style="padding-right:5px" class="text-muted">Обновлено</span>{{momentjs(update_date).format("D MMMM, HH:mm")}}</span>
       </li>
     {%endif%}     
     {%if expire_date %}
@@ -674,7 +674,7 @@ charset="utf-8"></script>
     </table>
 
       <div class="text-left" style="margin-top:20px">
-          <a rel="nofollow" style="" class="btn bnt-lg btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=900,height=700,scrollbars=yes');w.focus();return false;"><i class="fa fa-envelope-o"></i>&emsp;Написать письмо</a>
+          <a rel="nofollow" style="" class="btn bnt-lg btn-primary" href="{{url_for('dog_adv_email', adv_id = adv.get('_id'))}}" onclick="var w=window.open(this.href,'','width=900,height=700,scrollbars=yes');w.focus();return false;"><i class="fa fa-envelope-o"></i>&emsp;Написать автору</a>
       </div>
     
 

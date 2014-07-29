@@ -70,6 +70,8 @@
 {%- macro main_info(form, horizontal) -%}
 	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
+	{{ form_field(form.adv_type, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-5", autocomplete="off") }}  
+
 	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Введите или выберите название породы", autocomplete="off", btn_right = '<button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>' | safe) }}   
 
 	 {%from "dog/breed_picker.html" import dog_breed_picker %}
@@ -79,8 +81,7 @@
 
     {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", help="Выберите из выпадающего списка населенный пункт, в котором продается собака, введя первые буквы названия.", autocomplete="off") }}
 
-    <div class="row" style="margin-top:-15px; margin-bottom:10px">
-		
+    <div class="row" style="margin-top:-15px; margin-bottom:10px">	
 		<div class="col-sm-9 col-sm-push-3">
 			{{form_field(form.delivery)}}	
 		</div>
@@ -128,13 +129,12 @@
 
  	{{ form_field(form.birthday, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, help="", help_placement="top", style="width:120px") }}
 	
-	{{ form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:140px") }}
+	{# form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:140px") }#}
 
-		
+<div id="color_block">
 	{{ form_field(form.color, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, style="width:200px", help="", help_placement="top") }}
+</div>
 
-		
-		
 		
 
 	<div class="row" style="margin-bottom:10px; margin-top:-10px">
@@ -152,7 +152,7 @@
 		
 	{{doc(form)}}
 
-  {{ form_field(form.desc, rows="8", placeholder="Опишите вашу собаку с выгодной стороны. Характер, психика, поведение, привычки, генетическая предрасположенность, титулы, регалии, оценки, тесты и прочее", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}          
+  {{ form_field(form.desc, rows="8", placeholder="Опишите вашу собаку / щенков с выгодной стороны. Характер, психика, поведение, привычки, генетическая предрасположенность, титулы, регалии, оценки, тесты и прочее", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}          
 
 {%- endmacro -%}
 
@@ -268,6 +268,8 @@ $(document).ready(function(){
 
 	var doc_puppy_cards = $.map({{pet_docs.doc_puppy_cards.keys() | json | safe}}, function(x) {return x.toString();})
 
+	var adv_dog_type_single = $.map({{adv_types.adv_dog_type_single.keys() | json | safe}}, function(x) {return x.toString();})
+
 	$("#{{form.doc.id}}").change(function(){
 
 		if(doc_pedigrees_rkf.indexOf(this.value) > -1) {
@@ -292,6 +294,8 @@ $(document).ready(function(){
 	});
 
 	$("#{{form.doc.id}}").trigger("change");
+
+	$("#{{form.adv_type.id}}").trigger("change");
 
 	var fields = {{fields | json | safe }};
 	var attraction_fields_count = 0;
@@ -325,7 +329,7 @@ $(document).ready(function(){
 
 	var get_attraction_field_val = function(elem_id) {
 		var cf = attraction_fields[elem_id];
-		if(cf.attrs && cf.attrs.attraction_depends) {
+		if(cf && cf.attrs && cf.attrs.attraction_depends) {
 			var depends = cf.attrs.attraction_depends;
 			if(!get_attraction_field_val(depends["id"])){
 				return null;
@@ -337,7 +341,7 @@ $(document).ready(function(){
 
 	var get_field_val = function(elem_id) {
 		var cf = attraction_fields[elem_id];
-		if(cf.attrs && cf.attrs.depends) {
+		if(cf && cf.attrs && cf.attrs.depends) {
 			var depends = cf.attrs.depends;
 			if(!get_field_val(depends["id"])){
 				return null;
@@ -368,10 +372,10 @@ $(document).ready(function(){
 		for(cf_id in attraction_fields) {
 			if(is_active_attraction_field(cf_id)) {
 				count += 1;	
-				// console.log(cf_id, "count", count)
+				console.log(cf_id, "count", count)
 					if(get_attraction_field_val(cf_id) ) {
 					complete += 1;	
-					// console.log(cf_id, "complete", complete);
+					console.log(cf_id, "complete", complete);
 				}
 			}
 		}
@@ -439,6 +443,7 @@ $(document).ready(function(){
 
 
  var rules  = {
+	  adv_type: { range: [{{adv_types.adv_dog_types.keys() | min}},{{adv_types.adv_dog_types.keys() | max}}] },
       breed: { required: true },
       title: { required: true, rangelength: 
       	[{{title_length.min}}, {{title_length.max}}] },
@@ -455,7 +460,7 @@ $(document).ready(function(){
       {{form.site_link.id}} : {url : true}
    };
 
-  var messages = {};
+  var messages = {adv_type: {range: "Обязательно поле"}};
 
   povodochek.validate($("form"), 
   	{rules:rules, messages:messages}, function() {

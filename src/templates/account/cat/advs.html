@@ -14,9 +14,20 @@
         <a target="_blank" href="{{url_for('account_cat_adv_new')}}" class="btn btn-success btn-sm"><i class="fa fa-paw"></i>&emsp;Подать новое объявление</a> 
     </p>
     
+    
+    {% if advs.count() > 0%}
+
     {% for adv in advs %}
-      {{render_adv(adv, loop)}}
+
+      {{render_adv(adv, loop)}} 
+
     {% endfor %}
+
+    {%else%}
+
+      <blockquote>Нет объявлений</blockquote>
+
+    {%endif%}
 
 </div>
 

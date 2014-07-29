@@ -29,13 +29,16 @@
                 
     </div>
 
+    {% if unsubscribe %}
+
     <div style="font-size:80%;">
-     <a style="color:rgb(136,136,136);" href="{{base_url ~ '/unsubscribe/' ~ user.get('_id') ~ '/news/' }}">Отписаться</a> от рассылки
+     <a style="color:rgb(136,136,136);" href="{{unsubscribe}}">Отписаться</a> от рассылки
     </div>
 
+    {%endif%}
+
     <div style="position:absolute;top:-60px;">
-     <a href="{{base_url}}" style="border: 0px none;"><img style="height: 48px;width: 131px;border: 0px none;" src="{{base_url ~ '/static/img/brand.png'}}"/></a> 
-     </div>
+     <a href="{{base_url}}" style="display: block; height: 40px; width:155px; background-image: url({{base_url ~ '/static/img/brand_combo.png' }} ); background-repeat: no-repeat; background-position:center -60px;"></a> </div>
 
 </div>
 

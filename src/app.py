@@ -43,6 +43,7 @@ import dic.pets as pets
 import dic.breeds as breeds
 import dic.geo as geo
 import dic.pet_docs
+import dic.adv_types as adv_types
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
@@ -165,7 +166,9 @@ app.jinja_env.globals['pet_docs'] = dic.pet_docs
 app.jinja_env.globals['breeds'] = breeds
 app.jinja_env.globals['pets'] = pets
 app.jinja_env.globals['users'] = users
+app.jinja_env.globals['adv_types'] = adv_types
 app.jinja_env.filters['morph_word'] = morph_word
+
 
 
 def change_query(url, param, old, new):
@@ -670,13 +673,15 @@ def dog_adv_show(adv_id):
     if not adv:
         abort(404)
 
-    name = u"Продам собаку породы {0} в г. {1}".format( \
-        breeds.get_breed_name(adv.get("breed_id")).lower(),\
+    name = u"Продам {0} породы {1} в г. {2}".format(
+        adv_types.get_adv_type_name(adv.get('adv_type')) or u"собаку",
+        breeds.get_breed_name(adv.get("breed_id")).lower(),
         geo.get_city_name(adv.get("city_id"), "i"))
 
     header = \
-    Markup(u"Продам собаку породы {0} в г.&nbsp;{1}".format( \
-        breeds.get_breed_name(adv.get("breed_id")).lower(),\
+    Markup(u"Продам {0} породы {1} в г.&nbsp;{2}".format(
+        adv_types.get_adv_type_name(adv.get('adv_type')) or u"собаку",
+        breeds.get_breed_name(adv.get("breed_id")).lower(),
         geo.get_city_name(adv.get("city_id"), "i")
     ))
     title = u"{0} за {1}".format(name, \
@@ -839,7 +844,7 @@ def account_cat_advs():
     advs = db.get_cat_advs_by_user(current_user.id)
     tmpl = render_template("account/cat/advs.html", \
         title=u"Мои объявления о продаже кошек", \
-        advs = [adv for adv in advs])
+        advs = advs)
     return tmpl
 
 
@@ -849,7 +854,7 @@ def account_dog_advs():
     advs = db.get_dog_advs_by_user(current_user.id)
     tmpl = render_template("account/dog/advs.html", \
         title=u"Мои объявления о продаже собак", \
-        advs = [adv for adv in advs])
+        advs = advs)
     return tmpl
 
 
@@ -946,8 +951,8 @@ def autofill_user_to_adv(form):
 def ajax_account_dog_adv_refresh(adv_id):
     adv = db.refresh_dog_adv(current_user.id, adv_id)
     return jsonify(items = {
-        'expire_date': str(adv.get('expire_date').isoformat()),
-        'update_date' :str(adv.get('update_date').isoformat())
+        'expire_date': str(adv.get('expire_date').strftime("%Y-%m-%dT%H:%M:%SZ")),
+        'update_date' :str(adv.get('update_date').strftime("%Y-%m-%dT%H:%M:%SZ"))
         })
 
 
@@ -988,6 +993,8 @@ def account_dog_adv_new():
             flash(msg, "success")
             return render_template(
                 "/account/dog/adv_edit_success.html", header=msg, title = u"Объявление '%s' опубликовано" % form.title.data)
+        else:
+            print(form.errors)
     else:
         autofill_user_to_adv(form)
         form.city.data = form.city.data or geo.format_city_region_by_city_id(current_user.city_id)

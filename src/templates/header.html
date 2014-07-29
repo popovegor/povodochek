@@ -2,17 +2,14 @@
   
    <div class="container"> 
 
-    <div style="padding:15px 0px 5px 3px">
+    <div style="padding:25px 0px 10px 3px">
       <ul class="list-inline">
-        <li class="header-logo">
+        <li class="header-logo" style="vertical-align:bottom">
             {%if url_for('index') != request.path %}
-            <a href="{{url_for('index')}}">
-              <img src="/static/img/brand.png" class="img-brand">
+            <a href="{{url_for('index')}}" class="img-brand">
             </a>
             {%else%}
-              <span href="{{url_for('index')}}">
-                <img src="/static/img/brand.png" class="img-brand">
-              </span>
+              <span href="{{url_for('index')}}" class="img-brand"></span>
             {%endif%}
         </li>
         <li style="" class="header-tagline">

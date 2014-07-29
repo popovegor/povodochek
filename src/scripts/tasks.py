@@ -108,9 +108,9 @@ def rebuild_typeahead_breeds():
     db.povodochek.typeahead_cat_breeds_tmp.insert(typeahead_cat_breeds)
 
 
-    db.povodochek.typeahead_dog_breeds_tmp.ensure_index([('name_search', ASCENDING)])
+    db.povodochek.typeahead_dog_breeds_tmp.ensure_index([('breed_name_search', ASCENDING)])
 
-    db.povodochek.typeahead_cat_breeds_tmp.ensure_index([('name_search', ASCENDING)])
+    db.povodochek.typeahead_cat_breeds_tmp.ensure_index([('breed_name_search', ASCENDING)])
 
     db.povodochek.typeahead_dog_breeds_tmp.rename('typeahead_dog_breeds', dropTarget=
         'typeahead_dog_breeds' in db.povodochek.collection_names())

@@ -11,41 +11,31 @@
 
 {%  block content %}
 
-	<div class="main">
+	<div class="main" style="margin-top:20px">
 
-		<div style="margin-top:20px;">
-				{% include "main/search.html" %}
+		<div style="float:left;width:200px">
+			{% from "main/news.html" import render_news_feed %}
+			{{ render_news_feed() }}
 		</div>
 
-		<div class="" style="margin-top:65px; padding-right:10px;">
-				
+		<div style="margin-left:220px;">
+			{% include "main/search.html" %}
 
-		{% from "main/fresh.html" import render_fresh_advs %}
-			{{ render_fresh_advs() }}
+			<div class="" style="margin-top:65px;">
 
-		</div>
-		
-		<div class="" style="float:left">
-			<div class="" style="margin-top:65px; padding-right:50px; width:250px; float:left">
-				
-				{% from "main/news.html" import render_news_feed %}
-
-				{{ render_news_feed() }}
+			{% from "main/fresh.html" import render_fresh_advs %}
+				{{ render_fresh_advs() }}
 
 			</div>
-
-			<div class="" style="margin-top:60px;margin-left:250px;">
-			
 
 			<div style="" class="">
 				{% from "main/popular.html" import render_popular %}
 
 				{{ render_popular()  }}
 			</div>
-
-			</div>	
-
+			
 		</div>
+
 
 		<div class="clearfix"></div>
 

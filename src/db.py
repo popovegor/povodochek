@@ -14,6 +14,8 @@ import sys
 import os
 import time
 import config
+import dic.genders as genders
+import dic.adv_types as adv_types
 
 print(config.MONGODB_URI)
 mongo = MongoReplicaSetClient(config.MONGODB_URI)
@@ -212,7 +214,8 @@ def upsert_dog_adv(user_id, adv_id, form, attraction):
     now = datetime.utcnow()
     updater = {}
     expire_date = get_expire_date(now)
-    
+
+    dog_unset = {}
     dog_set = {
         'user_id' : str(user_id),
         'update_date' : now,
@@ -220,7 +223,17 @@ def upsert_dog_adv(user_id, adv_id, form, attraction):
         'attraction': attraction,
         'region_id' : form.city.region_id
         }
-    dog_unset = {}
+
+    if form.adv_type.data:
+        if form.adv_type.data == adv_types.MALE:
+            dog_set['gender_id'] = genders.MALE
+        elif form.adv_type.data == adv_types.FEMALE:
+            dog_set['gender_id'] = genders.FEMALE
+        else:
+            dog_unset['gender_id'] = None
+    
+    
+    
 
     for field in form:
         val = field.get_val(form)

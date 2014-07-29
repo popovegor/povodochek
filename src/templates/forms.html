@@ -3,7 +3,7 @@
 {%- endmacro -%}
 
 {%- macro form_field_required() -%}
-<span title="Обязательное поле" class="fa fa-asterisk small required-field" style=""></span>
+<i title="Обязательное поле" class="fa fa-asterisk small required-field" style=""></i>
 {%- endmacro -%}
 
 {%- macro form_field_label(field) -%}
@@ -12,12 +12,12 @@
       <span style="display:inline">
         <label for="{{ field.id }}" style="display:inline" class="form-field-name">{{ field.label.text }}   
         </label> 
-      </span>&ensp;
+      </span>
        {%- if field.flags.required -%}
-        <span>{{form_field_required()}}</span>&ensp;
+        <span>{{form_field_required()}}</span>&nbsp;
       {%- endif %}
        {%- if field.attrs and field.attrs.attraction -%}
-        <span>{{form_field_attraction()}}</span>&ensp;
+        <span>{{form_field_attraction()}}</span>&nbsp;
     {%- endif %}
     </div>
     
@@ -114,8 +114,8 @@
           <div class="{{rightside_class}}">
     {%endif%}
             
-            {% if field.type == 'RadioField' %}
-                {{ field(class='radio-group', **kwargs) }}
+            {% if field.type == 'PRadioField' %}
+                {{ field(class='radio-group list-unstyled',  **kwargs) }}
             {% else %}
               {% if 'size' in kwargs %}
                       <div class="row">

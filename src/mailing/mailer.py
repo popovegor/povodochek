@@ -13,7 +13,7 @@ from helpers import (run_async, morph_word, log_exception)
 import helpers
 import db
 
-base_url = "http://поводочек.рф"
+base_url = u"http://поводочек.рф"
 
 env = Environment(loader=PackageLoader('mailing', ''))
 env.globals['helpers'] = helpers
@@ -28,7 +28,7 @@ def send_email_async(sender = u"Поводочек <%s>" % config.MAIL_USERNAME,
     send_email(sender = sender, to = to, subject = subject, 
         text = text, html = html, unsubscribe = unsubscribe)
 
-def send_email_to_user(user, subject, html, unsubscribe):
+def send_email_to_user(user, subject, html, unsubscribe = u""):
     print(user)
     if user:
         email = user.get('email')
@@ -80,7 +80,7 @@ def send_email(
         print("mail failed; %s" % str(exc) ) # give a error message
 
 @run_async
-def send_email_to_users(users,subject, hmtl):
+def send_email_to_users(users, subject, hmtl):
     counter = 0
     for user in users:
         counter += 1
@@ -90,23 +90,37 @@ def send_email_to_users(users,subject, hmtl):
 
 def notify_user_of_dog_adv_archived(user, adv):
     if user and db.check_subscribe(user.get("_id"), "archived"):
-        html = env.get_template('notify_dog_adv_archived.html').render(adv = adv, user = user)
-        send_email_to_user(user = user, subject = u"Ваше объявление перенесено в архив", html = html)
+        unsubscribe = get_unsibscribe_link(user, "expired")
+        html = env.get_template('notify_dog_adv_archived.html').render(adv = adv, user = user, unsubscribe = unsubscribe)
+        send_email_to_user(user = user, 
+            subject = u"Ваше объявление перенесено в архив", 
+            html = html, 
+            unsubscribe = unsubscribe)
 
 def notify_user_of_dog_adv_expired(user, adv):
     if user and db.check_subscribe(user.get("_id"), "expired"):
         from datetime import (datetime, timedelta)
         now = datetime.utcnow()
         left_days = (adv.get('expire_date').date() - now.date()).days
-        html = env.get_template('notify_dog_adv_expired.html').render(adv = adv, left_days = left_days, user = user)
-        send_email_to_user(user = user, subject = u"Срок размещения вашего объявления истекает", html = html)
+        unsubscribe = get_unsibscribe_link(user, "expired")
+        html = env.get_template('notify_dog_adv_expired.html').render(adv = adv, left_days = left_days, user = user, unsubscribe = unsubscribe)
+        send_email_to_user(user = user, 
+            subject = u"Срок размещения вашего объявления истекает", 
+            html = html, 
+            unsubscribe = unsubscribe)
 
 def notify_user_of_news(user, news):
     if user and db.check_subscribe(user.get('_id'), "news"):
+        unsubscribe = get_unsibscribe_link(user, "news")
         html = env.get_template('notify_news.html').render(
-            news = news, user = user)
-        unsubscribe = "%s/unsubscribe/%s/news/" % (base_url, user.get('_id'))
-        send_email_to_user(user = user, subject = news.get('subject'), html = html, unsubscribe = unsubscribe)
+            news = news, user = user, unsubscribe = unsubscribe)
+        send_email_to_user(user = user, 
+            subject = news.get('subject'), 
+            html = html, 
+            unsubscribe = unsubscribe)
+
+def get_unsibscribe_link(user, subscribe):
+    return u"%s/unsubscribe/%s/%s/" % (base_url, user.get('_id'), subscribe)
 
 @run_async
 def notify_users_of_news(users, news):

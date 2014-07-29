@@ -26,6 +26,7 @@ from dic.pets import pets, get_pet_name
 import dic.geo as geo
 from dic.pet_docs import (dog_docs, doc_dog_pedigrees, 
     doc_dog_pedigrees_rkf, doc_puppy_cards)
+import dic.adv_types as adv_types
 
 
 import config
@@ -264,10 +265,10 @@ class Cat(Form):
 
 class Dog(Form):
 
-    # breed = SelectField(u'Порода', \
-    #     choices = [(0, u"")] + [ (dog_id, dog_name) for (dog_id, dog_name) in dogs.items()], \
-    #     coerce = int, 
-    #     validators = [Required(message=MSG_REQUIRED)])
+    adv_type = PSelectField(u'Я продаю', \
+        choices = [(0, u"")] + [ (type_id, type_names.get('name_edit')) for (type_id, type_names) in adv_types.adv_dog_types.items()], \
+        coerce = int, 
+        validators = [Required(message=MSG_REQUIRED)])
 
 
     breed = PTextField(u'Порода', \
@@ -276,13 +277,12 @@ class Dog(Form):
         db_in = lambda f: f.breed_id, \
         db_out = lambda v: breeds.get_breed_dog_name(v)) 
 
-    gender = PSelectField(u"Пол", \
-        choices = [(0, u'-- не указан --')] + [ (gender_id, gender_name) \
-        for gender_id, gender_name in genders.genders.items()], \
-        coerce=int, \
-        attraction = True, \
-        db_name = 'gender_id', \
-        db_out = lambda v: num(v))
+    # gender = PSelectField(u"Пол", \
+    #     choices = [(0, u'-- не указан --')] + [ (gender_id, gender_name) \
+    #     for gender_id, gender_name in genders.genders.items()], \
+    #     coerce=int, \
+    #     db_name = 'gender_id', \
+    #     db_out = lambda v: num(v))
    
     title = PTextField(Markup(u"Заголовок<br/>объявления"), \
         validators = [Required(message=MSG_REQUIRED), Length(min=10, max=80, message=MSG_RANGE_LENGTH.format(10, 80))], \
@@ -323,8 +323,7 @@ class Dog(Form):
         db_out = lambda v : geo.get_city_region(v))
 
     
-    color = PTextField(u"Окрас", \
-        attraction = True)
+    color = PTextField(u"Окрас")
 
     contract = PBooleanField(u"Договор купли-продажи", \
         attraction = True)

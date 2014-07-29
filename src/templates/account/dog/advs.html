@@ -14,11 +14,20 @@
         <a target="_blank" href="{{url_for('account_dog_adv_new')}}" class="btn btn-success btn-sm"><i class="fa fa-paw"></i>&emsp;Подать новое объявление</a> 
     </p>
 
+
+    {% if advs.count() > 0%}
+
     {% for adv in advs %}
-    
-      {{render_adv(adv, loop)}}
+
+      {{render_adv(adv, loop)}} 
 
     {% endfor %}
+
+    {%else%}
+
+      <blockquote>Нет объявлений</blockquote>
+
+    {%endif%}
 
 </div>
 
@@ -143,20 +152,20 @@
       {%if add_date %}
        
         <span class="text-semi-muted" style="">Размещено&nbsp;</span>
-        <span style="white-space:nowrap">{{ momentjs(add_date).format("D MMMM, hh:mm") }}</span>
+        <span style="white-space:nowrap">{{ momentjs(add_date).format("D MMMM, HH:mm") }}</span>
         &emsp;
       {%endif%}
       
       <span style="{{ 'display:inline' if add_date != update_date else 'display:none' }}" adv-id="{{adv.get('_id')}}" class="adv-date-update-block">
         <span class="text-semi-muted" style="">Обновлено&nbsp;</span>
-        <span style="white-space:nowrap" class="adv-date-update" adv-id="{{adv.get('_id')}}">{{ momentjs(update_date).format("D MMMM, hh:mm") }}</span>
+        <span style="white-space:nowrap" class="adv-date-update" adv-id="{{adv.get('_id')}}">{{ momentjs(update_date).format("D MMMM, HH:mm") }}</span>
         &emsp;
         </span>
       
 
       {%if expire_date %}
         <span class="text-semi-muted">Активно до&nbsp;</span>
-        <span  class="adv-date-expire" adv-id="{{adv.get('_id')}}">{{ momentjs(expire_date).format("D MMMM") }}</span>&ensp;<i data-toggle="popover" data-html="true" data-placement="top" data-trigger="hover" data-content="<div style='width:250px'>По истечению указанного срока объявление будет перенесено в архив.</div>" class="text-muted fa fa-question-circle cursor-help"></i>
+        <span  class="adv-date-expire" adv-id="{{adv.get('_id')}}">{{ momentjs(expire_date).format("D MMMM") }}</span>&ensp;<i data-toggle="popover" data-html="true" data-placement="top" data-trigger="hover" data-content="<div style='width:250px'>По истечении указанного срока объявление будет перенесено в архив.</div>" class="text-muted fa fa-question-circle cursor-help"></i>
       {%endif%}
 
     </p>
@@ -204,7 +213,7 @@
             function(data){
               btn.replaceWith("<small>Обновлено&ensp;</small>");
               $(".adv-date-expire[adv-id={{adv.get('_id')}}]").replaceWith(moment(data.items.expire_date).format("D MMMM"));
-              $(".adv-date-update[adv-id={{adv.get('_id')}}]").replaceWith(moment(data.items.update_date).format("D MMMM, hh:mm"));
+              $(".adv-date-update[adv-id={{adv.get('_id')}}]").replaceWith(moment(data.items.update_date).format("D MMMM, HH:mm"));
               $(".adv-date-update-block[adv-id={{adv.get('_id')}}]").show();
               // btn.find("i.fa-spin").removeClass("fa-spin");
               // btn.find("span").html("&ensp;Обновлено");
