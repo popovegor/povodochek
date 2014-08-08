@@ -133,7 +133,7 @@
 
 
                     {% if addon_r or addon_l or btn_r or btn_l %}
-                    <div class="input-group">
+                    <div class="input-group {{kwargs.get('group_class')}}">
                     {% endif %}
 
                     {% if addon_l %}

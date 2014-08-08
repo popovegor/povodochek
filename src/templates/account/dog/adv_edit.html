@@ -127,7 +127,7 @@
 
 
 
- 	{{ form_field(form.birthday, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, help="", help_placement="top", style="width:120px") }}
+ 	{{ form_field(form.birthday, horizontal={"l":"col-sm-3", "r":"col-sm-9"}, help="", help_placement="top", size="col-sm-4 col-lg-3", group_class="date", addon_right = '<i class="fa fa-calendar"></i>' | safe ) }}
 	
 	{# form_field(form.gender, horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:140px") }#}
 
@@ -163,7 +163,7 @@
 	{% from "forms.html" import form_field_boolean, form_field, action_buttons %}
 
 	
-	{{form_field(form.doc, horizontal ={"l":"col-sm-3", "r":"col-sm-9"}, size="col-sm-8 col-md-6")}}
+	{{form_field(form.doc, horizontal ={"l":"col-sm-3", "r":"col-sm-9"}, style="width:400px")}}
 
 <div id="doc_fields" class="bg-info" style="padding:10px 20px 20px 20px; margin-bottom:20px; {{'display:none' if not form.doc.data else ''}}">
 
@@ -186,46 +186,46 @@
 			{{ form_field(form.puppy_card_kennel, rows = 3) }} 	
 		</div>
 		
-		<h4 class="alert-warning" style="width: 150px;
-padding: 10px 20px 10px 20px;
-margin-left: -20px;
-margin-top:20px;
-display: inline-block;">Отец</h4>
+		<h4 class="alert-warning" style="width: 150px; padding: 10px 20px 10px 20px; margin-left: -20px; margin-top:20px; display: inline-block;">Отец</h4>
+
+		{{form_field(form.father_name, size="col-sm-6")}}	
 
 		<div class="row">
-			<div class="col-sm-4">
-				{{form_field(form.father_name)}}		
+			<div class="col-sm-3">
+				{{form_field(form.father_country)}}	
 			</div>
-			<div class="col-sm-4">
-					{{form_field(form.father_country)}}
+			<div class="col-sm-3">
+				{{form_field(form.father_birthday, group_class="date", addon_right = '<i class="fa fa-calendar"></i>' | safe )}}
 			</div>
-			<div class="col-sm-4">
-				{{form_field(form.father_color)}}	
+			<div class="col-sm-3">
+				{{form_field(form.father_mark)}}
+			</div>
+			<div class="col-sm-3">
+				{{form_field(form.father_color)}}
 			</div>
 		</div>
-
-		{{form_field(form.father_pedigree_link, placeholder="http://", size="col-md-8")}}
 
 		{{form_field(form.father_misc, rows = 3)}}
 
-		<h4 class="alert-warning" style="width: 150px;
-padding: 10px 20px 10px 20px;
-margin-left: -20px;
-margin-top:20px;
-display: inline-block;">Мать</h4>
+		<h4 class="alert-warning" style="width: 150px; padding: 10px 20px 10px 20px; margin-left: -20px; margin-top:20px; display: inline-block;">Мать</h4>
+
+		{{form_field(form.mother_name, size="col-sm-6")}}	
+		
 		<div class="row">
-			<div class="col-sm-4">
-				{{form_field(form.mother_name)}}			
+			<div class="col-sm-3">
+				{{form_field(form.mother_country)}}	
 			</div>
-			<div class="col-sm-4">
-				{{form_field(form.mother_country)}}
+			<div class="col-sm-3">
+				{{form_field(form.mother_birthday, group_class="date", addon_right = '<i class="fa fa-calendar"></i>' | safe )}}	
 			</div>
-			<div class="col-sm-4">
+			<div class="col-sm-3">
+				{{form_field(form.mother_mark)}}
+			</div>
+			<div class="col-sm-3">
 				{{form_field(form.mother_color)}}
 			</div>
+			
 		</div>
-
-		{{form_field(form.mother_pedigree_link, placeholder="http://", size="col-md-8")}}
 		
 		{{form_field(form.mother_misc, rows = 3)}}
 
@@ -245,8 +245,6 @@ display: inline-block;">Мать</h4>
 	{{ form_field(form.phone, style="width:150px", placeholder = "Введите тел.", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}
 
 	{{ form_field(form.skype, placeholder="Ваше skype-имя", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}, style="width:200px") }}
-
-  	{#{ form_field(form.kennel_name, style="width:300px", placeholder = "Название вашего питомника", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }#}
 
   	{{ form_field(form.site_link, size="col-sm-8", placeholder = "http://", horizontal = {"l":"col-sm-3", "r":"col-sm-9"}) }}
 
@@ -416,15 +414,37 @@ $(document).ready(function(){
     $("#{{form.phone.id}}").inputmask(
     	{"mask": "+7(999)999-9999"});
 
-    $("#{{form.birthday.id}}").inputmask("d/m/y", {
-	    "onincomplete" : function(){
+    var birthday_incomplete =  function(){
 	    	$(this).val("").trigger("change");
 	    }
+
+    $("#{{form.birthday.id}}").inputmask("d/m/y", {
+	    "onincomplete" : birthday_incomplete
+	});
+
+	$("#{{form.birthday.id}}_field .input-group.date").datepicker({
+		format:"dd/mm/yyyy", language: "ru", autoclose: true});
+
+	 $("#{{form.mother_birthday.id}}").inputmask("d/m/y", {
+	    "onincomplete" : birthday_incomplete
 	}); 
+
+	 $("#{{form.mother_birthday.id}}_field .input-group.date").datepicker({
+	 	format:"dd/mm/yyyy", language: "ru"});
+
+	 $("#{{form.father_birthday.id}}").inputmask("d/m/y", {
+	    "onincomplete" : birthday_incomplete
+	}); 
+
+
+	 $("#{{form.father_birthday.id}}_field .input-group.dateub").datepicker({
+	 	format:"dd/mm/yyyy", language: "ru", autoclose: true});
 
 
 	$("#{{form.price.id}}").inputmask("integer", {allowMinus: false, allowPlus: false, rightAlignNumerics: false
 	});
+
+
 
 	{% set desc_length = form.desc.validators[1] %}
 

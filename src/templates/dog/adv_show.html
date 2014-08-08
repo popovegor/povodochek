@@ -407,24 +407,13 @@ charset="utf-8"></script>
   </th></tr></thead>
 
   <tbody>
-   {%set pedigree_link = adv.get(prefix + "_pedigree_link") %}
-    <tr><th class="small">Родословная</th><td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-      {% if pedigree_link %}
-            <a rel="nofollow" title="{{pedigree_link}}" target="_blank" href="{{pedigree_link}}">{{ pedigree_link 
-          | truncate(30, killwords = True)}}</a> 
-      {% else %}
-        <span class='text-muted' >не указана</span>
-      {%endif%}
-    </td></tr>
 
-    {%set name = adv.get(prefix + "_name") %}
+  {%set name = adv.get(prefix + "_name") %}
+    {% if name %}
     <tr><th class="small">Кличка</th><td style="">
-      {% if name %}
-            {{ name }}
-      {% else %}
-        <span class='text-muted' >не указана</span>
-      {%endif%}
+        {{ name }}
     </td></tr>
+    {%endif%}
 
     {%set country = adv.get(prefix + "_country_id") %}
      <tr><th class="small">Страна рождения</th><td style="">
@@ -435,6 +424,15 @@ charset="utf-8"></script>
       {%endif%}
     </td></tr>
 
+     {%set birthday = adv.get(prefix + "_birthday") %}
+    <tr><th class="small">Дата рождения</th><td>
+      {% if birthday %}
+             {{momentjs(birthday).format("D MMMM YYYY[, ]")}} 
+              ~{{momentjs(birthday).fromNow(True)}} 
+      {% else %}
+        <span class='text-muted'>не указана</span>
+      {%endif%}
+    </td></tr>
 
     {%set color = adv.get(prefix + "_color") %}
      <tr><th class="small">Окрас</th><td style="">

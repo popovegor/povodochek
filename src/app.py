@@ -88,11 +88,13 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.mosaicflow.min.js', \
     'js/bootstrap3-typeahead.min.js', \
     'js/bootstrap.min.js', \
-    'js/list.min.js', \
-    'js/list.fuzzysearch.js', \
-    'js/povodochek.js', \
-    'js/jquery.simplyCountable.js', \
-    filters='rjsmin', \
+    'js/list.min.js',
+    'js/list.fuzzysearch.js',
+    'js/povodochek.js',
+    'js/jquery.simplyCountable.js',
+    'js/bootstrap-datepicker.js',
+    'js/bootstrap-datepicker.ru.js',
+    filters='rjsmin',
     output='gen/js.js')
 assets.register('js_all', js)
 
@@ -108,6 +110,7 @@ css = Bundle(
     'css/nouislider.fox.css', \
     'css/font-awesome.min.css', \
     'css/flexslider.css', \
+    'css/datepicker3.css', \
     filters = 'cssmin', \
     output = 'gen/css.css')
 assets.register('css_all', css)

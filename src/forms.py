@@ -27,6 +27,7 @@ import dic.geo as geo
 from dic.pet_docs import (dog_docs, doc_dog_pedigrees, 
     doc_dog_pedigrees_rkf, doc_puppy_cards)
 import dic.adv_types as adv_types
+import dic.dog_marks as dog_marks
 
 
 import config
@@ -343,9 +344,14 @@ class Dog(Form):
 
     champion_bloodlines = PBooleanField(Markup(u"<small>Чемпионские крови</small>"), 
         depends = {"id":"doc"})
+
+    father_mark = PSelectField(Markup(u"<small>Экстерьерная оценка</small>"), \
+        choices = [(0, u"-- не указана --")] + dog_marks.get_marks_for_edit_adv(), \
+        coerce = int, \
+        attraction = True, \
+        depends = {"id":"doc"})
     
     father_name = PTextField(Markup(u"<small>Кличка</small>"), \
-        attraction = True, \
         depends = {"id":"doc"})
 
     father_country = PSelectField(Markup(u"<small>Страна рождения</small>"), \
@@ -355,12 +361,12 @@ class Dog(Form):
         depends = {"id":"doc"}, \
         db_name = 'father_country_id')
 
-    father_pedigree_link = PTextField(Markup(u"<small>Ссылка на страницу с родословной</small>"), \
-        description = Markup(u"Например, <a target='_blank' href='http://www.shiba-pedigree.ru/details.php?id=65529'>http://www.shiba-pedigree.ru/details.php?id=65529</a>"), 
-        attraction = True, \
-        depends = {"id": "doc"})
+    # father_pedigree_link = PTextField(Markup(u"<small>Ссылка на страницу с родословной</small>"), \
+    #     description = Markup(u"Например, <a target='_blank' href='http://www.shiba-pedigree.ru/details.php?id=65529'>http://www.shiba-pedigree.ru/details.php?id=65529</a>"), 
+    #     attraction = True, \
+    #     depends = {"id": "doc"})
 
-    father_misc = PTextAreaField(Markup(u"<small>Награды, титулы, оценки, тесты и прочее</small>"), 
+    father_misc = PTextAreaField(Markup(u"<small>Награды, титулы, тесты и прочее</small>"), 
         attraction = True,
         depends = {"id":"doc"}
         )
@@ -369,8 +375,12 @@ class Dog(Form):
         attraction = True, \
         depends = {"id": "doc"})
 
+    father_birthday = PTextField(Markup(u"<small>Дата рождения</small>"),
+        attraction = True,
+        db_in = lambda f: str2date(f.data),
+        db_out = lambda v : date2str(v, "%d%m%Y") )
+
     mother_name = PTextField(Markup(u"<small>Кличка</small>"), \
-        attraction = True,\
         depends = {"id":"doc"})
 
     mother_country = PSelectField(Markup(u"<small>Страна рождения</small>"), \
@@ -380,18 +390,29 @@ class Dog(Form):
         depends = {"id":"doc"}, \
         db_name = 'mother_country_id')
 
-    mother_misc = PTextAreaField(Markup(u"<small>Награды, титулы, оценки, тесты и прочее</small>"), 
+    mother_misc = PTextAreaField(Markup(u"<small>Награды, титулы, тесты и прочее</small>"), 
         attraction = True,
         depends = {"id":"doc"})
 
-    mother_pedigree_link = PTextField(Markup(u"<small>Ссылка на страницу с родословной</small>"), \
-        description = Markup(u"Например, <a target='_blank' href='http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2159170'>http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2159170</a>"), 
-        attraction = True, \
-        depends = {"id": "doc"})
+    # mother_pedigree_link = PTextField(Markup(u"<small>Ссылка на страницу с родословной</small>"), \
+    #     description = Markup(u"Например, <a target='_blank' href='http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2159170'>http://www.pedigreedatabase.com/german_shepherd_dog/dog.html?id=2159170</a>"), 
+    #     attraction = True, \
+    #     depends = {"id": "doc"})
 
     mother_color = PTextField(Markup(u"<small>Окрас</small>"), \
         attraction = True, \
         depends = {"id": "doc"})
+
+    mother_mark = PSelectField(Markup(u"<small>Экстерьерная оценка</small>"), \
+        choices = [(0, u"-- не указана --")] + dog_marks.get_marks_for_edit_adv(), \
+        coerce = int, \
+        attraction = True, \
+        depends = {"id":"doc"})
+
+    mother_birthday = PTextField(Markup(u"<small>Дата рождения</small>"),
+        attraction = True,
+        db_in = lambda f: str2date(f.data),
+        db_out = lambda v : date2str(v, "%d%m%Y") )
 
     birthday = PTextField(Markup(u"Дата рождения"), \
         description = u"Дата в формате день/месяц/год, например, 24/02/2014", \
