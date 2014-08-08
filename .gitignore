@@ -15,6 +15,6 @@ src/static/.webassets-cache/
 src/config.py
 src/bootstrap/dist/
 _2X68Q~7/
-!src/log/
+src/log/*
 src/log/*.log
 \#*\#
