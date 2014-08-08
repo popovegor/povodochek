@@ -7035,7 +7035,7 @@ a.img-brand:focus {
   direction: ltr;
 }
 .main .main-fresh-advs #mfa_items .mfai-title {
-  display: inline-block;
+  display: block;
   overflow-x: hidden;
   text-overflow: ellipsis;
 
