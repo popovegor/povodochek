@@ -291,9 +291,10 @@ def recalc_attraction_in_advs():
         for f in form:
             f.set_val(dog.get(f.get_db_name()))
         attraction = calc_attraction(form)
-        print(attraction)
-        db.dog_advs.update(dog, \
-            {'$set': {'attraction': attraction}}, upsert = False)
+        print(attraction, dog.get('_id'))
+        db.dog_advs.find_and_modify({'_id' : dog.get('_id')}, \
+            {'$set': {'attraction': attraction}})
+        
 
 @log_exception(logger = logger)
 def set_expire_date_for_dog_advs(days = 4):
