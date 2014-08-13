@@ -456,14 +456,13 @@ def find_dog_advs(
     return (advs, count, total)
 
 
-def find_cat_advs(pet_id = 2, gender_id = None, \
+def find_cat_advs(gender_id = None, \
     breed_id = None,  region = None, city = None, distance = None, \
     photo = False, price_from = None, price_to = None, \
     sort = None, skip = None, limit = None):
 
     _filter = {}
     extend_filter = lambda k,v: _filter.update({k:v}) if v else None
-    extend_filter("pet_id", num(pet_id))
     if num(gender_id):
         extend_filter('$or', [{'gender_id' : num(gender_id)}, \
             {'gender_id' : {'$exists': False}}])

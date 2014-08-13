@@ -434,6 +434,15 @@ charset="utf-8"></script>
       {%endif%}
     </td></tr>
 
+    {%set mark = adv.get(prefix + "_mark") %}
+     <tr><th class="small">Экстерьерная оценка</th><td style="">
+     {% if mark %}
+            {{ dog_marks.get_mark_name(mark) | lower }}
+      {% else %}
+        <span class='text-muted' >не указана</span>
+      {%endif%}
+    </td></tr>
+
     {%set color = adv.get(prefix + "_color") %}
      <tr><th class="small">Окрас</th><td style="">
      {% if color %}

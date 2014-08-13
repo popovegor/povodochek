@@ -44,6 +44,7 @@ import dic.breeds as breeds
 import dic.geo as geo
 import dic.pet_docs
 import dic.adv_types as adv_types
+import dic.dog_marks as dog_marks
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
@@ -170,6 +171,7 @@ app.jinja_env.globals['breeds'] = breeds
 app.jinja_env.globals['pets'] = pets
 app.jinja_env.globals['users'] = users
 app.jinja_env.globals['adv_types'] = adv_types
+app.jinja_env.globals['dog_marks'] = dog_marks
 app.jinja_env.filters['morph_word'] = morph_word
 
 
