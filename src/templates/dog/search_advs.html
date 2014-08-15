@@ -183,35 +183,7 @@
 
  {%- macro pagination(pages, current_page, page_range, paging_class) -%}
           
-          <ul class="pagination {{paging_class}}">
-
-            {% set page_range_left = (current_page - page_range / 2 ) | int | max(1) %}
-            {% set page_range_right = (current_page + page_range / 2 ) | int | min(pages) %}
-
-            {% if page_range_left != 1 %}
-            <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
-            </li>
-            {%endif%}
-            {%if page_range_left > 2 %}
-            <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
-            {% endif %}
-
-            {%for page in range(page_range_left, page_range_right + 1)%}
-            <li class="{{'active' if current_page == page else ''}}">
-              <a href="{{request.url | change_query(form.page.name, current_page, page)}}">{{page}}</a>
-            </li>
-            {%endfor%}
-
-            {%if  page_range_right < pages  %}
-
-            <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
-
-            <li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
-            </li>
-           
-           {% endif %}
-
-          </ul>                
+                    
 
 {%- endmacro -%}
 
@@ -261,13 +233,75 @@
 
       {% endfor %}
 
+
       {%set pages = (count / form.perpage.data ) | round(0, 'ceil') | int | max(1) %}
 
-       
-          <div style="margin-top:20px">Страницы:</div>
+       {%set current_page = form.page.data%}
+
+      {%set page_range = 8 %} 
+
+
+          <div style="margin-top:40px">
+
+          <ul class="list-inline large">
+              <li>
+                <b>Страницы</b>
+              </li>
+              <li>
+               {%if current_page != 1 %}
+                <a href="{{request.url | change_query(form.page.name, current_page, current_page - 1)}}"> предыдущая</a>
+                {%else%}
+                <span class="text-muted">предыдущая</span>
+                {%endif%}
+                
+              </li>
+              <li>
+                {%if current_page != pages %}
+                <a href="{{request.url | change_query(form.page.name, current_page, current_page + 1)}}">
+                следующая</a>
+                {%else%}
+                <span class="text-muted">следующая</span>
+                {%endif%}
+              </li>
+          </ul>
+
+          </div>
 
             <!-- desktop -->
-          {{ pagination(pages, form.page.data, 10, paging_class="advs-paging pagination-left") }}
+
+         
+
+          <ul class="pagination advs-paging pagination-left pagination-md">
+
+            {% set page_range_left = (current_page - page_range) | int | max(1) %}
+            {% set page_range_right = (current_page + page_range) | int | min(pages) %}
+
+            {#% if page_range_left != 1 %}
+            <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
+            </li>
+            {%endif%#}
+
+            {%if page_range_left >= 2 %}
+            <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
+            {% endif %}
+
+            {%for page in range(page_range_left, page_range_right + 1)%}
+            <li class="{{'active' if current_page == page else ''}}">
+              <a href="{{request.url | change_query(form.page.name, current_page, page)}}">{{page}}</a>
+            </li>
+            {%endfor%}
+
+            {%if page_range_right < pages  %}
+
+            <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
+
+            {#<li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
+            </li>#}
+           
+           {% endif %}
+
+          </ul>      
+
       
 {%endif%}
 

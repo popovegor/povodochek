@@ -214,7 +214,8 @@ class SaleSearch(Form):
 
     page = IntegerField(u"Страница", default = 1)
 
-    perpage = SelectField(u"Объявлений на стр.", default = 15, coerce=int, choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
+    perpage = SelectField(u"Объявлений на стр.", default = 15,
+    coerce=int,choices = [(1, 10), (2, 20), (3, 30), (4, 50), (5, 100)])
 
 class Profile(Form):
     username = PTextField(u"Имя", validators = [Required(message=MSG_REQUIRED) ])

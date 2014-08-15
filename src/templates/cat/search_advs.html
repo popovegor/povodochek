@@ -156,22 +156,55 @@
               {{ cat_adv(adv, loop) }}
 
               {% endfor %}
-      
-{%endif%}
+
+      {%set pages = (count / form.perpage.data ) | round(0, 'ceil') | int | max(1) %}
+
+       {%set current_page = form.page.data%}
+
+      {%set page_range = 8 %} 
 
 
-         {%- macro pagination(pages, current_page, page_range, paging_class) -%}
-          
-          <ul class="pagination {{paging_class}}">
+          <div style="margin-top:40px">
 
-            {% set page_range_left = (current_page - page_range / 2 ) | int | max(1) %}
-            {% set page_range_right = (current_page + page_range / 2 ) | int | min(pages) %}
+          <ul class="list-inline large">
+              <li>
+                <b>Страницы</b>
+              </li>
+              <li>
+               {%if current_page != 1 %}
+                <a href="{{request.url | change_query(form.page.name, current_page, current_page - 1)}}"> предыдущая</a>
+                {%else%}
+                <span class="text-muted">предыдущая</span>
+                {%endif%}
+                
+              </li>
+              <li>
+                {%if current_page != pages %}
+                <a href="{{request.url | change_query(form.page.name, current_page, current_page + 1)}}">
+                следующая</a>
+                {%else%}
+                <span class="text-muted">следующая</span>
+                {%endif%}
+              </li>
+          </ul>
 
-            {% if page_range_left != 1 %}
+          </div>
+
+            <!-- desktop -->
+
+         
+
+          <ul class="pagination advs-paging pagination-left pagination-md">
+
+            {% set page_range_left = (current_page - page_range) | int | max(1) %}
+            {% set page_range_right = (current_page + page_range) | int | min(pages) %}
+
+            {#% if page_range_left != 1 %}
             <li><a href="{{request.url | change_query(form.page.name, current_page, 1)}}">1</a>
             </li>
-            {%endif%}
-            {%if page_range_left > 2 %}
+            {%endif%#}
+
+            {%if page_range_left >= 2 %}
             <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_left - 1)}}">&hellip;</a></li>
             {% endif %}
 
@@ -181,39 +214,19 @@
             </li>
             {%endfor%}
 
-            {%if  page_range_right < pages  %}
+            {%if page_range_right < pages  %}
 
             <li><a href="{{request.url | change_query(form.page.name, current_page, page_range_right + 1)}}">&hellip;</a></li>
 
-            <li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
-            </li>
+            {#<li><a href="{{request.url | change_query(form.page.name, current_page, pages)}}">{{pages}}</a>
+            </li>#}
            
            {% endif %}
 
-          </ul>                
+          </ul>      
 
-        {%- endmacro -%}
-
-
-         {%set pages = (count / form.perpage.data ) | round(0, 'ceil') | int %}
-
-        {% if pages > 1 %}
-          <div style="margin-top:20px">Страницы:</div>
-
-            <!-- desktop -->
-          {{ pagination(pages, form.page.data, 15, paging_class="advs-paging pagination-left hidden-sm hidden-xs") }}
-          <!-- tablet -->
-          {{ pagination(pages, form.page.data, 10, paging_class="advs-paging pagination-left visible-sm") }}
-          <!-- phone --> 
-          {{ pagination(pages, form.page.data, 3, paging_class="advs-paging pagination-left visible-xs") }}
-
-         {%endif%}
-
-
-
-
-        
-
+      
+{%endif%}
 
        
 
