@@ -3,8 +3,8 @@
         <div class="col-sm-5">
             <table style="width:100%"><tr>
             <td>
-                <label for="{{form.breed.name}}" class="control-label">Порода</label>
-                <div class="input-group">
+                <label for="{{form.breed.name}}" class="control-label small">Порода</label>
+                <div class="input-group input-group-sm">
                     <input name="{{form.breed.name}}" class="form-control" placeholder="Введите или выберите породу", value="{{form.breed.data or ''}}" class="form-control" autocomplete="off" id="{{form.breed.id}}">
 
                     <div class="input-group-btn">
@@ -22,19 +22,19 @@
         <table class="dsf-geo"><tbody><tr>
            
             <td class="dsf-geo-location">
-              <label for="{{form.city.name}}" class="control-label">Местоположение</label>
-              <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control" autocomplete="off" id="{{form.city.id}}" style="" />
+              <label for="{{form.city.name}}" class="control-label small">Местоположение</label>
+              <input name="{{form.city.name}}" placeholder="Укажите город или область" value="{{form.city.data or ''}}" class="form-control input-sm" autocomplete="off" id="{{form.city.id}}" style="" />
 
-              <div class="dsf-geo-delivery">
+              {#<div class="dsf-geo-delivery">
                  <label for="{{form.delivery.name}}"><input type="checkbox" value="y" {{"checked" if form.delivery.data}} name="{{form.delivery.name}}" id="{{form.delivery.id}}" />&ensp;<span class="small">из других городов с доставкой</span></label>&ensp;<i data-toggle="popover" data-trigger="hover" data-content="<div style='width:300px'>Показывать объявления с&nbsp;доставкой из других населенных пунктов, помимо выбранного местоположения.</div>" data-placement="top" class="fa fa-question-circle text-muted" data-html="true"></i>
-              </div>
+              </div>#}
 
             </td>
             <!-- <td style="width:20px;padding-top:25px" class="text-center">+</td> -->
             <td style="width:20px;padding-top:30px" class="text-center">+</td>
             <td style="width:110px">
-              <label for="{{form.distance.name}}" class="control-label">удаленность{#&nbsp;<i class="fa fa-question-circle text-muted" data-toggle="popover" data-placement="left" data-content="<div style='width:200px; font-weight:normal'>Учитывать города в близлежащей окрестность от указаного местоположения.</div>" data-html="true" data-trigger="hover"></i>#}</label>
-              <div class="input-group">
+              <label for="{{form.distance.name}}" class="small control-label">удаленность{#&nbsp;<i class="fa fa-question-circle text-muted" data-toggle="popover" data-placement="left" data-content="<div style='width:200px; font-weight:normal'>Учитывать города в близлежащей окрестность от указаного местоположения.</div>" data-html="true" data-trigger="hover"></i>#}</label>
+              <div class="input-group input-group-sm">
                 <input class="form-control" name="{{form.distance.name}}" placeholder="150" value="{{(form.distance.default or "") if form.distance.name not in request.args else form.distance.data or ''}}" class="form-control" id="{{form.distance.id}}">  
                 <span class="input-group-addon" style="font-weight:bold;">км</span>
               </div>
@@ -46,24 +46,24 @@
 
 {%- macro second_line() -%}
    <!-- price -->
-      <div class="" style="margin-top:15px">
+      <div class="" style="margin-top:25px">
         
-          <label class="control-label">Цена <i>(руб)</i></label>
+          <!-- <label class="control-label">Цена <i>(руб)</i></label> -->
           <table style="">
             <tr>
-              {#<td style="width:45px;">
-                <label class="control-label">Цена</label>
-              </td>#}
+              <td style="width:85px;">
+                <label class="control-label small">Цена <i>(руб)</i></label>
+              </td>
               <td style="width:100px">
                
-                <div class="input-group input-group-md">
+                <div class="input-group input-group-sm">
                 <input name="{{form.price_from.name}}" placeholder="от" value="{{form.price_from.data or form.price_from.default or ''}}" class="form-control" id="{{form.price_from.id}}">  
-                {#<span class="input-group-addon" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>#}
+                {#<span class="input-group-addon" title="рубль">руб</span>#}
               </div>
               </td>
               <td style="width:25px;" class="text-center small">&ndash;</td>
               <td style="width:100px;">
-               <div class="input-group input-group-md">
+               <div class="input-group input-group-sm">
                 <input class="form-control" name="{{form.price_to.name}}" placeholder="до" value="{{form.price_to.data or form.price_to.default or ''}}" class="form-control" id="{{form.price_to.id}}">  
                 {#<span class="input-group-addon rur" title="рубль"><i class="fa fa-ruble" style="font-size:1.2em"></i></span>#}
               </div>  
@@ -116,7 +116,7 @@
 {%- macro actions() -%}
   <div class="dsf-actions">
       <a type="reset" class="btn btn-md btn-link" href="{{request.path}}"><span title="сбросить текущий фильтр">Сбросить</span></a>
-          <button type="submit" class="btn btn-primary" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
+          <button type="submit" class="btn btn-sm btn-pov" style=""><i class="fa fa-search"></i>&emsp;Показать</button>
   </div>
 {%- endmacro -%}
 
@@ -127,7 +127,7 @@
 
       <form action="" method="get" class="" role="form">
 
-      {{header()}}
+      {#{header()}#}
 
       {{first_line()}}
 

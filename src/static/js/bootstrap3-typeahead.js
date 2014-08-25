@@ -209,7 +209,9 @@
       this.$menu
         .on('click', $.proxy(this.click, this))
         .on('mouseenter', 'li', $.proxy(this.mouseenter, this))
-        .on('mouseleave', 'li', $.proxy(this.mouseleave, this));
+        .on('mouseleave', 'li', $.proxy(this.mouseleave, this))
+        .on('mousedown', $.proxy(this.mousedown));
+
     }
   , destroy : function () {
       this.$element.data('typeahead',null);
@@ -330,6 +332,10 @@
       this.mousedover = false;
       if (!this.focused && this.shown) this.hide();
     }
+
+  , mousedown: function(e) {
+      e.preventDefault()
+  }
 
   };
 

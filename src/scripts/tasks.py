@@ -11,7 +11,7 @@ from pymongo import (GEO2D, GEOSPHERE, ASCENDING, DESCENDING)
 from bson.objectid import ObjectId
 from dic.breeds import (dogs, cats, get_breed_name)
 from forms import (Dog)
-from form_helper import (calc_attraction)
+from forms.fields import (calc_attraction)
 from mailing import mailer
 from helpers import (log_exception)
 import config

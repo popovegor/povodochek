@@ -86,24 +86,33 @@
                 <h4 class="adv-head"><a target="_blank" href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title")}}</a></h4>
               
 
+              
                 <p class="">
                 {% set breed_name = breeds.get_breed_name(adv.get("breed_id")) %}
                 {% if breed_name %}
-                <span  title="Порода">{{breed_name }}</span>
+                <i  title="Порода">{{breed_name }}</i>
                 {%endif%}
 
-              </p>
+                </p>
 
+                
+                {% set city_id = adv.get("city_id") %}
+                {% if city_id %}
                 <p class="">
-                  {% set city_id = adv.get("city_id") %}
+               <b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id)  }}</b>
 
-                  {% if city_id %}
-                 <b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id)  }}</b>
-
-                </span>
+               {% set metro_id = adv.get("metro_id") %}
+                {% if metro_id %}
+                <br/>
+               <span title="Станция метро">м.&nbsp;{{ metro.get_station_name_by_id(metro_id) }}</span>
+                   
                 {%endif%}
 
-              </p>                
+              </p>            
+                {%endif%}
+
+                
+
               
 
               {% if adv.get("desc") %}

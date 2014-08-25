@@ -79,13 +79,18 @@
      {{dog_breed_picker(form.breed.id, "breed_picker")}}
 	
 
-    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", help="Выберите из выпадающего списка населенный пункт, в котором продается собака, введя первые буквы названия.", autocomplete="off") }}
+    {{ form_field(form.city, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, size="col-sm-8", placeholder="Укажите населенный пункт", autocomplete="off") }}
 
-    <div class="row" style="margin-top:-15px; margin-bottom:10px">	
+    <div class="row" style="margin-top:-15px;">	
 		<div class="col-sm-9 col-sm-push-3">
 			{{form_field(form.delivery)}}	
 		</div>
 	</div>	
+
+	<div id="{{form.metro.id}}_block" style="{{'display:none' if not form.metro.data }}">
+		{{ form_field(form.metro, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, style="width:300px") }}		
+	</div>
+
 
     {{ form_field(form.title, horizontal={"l": "col-sm-3", "r":"col-sm-9"}, placeholder="Напишите наиболее привлекательный заголовок", size="col-sm-10")}}
 
@@ -395,10 +400,38 @@ $(document).ready(function(){
 	};
 	
 
+  var city_updater =  function(item) {
+  		window.setTimeout(function() {
+  			$.getJSON("{{url_for('ajax_metro_stations')}}", 
+  				{city_name : item}, 
+  				function(data) {
+  					// debugger;
+  					var metro = $("#{{form.metro.id}}");
+  					metro.typeahead("destroy");
+  					if(data && data["stations"]) {
+  						if ($.inArray(metro.val(), data['stations']) === -1 ) {
+  							metro.val("");	
+  						}
+  						var source = data['stations'];
+  						metro.typeahead({source : source, minLength : 0});  				
+  						$("#{{form.metro.id}}_block").show();
+					} else {
+  						$("#{{form.metro.id}}_block").hide();
+  					}
+  			});
+  		}, 10);
+  		return item;
+  };
+
+  city_updater("{{form.city._value()}}");
+
+
+  
+
   $("#{{form.city.id}}").typeahead(
 	  povodochek.typeahead(
 	  "{{url_for('ajax_typeahead_geo_cities')}}",
-	  "{{form.city.id}}")); //typeahead  
+	  "{{form.city.id}}", city_updater)); //typeahead  
 
 
    $("#{{form.breed.id}}").typeahead(

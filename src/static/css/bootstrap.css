@@ -476,15 +476,18 @@ small,
   font-size: 85%;
 }
 .big,
-.large {
+.large,
+.text-large {
   font-size: 115%;
 }
 .bigger,
-.larger {
+.larger,
+.text-larger {
   font-size: 130%;
 }
 .biggest,
-.largest {
+.largest,
+.text-largest {
   font-size: 145%;
 }
 cite {
@@ -6186,10 +6189,10 @@ form .textarea-counter {
 .pet-sale .ds-filter,
 .account-pet-sale .ds-filter,
 .dog-search .ds-filter {
-  max-width: 920px;
-  margin: 60px 0 40px 0;
+  max-width: 820px;
+  margin: 30px auto 40px auto;
   background-color: #d9edf7;
-  border-radius: 0 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
   -webkit-box-shadow: 2px 2px 5px 0 #ccc;
           box-shadow: 2px 2px 5px 0 #ccc;
 }
@@ -6204,14 +6207,16 @@ form .textarea-counter {
 .dog-search .ds-filter form .dsf-actions {
   position: absolute;
   right: 20px;
-  bottom: 60px;
+  bottom: 53px;
 }
 .pet-sale .ds-filter form .dsf-advanced,
 .account-pet-sale .ds-filter form .dsf-advanced,
 .dog-search .ds-filter form .dsf-advanced {
-  height: 35px;
-  padding: 8px 20px 0 20px;
+  height: 30px;
+  padding: 5px 20px 0 20px;
   margin: 25px -20px 0 -20px;
+  /*border-top:solid 1px #ddd;*/
+  /*#gradient > .vertical(#f5f5f5, #efefef);*/
   background-image: -webkit-linear-gradient(top, #f4f6fc 0%, #d9edf7 100%);
   background-image:         linear-gradient(to bottom, #f4f6fc 0%, #d9edf7 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff4f6fc', endColorstr='#ffd9edf7', GradientType=0);
@@ -6231,11 +6236,6 @@ form .textarea-counter {
   left: 0;
   height: 40px;
   padding: 10px 20px 0 20px;
-  font-size: 18px;
-  background-image: -webkit-linear-gradient(top, #f4f6fc 0%, #d9edf7 100%);
-  background-image:         linear-gradient(to bottom, #f4f6fc 0%, #d9edf7 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff4f6fc', endColorstr='#ffd9edf7', GradientType=0);
-  background-repeat: repeat-x;
   border-radius: 10px 10px 0 0;
 }
 .pet-sale .ds-filter form .dsf-geo,
@@ -6987,10 +6987,6 @@ a.img-brand:focus {
 .main .main-pet-search table {
   width: 100%;
 }
-.main .main-pet-search .mps-label {
-  font-size: 32px;
-  font-weight: bold;
-}
 .main .main-pet-search .mps-breed-selector {
   border: 5px solid #d9edf7;
   border-radius: 4px;
@@ -7035,11 +7031,10 @@ a.img-brand:focus {
   direction: ltr;
 }
 .main .main-fresh-advs #mfa_items .mfai-title {
+  /*overflow-wrap: break-word;*/
   display: block;
   overflow-x: hidden;
   text-overflow: ellipsis;
-
-  overflow-wrap: break-word;
 }
 .adv-expired-block {
   display: table;
@@ -7057,5 +7052,10 @@ a.img-brand:focus {
 }
 .layout-popup {
   padding-bottom: 50px;
+}
+.typeahead.dropdown-menu {
+  height: auto;
+  max-height: 300px;
+  overflow-x: hidden;
 }
 /*# sourceMappingURL=bootstrap.css.map */

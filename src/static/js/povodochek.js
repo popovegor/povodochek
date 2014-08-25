@@ -105,7 +105,7 @@ povodochek.typeahead = function(ajax_url, input_id, updater){
           if(data.items.length === 0) {
               input.tooltip("destroy").tooltip(
                 {title:"<i class='fa fa-exclamation-triangle'></i>&emsp;Совпадений не найдено", 
-                trigger: "click", html: true}).tooltip('show').
+               	trigger: "click", html: true}).tooltip('show').
               attr("show-tooltip", "true");
           } else if (input.attr("show-tooltip") === "true"){
             input.tooltip("destroy").attr("show-tooltip", "false");

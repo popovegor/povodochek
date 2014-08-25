@@ -14,7 +14,7 @@ from bson.objectid import ObjectId
 from itertools import groupby
 
 from wtforms_extended_selectfield import SelectField
-from form_helper import *
+from fields import *
 import re
 from security import hash_password, check_password
 
@@ -28,6 +28,7 @@ from dic.pet_docs import (dog_docs, doc_dog_pedigrees,
     doc_dog_pedigrees_rkf, doc_puppy_cards)
 import dic.adv_types as adv_types
 import dic.dog_marks as dog_marks
+import dic.metro as metro
 
 
 import config
@@ -317,13 +318,13 @@ class Dog(Form):
 
     price_hp =  PBooleanField(u"Рассрочка") #рассрочка hire purchase
 
-    city = PTextField(u"Местоположение", \
-        validators = [Required(message=MSG_REQUIRED), validate_location], \
-        description = u"", \
-        db_name = 'city_id', \
-        db_in = lambda f: f.city_id, \
-        db_out = lambda v : geo.get_city_region(v))
+    city = CityField(u"Местоположение", \
+        validators = [Required(message=MSG_REQUIRED)], 
+        db_name = 'city_id')
 
+    def validate_city(form, field):
+        if not field.data and field.raw_data and field.raw_data[0]:
+            raise ValidationError(u'Совпадений не найдено. Выберите населенный пункт из выпадающего списка, введя часть названия.')
     
     color = PTextField(u"Окрас")
 
@@ -434,6 +435,15 @@ class Dog(Form):
     breeding = PBooleanField(Markup(u"<small>Допуск в разведение</small>"), \
         depends = {"id":"doc", "values": doc_dog_pedigrees_rkf.keys()})
 
+    metro = MetroField(u"Станция метро", 
+        db_name = u"metro_id"
+        )
+
+    def validate_metro(form, field):
+        print(field.raw_data)
+        if form.city.city_id and field.raw_data and field.raw_data[0]:
+            if not metro.is_station_in_city(field.data, form.city.city_id):
+                raise ValidationError(u"В городе %s не существует станции метро '%s'" % (geo.get_city_name(form.city.city_id), field.raw_data[0]) )
 
     show = PBooleanField(Markup(u"<small>Подходит для выставок</small>"))
 

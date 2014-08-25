@@ -315,7 +315,16 @@ def get_cat_breeds_for_typeahead(query, limit):
             ('rating', DESCENDING),
             ('breed_name', ASCENDING)
             ] )]
-    return breeds
+    return breeds\
+
+
+def get_city_by_name(city_name):
+    _name = (city_name or u"").strip().lower()
+    if _name:
+        matcher = re.compile("^" + re.escape(city_name.lower()))
+        return typeahead_geo_cities.find_one(
+            {'name_search': {"$regex": matcher}},
+            sort = [('rating', DESCENDING), ('name_search',ASCENDING)] )
 
 def get_geo_cities_for_typeahead(query, limit):
     matcher = re.compile("^" + re.escape(query.lower()))

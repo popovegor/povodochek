@@ -488,7 +488,7 @@ charset="utf-8"></script>
         </thead>
         <tbody>
           <tr itemscope itemprop="availableAtOrFrom" itemtype="http://schema.org/Place">
-          <th class="small">Местоположение</th>
+          <th class="small">Населенный пункт</th>
           <td>
             <span itemprop="name">{{geo.format_city_region_by_city_id(adv.get("city_id"))}}</span>
 
@@ -498,6 +498,14 @@ charset="utf-8"></script>
             <meta itemprop="addressRegion" content="{{geo.get_region_name_by_city_id(adv.get('city_id')) }}" />
             </span>
           </td></tr>
+
+           {% set metro_id = adv.get("metro_id") %}
+            {% if metro_id %}
+            <tr><th class="small">Метро</th>
+            <td>
+              <span title="Станция метро">{{ metro.get_station_name_by_id(metro_id) }}</span>
+            </td></tr>
+          {%endif%}
 
           <tr><th class="small">Доставка</th>
           <td>

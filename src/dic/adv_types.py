@@ -6,7 +6,7 @@ FEMALE = 2
 MALE = 3
 
 adv_dog_type_litter = {
-	LITTER: {"name_edit" : u"Щенков из одного помета", "name_view" : u"щенков"}
+	LITTER: {"name_edit" : u"Щенков", "name_view" : u"щенков"}
 }
 
 adv_dog_type_female = {

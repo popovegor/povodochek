@@ -45,6 +45,7 @@ import dic.geo as geo
 import dic.pet_docs
 import dic.adv_types as adv_types
 import dic.dog_marks as dog_marks
+import dic.metro as metro
 
 from flaskext.markdown import Markdown
 from flask.ext.assets import Environment, Bundle
@@ -56,7 +57,7 @@ from pymongo.errors import InvalidId
 import random
 import json
 from pprint import pprint 
-from form_helper import (get_fields, calc_attraction)
+from forms.fields import (get_fields, calc_attraction)
 import cProfile
 import sys
 
@@ -87,14 +88,14 @@ js = Bundle('js/jquery-1.11.0.min.js', \
     'js/jquery.touch-punch.min.js', \
     'js/jquery.shapeshift.js', \
     'js/jquery.mosaicflow.min.js', \
-    'js/bootstrap3-typeahead.min.js', \
+    'js/bootstrap3-typeahead.js', \
     'js/bootstrap.min.js', \
     'js/list.min.js',
     'js/list.fuzzysearch.js',
-    'js/povodochek.js',
-    'js/jquery.simplyCountable.js',
     'js/bootstrap-datepicker.js',
     'js/bootstrap-datepicker.ru.js',
+    'js/povodochek.js',
+    'js/jquery.simplyCountable.js',
     filters='rjsmin',
     output='gen/js.js')
 assets.register('js_all', js)
@@ -107,7 +108,6 @@ assets.register('js_ie8', js_ie8)
 
 css = Bundle(
     'css/bootstrap.min.css', \
-    'css/typeahead.js-bootstrap.css', \
     'css/nouislider.fox.css', \
     'css/font-awesome.min.css', \
     'css/flexslider.css', \
@@ -172,6 +172,7 @@ app.jinja_env.globals['pets'] = pets
 app.jinja_env.globals['users'] = users
 app.jinja_env.globals['adv_types'] = adv_types
 app.jinja_env.globals['dog_marks'] = dog_marks
+app.jinja_env.globals['metro'] = metro
 app.jinja_env.filters['morph_word'] = morph_word
 
 
@@ -975,6 +976,8 @@ def account_dog_adv_edit(adv_id):
             msg = Markup(u"Объявление <a target='_blank' href='%s'>&laquo;%s&raquo;</a> опубликовано." % (url_for('dog_adv_show', adv_id = adv_id), form.title.data))
             flash(msg, "success")
             return render_template("/account/dog/adv_edit_success.html", header = msg, title = u"Объявление '%s' опубликовано" % form.title.data)
+        else:
+            print(form.errors)
     else:
         for f in form:
             f.set_val(dog.get(f.get_db_name()))
@@ -1640,6 +1643,22 @@ def ajax_main_news():
 def ajax_main_popular_breed_dog():
     breed_rating = db.get_dog_breeds_rating(limit = 10)
     return render_template("main/popular.html", breed_rating = breed_rating)
+
+@app.route("/ajax/metro/stations/", methods = ["GET"])
+def ajax_metro_stations():
+    stations = None
+    city_name = request.args.get("city_name")
+    city = db.get_city_by_name(city_name)
+    if city:
+        stations = metro.get_stations_by_city(city.get('geo_id'))
+
+    if stations:
+        stations = sorted(stations.values())
+
+    return jsonify(stations = stations)
+
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

@@ -355,9 +355,9 @@ form {
     .ds-filter {
         background-color: @state-info-bg;
         .box-shadow(2px 2px 5px 0px #ccc);
-        border-radius: 0px 10px 10px 10px; 
-        max-width:920px; 
-        margin:60px 0 40px 0;
+        border-radius: 10px 10px 10px 10px; 
+        max-width:820px; 
+        margin:30px auto 40px auto;
         form {
            padding:15px 20px 0px 20px;
            position:relative;
@@ -365,14 +365,16 @@ form {
            .dsf-actions {
                 position:absolute; 
                 right:20px; 
-                bottom:60px
+                bottom:53px
            }
 
            .dsf-advanced {
                 margin: 25px -20px 0 -20px;
                 border-radius: 0px 0px 10px 10px;
-                padding:8px 20px 0px 20px;
-                height:35px;
+                padding:5px 20px 0px 20px;
+                height:30px;
+                /*border-top:solid 1px #ddd;*/
+                /*#gradient > .vertical(#f5f5f5, #efefef);*/
                 #gradient > .vertical(#f4f6fc, #d9edf7);
                 .checkbox {
                     margin-top: 0px;
@@ -385,8 +387,7 @@ form {
                 border-radius:10px 10px 0px 0px;
                 top:-40px; left:0px;
                 height: 40px;
-                font-size: @font-size-h4;
-                #gradient > .vertical(#f4f6fc, #d9edf7);
+                //#gradient > .vertical(#f4f6fc, #d9edf7);
            }
 
            .dsf-geo {
@@ -1071,8 +1072,6 @@ a.img-brand:hover, a.img-brand:focus {
         padding:20px;
         table { width:100%; }
         .mps-label {
-            font-size: 32px;
-            font-weight: bold;
         }
 
         .mps-breed-selector {
@@ -1120,7 +1119,7 @@ a.img-brand:hover, a.img-brand:focus {
             .mfai-title {
                 overflow-x: hidden; 
                 text-overflow: ellipsis;
-                overflow-wrap: break-word;
+                /*overflow-wrap: break-word;*/
                 display: block;
             }
         }
@@ -1145,4 +1144,10 @@ a.img-brand:hover, a.img-brand:focus {
 
 .layout-popup {
     padding-bottom: 50px;
+}
+
+.typeahead.dropdown-menu {
+    overflow-x: hidden;
+    height: auto;
+    max-height: 300px;
 }

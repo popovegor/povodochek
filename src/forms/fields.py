@@ -1,6 +1,14 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from wtforms import (fields, widgets, TextField, \
     SelectField, HiddenField, BooleanField, TextAreaField, \
     IntegerField, Form, DateTimeField, PasswordField, RadioField)
+
+
+import dic.metro as metro
+import dic.geo as geo
+import db
 
 class Select2Widget(widgets.Select):
     """
@@ -176,6 +184,46 @@ class PIntegerField(IntegerField, PField):
             depends = depends, db_name = db_name, \
             db_in = db_in, db_out = db_out)
 
+class MetroField(PIntegerField):
+
+    def _value(self):
+        if self.data:
+            return metro.get_station_name_by_id(self.data)
+        elif self.raw_data:
+            return self.raw_data[0]
+        else:
+            return u""
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = metro.get_station_id_by_name(valuelist[0])
+        else:
+            self.data = None
+
+
+class CityField(PIntegerField):
+
+    def _value(self):
+        if self.data:
+            return geo.get_city_region(self.data)
+        elif self.raw_data:
+            return self.raw_data[0]
+        else:
+            return u""
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            city = db.get_city_by_id(valuelist[0])
+            if not city:
+                city = db.get_city_by_city_and_region(valuelist[0])
+            if city:
+                self.data = city.get('city_id')
+                self.city_id = city.get('city_id')
+                self.region_id = city.get("region_id")
+                self.location = city.get("location")
+
+        else:
+            self.data = None
 
 def is_active_attraction_field(form, field):
     if field.attrs and field.attrs.get("attraction_depends"):
@@ -232,11 +280,11 @@ def calc_attraction(form):
     for f in filter(lambda f: f.attrs.get("attraction"), form):
         if is_active_attraction_field(form, f):
             count += 1; 
-            print('count', count, f.name)
+            #print('count', count, f.name)
     
             if get_attraction_field_val(form, f):
                 complete += 1;  
-                print('complete', complete, f.name)
+                #print('complete', complete, f.name)
 
 
     percent = (round(complete / float(count) * 10000) / 100) if count > 0 else 0;

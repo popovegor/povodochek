@@ -90,7 +90,13 @@
                   {% if city_id %}
                   <b title="Местоположение">{{ geo.get_city_region(city_id) }}</b>
 
-                </span>
+                   {% set metro_id = adv.get("metro_id") %}
+                  {% if metro_id %}
+                  <br/>
+                 <span title="Станция метро">м.&nbsp;{{ metro.get_station_name_by_id(metro_id) }}</span>
+                     
+                  {%endif%}
+                
                 {%endif%}
 
               </p>                

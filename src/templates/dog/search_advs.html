@@ -94,21 +94,21 @@
       <div class="row">
           <div class="col-sm-9 col-lg-10" style="">
 
+
+           
+
             <h4 class="adv-head"><a href="{{url_for('dog_adv_show', adv_id = adv['_id'])}}" target="_blank" title='{{adv.get("title")}}'>{{adv.get("title") | capitalize}}</a></h4>
-            
-            
-            {% if breed_name %}
+
+             {% if breed_name %}
             <p class="adv-breed">
-              <span>{{breed_name }}</span> 
+              <i>{{breed_name }}</i> 
             </p>
-            {%endif%}
+            {%endif%} 
 
             {% set city_id = adv.get("city_id") %}
             {% if city_id %}
               <p class="adv-city">
 
-              	
-                
                 <b title="Местоположение">{{ geo.format_city_region_by_city_id(city_id) }}</b>
 
                 {% if adv.get("distance") and adv.get("distance") > 0 %}<span>
@@ -119,12 +119,20 @@
                 &thinsp;&rarr;&ensp;<span style="white-space:nowrap" data-placement="top" data-toggle="popover" data-html="true" data-content="<div style='width:200px'>Возможна доставка в ваш населенный пункт</div>" class="cursor-help" data-trigger="hover"><i class="fa fa-truck"></i>&nbsp;<i class="small">(доставка)</i></span>
                 {%endif%}
 
+                {% set metro_id = adv.get("metro_id") %}
+                {% if metro_id %}
+                <br/>
+               <span title="Станция метро">м.&nbsp;{{ metro.get_station_name_by_id(metro_id) }}</span>
+                   
+                {%endif%}
+
 
 	          </p>    
-            {%endif%}    
+            {%endif%}   
+
 
             {% if adv.get("desc") %}
-            <p class="" style="">
+            <p class="" style="margin-top:15px">
                <span class="">{{adv.get("desc") | truncate (300, end='...', killwords = False)}} </span>
             </p>
             {%endif%}
