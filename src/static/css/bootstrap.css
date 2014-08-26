@@ -7055,7 +7055,7 @@ a.img-brand:focus {
 }
 .typeahead.dropdown-menu {
   height: auto;
-  max-height: 300px;
+  max-height: 350px;
   overflow-x: hidden;
 }
 /*# sourceMappingURL=bootstrap.css.map */

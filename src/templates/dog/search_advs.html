@@ -62,8 +62,6 @@
         {% else %}
           <img  src="/static/img/no_photo.png" class="img-thumbnail no-photo" style="margin:0 auto" />
         {%endif%}
-
-
       </div>
 
       <div class="small text-right">
@@ -78,15 +76,10 @@
           {% endif%#}
 
           {#% if update_date %#}
-          <span class="text-muted" style="margin-right:-3px">Обновлено:</span>
-          <br/><span title="Дата обновления объявления" style="white-space: nowrap;">{{ momentjs(update_date).fromNow() }}</span>
+          <span class="text-muted" style="margin-right:-3px">Обновлено</span>&ensp;<span title="Дата обновления объявления" style="white-space: nowrap;">{{ momentjs(update_date).fromNow() }}</span>
           {#% endif%#}
 
        </div> 
-
-        
-     
-
    </div>
 
    <div class="col-sm-8 col-md-9">
