@@ -537,18 +537,18 @@ def sale_find_header(pet_id, breed_id, city, region):
     breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed_header = Markup(u" породы <span class='ajax-link dsf-header-breed'>%s</span>" % breed.lower() )
+        breed_header = Markup(u" породы <b class='ajax-link dsf-header-breed'>%s</b>" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
     geo_header = u""
     geo_title = u""
     if city:
-        geo_header = u" в г. <span class='ajax-link dsf-header-location'>{0}</span>".format(city.get('city_name'))
+        geo_header = u" в г. <b class='ajax-link dsf-header-location'>{0}</b>".format(city.get('city_name'))
         geo_title = u" в г. {0}".format(city.get('city_name'))
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
     elif region:
-        geo_header = u" в <span class='ajax-link dsf-header-location'>%s</span>" % region.get('region_name_p')
+        geo_header = u" в <b class='ajax-link dsf-header-location'>%s</b>" % region.get('region_name_p')
         geo_title = u" в %s" % region.get('region_name_p')
 
     return (header.format(pet, breed_header, geo_header), \

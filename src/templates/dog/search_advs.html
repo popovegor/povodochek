@@ -76,7 +76,7 @@
           {% endif%#}
 
           {#% if update_date %#}
-          <span class="text-muted" style="margin-right:-3px">Обновлено</span>&ensp;<span title="Дата обновления объявления" style="white-space: nowrap;">{{ momentjs(update_date).fromNow() }}</span>
+          <span class="text-muted">Обновлено</span>&ensp;<span title="Дата обновления объявления" style="white-space: nowrap;">{{ momentjs(update_date).fromNow() }}</span>
           {#% endif%#}
 
        </div> 
@@ -179,54 +179,54 @@
 
 </div>
 
-{% endmacro%}
+{%- endmacro -%}  
 
-
- {%- macro pagination(pages, current_page, page_range, paging_class) -%}
-          
-                    
-
-{%- endmacro -%}
-
-
-
-    {%if count > 0 %}
-
-            <div class="clearfix" style="margin:0px 0px 20px 0px">
-
-              <div class="advs-found pull-left"><span>Найдено <b>{{count}}</b> {{"объявление" | morph_word(count = count) }}</span>
-              </div> <!-- advs-found -->
-
-              <div class="advs-sort pull-right" style="white-space:nowrap">
-                <span class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>
-                {% for (value, name) in form.sort.choices %}
-                {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
-                {% if sort == value %}
-                <small title="{#{title}#}" class="label label-default">{{name}}</small>
-                {%else%}
-                <a title="{#{title}#}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
-                {%endif%}
-                {% endfor %}
-              </div> <!-- advs-sort -->
-
-              
-
-
-            </div>
-
-      
-  {%endif%}  
-
-<div class="advs" style="">
-
-
-{%if count <= 0%}
+    {%if count <= 0 %}
 
   <div style="margin-top:30px" class="text-left">
-  <span>Объявления по вашему запросу, к сожалению, не найдены :(</span>
+  <p class="lead">Объявления по вашему запросу, к сожалению, не найдены.
+    </p>
+    Что вы можете сделать прямо сейчас:
+    <ul class="">
+      <li>
+        Искать объявление в близких населенных пунктах, используя форму поиска вверху страницы.   
+      </li>
+      <li>
+        <a href="{{url_for('account_dog_adv_new')}}">Добавить объявление</a> на эту страницу. Вы будете первым и получите все внимание посетителей.
+      </li>
+    </ul>
   </div>
-       
-{%else%}  
+
+  {%else%}
+
+
+     
+      <h1 style="font-size:20px;margin-top:5px; margin-bottom:20px" class=""><i class="fa fa-filter"></i>&ensp;{{header}}</h1>
+
+      <div class="clearfix" style="margin:30px 0 20px;padding:15px 10px; background-color:#ffc">
+
+
+      <div class="">
+          <div class="advs-found pull-left"><span>Найдено <b>{{count}}</b> {{"объявление" | morph_word(count = count) }}</span>
+          </div> <!-- advs-found -->
+
+          <div class="advs-sort pull-right" style="white-space:nowrap">
+            <span class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>
+            {% for (value, name) in form.sort.choices %}
+            {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
+            {% if sort == value %}
+            <small title="{#{title}#}" class="label label-default">{{name}}</small>
+            {%else%}
+            <a title="{#{title}#}" href="{{ request.url | change_query(form.sort.name, sort, value)}}" class="ajax-link">{{name}}</a>
+            {%endif%}
+            {% endfor %}
+          </div> <!-- advs-sort -->
+      </div> <!-- found-info -->
+
+    </div>
+
+
+  <div class="advs" style="">
 
       {% for adv in advs %}   
       
@@ -242,7 +242,7 @@
       {%set page_range = 8 %} 
 
 
-          <div style="margin-top:40px">
+          <div style="">
 
           <ul class="list-inline large">
               <li>
@@ -303,16 +303,8 @@
 
           </ul>      
 
+      </div>
+
       
-{%endif%}
-
-
-         
-          
-
-       
-
-
-</div>
-
+  {%endif%} 
 
