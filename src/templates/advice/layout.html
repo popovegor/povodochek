@@ -6,7 +6,7 @@
 
     {{breadcrumbs( [
     {'name':"Полезное", 'url':url_for('advice')}, 
-    {'name':title | truncate(50)}
+    {'name':title | truncate(100)}
     ] ) }}
 
 {%endblock%}
@@ -16,7 +16,7 @@
 
 <div class="row">
 
-<div class="advice-article col-md-8">
+<div class="advice-article col-lg-9">
 
 	{%block advice_content%}
 

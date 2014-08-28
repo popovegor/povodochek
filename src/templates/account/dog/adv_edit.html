@@ -72,7 +72,7 @@
 
 	{{ form_field(form.adv_type, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-5", autocomplete="off") }}  
 
-	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Введите или выберите название породы", autocomplete="off", btn_right = '<button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>' | safe) }}   
+	{{ form_field(form.breed, horizontal={"l": "col-sm-3", "r":"col-sm-9"} , size="col-sm-8", placeholder="Введите или выберите название породы", autocomplete="off", btn_right = '<button id="breed_picker" title="Выбрать породу из списка" type="button" class="btn btn-default"><b>&hellip;</b></button>' | safe) }}
 
 	 {%from "dog/breed_picker.html" import dog_breed_picker %}
 
@@ -400,38 +400,41 @@ $(document).ready(function(){
 	};
 	
 
-  var city_updater =  function(item) {
+  var typeahead_city_updater =  function(item) {
   		window.setTimeout(function() {
   			$.getJSON("{{url_for('ajax_metro_stations')}}", 
   				{city_name : item}, 
-  				function(data) {
-  					// debugger;
-  					var metro = $("#{{form.metro.id}}");
-  					metro.typeahead("destroy");
-  					if(data && data["stations"]) {
-  						if ($.inArray(metro.val(), data['stations']) === -1 ) {
-  							metro.val("");	
-  						}
-  						var source = data['stations'];
-  						metro.typeahead({source : source, minLength : 0});  				
-  						$("#{{form.metro.id}}_block").show();
-					} else {
-  						$("#{{form.metro.id}}_block").hide();
-  					}
-  			});
+  				typeahead_metro_init
+  				);
   		}, 10);
   		return item;
   };
 
-  city_updater("{{form.city._value()}}");
+var typeahead_metro_init = function(data) {
+	// debugger;
+	var metro = $("#{{form.metro.id}}");
+	metro.typeahead("destroy");
+	if(data && data["stations"]) {
+		if ({{form.metro.errors | length}} > 0) {
+			if($.inArray(metro.val(), data['stations']) === -1) {
+				metro.val();
+			}
+		}
+		var source = data['stations'];
+		metro.typeahead({source : source, minLength : 0});  				
+		$("#{{form.metro.id}}_block").show();
+	} else {
+			$("#{{form.metro.id}}_block").hide();
+	}
+}
 
+  typeahead_city_updater("{{form.city._value()}}");
 
-  
 
   $("#{{form.city.id}}").typeahead(
 	  povodochek.typeahead(
 	  "{{url_for('ajax_typeahead_geo_cities')}}",
-	  "{{form.city.id}}", city_updater)); //typeahead  
+	  "{{form.city.id}}", typeahead_city_updater)); //typeahead  
 
 
    $("#{{form.breed.id}}").typeahead(

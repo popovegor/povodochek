@@ -5,7 +5,7 @@
     <li><a href="{{url_for('index')}}" title="Главная"><small class="glyphicon glyphicon-home"></small></a> 
     <li class="active">Личный кабинет</li>
 </ol>#}
-{% endblock %}  
+{% endblock %}
 
 
 {% macro render_nav_item(title, path) -%}
@@ -68,7 +68,7 @@
 
 
     <div class="clearfix" style="margin-left:220px">
-      <h1 class="">{{ title }}</h1>
+      <h1 class="page-header">{{ title }}</h1>
 
       <div style="margin-bottom:30px" class="text-semi-muted">
       {%block page_desc %}

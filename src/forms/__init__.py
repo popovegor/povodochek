@@ -319,7 +319,7 @@ class Dog(Form):
     price_hp =  PBooleanField(u"Рассрочка") #рассрочка hire purchase
 
     city = CityField(u"Местоположение", \
-        validators = [Required(message=MSG_REQUIRED)], 
+        validators = [InputRequired(message=MSG_REQUIRED)], 
         db_name = 'city_id')
 
     def validate_city(form, field):

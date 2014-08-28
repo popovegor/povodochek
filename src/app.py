@@ -1190,13 +1190,18 @@ def account_cat_adv_new():
 
 @app.route("/spravka/")
 def help():
-    return render_template("/help.html", \
+    return render_template("/help/index.html", \
         title=u"Справка", header=Markup(u"Справка"))
 
 @app.route("/spravka/privlekatelnost-obyavleniya/")
 def help_attraction():
     return render_template("/help/faq_attraction.html", \
         title=u"Привлекательность объявления", header=Markup(u"Привлекательность объявления"))
+
+@app.route("/spravka/preimushhetsva-dlja-zavodchikov/")
+def help_breeder_benefits():
+    return render_template("/help/faq_breeder_benefits.html", \
+        title=u"Как мы помогаем продавать ваших собак или кошек?", header=Markup(u"Как мы помогаем продавать ваших собак или кошек?"))
 
 @app.route("/poleznoe/")
 def advice():

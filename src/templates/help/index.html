@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+
+
+{% block content %}
+
+<h1 class="page-header">{{header or title}}</h1>
+<h3 class="">Часто задаваемые вопросы</h3>
+
+	<div class="help">
+		<ul class="fa-ul">
+		<li class="">
+			<i class="fa fa-li fa-file-o"></i>
+			<a href="{{url_for('help_breeder_benefits')}}">Как мы помогаем продавать ваших собак или кошек?</a>
+		</li>
+		<li class=""> 
+			<i class="fa fa-li fa-file-o"></i>
+			<a href="{{url_for('help_attraction')}}">Как мы считаем привлекательность объявления?</a>
+		</li>
+			
+		</ul>
+</div> 
+
+
+{% endblock %}

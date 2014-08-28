@@ -212,6 +212,10 @@ class CityField(PIntegerField):
             return u""
 
     def process_formdata(self, valuelist):
+        self.data = None
+        self.city_id = None
+        self.region_id = None
+        self.location = None
         if valuelist:
             city = db.get_city_by_id(valuelist[0])
             if not city:
@@ -221,9 +225,8 @@ class CityField(PIntegerField):
                 self.city_id = city.get('city_id')
                 self.region_id = city.get("region_id")
                 self.location = city.get("location")
-
-        else:
-            self.data = None
+                
+            
 
 def is_active_attraction_field(form, field):
     if field.attrs and field.attrs.get("attraction_depends"):

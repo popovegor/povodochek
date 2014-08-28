@@ -6,7 +6,7 @@
 
     {{breadcrumbs( [
     {'name':"Справка", 'url':url_for('help')}, 
-    {'name':title | truncate(50)}
+    {'name':title | truncate(100)}
     ] ) }}
 
 {%endblock%}
@@ -14,9 +14,12 @@
 {% block content %}
 
 
+
 <div class="row">
 
-<div class="help col-md-8">
+<div class="help col-lg-10">
+
+	<h1 class="page-header">{{header or title}}</h1>
 
 	{%block help_content%}
 

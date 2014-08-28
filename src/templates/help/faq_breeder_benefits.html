@@ -1,0 +1,50 @@
+{% extends "help/layout.html" %}
+
+
+{% block help_content %}
+	
+	<div class="breeder-benefits" style="margin-top:40px">
+
+		<ul class="list-unstyled">
+			<li style="margin-bottom:40px">
+				<div style="float:left;color:#83AFC5;"><i style="" class="fa fa-file-text-o fa-fw fa-5x"></i>
+				</div>
+				<div style="margin-left:120px;" class="text-larger clearfix"><b>Неограниченное количество объявлений.</b>
+				<br/>
+				Вы можете размещать столько объявлений о продаже собак и кошек сколько захотите.</div>
+			</li>
+			<li style="margin-bottom:40px">
+				<div style="float:left;color:#83AFC5;"><i style="" class="fa fa-picture-o fa-fw fa-5x"></i>
+				</div>
+				<div style="margin-left:120px;" class="text-larger clearfix"><b>Неограниченное количество фотографий.</b>
+				<br/>
+				При подаче объявления о продаже щенков или котят не ограничивайте себя в выборе фотографий &mdash; загружайте все понравившиеся! </div>
+			</li>
+			<li style="margin-bottom:40px">
+				<div style="float:left;color:#83AFC5;"><i style="" class="fa fa-video-camera fa-fw fa-5x"></i>
+				</div>
+				<div style="margin-left:120px;" class="text-larger clearfix"><b>Видеоролики в объявлениях.</b>
+				<br/>
+				Публикуя объявление о продаже собак или кошек, укажите ссылку на видеоролик, на котором запечатлены ваши питомцы &mdash; видеоряд повышает продажи в два раза!</div>
+			</li>
+			<li style="margin-bottom:40px">
+				<div style="float:left;color:#83AFC5;"><i style="" class="fa fa-thumbs-o-up fa-fw fa-5x"></i>
+				</div>
+				<div style="margin-left:120px;" class="text-larger clearfix"><b>Поощряем информативность и полноту объявления.</b>
+				<br/>
+				Размещая объявление о продаже щенков или котят, старайтесь заполнять максимальное количество полей, отмеченных звездочкой &mdash; влияют на <a target="_blank" href="{{url_for('help_attraction')}}">&laquo;привлекательность&raquo; объявления</a>. Опубликованные объявления с высокой &laquo;привлекательностью&raquo; размещаются на первых позициях в <a href="{{url_for('dog_search')}}">поиске</a>, тем самым увеличивая количество просмотров.</div>
+			</li>
+		</ul>
+		
+		<div class="text-center">
+			<a href="{{url_for('account_dog_adv_new')}}" class="btn btn-success btn-lg">Разместить объявление</a>	
+		</div>
+
+		
+
+	
+	</div> <!-- help -->
+
+
+{% endblock %}
+
