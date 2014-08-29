@@ -201,17 +201,14 @@
 
 
      
-      <h1 style="font-size:20px;margin-top:5px; margin-bottom:20px" class=""><i class="fa fa-filter"></i>&ensp;{{header}}</h1>
+      {#<h1 style="font-size:20px;margin-top:5px; margin-bottom:20px" class=""><i class="fa fa-filter"></i>&ensp;{{header}}</h1>#}
 
-      <div class="clearfix" style="margin:30px 0 20px;padding:10px; background-color:#ffc">
-
-
-      <div class="">
-          <div class="advs-found pull-left"><span>Найдено <b>{{count}}</b> {{"объявление" | morph_word(count = count) }}</span>
+      <div class="clearfix advs-found-info">
+          <div class="pull-left"><span>Найдено <b>{{count}}</b> {{"объявление" | morph_word(count = count) }}</span>
           </div> <!-- advs-found -->
 
           <div class="advs-sort pull-right" style="white-space:nowrap">
-            <span class="text-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>
+            <span class="text-semi-muted" title="Способы сортировки результатов поиска.">{{form.sort.label.text}}</span>
             {% for (value, name) in form.sort.choices %}
             {%set title = "Вначале показываются самые " +  (name | morph_word(['plur']) | lower) %}
             {% if sort == value %}
@@ -223,7 +220,6 @@
           </div> <!-- advs-sort -->
       </div> <!-- found-info -->
 
-    </div>
 
 
   <div class="advs" style="">

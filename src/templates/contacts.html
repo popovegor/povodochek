@@ -1,10 +1,34 @@
 {% extends "layout.html" %}
 
+{%block page_header%}
+
+{%endblock%}
+
+
 {% block content %}
 
 <div class="contacts">
 
-	<h1 class="page-header">{{title}}</h1>
+
+	
+		<div style="margin-top:40px;width:600px; border-radius:20px" class="well well-info">
+			<i class="fa fa-wrench fa-fw" style="display:block; float:left; margin-top:40px;font-size:6em;"></i>
+			
+			<div style="margin-left:140px">
+			<h2 id="support">Техническая поддержка</h2>
+			<p>
+			Если у&nbsp;вас есть вопросы, пожелания, предложения или&nbsp;комментарии, но&nbsp;вы&nbsp;не&nbsp;знаете к&nbsp;кому из&nbsp;нас обратиться, то&nbsp;оправляйте их&nbsp;на&nbsp;адрес технической поддержки.
+			</p>
+			<p>
+				<span>Email:</span>		
+				<a href="mailto:support@povodochek.com">support@povodochek.com</a>
+			</p>
+			</div>
+		</div>
+	
+
+
+	<h2 class="page-header">Основатели проекта</h2>
 
 	<ul class="thumbnails list-unstyled row" style="margin-top:40px">
 		  <li class="col-sm-4" style="margin-bottom:40px">
@@ -47,18 +71,7 @@
 		    </div>
 		  </li>
 	</ul>
-	<div class="row">
-		<div style="margin-top:40px;" class="col-sm-7 well well-info">
-			<h2 id="support">Техническая поддержка</h2>
-			<p>
-			Если у&nbsp;вас есть вопросы, пожелания, предложения или&nbsp;комментарии, но&nbsp;вы&nbsp;не&nbsp;знаете к&nbsp;кому из&nbsp;нас обратиться, то&nbsp;оправляйте их&nbsp;на&nbsp;адрес технической поддержки.
-			</p>
-			<p>
-				<span>Email:</span>		
-				<a href="mailto:support@povodochek.com">support@povodochek.com</a>
-			</p>
-		</div>
-	</div>
+	
 
 </div> <!-- contacts -->
 

@@ -6,36 +6,50 @@
 {% endblock %}
 
 {%block breadcrumbs %}
-	 
 {%endblock%}
+
+{%block page_header%}
+<h1 class="text-center">{{header or title}}</h1>
+{%endblock%}
+
 
 {%  block content %}
 
-	<div class="main" style="margin-top:20px">
+	<div class="main">
 
-		<div style="float:left;width:200px">
-			{% from "main/news.html" import render_news_feed %}
-			{{ render_news_feed() }}
+		<div style="margin-top:30px;">
+				{% include "main/search.html" %}
 		</div>
 
-		<div style="margin-left:220px;">
-			{% include "main/search.html" %}
+		<div class="" style="margin-top:65px; padding-right:10px;">
+				
 
-			<div class="" style="margin-top:65px;">
+		{% from "main/fresh.html" import render_fresh_advs %}
+			{{ render_fresh_advs() }}
 
-			{% from "main/fresh.html" import render_fresh_advs %}
-				{{ render_fresh_advs() }}
+		</div>
+		
+		<div class="" style="float:left">
+			<div class="" style="margin-top:65px; padding-right:50px; width:250px; float:left">
+				
+				{% from "main/news.html" import render_news_feed %}
+
+				{{ render_news_feed() }}
 
 			</div>
+
+			<div class="" style="margin-top:60px;margin-left:250px;">
+			
 
 			<div style="" class="">
 				{% from "main/popular.html" import render_popular %}
 
 				{{ render_popular()  }}
 			</div>
-			
-		</div>
 
+			</div>	
+
+		</div>
 
 		<div class="clearfix"></div>
 

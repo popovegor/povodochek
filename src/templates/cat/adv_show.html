@@ -20,9 +20,6 @@
 
 <div class="sale-pet-show"> 
 
-
-  <h1>{{header}}</h1>
-
   
           <div style="font-family:Georgia; font-size:1.2em; font-style:italic">
               <span style="white-space:nowrap; margin-right:20px" title="{{ format('{0:,}', adv.get('price')) | replace(',', ' ') }} {{ 'рубль' | morph_word(count = adv.get('price') | int) }}"  ><small class="text-muted">цена:</small>&nbsp;{{adv.get('price') | format_price() }}&nbsp;руб</span>

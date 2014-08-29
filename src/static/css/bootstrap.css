@@ -433,13 +433,13 @@ h6 .small,
 }
 h1,
 .h1 {
-  font-size: 32px;
+  font-size: 30px;
   /*font-family: @font-family-serif;*/
   /*font-style: italic;*/
 }
 h2,
 .h2 {
-  font-size: 28px;
+  font-size: 26px;
 }
 h3,
 .h3 {
@@ -6190,7 +6190,7 @@ form .textarea-counter {
 .account-pet-sale .ds-filter,
 .dog-search .ds-filter {
   max-width: 820px;
-  margin: 25px 0 0 0;
+  margin: 40px auto;
   background-color: #d9edf7;
   border-radius: 10px 10px 10px 10px;
   -webkit-box-shadow: 2px 2px 5px 0 #ccc;
@@ -6216,10 +6216,11 @@ form .textarea-counter {
   padding: 5px 20px 0 20px;
   margin: 25px -20px 0 -20px;
   /*border-top:solid 1px #ddd;*/
-  /*#gradient > .vertical(#f5f5f5, #efefef);*/
-  background-image: -webkit-linear-gradient(top, #f4f6fc 0%, #d9edf7 100%);
-  background-image:         linear-gradient(to bottom, #f4f6fc 0%, #d9edf7 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff4f6fc', endColorstr='#ffd9edf7', GradientType=0);
+  /*#gradient > .vertical(#f4f6fc, #d9edf7);*/
+  /*#gradient > .vertical(#ddd, #f5f5f5);*/
+  background-image: -webkit-linear-gradient(top, #f5f5f5 0%, #eee 100%);
+  background-image:         linear-gradient(to bottom, #f5f5f5 0%, #eee 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#ffeeeeee', GradientType=0);
   background-repeat: repeat-x;
   border-radius: 0 0 10px 10px;
 }
@@ -6390,6 +6391,13 @@ form .textarea-counter {
 .dog-search .advs-paging .adv-paging-title {
   padding-right: 10px;
   /*padding-top:5px;*/
+}
+.pet-sale .advs-found-info,
+.account-pet-sale .advs-found-info,
+.dog-search .advs-found-info {
+  padding: 8px 25px;
+  margin: 30px 0 20px;
+  background-color: #d9edf7;
 }
 .pet-sale .advs-sort,
 .account-pet-sale .advs-sort,
@@ -6942,6 +6950,9 @@ form .textarea-counter {
   background-image: url(../img/brand_combo.png);
   background-repeat: no-repeat;
   background-position: center -60px;
+}
+span.img-brand {
+  background-position: center 0;
 }
 a.img-brand:hover,
 a.img-brand:focus {

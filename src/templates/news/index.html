@@ -4,9 +4,7 @@
 {% block content %}
 	
 
-<h1 class="page-header">{{header or title}}</h1>
-
-<div class="row" style="margin-top:30px">
+<div class="row" style="">
 	<div class="col-md-10 col-lg-8">
 	{%for news in news_feed if news.get('published') %}
 

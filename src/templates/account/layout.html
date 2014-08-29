@@ -7,6 +7,9 @@
 </ol>#}
 {% endblock %}
 
+{%block page_header%}
+{%endblock%}
+
 
 {% macro render_nav_item(title, path) -%}
       <li class="{{'active' if request.path == path}}">

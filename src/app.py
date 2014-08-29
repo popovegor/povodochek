@@ -225,10 +225,10 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    tmpl = render_template('main.html',
+    tmpl = render_template('index.html',
         dog_breeds_rating = db.get_dog_breeds_rating(limit = 10),
         cat_breeds_rating = db.get_cat_breeds_rating(limit = 10),
-        title = u"Продажа и покупка породистых собак и кошек по всей России")
+        title = u"Продажа и покупка породистых собак и кошек")
     return tmpl
 
 @app.route("/signin/", methods = ["POST", "GET"])
@@ -537,18 +537,18 @@ def sale_find_header(pet_id, breed_id, city, region):
     breed_title = breed
     if breed:
         # breed = u" {0}".format(morph_word(breed, {"gent"}).lower())
-        breed_header = Markup(u" породы <b class='ajax-link dsf-header-breed'>%s</b>" % breed.lower() )
+        breed_header = Markup(u" породы <b class='dsf-header-breed'>%s</b>" % breed.lower() )
         breed_title = Markup(u" породы {0}".format(breed.lower()))
 
     geo_header = u""
     geo_title = u""
     if city:
-        geo_header = u" в г. <b class='ajax-link dsf-header-location'>{0}</b>".format(city.get('city_name'))
+        geo_header = u" в г. <b class='dsf-header-location'>{0}</b>".format(city.get('city_name'))
         geo_title = u" в г. {0}".format(city.get('city_name'))
         # if form.distance.data:
             # city = u"{0}(+ {1} км)".format(city, form.distance.data) 
     elif region:
-        geo_header = u" в <b class='ajax-link dsf-header-location'>%s</b>" % region.get('region_name_p')
+        geo_header = u" в <b class='dsf-header-location'>%s</b>" % region.get('region_name_p')
         geo_title = u" в %s" % region.get('region_name_p')
 
     return (header.format(pet, breed_header, geo_header), \
@@ -1198,7 +1198,7 @@ def help_attraction():
     return render_template("/help/faq_attraction.html", \
         title=u"Привлекательность объявления", header=Markup(u"Привлекательность объявления"))
 
-@app.route("/spravka/preimushhetsva-dlja-zavodchikov/")
+@app.route("/spravka/preimushhestva-dlja-zavodchikov/")
 def help_breeder_benefits():
     return render_template("/help/faq_breeder_benefits.html", \
         title=u"Как мы помогаем продавать ваших собак или кошек?", header=Markup(u"Как мы помогаем продавать ваших собак или кошек?"))
@@ -1339,10 +1339,12 @@ def favicon():
         'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/prodazha-koshek/goroda/')
+@app.route('/prodazha-koshek-v-gorodah/')
 def cat_advs_by_cities():
     return pet_advs_by_cities(pet_id = pets.CAT_ID) 
 
 @app.route('/prodazha-sobak/goroda/')
+@app.route('/prodazha-sobak-v-gorodah/')
 def dog_advs_by_cities():
     return pet_advs_by_cities(pet_id = pets.DOG_ID) 
 
@@ -1362,10 +1364,12 @@ def pet_advs_by_cities(pet_id):
 
 
 @app.route('/prodazha-koshek/oblasti/')
+@app.route('/prodazha-koshek-v-oblastjah/')
 def cat_advs_by_regions():
     return pet_advs_by_regions(pet_id = pets.CAT_ID) 
 
 @app.route('/prodazha-sobak/oblasti/')
+@app.route('/prodazha-sobak-v-oblastjah/')
 def dog_advs_by_regions():
     return pet_advs_by_regions(pet_id = pets.DOG_ID) 
 

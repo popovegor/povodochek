@@ -13,6 +13,11 @@
 
   
     {% include "flashed_messages.html" %}
+
+    {%block page_header %}
+    <h1 class="page-header">{{header or title}}</h1>
+    {%endblock%}
+
     {% block content %}
     {% endblock %}
 

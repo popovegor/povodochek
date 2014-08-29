@@ -37,13 +37,7 @@
 
 {% block content %}  
 
-
-
-<div class="dog-adv-show" itemscope itemtype="http://schema.org/Offer"> 
-
-  {{render_share()}}
- 
- <h1 itemprop="name">{{header}}</h1>
+<div class="dog-adv-show" itemscope itemtype="http://schema.org/Offer">   
         
   <div class="row">
     <div class="col-sm-7" style="" >
@@ -60,7 +54,7 @@
 
     <div class="right-side col-sm-5">
 
-
+        {{render_share()}}
 
         {{price_info(adv)}}
 
@@ -99,7 +93,7 @@
 
 
 {%- macro render_share() -%}
-<div style="margin:20px 0px 30px -5px">
+<div style="margin:10px 0px 30px -5px">
 <script type="text/javascript" src="//yandex.st/share/share.js"
 charset="utf-8"></script>
 <div class="yashare-auto-init" data-yashareL10n="ru"

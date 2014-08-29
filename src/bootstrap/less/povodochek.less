@@ -353,14 +353,15 @@ form {
     }
 
     .ds-filter {
-        background-color: @state-info-bg;
+         background-color: @state-info-bg;
         .box-shadow(2px 2px 5px 0px #ccc);
-        border-radius: 10px 10px 10px 10px; 
-        max-width:820px; 
-        margin:25px 0 0px 0;
+         border-radius: 10px 10px 10px 10px;
+         max-width:820px;
+         margin:40px auto;
+
         form {
-           padding:15px 20px 0px 20px;
-           position:relative;
+           padding: 15px 20px 0px 20px;
+           position: relative;
            
            .dsf-actions {
                 position:absolute; 
@@ -373,9 +374,11 @@ form {
                 border-radius: 0px 0px 10px 10px;
                 padding:5px 20px 0px 20px;
                 height:30px;
+
                 /*border-top:solid 1px #ddd;*/
-                /*#gradient > .vertical(#f5f5f5, #efefef);*/
-                #gradient > .vertical(#f4f6fc, #d9edf7);
+                /*#gradient > .vertical(#f4f6fc, #d9edf7);*/
+                /*#gradient > .vertical(#ddd, #f5f5f5);*/
+                #gradient > .vertical(#f5f5f5, #eee);
                 .checkbox {
                     margin-top: 0px;
                 }
@@ -491,6 +494,12 @@ form {
         }
     }
 
+    .advs-found-info {
+        margin:30px 0 20px;
+        padding:8px 25px; 
+        background-color:@state-info-bg
+    }
+
     .advs-sort {
         margin-bottom: 0px;
         span, a, small {
@@ -502,7 +511,7 @@ form {
     .adv-number {padding-left: 10px;}
 
 
-    .adv-odd { background-color: @panel-default-heading-bg; }
+    .adv-odd { background-color: @state-default-bg; }
     .adv-even { background-color: @state-warning-bg; }
     
     .filter {
@@ -1012,6 +1021,10 @@ form {
     background-image: url(../img/brand_combo.png);
     background-repeat: no-repeat;
     background-position:center -60px;
+}
+
+span.img-brand {
+    background-position: center 0px;
 }
 
 a.img-brand:hover, a.img-brand:focus {
